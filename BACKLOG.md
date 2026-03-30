@@ -8,7 +8,7 @@ _nothing currently in progress_
 
 ## Queue
 
-- [ ] **00 — Auth & Onboarding** · [spec](specs/00-auth-onboarding.md) · Google login, first-time skill setup, all routes protected
+- [x] **00 — Auth & Onboarding** · [spec](specs/00-auth-onboarding.md) · Google login, first-time skill setup, all routes protected
 - [ ] **01 — Player Registry** · [spec](specs/01-player-registry.md) · View all players (read-only, populated via auth)
 - [ ] **02 — Session Management** · [spec](specs/02-session-management.md) · Auto-create Mon/Thu sessions, admin starts, players check in
 - [ ] **03 — Record a Match** · [spec](specs/03-record-match.md) · Pick 4 players, record winner, live session scoreboard
