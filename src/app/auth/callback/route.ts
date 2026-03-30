@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
+import { isAdminEmail } from "@/lib/db/players";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
@@ -40,6 +41,7 @@ export async function GET(request: NextRequest) {
           name: user.user_metadata?.full_name ?? user.email?.split("@")[0] ?? "Player",
           email: user.email!,
           skill_level: 3,
+          is_admin: isAdminEmail(user.email!),
           onboarding_complete: false,
         });
         return NextResponse.redirect(new URL("/onboarding", origin));
