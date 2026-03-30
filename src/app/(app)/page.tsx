@@ -5,9 +5,11 @@ import {
   getCheckedInPlayers,
   getPastSessionsThisSeason,
 } from "@/lib/db/sessions";
+import { getSessionMatches, getSessionScoreboard } from "@/lib/db/matches";
 import { createClient } from "@/lib/supabase-server";
 import StartSessionButton from "@/components/StartSessionButton";
 import CheckInButton from "@/components/CheckInButton";
+import RecordMatchForm from "@/components/RecordMatchForm";
 
 export const dynamic = "force-dynamic";
 
@@ -48,9 +50,17 @@ export default async function Home() {
 
   const isCheckedIn = checkedInPlayers.some((p) => p.player_id === playerId);
 
-  const pastSessions = todaySession
-    ? await getPastSessionsThisSeason(todaySession.season.id, todaySession.date)
-    : [];
+  const [pastSessions, scoreboard, recentMatches] = todaySession?.status === "active"
+    ? await Promise.all([
+        getPastSessionsThisSeason(todaySession.season.id, todaySession.date),
+        getSessionScoreboard(todaySession.id),
+        getSessionMatches(todaySession.id),
+      ])
+    : [
+        todaySession ? await getPastSessionsThisSeason(todaySession.season.id, todaySession.date) : [],
+        [],
+        [],
+      ];
 
   // ── No session today ──────────────────────────────────────────────────────
   if (!todaySession) {
@@ -138,21 +148,68 @@ export default async function Home() {
             )}
           </div>
 
-          {/* Scoreboard placeholder — populated in spec 03 */}
+          {/* Record match */}
+          <RecordMatchForm sessionId={todaySession.id} checkedInPlayers={checkedInPlayers} />
+
+          {/* Scoreboard */}
           <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
               Tonight's Scores
             </h2>
-            <p className="text-sm text-gray-400">Record a match to see scores here.</p>
+            {scoreboard.length === 0 ? (
+              <p className="text-sm text-gray-400">No matches recorded yet.</p>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <div className="flex text-xs text-gray-400 px-1 mb-1">
+                  <span className="flex-1">Player</span>
+                  <span className="w-8 text-center">W</span>
+                  <span className="w-8 text-center">L</span>
+                  <span className="w-12 text-right">Win%</span>
+                </div>
+                {scoreboard.map((p, i) => {
+                  const pct = p.matches_played ? Math.round((p.wins / p.matches_played) * 100) : 0;
+                  return (
+                    <div key={p.player_id} className="flex items-center px-1">
+                      <span className="text-xs text-gray-300 w-5 shrink-0">{i + 1}</span>
+                      <span className={`flex-1 text-sm font-medium truncate ${p.player_id === playerId ? "text-blue-600" : "text-gray-800"}`}>
+                        {p.name}
+                      </span>
+                      <span className="w-8 text-center text-sm font-bold text-green-600">{p.wins}</span>
+                      <span className="w-8 text-center text-sm font-bold text-red-400">{p.losses}</span>
+                      <span className="w-12 text-right text-sm text-gray-500">{pct}%</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
-          {/* Record match — spec 03 */}
-          <button
-            disabled
-            className="w-full py-3 bg-gray-100 text-gray-400 font-semibold rounded-xl cursor-not-allowed"
-          >
-            🎾 Record a Match — Coming Soon
-          </button>
+          {/* Match history */}
+          {recentMatches.length > 0 && (
+            <div className="bg-white rounded-xl shadow-sm px-4 py-3">
+              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                Matches · {recentMatches.length}
+              </h2>
+              <div className="flex flex-col gap-3">
+                {recentMatches.map((m) => (
+                  <div key={m.id} className="text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className={`font-semibold ${m.winning_team === 1 ? "text-green-600" : "text-gray-400"}`}>
+                        {m.team1.join(" & ")}
+                      </span>
+                      <span className="text-gray-300">vs</span>
+                      <span className={`font-semibold ${m.winning_team === 2 ? "text-green-600" : "text-gray-400"}`}>
+                        {m.team2.join(" & ")}
+                      </span>
+                    </div>
+                    <div className="text-xs text-gray-400 mt-0.5">
+                      {m.team1_score} – {m.team2_score} · {m.winning_team === 1 ? m.team1.join(" & ") : m.team2.join(" & ")} won
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
 
