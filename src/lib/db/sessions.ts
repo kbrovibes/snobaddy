@@ -14,6 +14,12 @@ export interface CheckedInPlayer {
   checked_in_at: string;
 }
 
+export interface SessionPresence {
+  player_id: string;
+  checked_in_at: string;
+  checked_out_at: string | null;
+}
+
 export async function getTodaySession(): Promise<Session | null> {
   const supabase = await createClient();
   const today = new Date().toISOString().split("T")[0];
@@ -56,12 +62,14 @@ export async function getPastSessionsThisSeason(seasonId: string, beforeDate: st
   return data ?? [];
 }
 
+// Players currently present (checked in, not checked out)
 export async function getCheckedInPlayers(sessionId: string): Promise<CheckedInPlayer[]> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("session_players")
     .select("player_id, checked_in_at, players(name, skill_level)")
     .eq("session_id", sessionId)
+    .is("checked_out_at", null)
     .order("checked_in_at");
 
   return (data ?? []).map((row) => ({
@@ -69,4 +77,14 @@ export async function getCheckedInPlayers(sessionId: string): Promise<CheckedInP
     checked_in_at: row.checked_in_at,
     ...(row.players as unknown as { name: string; skill_level: number }),
   }));
+}
+
+// All presence records for a session (for admin players view)
+export async function getSessionPresence(sessionId: string): Promise<SessionPresence[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("session_players")
+    .select("player_id, checked_in_at, checked_out_at")
+    .eq("session_id", sessionId);
+  return data ?? [];
 }
