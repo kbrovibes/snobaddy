@@ -16,6 +16,7 @@ _nothing currently in progress_
 
 ## Future (unspecced)
 
+- **Prior seasons** — read-only history view of past seasons: leaderboards, match logs, prize winners
 - Edit skill level from profile page
 - Match suggestions based on skill balance
 - "Waiting" queue — who's next to play
