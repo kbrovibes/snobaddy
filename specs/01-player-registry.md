@@ -1,43 +1,28 @@
 # Spec 01: Player Registry
 
 ## What it does
-A page at `/players` that shows all players ever added to the system.
-Anyone can add a new player by typing their name and selecting a skill level (1–5).
-Players are permanent records — they persist across all sessions and seasons.
+A page at `/players` showing all players who have ever signed in and completed onboarding.
+This is a read-only directory — players are created automatically via Google login (spec 00),
+not manually added here.
 
 ## What it does NOT do
-- No editing or deleting players (yet)
-- No login — anyone can add a player
-- No duplicate prevention beyond a unique name constraint in the DB
-- No importing from an existing list
-
-## Data
-
-### Table: `players`
-```sql
-create table players (
-  id uuid primary key default gen_random_uuid(),
-  name text not null unique,
-  skill_level integer not null check (skill_level between 1 and 5),
-  created_at timestamptz default now()
-);
-```
+- No manual player creation (handled by auth onboarding)
+- No editing skill levels (yet)
+- No deleting players
 
 ## UI
-- `/players` — full page
+- `/players` — accessible from nav after login
   - Header: "Players"
-  - List of all players, sorted alphabetically, showing name + skill level (shown as filled dots ●●●○○ or similar)
-  - "Add Player" form at the bottom or in a modal: name (text input) + skill level (1–5 selector) + Save button
-  - After save, list refreshes to show the new player
+  - List of all players sorted alphabetically
+  - Each row: name, skill level (shown as filled dots ●●●○○), email
+  - Shows total player count
+  - No add/edit controls
 
 ## API
-- `GET /api/players` — returns all players ordered by name
-- `POST /api/players` — creates a player, body: `{ name, skill_level }`
+- `GET /api/players` — returns all players with onboarding_complete = true, ordered by name
 
 ## Acceptance Criteria
-- [ ] `/players` page loads and shows all existing players
-- [ ] Can add a new player with name + skill level
-- [ ] New player appears in the list immediately after save
-- [ ] Skill level is visually shown (not just a number)
-- [ ] Duplicate name returns a clear error message
-- [ ] Works on mobile (phone screen at the court)
+- [ ] `/players` lists all onboarded players
+- [ ] Skill level shown visually, not just a number
+- [ ] Requires login to view
+- [ ] Works on mobile
