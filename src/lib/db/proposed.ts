@@ -40,9 +40,13 @@ export async function deleteProposedMatch(id: string) {
   await supabase.from("proposed_matches").delete().eq("id", id);
 }
 
+const COURTS = 2; // matches that run simultaneously
+
 /**
  * THE ALGORITHM
- * Proposes matches to fill the delta up to 4 matches.
+ * Proposes matches up to 4 total, organized in waves of COURTS matches.
+ * Wave 1 = matches 1 & 2 (run simultaneously). Wave 2 = matches 3 & 4 (run after wave 1).
+ * Players are only locked within a wave, so wave 2 can reuse wave 1 players.
  */
 export async function proposeNextMatches(sessionId: string) {
   // 1. Get current state
@@ -72,33 +76,41 @@ export async function proposeNextMatches(sessionId: string) {
     .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id")
     .eq("session_id", sessionId);
 
-  // 2. Identify players currently in queue
-  const playersInQueue = new Set<string>();
-  existingProposed?.forEach((m) => {
-    playersInQueue.add(m.team1_player1_id);
-    playersInQueue.add(m.team1_player2_id);
-    playersInQueue.add(m.team2_player1_id);
-    playersInQueue.add(m.team2_player2_id);
-  });
-
-  // 3. Identify players who just played (Back-to-back detection)
+  // 2. Identify players who just played (Back-to-back detection)
   const justPlayed = new Set<string>();
-  recentMatches?.forEach((m, idx) => {
-    // Priority 1: Penalty for the very last match is highest
-    if (idx === 0) {
-      justPlayed.add(m.team1_player1_id);
-      justPlayed.add(m.team1_player2_id);
-      justPlayed.add(m.team2_player1_id);
-      justPlayed.add(m.team2_player2_id);
-    }
-  });
+  if (recentMatches && recentMatches.length > 0) {
+    const last = recentMatches[0];
+    justPlayed.add(last.team1_player1_id);
+    justPlayed.add(last.team1_player2_id);
+    justPlayed.add(last.team2_player1_id);
+    justPlayed.add(last.team2_player2_id);
+  }
 
-  // 4. Fill delta
-  const needed = 4 - (existingProposed?.length ?? 0);
+  // 3. Fill up to 4 proposals using wave-based locking.
+  // Within each wave (COURTS slots), players cannot appear twice.
+  // Between waves, the lock resets — wave 2 players are drawn from the full pool.
+  const existingCount = existingProposed?.length ?? 0;
+  const needed = 4 - existingCount;
   const newProposals = [];
 
+  // Seed the wave lock with any existing proposals in the current (incomplete) wave
+  const currentWaveOffset = existingCount % COURTS;
+  const waveLocked = new Set<string>();
+  existingProposed?.slice(existingCount - currentWaveOffset).forEach((m) => {
+    waveLocked.add(m.team1_player1_id);
+    waveLocked.add(m.team1_player2_id);
+    waveLocked.add(m.team2_player1_id);
+    waveLocked.add(m.team2_player2_id);
+  });
+
   for (let i = 0; i < needed; i++) {
-    const available = players.filter(p => !playersInQueue.has(p.id));
+    const slotInWave = (existingCount + i) % COURTS;
+    if (slotInWave === 0) {
+      // New wave starts — all players are available again
+      waveLocked.clear();
+    }
+
+    const available = players.filter(p => !waveLocked.has(p.id));
     if (available.length < 4) break;
 
     const match = findBestMatch(available, justPlayed, sessionHistory ?? []);
@@ -111,8 +123,7 @@ export async function proposeNextMatches(sessionId: string) {
         team2_player2_id: match.players[3].id,
         avg_skill_diff: match.skillDiff
       });
-      // Lock these players for the next match in this batch
-      match.players.forEach(p => playersInQueue.add(p.id));
+      match.players.forEach(p => waveLocked.add(p.id));
     }
   }
 

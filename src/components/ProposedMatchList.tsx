@@ -33,7 +33,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
         onClick={handleSuggest}
         className="w-full py-3 bg-white border-2 border-dashed border-blue-200 text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-colors flex items-center justify-center gap-2"
       >
-        🏸 Suggest Matches
+        ✨ Generate Matches
       </button>
     );
   }
@@ -50,7 +50,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
             disabled={loading}
             className="text-xs text-blue-600 font-bold hover:underline"
           >
-            {loading ? "Suggesting..." : "+ Fill Delta"}
+            {loading ? "Generating..." : "+ Add Matches"}
           </button>
         )}
       </div>

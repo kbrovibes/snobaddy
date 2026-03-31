@@ -6,6 +6,17 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.10.2] — 2026-03-30
+
+### Fixed
+- **Match generation** — "Generate Matches" now correctly produces 4 suggestions even with ~12 players. Matches are organized in 2-match waves (one per court pair); wave 2 (matches 3 & 4) reuses players from wave 1 since both courts will have finished by then.
+
+### Changed
+- **"Suggest Matches" → "✨ Generate Matches"** — clearer label with generate emoji.
+- **"Fill Delta" → "Add Matches"** — plain English for the top-up button.
+
+---
+
 ## [0.10.1] — 2026-03-30
 
 ### Fixed
