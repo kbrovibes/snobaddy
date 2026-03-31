@@ -1,0 +1,86 @@
+# Changelog
+
+All notable changes to snobaddy are documented here.
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+Versions follow [Semantic Versioning](https://semver.org/).
+
+---
+
+## [0.6.0] — 2026-03-30
+
+### Added
+- **Record a Match** — tap "🎾 Record a Match" on the session tab to log a completed doubles game
+- Pick 4 players from tonight's checked-in list, split into two teams
+- Enter the final score — winner is determined automatically
+- **Live session scoreboard** — W / L / Win% for every checked-in player, updates after each match
+- **Match history** — list of tonight's matches with scores and winner highlighted in green
+
+→ [Technical details](releases/v0.6.0-record-match.md)
+
+---
+
+## [0.5.0] — 2026-03-30
+
+### Added
+- **Check-out** — players can leave the session by tapping "Leave" next to their check-in status
+- **Admin presence control** — admins can check in or out any player directly from the Players tab during an active session
+- Players who check out and return can be re-added by tapping "Left · Re-add"
+
+→ [Technical details](releases/v0.5.0-checkout.md)
+
+---
+
+## [0.4.0] — 2026-03-30
+
+### Added
+- **Session tab** — home screen now shows tonight's session with live status
+- Spring 2026 season loaded: 18 sessions across all Mondays and Thursdays (Mar 23 – May 21, 2026)
+- Admins can activate a session with one tap — non-admins see "Starting soon" until then
+- Players check themselves in once the session is active
+- Who's here list shows checked-in players with skill level dots
+- Past sessions for this season shown at the bottom
+- Serve Sports logo displayed in the session header
+
+→ [Technical details](releases/v0.4.0-session-management.md)
+
+---
+
+## [0.3.0] — 2026-03-30
+
+### Added
+- **Players tab** — lists all registered players with name and skill level
+- Admins can tap skill level dots to change any player's rating (1–5) inline
+- Support for manually-added players (no Google account required — useful for walk-ins)
+
+→ [Technical details](releases/v0.3.0-player-registry.md)
+
+---
+
+## [0.2.0] — 2026-03-30
+
+### Added
+- **Google login** — all pages require sign-in with a Google account
+- **Onboarding** — first-time users rate their own skill level (1 Beginner → 5 Pro); defaults to 3 if skipped
+- App shell with fixed header (logo + logout) and bottom navigation (Session / Players / Leaderboard)
+- Player record automatically created on first login using name and email from Google
+
+→ [Technical details](releases/v0.2.0-auth-onboarding.md)
+
+---
+
+## [0.1.0] — 2026-03-29
+
+### Added
+- Initial project scaffold: Next.js 14 + Supabase + Vercel + GitHub
+- Hello World page with live database query confirming end-to-end connectivity
+
+→ [Technical details](releases/v0.1.0-hello-world.md)
+
+---
+
+[0.6.0]: https://github.com/kbrovibes/snobaddy/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/kbrovibes/snobaddy/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/kbrovibes/snobaddy/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/kbrovibes/snobaddy/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/kbrovibes/snobaddy/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/kbrovibes/snobaddy/releases/tag/v0.1.0
