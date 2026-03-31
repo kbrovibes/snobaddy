@@ -15,6 +15,7 @@ Single source of truth for all planned and completed work.
 - [x] **04 — Season Leaderboard** · [spec](specs/04-season-leaderboard.md) · Cumulative W/L/win% across all sessions
 - [ ] **05 — Session Navigation** · [spec](specs/05-session-navigation.md) · Session list at `/`, per-session detail at `/session/[id]`, auto-redirect into open session on login, admin creates new session from list
 - [ ] **06 — Match Generation** · [spec](specs/07-match-generation.md) · Propose next 4 matches based on presence, skill, and history (Algorithm TBD)
+- [ ] **08 — Ethan Mode** · [spec](specs/08-ethan-mode.md) · Easter egg: DB-persisted admin toggle that biases match suggestions (Chitra favored, Kiran Iyer skipped); banner visible to all when active
 
 ---
 
