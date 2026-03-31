@@ -86,34 +86,60 @@ export async function proposeNextMatches(sessionId: string) {
     justPlayed.add(last.team2_player2_id);
   }
 
-  // 3. Fill up to 4 proposals using wave-based locking.
-  // Within each wave (COURTS slots), players cannot appear twice.
-  // Between waves, the lock resets — wave 2 players are drawn from the full pool.
+  // 3. Fill up to 4 proposals using wave-based locking with fresh-player preference.
+  //
+  // Waves: only COURTS matches run at once. Within a wave, a player can't appear twice.
+  // Between waves the hard lock resets, BUT wave 2 prefers "fresh" players (not used in
+  // wave 1) before falling back to the full pool. This prevents wave 2 from blindly
+  // repeating the same matchups as wave 1.
+  //
+  // Duplicate guard: newly proposed matches are appended to the working history so the
+  // scoring function penalises exact repeats within the same batch.
   const existingCount = existingProposed?.length ?? 0;
   const needed = 4 - existingCount;
   const newProposals = [];
 
-  // Seed the wave lock with any existing proposals in the current (incomplete) wave
+  // Working history starts with completed matches; new proposals are appended as we go
+  // so that each subsequent call to findBestMatch sees the full picture.
+  const workingHistory: typeof sessionHistory = [...(sessionHistory ?? [])];
+
+  // Players used in wave 1 (hard-locked from wave 2 preference pool, but not excluded).
+  const wave1Players = new Set<string>();
+
+  // Seed per-wave state from existing proposals.
   const currentWaveOffset = existingCount % COURTS;
   const waveLocked = new Set<string>();
-  existingProposed?.slice(existingCount - currentWaveOffset).forEach((m) => {
-    waveLocked.add(m.team1_player1_id);
-    waveLocked.add(m.team1_player2_id);
-    waveLocked.add(m.team2_player1_id);
-    waveLocked.add(m.team2_player2_id);
+  existingProposed?.forEach((m, idx) => {
+    const pids = [m.team1_player1_id, m.team1_player2_id, m.team2_player1_id, m.team2_player2_id];
+    if (Math.floor(idx / COURTS) === 0) pids.forEach(id => wave1Players.add(id));
+    if (idx >= existingCount - currentWaveOffset) pids.forEach(id => waveLocked.add(id));
   });
 
   for (let i = 0; i < needed; i++) {
-    const slotInWave = (existingCount + i) % COURTS;
+    const absoluteSlot = existingCount + i;
+    const slotInWave = absoluteSlot % COURTS;
+    const waveNum = Math.floor(absoluteSlot / COURTS);
+
     if (slotInWave === 0) {
-      // New wave starts — all players are available again
+      // New wave — hard lock resets (players can play again)
       waveLocked.clear();
     }
 
-    const available = players.filter(p => !waveLocked.has(p.id));
+    // In wave 2+, prefer players who haven't played yet (not in wave1Players).
+    // Only fall back to the full pool if there aren't 4 fresh players left.
+    let available: any[];
+    if (waveNum >= 1) {
+      const fresh = players.filter(p => !waveLocked.has(p.id) && !wave1Players.has(p.id));
+      available = fresh.length >= 4
+        ? fresh
+        : players.filter(p => !waveLocked.has(p.id));
+    } else {
+      available = players.filter(p => !waveLocked.has(p.id));
+    }
+
     if (available.length < 4) break;
 
-    const match = findBestMatch(available, justPlayed, sessionHistory ?? []);
+    const match = findBestMatch(available, justPlayed, workingHistory);
     if (match) {
       newProposals.push({
         session_id: sessionId,
@@ -123,7 +149,17 @@ export async function proposeNextMatches(sessionId: string) {
         team2_player2_id: match.players[3].id,
         avg_skill_diff: match.skillDiff
       });
-      match.players.forEach(p => waveLocked.add(p.id));
+      // Register this proposal in working history so future slots avoid repeating it.
+      workingHistory.push({
+        team1_player1_id: match.players[0].id,
+        team1_player2_id: match.players[1].id,
+        team2_player1_id: match.players[2].id,
+        team2_player2_id: match.players[3].id,
+      });
+      match.players.forEach(p => {
+        waveLocked.add(p.id);
+        if (waveNum === 0) wave1Players.add(p.id);
+      });
     }
   }
 
@@ -216,14 +252,27 @@ function scoreMatch(t1: any[], t2: any[], justPlayed: Set<string>, history: any[
   }
 
   // 4. Diversity (Pairing History)
-  // Check if T1P1 & T1P2 have played together before
-  // (Simplified: count how many times this specific 4-player set appeared)
+  // Penalise exact or near-exact repetition of a previous match.
+  // "history" includes both completed matches AND already-proposed matches in the current
+  // batch, so this fires for intra-batch duplicates too.
   const pids = new Set(allPlayers.map(p => p.id));
+  const t1Pair = new Set([t1[0].id, t1[1].id]);
+  const t2Pair = new Set([t2[0].id, t2[1].id]);
   for (const m of history) {
     const hPids = [m.team1_player1_id, m.team1_player2_id, m.team2_player1_id, m.team2_player2_id];
     const intersection = hPids.filter(id => pids.has(id));
-    if (intersection.length >= 3) score -= 50; // High overlap
-    if (intersection.length === 4) score -= 200; // Exact same match
+    // Same 4-player group regardless of team split — strong deterrent
+    if (intersection.length === 4) score -= 5000;
+    // 3-player overlap — high penalty
+    else if (intersection.length >= 3) score -= 500;
+    // Same team pairing (same two players on the same side)
+    const mT1Pair = new Set([m.team1_player1_id, m.team1_player2_id]);
+    const mT2Pair = new Set([m.team2_player1_id, m.team2_player2_id]);
+    const t1MatchesMT1 = [...t1Pair].every(id => mT1Pair.has(id));
+    const t1MatchesMT2 = [...t1Pair].every(id => mT2Pair.has(id));
+    const t2MatchesMT1 = [...t2Pair].every(id => mT1Pair.has(id));
+    const t2MatchesMT2 = [...t2Pair].every(id => mT2Pair.has(id));
+    if (t1MatchesMT1 || t1MatchesMT2 || t2MatchesMT1 || t2MatchesMT2) score -= 150;
   }
 
   // 5. Phase Logic

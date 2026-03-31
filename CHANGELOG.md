@@ -6,7 +6,20 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [0.10.2] — 2026-03-30
+## [0.10.4] - 2026-03-31
+
+### Fixed
+- **Match generation — no more repeated matchups** — wave 2 now prefers "fresh" players (not used in wave 1) before falling back to the full pool. With 12 players: match 3 uses the remaining 4 untouched players; match 4 draws from the wave 1 pool with different pairings. Newly proposed matches are also fed into the scoring history mid-batch, so the duplicate penalty fires for intra-batch repeats. Exact-duplicate penalty raised from -200 to -5000.
+
+---
+
+## [0.10.3] - 2026-03-31
+### Changed
+- Replaced TestPlayer placeholder data with initial real player registry (21 players)
+- Preserved match history by mapping real players to existing test IDs
+
+## [0.10.2] - 2026-03-31
+
 
 ### Fixed
 - **Match generation** — "Generate Matches" now correctly produces 4 suggestions even with ~12 players. Matches are organized in 2-match waves (one per court pair); wave 2 (matches 3 & 4) reuses players from wave 1 since both courts will have finished by then.
