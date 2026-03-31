@@ -6,6 +6,7 @@ import {
   getPastSessionsThisSeason,
 } from "@/lib/db/sessions";
 import { getSessionMatches, getSessionScoreboard } from "@/lib/db/matches";
+import { getProposedMatches } from "@/lib/db/proposed";
 import { createClient } from "@/lib/supabase-server";
 import StartSessionButton from "@/components/StartSessionButton";
 import StartTodayButton from "@/components/StartTodayButton";
@@ -14,6 +15,7 @@ import CloseSessionButton from "@/components/CloseSessionButton";
 import RecordMatchForm from "@/components/RecordMatchForm";
 import ReopenSessionButton from "@/components/ReopenSessionButton";
 import MatchAdminControls from "@/components/MatchAdminControls";
+import ProposedMatchList from "@/components/ProposedMatchList";
 
 export const dynamic = "force-dynamic";
 
@@ -65,12 +67,13 @@ export default async function Home() {
   const needsScoreboard =
     todaySession?.status === "active" || todaySession?.status === "completed";
 
-  const [scoreboard, recentMatches] = needsScoreboard
+  const [scoreboard, recentMatches, proposedMatches] = needsScoreboard
     ? await Promise.all([
         getSessionScoreboard(todaySession!.id),
         getSessionMatches(todaySession!.id),
+        getProposedMatches(todaySession!.id),
       ])
-    : [[], []];
+    : [[], [], []];
 
   // ── No session today ──────────────────────────────────────────────────────
   if (!todaySession) {
@@ -165,6 +168,13 @@ export default async function Home() {
               </div>
             )}
           </div>
+
+          {/* Proposed matches */}
+          <ProposedMatchList 
+            sessionId={todaySession.id} 
+            matches={proposedMatches} 
+            checkedInPlayers={checkedInPlayers} 
+          />
 
           {/* Record match */}
           <RecordMatchForm sessionId={todaySession.id} checkedInPlayers={checkedInPlayers} />

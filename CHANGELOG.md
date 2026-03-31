@@ -19,6 +19,17 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.10.0] — 2026-03-30
+
+### Added
+- **Match Generation (The Algorithm)** — intelligent match suggester that proposes the next 4 matches for an active session
+- **Anti-Back-to-Back logic** — prioritizes players who didn't play in the most recent matches to ensure everyone gets rest
+- **Smart Balancing** — heuristic algorithm that balances combined team skill levels while avoiding "dumb" matchups (e.g., three Skill 5s vs one Skill 1)
+- **Proposed Match Queue** — view up to 4 persistent suggestions on the session page; each can be deleted or quickly recorded with a pre-filled form
+- **Delta Filling** — tap "Fill Delta" to generate only the number of matches needed to reach the queue limit of 4
+
+---
+
 ## [0.9.5] — 2026-03-30
 
 ### Fixed

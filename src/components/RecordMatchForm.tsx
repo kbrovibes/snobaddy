@@ -12,16 +12,31 @@ interface Player {
 interface Props {
   sessionId: string;
   checkedInPlayers: Player[];
+  initialData?: {
+    team1p1: string;
+    team1p2: string;
+    team2p1: string;
+    team2p2: string;
+    proposedMatchId?: string;
+  };
+  label?: string;
+  variant?: "primary" | "secondary";
 }
 
 const EMPTY = "";
 
-export default function RecordMatchForm({ sessionId, checkedInPlayers }: Props) {
+export default function RecordMatchForm({ 
+  sessionId, 
+  checkedInPlayers, 
+  initialData,
+  label = "🏸 Record a Match",
+  variant = "primary"
+}: Props) {
   const [open, setOpen] = useState(false);
-  const [t1p1, setT1p1] = useState(EMPTY);
-  const [t1p2, setT1p2] = useState(EMPTY);
-  const [t2p1, setT2p1] = useState(EMPTY);
-  const [t2p2, setT2p2] = useState(EMPTY);
+  const [t1p1, setT1p1] = useState(initialData?.team1p1 || EMPTY);
+  const [t1p2, setT1p2] = useState(initialData?.team1p2 || EMPTY);
+  const [t2p1, setT2p1] = useState(initialData?.team2p1 || EMPTY);
+  const [t2p2, setT2p2] = useState(initialData?.team2p2 || EMPTY);
   const [score1, setScore1] = useState("");
   const [score2, setScore2] = useState("");
   const [error, setError] = useState("");
@@ -29,7 +44,14 @@ export default function RecordMatchForm({ sessionId, checkedInPlayers }: Props) 
   const router = useRouter();
 
   function reset() {
-    setT1p1(EMPTY); setT1p2(EMPTY); setT2p1(EMPTY); setT2p2(EMPTY);
+    if (initialData) {
+      setT1p1(initialData.team1p1);
+      setT1p2(initialData.team1p2);
+      setT2p1(initialData.team2p1);
+      setT2p2(initialData.team2p2);
+    } else {
+      setT1p1(EMPTY); setT1p2(EMPTY); setT2p1(EMPTY); setT2p2(EMPTY);
+    }
     setScore1(""); setScore2(""); setError("");
   }
 
@@ -40,36 +62,45 @@ export default function RecordMatchForm({ sessionId, checkedInPlayers }: Props) 
     return checkedInPlayers.filter((p) => !exclude.includes(p.player_id));
   }
 
-  const selected = [t1p1, t1p2, t2p1, t2p2].filter(Boolean);
-
   async function submit() {
     setError("");
     if ([t1p1, t1p2, t2p1, t2p2].some((v) => !v)) {
       setError("Select all 4 players."); return;
     }
     const s1 = parseInt(score1), s2 = parseInt(score2);
-    if (isNaN(s1) || isNaN(s2) || s1 < 0 || s2 < 0) {
+    if (isNaN(s1) || iSNaN(s2) || s1 < 0 || s2 < 0) {
       setError("Enter valid scores."); return;
     }
     if (s1 === s2) { setError("Scores can't be tied."); return; }
 
     setSaving(true);
-    const res = await fetch("/api/matches", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        session_id: sessionId,
-        team1: [t1p1, t1p2],
-        team2: [t2p1, t2p2],
-        team1_score: s1,
-        team2_score: s2,
-      }),
-    });
-    const data = await res.json();
-    setSaving(false);
-    if (!res.ok) { setError(data.error ?? "Failed to save."); return; }
-    close();
-    router.refresh();
+    try {
+      const res = await fetch("/api/matches", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          team1: [t1p1, t1p2],
+          team2: [t2p1, t2p2],
+          team1_score: s1,
+          team2_score: s2,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error ?? "Failed to save."); setSaving(false); return; }
+
+      // If this was from a proposal, delete the proposal
+      if (initialData?.proposedMatchId) {
+        await fetch(`/api/proposed-matches/${initialData.proposedMatchId}`, { method: "DELETE" });
+      }
+
+      setSaving(false);
+      close();
+      router.refresh();
+    } catch (e) {
+      setSaving(false);
+      setError("An unexpected error occurred.");
+    }
   }
 
   const PlayerSelect = ({
@@ -105,13 +136,18 @@ export default function RecordMatchForm({ sessionId, checkedInPlayers }: Props) 
     ? parseInt(score1) > parseInt(score2) ? "Team 1" : "Team 2"
     : null;
 
+  function iSNaN(v: any) { return isNaN(v); }
+
   return (
     <>
       <button
         onClick={() => setOpen(true)}
-        className="w-full py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+        className={variant === "primary"
+          ? "w-full py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+          : "w-full py-2 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-100 transition-colors"
+        }
       >
-        🏸 Record a Match
+        {label}
       </button>
 
       {open && (
