@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.13.1] - 2026-03-31
+
+### Changed
+- **Past Sessions links** — entries in the Past Sessions section at the bottom of a session view are now tappable links to those sessions.
+
+---
+
 ## [0.13.0] - 2026-03-31
 
 ### Added
