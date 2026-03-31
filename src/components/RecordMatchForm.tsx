@@ -85,9 +85,13 @@ export default function RecordMatchForm({ sessionId, checkedInPlayers }: Props) 
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white"
+        className={`w-full border rounded-lg px-3 py-2.5 text-sm bg-white font-medium ${
+          value
+            ? "border-blue-400 text-gray-900"
+            : "border-gray-200 text-gray-400"
+        }`}
       >
-        <option value="">Pick player…</option>
+        <option value="" disabled>Pick player…</option>
         {options(exclude.filter((id) => id !== value)).map((p) => (
           <option key={p.player_id} value={p.player_id}>
             {p.name} {"●".repeat(p.skill_level)}{"○".repeat(5 - p.skill_level)}
