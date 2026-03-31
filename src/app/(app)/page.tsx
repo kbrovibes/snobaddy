@@ -13,7 +13,6 @@ import CheckInButton from "@/components/CheckInButton";
 import CloseSessionButton from "@/components/CloseSessionButton";
 import RecordMatchForm from "@/components/RecordMatchForm";
 import ReopenSessionButton from "@/components/ReopenSessionButton";
-import MatchAdminControls from "@/components/MatchAdminControls";
 
 export const dynamic = "force-dynamic";
 
@@ -234,15 +233,6 @@ export default async function Home() {
                 <div className="text-xs text-gray-400 mt-0.5">
                   {m.team1_score} – {m.team2_score} · {m.winning_team === 1 ? m.team1.join(" & ") : m.team2.join(" & ")} won
                 </div>
-                {isAdmin && isActive && (
-                  <MatchAdminControls
-                    matchId={m.id}
-                    team1Names={m.team1}
-                    team2Names={m.team2}
-                    team1Score={m.team1_score}
-                    team2Score={m.team2_score}
-                  />
-                )}
               </div>
             ))}
           </div>
