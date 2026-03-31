@@ -77,9 +77,24 @@ export async function getActiveSession(): Promise<Session | null> {
 
 export async function getAllSessions(): Promise<SessionRow[]> {
   const supabase = await createClient();
+  const today = todayPacific();
+
+  // Find the next session on or after today — that's our upper bound
+  const { data: next } = await supabase
+    .from("sessions")
+    .select("date")
+    .gte("date", today)
+    .order("date")
+    .limit(1)
+    .maybeSingle();
+
+  // If no upcoming session, cap at today (shows all past sessions)
+  const cutoff = next?.date ?? today;
+
   const { data } = await supabase
     .from("sessions")
     .select("id, date, status, seasons(name)")
+    .lte("date", cutoff)
     .order("date", { ascending: false });
   if (!data) return [];
   return data.map((row) => ({
