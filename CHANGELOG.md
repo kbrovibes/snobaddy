@@ -6,6 +6,18 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.10.7] - 2026-03-31
+
+### Added
+- **Who's Here — check-in time column** — the "Who's Here" table now shows arrival time (Pacific time) for each player.
+- **Who's Here — sortable columns** — tap Name, Skill, or Arrived to sort; tap again to reverse. Defaults to arrival order.
+- **Match generation — wait-time fairness** — players who have been waiting longer (since check-in or last match) now get a scoring bonus, so early arrivals are prioritised over players who just walked in.
+
+### Fixed
+- **Re-checkin resets arrival time** — checking back in after checking out now records a fresh `checked_in_at`, so the wait-time logic correctly treats re-arrivals as new arrivals.
+
+---
+
 ## [0.10.6] - 2026-03-31
 
 ### Fixed

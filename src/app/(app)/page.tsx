@@ -16,6 +16,7 @@ import RecordMatchForm from "@/components/RecordMatchForm";
 import ReopenSessionButton from "@/components/ReopenSessionButton";
 import MatchAdminControls from "@/components/MatchAdminControls";
 import ProposedMatchList from "@/components/ProposedMatchList";
+import WhoIsHere from "@/components/WhoIsHere";
 
 export const dynamic = "force-dynamic";
 
@@ -155,18 +156,7 @@ export default async function Home() {
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
               Who's Here · {checkedInPlayers.length}
             </h2>
-            {checkedInPlayers.length === 0 ? (
-              <p className="text-sm text-gray-400">No one checked in yet</p>
-            ) : (
-              <div className="flex flex-col gap-2">
-                {checkedInPlayers.map((p) => (
-                  <div key={p.player_id} className="flex items-center justify-between">
-                    <span className="font-medium text-gray-800">{p.name}</span>
-                    <SkillDots level={p.skill_level} />
-                  </div>
-                ))}
-              </div>
-            )}
+            <WhoIsHere players={checkedInPlayers} />
           </div>
 
           {/* Proposed matches */}

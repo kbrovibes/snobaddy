@@ -61,11 +61,14 @@ export async function proposeNextMatches(sessionId: string) {
   // 1. Get current state
   const { data: checkedIn } = await supabase
     .from("session_players")
-    .select("player_id, players(id, name, skill_level)")
+    .select("player_id, checked_in_at, players(id, name, skill_level)")
     .eq("session_id", sessionId)
     .is("checked_out_at", null);
 
-  const players = (checkedIn ?? []).map((cp: any) => cp.players);
+  const players = (checkedIn ?? []).map((cp: any) => ({
+    ...cp.players,
+    checked_in_at: cp.checked_in_at,
+  }));
   if (players.length < 4) return { error: "Not enough players checked in" };
 
   // Active (non-deleted) proposals count toward the 4-match target and drive wave logic.
@@ -91,7 +94,7 @@ export async function proposeNextMatches(sessionId: string) {
 
   const { data: sessionHistory } = await supabase
     .from("matches")
-    .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id")
+    .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, played_at")
     .eq("session_id", sessionId);
 
   // 2. Identify players who just played (Back-to-back detection)
@@ -104,7 +107,28 @@ export async function proposeNextMatches(sessionId: string) {
     justPlayed.add(last.team2_player2_id);
   }
 
-  // 3. Fill up to 4 proposals using wave-based locking with fresh-player preference.
+  // 3. Build wait-time map: minutes since each player last played (or checked in).
+  // Players who have been waiting longer get a scoring bonus so they play sooner.
+  const now = Date.now();
+  const lastPlayedAt = new Map<string, number>(); // player_id → ms timestamp
+  for (const m of sessionHistory ?? []) {
+    if (!m.played_at) continue;
+    const t = new Date(m.played_at).getTime();
+    for (const pid of [m.team1_player1_id, m.team1_player2_id, m.team2_player1_id, m.team2_player2_id]) {
+      if (!lastPlayedAt.has(pid) || t > lastPlayedAt.get(pid)!) {
+        lastPlayedAt.set(pid, t);
+      }
+    }
+  }
+  const waitMinutes = new Map<string, number>();
+  for (const p of players) {
+    // Fall back to checked_in_at if never played; fall back to now if no timestamp at all
+    const checkedInMs = p.checked_in_at ? new Date(p.checked_in_at).getTime() : now;
+    const sinceMs = now - Math.max(checkedInMs, lastPlayedAt.get(p.id) ?? checkedInMs);
+    waitMinutes.set(p.id, Math.max(0, sinceMs / 60_000));
+  }
+
+  // 4. Fill up to 4 proposals using wave-based locking with fresh-player preference.
   //
   // Waves: only COURTS matches run at once. Within a wave, a player can't appear twice.
   // Between waves the hard lock resets, BUT wave 2 prefers "fresh" players (not used in
@@ -163,7 +187,7 @@ export async function proposeNextMatches(sessionId: string) {
 
     if (available.length < 4) break;
 
-    const match = findBestMatch(available, justPlayed, workingHistory);
+    const match = findBestMatch(available, justPlayed, workingHistory, waitMinutes);
     if (match) {
       newProposals.push({
         session_id: sessionId,
@@ -329,7 +353,7 @@ export async function replacePlayerInProposedMatches(
   }
 }
 
-function findBestMatch(available: any[], justPlayed: Set<string>, history: any[]) {
+function findBestMatch(available: any[], justPlayed: Set<string>, history: any[], waitMinutes: Map<string, number>) {
   const sortedAvailable = [...available].sort((a, b) => {
     const aRested = justPlayed.has(a.id) ? 1 : 0;
     const bRested = justPlayed.has(b.id) ? 1 : 0;
@@ -360,7 +384,7 @@ function findBestMatch(available: any[], justPlayed: Set<string>, history: any[]
         ];
 
         for (const lineup of lineups) {
-          const score = scoreMatch(lineup.t1, lineup.t2, justPlayed, history);
+          const score = scoreMatch(lineup.t1, lineup.t2, justPlayed, history, waitMinutes);
           if (score > bestScore) {
             bestScore = score;
             const t1Skill = lineup.t1[0].skill_level + lineup.t1[1].skill_level;
@@ -379,7 +403,7 @@ function findBestMatch(available: any[], justPlayed: Set<string>, history: any[]
   return bestMatch;
 }
 
-function scoreMatch(t1: any[], t2: any[], justPlayed: Set<string>, history: any[]) {
+function scoreMatch(t1: any[], t2: any[], justPlayed: Set<string>, history: any[], waitMinutes: Map<string, number>) {
   let score = 1000;
 
   const t1Skill = t1[0].skill_level + t1[1].skill_level;
@@ -423,7 +447,13 @@ function scoreMatch(t1: any[], t2: any[], justPlayed: Set<string>, history: any[
     }
   }
 
-  // 5. Phase Logic
+  // 5. Wait-time fairness: reward including players who have been waiting longer.
+  // 3 pts/min — a 30-min wait adds +90, meaningful vs the -100/skill-level-diff penalty.
+  for (const p of allPlayers) {
+    score += (waitMinutes.get(p.id) ?? 0) * 3;
+  }
+
+  // 6. Phase Logic
   const isConvergence = history.length > 10;
   const skillRange = Math.max(...skills) - Math.min(...skills);
   if (isConvergence) {

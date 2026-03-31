@@ -34,9 +34,10 @@ export async function POST(
     .maybeSingle();
 
   if (existing?.checked_out_at) {
+    // Refresh check-in time so wait-time ordering reflects re-arrival
     await supabase
       .from("session_players")
-      .update({ checked_out_at: null })
+      .update({ checked_out_at: null, checked_in_at: new Date().toISOString() })
       .eq("id", existing.id);
     return NextResponse.json({ ok: true });
   }
