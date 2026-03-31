@@ -111,7 +111,7 @@ export default function RecordMatchForm({ sessionId, checkedInPlayers }: Props) 
         onClick={() => setOpen(true)}
         className="w-full py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
       >
-        🎾 Record a Match
+        🏸 Record a Match
       </button>
 
       {open && (

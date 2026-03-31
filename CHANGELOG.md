@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.9.5] — 2026-03-30
+
+### Fixed
+- **Correct emoji used** — replaced the tennis ball (🎾) with a badminton shuttlecock (🏸) on the Record a Match button
+
+---
+
 ## [0.9.4] — 2026-03-30
 
 ### Changed
@@ -134,6 +141,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+[0.9.5]: https://github.com/kbrovibes/snobaddy/compare/v0.9.4...v0.9.5
 [0.9.4]: https://github.com/kbrovibes/snobaddy/compare/v0.9.3...v0.9.4
 [0.9.3]: https://github.com/kbrovibes/snobaddy/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/kbrovibes/snobaddy/compare/v0.9.1...v0.9.2
