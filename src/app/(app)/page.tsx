@@ -222,12 +222,12 @@ export default async function Home() {
           <div className="flex flex-col gap-3">
             {recentMatches.map((m) => (
               <div key={m.id} className="text-sm">
-                <div className="flex items-center gap-2">
-                  <span className={`font-semibold ${m.winning_team === 1 ? "text-green-600" : "text-gray-400"}`}>
+                <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                  <span className={`font-semibold truncate text-right ${m.winning_team === 1 ? "text-green-600" : "text-gray-400"}`}>
                     {m.team1.join(" & ")}
                   </span>
-                  <span className="text-gray-300">vs</span>
-                  <span className={`font-semibold ${m.winning_team === 2 ? "text-green-600" : "text-gray-400"}`}>
+                  <span className="text-gray-300 text-center w-6">vs</span>
+                  <span className={`font-semibold truncate text-left ${m.winning_team === 2 ? "text-green-600" : "text-gray-400"}`}>
                     {m.team2.join(" & ")}
                   </span>
                 </div>

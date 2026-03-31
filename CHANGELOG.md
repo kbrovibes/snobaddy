@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.9.1] — 2026-03-30
+
+### Fixed
+- **Match history layout** — switched to a grid layout for better vertical alignment of the "vs" text; team names now truncate if too long to prevent layout breaking
+
+---
+
 ## [0.9.0] — 2026-03-30
 
 ### Fixed
@@ -101,6 +108,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+[0.9.1]: https://github.com/kbrovibes/snobaddy/compare/v0.9.0...v0.9.1
 [0.6.0]: https://github.com/kbrovibes/snobaddy/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/kbrovibes/snobaddy/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/kbrovibes/snobaddy/compare/v0.3.0...v0.4.0
