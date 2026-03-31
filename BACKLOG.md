@@ -17,6 +17,10 @@ Single source of truth for all planned and completed work.
 
 ---
 
+- [ ] **06 — Soft-Delete Players** · [spec](specs/06-soft-delete-players.md) · Admin removes/restores players; deleted players hidden from all views and their matches invalidated
+
+---
+
 ## Future (unspecced)
 
 Add specs for these before implementing. Use the spec template in `AGENTS.md`.
