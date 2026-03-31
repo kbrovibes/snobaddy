@@ -149,3 +149,16 @@ This project supports both Claude Code and Gemini CLI.
 - `GEMINI.md` — loaded automatically by Gemini CLI
 - **These files must always be kept in sync.** Whenever `CLAUDE.md` is updated, apply the same changes to `GEMINI.md`.
 - Release notes live in `CHANGELOG.md` (user-facing) and `releases/` (technical detail per release).
+
+### Changelog enforcement
+
+Two hooks enforce changelog discipline:
+
+1. **Claude Code** — `PostToolUse` hook in `.claude/settings.json` fires after every `Write` or `Edit` to a `src/` file and prints a reminder to update `CHANGELOG.md` and `releases/`.
+
+2. **Git pre-commit** — `scripts/pre-commit` (installed via `bash scripts/install-hooks.sh`) blocks any commit that stages `src/` changes without also staging `CHANGELOG.md`. This covers Gemini CLI and human commits. Use `git commit --no-verify` to skip for WIP commits.
+
+**When the pre-commit hook blocks your commit**, you must:
+1. Update `CHANGELOG.md` with a user-facing entry under the correct version
+2. Create or update `releases/v{version}-{slug}.md` with technical detail
+3. Stage those files and commit again

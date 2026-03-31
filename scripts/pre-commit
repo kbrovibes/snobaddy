@@ -1,0 +1,29 @@
+#!/bin/bash
+# pre-commit hook — changelog guard
+# Blocks commits that change src/ files without updating CHANGELOG.md.
+# Install: bash scripts/install-hooks.sh
+# Skip for WIP commits: git commit --no-verify
+
+STAGED_SRC=$(git diff --cached --name-only | grep "^src/")
+STAGED_CHANGELOG=$(git diff --cached --name-only | grep "^CHANGELOG\.md$")
+
+if [ -n "$STAGED_SRC" ] && [ -z "$STAGED_CHANGELOG" ]; then
+  echo ""
+  echo "=== CHANGELOG NOT UPDATED ================================"
+  echo "You are committing changes to src/ but CHANGELOG.md was"
+  echo "not staged. If this is a feature or fix, please:"
+  echo ""
+  echo "  1. Update CHANGELOG.md with a user-facing entry"
+  echo "  2. Add releases/v{version}-{slug}.md with technical detail"
+  echo "  3. Stage the updated files and commit again"
+  echo ""
+  echo "src/ files staged:"
+  echo "$STAGED_SRC" | sed 's/^/  /'
+  echo ""
+  echo "To skip this check for WIP commits: git commit --no-verify"
+  echo "=========================================================="
+  echo ""
+  exit 1
+fi
+
+exit 0
