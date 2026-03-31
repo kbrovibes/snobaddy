@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.7.0] — 2026-03-30
+
+### Added
+- **Admin: edit match scores** — admins can correct the score of any match recorded during an active session
+- **Admin: delete a match** — admins can remove a match from tonight's session (requires confirmation)
+- Both actions are locked on completed sessions; re-open the session to unlock them
+
+---
+
 ## [0.6.0] — 2026-03-30
 
 ### Added
