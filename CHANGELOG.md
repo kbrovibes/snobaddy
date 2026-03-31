@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.10.1] — 2026-03-30
+
+### Fixed
+- **Build error** — resolved Next.js 15 type error in the proposed-match DELETE route handler (async params).
+
+---
+
 ## [0.10.0] — 2026-03-30
 
 ### Added
