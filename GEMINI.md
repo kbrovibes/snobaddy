@@ -146,7 +146,8 @@ npm run dev                         # http://localhost:3000
 
 This project supports both Claude Code and Gemini CLI.
 - `CLAUDE.md` — loaded automatically by Claude Code
-- `GEMINI.md` — loaded automatically by Gemini CLI
+- `GEMINI.md` — loaded automatically by Gemini CLI (this file)
+- `AGENTS.md` — shared agent protocol loaded by Claude Code; Gemini should read it manually
 - **These files must always be kept in sync.** Whenever `CLAUDE.md` is updated, apply the same changes to `GEMINI.md`.
 - Release notes live in `CHANGELOG.md` (user-facing) and `releases/` (technical detail per release).
 
@@ -154,11 +155,37 @@ This project supports both Claude Code and Gemini CLI.
 
 Two hooks enforce changelog discipline:
 
-1. **Claude Code** — `PostToolUse` hook in `.claude/settings.json` fires after every `Write` or `Edit` to a `src/` file and prints a reminder to update `CHANGELOG.md` and `releases/`.
+1. **Claude Code** — `PostToolUse` hook fires after every `Write` or `Edit` to a `src/` file and prints a reminder to update `CHANGELOG.md` and `releases/`.
 
-2. **Git pre-commit** — `scripts/pre-commit` (installed via `bash scripts/install-hooks.sh`) blocks any commit that stages `src/` changes without also staging `CHANGELOG.md`. This covers Gemini CLI and human commits. Use `git commit --no-verify` to skip for WIP commits.
+2. **Git pre-commit** — `scripts/pre-commit` blocks any commit that stages `src/` changes without also staging `CHANGELOG.md`. This covers Gemini CLI and human commits. Use `git commit --no-verify` to skip for WIP commits.
 
 **When the pre-commit hook blocks your commit**, you must:
 1. Update `CHANGELOG.md` with a user-facing entry under the correct version
 2. Create or update `releases/v{version}-{slug}.md` with technical detail
 3. Stage those files and commit again
+
+## Agent Protocol
+
+**Read `AGENTS.md` before starting any coding work.** It contains the full protocol for implementing features, writing specs, and maintaining the changelog.
+
+### Quick start (Gemini)
+
+1. Read this file (`GEMINI.md`) for project context
+2. Read `AGENTS.md` for the agent protocol
+3. Read `BACKLOG.md` — find the first `[ ]` item
+4. Read the linked spec file in `specs/`
+5. Implement, then update `BACKLOG.md`, `CHANGELOG.md`, and `releases/`
+
+### Adding a new spec
+
+When the user describes a future feature and asks you to plan (not implement):
+1. Create `specs/NN-feature-name.md` using the template in `AGENTS.md`
+2. Add a `[ ]` entry to `BACKLOG.md`
+3. Do not implement — confirm the spec is saved and stop
+
+### DB access rules
+
+- All queries go through `src/lib/db/*.ts`
+- Use `createClient()` from `@/lib/supabase-server` for auth-aware reads
+- Use `supabase` from `@/lib/supabase` (service role) for admin writes that bypass RLS
+- Never expose the service role key to the browser

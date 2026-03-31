@@ -1,32 +1,39 @@
 # Backlog
 
-Work items in priority order. Claude picks up the next `[ ]` item and implements it per the linked spec.
-Start each session with: "Implement the next backlog item."
+Single source of truth for all planned and completed work.
 
-## In Progress
-_nothing currently in progress_
+**To start a new session:** read `AGENTS.md` for the full agent protocol, then pick up the first `[ ]` item below.
+
+---
 
 ## Queue
 
 - [x] **00 — Auth & Onboarding** · [spec](specs/00-auth-onboarding.md) · Google login, first-time skill setup, all routes protected
-- [x] **01 — Player Registry** · [spec](specs/01-player-registry.md) · View all players (read-only, populated via auth)
-- [x] **02 — Session Management** · [spec](specs/02-session-management.md) · Auto-create Mon/Thu sessions, admin starts, players check in
-- [x] **03 — Record a Match** · [spec](specs/03-record-match.md) · Pick 4 players, record winner, live session scoreboard
-- [ ] **04 — Season Leaderboard** · [spec](specs/04-season-leaderboard.md) · Cumulative W/L/win% across all sessions
+- [x] **01 — Player Registry** · [spec](specs/01-player-registry.md) · View all players, admin skill editor, admin presence toggle
+- [x] **02 — Session Management** · [spec](specs/02-session-management.md) · Session check-in, admin start/close/reopen
+- [x] **03 — Record a Match** · [spec](specs/03-record-match.md) · Pick 4 players, record winner, live scoreboard, admin edit/delete
+- [ ] **04 — Season Leaderboard** · [spec](specs/04-season-leaderboard.md) · Cumulative W/L/win% across all sessions — **UI skeleton exists at `/leaderboard` but stats show 0; match aggregation query not yet implemented**
+- [ ] **05 — Session Navigation** · [spec](specs/05-session-navigation.md) · Session list at `/`, per-session detail at `/session/[id]`, auto-redirect into open session on login, admin creates new session from list
+
+---
 
 ## Future (unspecced)
 
-- **Prior seasons** — read-only history view of past seasons: leaderboards, match logs, prize winners
-- Edit skill level from profile page
-- Match suggestions based on skill balance
-- "Waiting" queue — who's next to play
-- Court assignment (Court 1 / Court 2)
-- Per-session history page
-- Season management (create new season, archive old one)
-- Prize highlights at season end (most matches, highest win%, most improved)
-- Push notifications when session goes active
-- PWA / add to home screen for phone use at court
+Add specs for these before implementing. Use the spec template in `AGENTS.md`.
+
+- **Prior seasons** — read-only history of past seasons: leaderboard, match log, prize highlights
+- **Season management** — admin creates new season, closes/archives old one; name and date range editable
+- **Match suggestions** — suggest fair 4-player matchups based on skill balance and recent play
+- **Waiting queue** — players mark themselves as waiting; system surfaces who's next
+- **Court assignment** — tag each match to Court 1 or Court 2
+- **Player profile page** — edit own skill level, view personal match history
+- **Prize highlights** — season-end view: most matches, highest win%, most improved
+- **PWA / add to home screen** — installable on phones; app-like experience at the court
+- **Push notifications** — notify players when a session goes active
+- **Per-session history** — browse any past session: who played, match log, scoreboard
+
+---
 
 ## Done
 
-- [x] **Hello World** · Next.js + Supabase + Vercel end-to-end working
+- [x] **Hello World** · Next.js + Supabase + Vercel end-to-end connectivity working
