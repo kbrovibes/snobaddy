@@ -32,6 +32,10 @@ function SkillDots({ level }: { level: number }) {
   );
 }
 
+function getFirstName(fullName: string) {
+  return fullName.split(" ")[0];
+}
+
 export default async function Home() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -154,7 +158,7 @@ export default async function Home() {
               <div className="flex flex-col gap-2">
                 {checkedInPlayers.map((p) => (
                   <div key={p.player_id} className="flex items-center justify-between">
-                    <span className="font-medium text-gray-800">{p.name}</span>
+                    <span className="font-medium text-gray-800">{getFirstName(p.name)}</span>
                     <SkillDots level={p.skill_level} />
                   </div>
                 ))}
@@ -200,7 +204,7 @@ export default async function Home() {
                   <div key={p.player_id} className="flex items-center px-1">
                     <span className="text-xs text-gray-300 w-5 shrink-0">{i + 1}</span>
                     <span className={`flex-1 text-sm font-medium truncate ${p.player_id === playerId ? "text-blue-600" : "text-gray-800"}`}>
-                      {p.name}
+                      {getFirstName(p.name)}
                     </span>
                     <span className="w-8 text-center text-sm font-bold text-green-600">{p.wins}</span>
                     <span className="w-8 text-center text-sm font-bold text-red-400">{p.losses}</span>
@@ -220,31 +224,36 @@ export default async function Home() {
             Matches · {recentMatches.length}
           </h2>
           <div className="flex flex-col gap-3">
-            {recentMatches.map((m) => (
-              <div key={m.id} className="text-sm">
-                <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                  <span className={`font-semibold truncate text-right ${m.winning_team === 1 ? "text-green-600" : "text-gray-400"}`}>
-                    {m.team1.join(" & ")}
-                  </span>
-                  <span className="text-gray-300 text-center w-6">vs</span>
-                  <span className={`font-semibold truncate text-left ${m.winning_team === 2 ? "text-green-600" : "text-gray-400"}`}>
-                    {m.team2.join(" & ")}
-                  </span>
+            {recentMatches.map((m) => {
+              const team1FirstNames = m.team1.map(getFirstName);
+              const team2FirstNames = m.team2.map(getFirstName);
+              const winnerFirstNames = m.winning_team === 1 ? team1FirstNames : team2FirstNames;
+              return (
+                <div key={m.id} className="text-sm">
+                  <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                    <span className={`font-semibold truncate text-right ${m.winning_team === 1 ? "text-green-600" : "text-gray-400"}`}>
+                      {team1FirstNames.join(" & ")}
+                    </span>
+                    <span className="text-gray-300 text-center w-6">vs</span>
+                    <span className={`font-semibold truncate text-left ${m.winning_team === 2 ? "text-green-600" : "text-gray-400"}`}>
+                      {team2FirstNames.join(" & ")}
+                    </span>
+                  </div>
+                  <div className="text-xs text-gray-400 mt-0.5">
+                    {m.team1_score} – {m.team2_score} · {winnerFirstNames.join(" & ")} won
+                  </div>
+                  {isAdmin && isActive && (
+                    <MatchAdminControls
+                      matchId={m.id}
+                      team1Names={m.team1}
+                      team2Names={m.team2}
+                      team1Score={m.team1_score}
+                      team2Score={m.team2_score}
+                    />
+                  )}
                 </div>
-                <div className="text-xs text-gray-400 mt-0.5">
-                  {m.team1_score} – {m.team2_score} · {m.winning_team === 1 ? m.team1.join(" & ") : m.team2.join(" & ")} won
-                </div>
-                {isAdmin && isActive && (
-                  <MatchAdminControls
-                    matchId={m.id}
-                    team1Names={m.team1}
-                    team2Names={m.team2}
-                    team1Score={m.team1_score}
-                    team2Score={m.team2_score}
-                  />
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
