@@ -6,6 +6,19 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.10.0] — 2026-03-30
+
+### Added
+- **Season Leaderboard** — full player statistics aggregated across all recorded matches this season.
+- **Rankings** — top 3 players are highlighted with medals (🥇🥈🥉) and colored backgrounds.
+- **Detailed stats** — Win%, wins, losses, matches played, and skill level for every player who has completed at least one match.
+- **Total stats** — total number of matches recorded this season shown at the bottom of the leaderboard.
+
+### Fixed
+- **Real-time stats** — the "Players" tab and session scoreboard now show accurate season-wide statistics instead of hardcoded zeros.
+
+---
+
 ## [0.9.5] — 2026-03-30
 
 ### Fixed
@@ -141,6 +154,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+[0.10.0]: https://github.com/kbrovibes/snobaddy/compare/v0.9.5...v0.10.0
 [0.9.5]: https://github.com/kbrovibes/snobaddy/compare/v0.9.4...v0.9.5
 [0.9.4]: https://github.com/kbrovibes/snobaddy/compare/v0.9.3...v0.9.4
 [0.9.3]: https://github.com/kbrovibes/snobaddy/compare/v0.9.2...v0.9.3

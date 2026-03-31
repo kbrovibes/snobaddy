@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { PlayerStats } from "@/lib/db/players";
 
-type SortKey = "name" | "matches_played" | "wins" | "losses" | "win_pct";
+type SortKey = "name" | "skill_level" | "matches_played" | "wins" | "losses" | "win_pct";
 type SortDir = "asc" | "desc";
 
 function winPct(p: PlayerStats) {
@@ -17,6 +17,7 @@ function formatPct(p: PlayerStats) {
 
 const COLUMNS: { key: SortKey; label: string; title: string }[] = [
   { key: "name",          label: "Player",  title: "Player"         },
+  { key: "skill_level",   label: "S",       title: "Skill Level"    },
   { key: "matches_played",label: "M",       title: "Matches played" },
   { key: "wins",          label: "W",       title: "Wins"           },
   { key: "losses",        label: "L",       title: "Losses"         },
@@ -71,10 +72,24 @@ export default function LeaderboardTable({ players }: { players: PlayerStats[] }
     );
   }
 
+  function getRankColor(index: number) {
+    if (index === 0) return "bg-yellow-50 border-yellow-100"; // Gold
+    if (index === 1) return "bg-slate-50 border-slate-100";  // Silver
+    if (index === 2) return "bg-orange-50 border-orange-100"; // Bronze
+    return "border-gray-50";
+  }
+
+  function getRankBadge(index: number) {
+    if (index === 0) return "🥇";
+    if (index === 1) return "🥈";
+    if (index === 2) return "🥉";
+    return index + 1;
+  }
+
   if (players.length === 0) {
     return (
       <p className="text-center text-gray-400 text-sm py-12">
-        No players yet.
+        No active players yet.
       </p>
     );
   }
@@ -103,14 +118,21 @@ export default function LeaderboardTable({ players }: { players: PlayerStats[] }
           {sorted.map((player, i) => (
             <tr
               key={player.id}
-              className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
+              className={`border-b hover:bg-gray-100/50 transition-colors ${getRankColor(i)}`}
             >
-              <td className="px-4 py-3 text-xs font-bold text-gray-300 text-right">{i + 1}</td>
-              <td className="px-2 py-3 font-medium text-gray-900">{player.name}</td>
+              <td className={`px-4 py-3 text-xs font-bold text-right ${i < 3 ? "text-gray-900" : "text-gray-300"}`}>
+                {getRankBadge(i)}
+              </td>
+              <td className="px-2 py-3 font-medium text-gray-900 truncate max-w-[120px]">
+                {player.name}
+              </td>
+              <td className="px-3 py-3 text-right tabular-nums text-gray-500 font-medium">
+                {player.skill_level}
+              </td>
               <td className="px-3 py-3 text-right tabular-nums text-gray-700">{player.matches_played}</td>
               <td className="px-3 py-3 text-right tabular-nums text-gray-700">{player.wins}</td>
               <td className="px-3 py-3 text-right tabular-nums text-gray-700">{player.losses}</td>
-              <td className="px-3 py-3 text-right tabular-nums font-medium text-gray-900">
+              <td className="px-3 py-3 text-right tabular-nums font-bold text-gray-900">
                 {formatPct(player)}
               </td>
             </tr>
