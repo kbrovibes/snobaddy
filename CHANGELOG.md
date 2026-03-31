@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.11.0] - 2026-03-30
+
+### Changed
+- **Branding update** — the site title has been updated to "SnoBaddy Dashboard" and the favicon now uses the official logo image.
+
+---
+
 ## [0.10.8] - 2026-03-31
 
 ### Fixed
