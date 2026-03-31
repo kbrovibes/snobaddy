@@ -6,6 +6,11 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.12.3] - 2026-03-31
+
+### Fixed
+- **Online indicator** — green dot now works correctly. Previously used Supabase's `last_sign_in_at` which only updates on OAuth login, not page loads. Now uses a `last_seen_at` column updated by a client-side ping on every session page open. Requires DB migration: `ALTER TABLE players ADD COLUMN last_seen_at TIMESTAMPTZ;`
+
 ## [0.12.2] - 2026-03-31
 
 ### Added

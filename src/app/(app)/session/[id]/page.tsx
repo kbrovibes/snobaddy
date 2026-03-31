@@ -18,6 +18,7 @@ import MatchAdminControls from "@/components/MatchAdminControls";
 import ProposedMatchList from "@/components/ProposedMatchList";
 import WhoIsHere from "@/components/WhoIsHere";
 import BackToSessionsLink from "@/components/BackToSessionsLink";
+import OnlinePing from "@/components/OnlinePing";
 
 export const dynamic = "force-dynamic";
 
@@ -79,6 +80,7 @@ export default async function SessionDetailPage({
   return (
     <div className="flex flex-col gap-4 px-4 py-4">
 
+      <OnlinePing />
       <BackToSessionsLink />
 
       {/* Season header */}
