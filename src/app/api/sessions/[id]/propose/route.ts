@@ -3,8 +3,9 @@ import { proposeNextMatches } from "@/lib/db/proposed";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const result = await proposeNextMatches(params.id);
+  const { id } = await params;
+  const result = await proposeNextMatches(id);
   return NextResponse.json(result);
 }

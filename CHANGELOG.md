@@ -10,6 +10,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 - **Build error** — resolved Next.js 15 type error in the proposed-match DELETE route handler (async params).
+- **Build error** — resolved Next.js 15 type error in the sessions propose POST route handler (async params).
 
 ---
 
