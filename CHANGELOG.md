@@ -6,6 +6,19 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.10.5] - 2026-03-31
+
+### Fixed
+- **Deleted match no longer re-added** — deleting a proposed match now soft-deletes it (sets `deleted_at`). The scorer loads deleted matches as history and applies the -5000 duplicate penalty, so "Add Matches" picks a different group instead of immediately re-adding the same one. The deleted group can still come back as a last resort if no other viable combination exists.
+- **Checkout updates the match queue** — when a player checks out, any proposed matches containing them are automatically updated: the best available replacement (minimising skill imbalance) is swapped in. If no eligible replacement exists, the match is soft-deleted instead.
+
+> **DB migration required** — run in Supabase SQL editor before deploying:
+> ```sql
+> ALTER TABLE proposed_matches ADD COLUMN deleted_at timestamptz;
+> ```
+
+---
+
 ## [0.10.4] - 2026-03-31
 
 ### Fixed

@@ -25,6 +25,7 @@ export async function getProposedMatches(sessionId: string): Promise<ProposedMat
       t2p2:team2_player2_id(name)
     `)
     .eq("session_id", sessionId)
+    .is("deleted_at", null)
     .order("created_at", { ascending: true });
 
   if (error) return [];
@@ -36,8 +37,12 @@ export async function getProposedMatches(sessionId: string): Promise<ProposedMat
   }));
 }
 
+/** Soft-delete so the scorer remembers and penalises re-picking the same group. */
 export async function deleteProposedMatch(id: string) {
-  await supabase.from("proposed_matches").delete().eq("id", id);
+  await supabase
+    .from("proposed_matches")
+    .update({ deleted_at: new Date().toISOString() })
+    .eq("id", id);
 }
 
 const COURTS = 2; // matches that run simultaneously
@@ -47,6 +52,10 @@ const COURTS = 2; // matches that run simultaneously
  * Proposes matches up to 4 total, organized in waves of COURTS matches.
  * Wave 1 = matches 1 & 2 (run simultaneously). Wave 2 = matches 3 & 4 (run after wave 1).
  * Players are only locked within a wave, so wave 2 can reuse wave 1 players.
+ *
+ * Deletion memory: soft-deleted proposals are loaded and added to workingHistory so the
+ * -5000 exact-duplicate penalty fires before picking a previously-rejected group again.
+ * The deleted group CAN still be selected if it's the only viable option.
  */
 export async function proposeNextMatches(sessionId: string) {
   // 1. Get current state
@@ -59,10 +68,19 @@ export async function proposeNextMatches(sessionId: string) {
   const players = (checkedIn ?? []).map((cp: any) => cp.players);
   if (players.length < 4) return { error: "Not enough players checked in" };
 
+  // Active (non-deleted) proposals count toward the 4-match target and drive wave logic.
   const { data: existingProposed } = await supabase
     .from("proposed_matches")
     .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id")
-    .eq("session_id", sessionId);
+    .eq("session_id", sessionId)
+    .is("deleted_at", null);
+
+  // Soft-deleted proposals: add to history so scorer penalises re-picking same group.
+  const { data: deletedProposed } = await supabase
+    .from("proposed_matches")
+    .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id")
+    .eq("session_id", sessionId)
+    .not("deleted_at", "is", null);
 
   const { data: recentMatches } = await supabase
     .from("matches")
@@ -90,23 +108,29 @@ export async function proposeNextMatches(sessionId: string) {
   //
   // Waves: only COURTS matches run at once. Within a wave, a player can't appear twice.
   // Between waves the hard lock resets, BUT wave 2 prefers "fresh" players (not used in
-  // wave 1) before falling back to the full pool. This prevents wave 2 from blindly
-  // repeating the same matchups as wave 1.
+  // wave 1) before falling back to the full pool.
   //
-  // Duplicate guard: newly proposed matches are appended to the working history so the
-  // scoring function penalises exact repeats within the same batch.
+  // Working history = completed matches + deleted proposals + newly proposed matches.
+  // Deleted proposals carry the same -5000 exact-duplicate penalty as any repeated match,
+  // so the scorer strongly avoids re-picking them unless there is no other option.
   const existingCount = existingProposed?.length ?? 0;
   const needed = 4 - existingCount;
   const newProposals = [];
 
-  // Working history starts with completed matches; new proposals are appended as we go
-  // so that each subsequent call to findBestMatch sees the full picture.
-  const workingHistory: typeof sessionHistory = [...(sessionHistory ?? [])];
+  const workingHistory: Array<{
+    team1_player1_id: string;
+    team1_player2_id: string;
+    team2_player1_id: string;
+    team2_player2_id: string;
+  }> = [
+    ...(sessionHistory ?? []),
+    ...(deletedProposed ?? []),   // ← deleted proposals seeded here
+  ];
 
   // Players used in wave 1 (hard-locked from wave 2 preference pool, but not excluded).
   const wave1Players = new Set<string>();
 
-  // Seed per-wave state from existing proposals.
+  // Seed per-wave state from existing active proposals.
   const currentWaveOffset = existingCount % COURTS;
   const waveLocked = new Set<string>();
   existingProposed?.forEach((m, idx) => {
@@ -149,7 +173,7 @@ export async function proposeNextMatches(sessionId: string) {
         team2_player2_id: match.players[3].id,
         avg_skill_diff: match.skillDiff
       });
-      // Register this proposal in working history so future slots avoid repeating it.
+      // Register this proposal so future slots in this batch avoid repeating it.
       workingHistory.push({
         team1_player1_id: match.players[0].id,
         team1_player2_id: match.players[1].id,
@@ -170,9 +194,142 @@ export async function proposeNextMatches(sessionId: string) {
   return { count: newProposals.length };
 }
 
+/**
+ * Called when a player checks out mid-session.
+ * For each active proposed match containing that player, tries to substitute the
+ * best available replacement (minimises new skill diff). Falls back to soft-deleting
+ * the match if no eligible replacement exists.
+ */
+export async function replacePlayerInProposedMatches(
+  sessionId: string,
+  departedPlayerId: string
+) {
+  // Active proposed matches that include the departed player
+  const { data: affected } = await supabase
+    .from("proposed_matches")
+    .select("*")
+    .eq("session_id", sessionId)
+    .is("deleted_at", null)
+    .or(
+      `team1_player1_id.eq.${departedPlayerId},` +
+      `team1_player2_id.eq.${departedPlayerId},` +
+      `team2_player1_id.eq.${departedPlayerId},` +
+      `team2_player2_id.eq.${departedPlayerId}`
+    );
+
+  if (!affected?.length) return;
+
+  // All checked-in players (excluding the one who just left), with skill levels
+  const { data: checkedIn } = await supabase
+    .from("session_players")
+    .select("player_id, players(id, name, skill_level)")
+    .eq("session_id", sessionId)
+    .is("checked_out_at", null)
+    .neq("player_id", departedPlayerId);
+
+  const checkedInById: Record<string, any> = {};
+  (checkedIn ?? []).forEach((cp: any) => {
+    checkedInById[cp.players.id] = cp.players;
+  });
+
+  // All player skill levels (for the 3 remaining players in each affected match)
+  const { data: allPlayerRows } = await supabase
+    .from("players")
+    .select("id, skill_level");
+  const skillOf: Record<string, number> = {};
+  (allPlayerRows ?? []).forEach((p: any) => { skillOf[p.id] = p.skill_level ?? 3; });
+
+  // Snapshot of active proposed matches so we can track who is already locked
+  const { data: allActive } = await supabase
+    .from("proposed_matches")
+    .select("id, team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id")
+    .eq("session_id", sessionId)
+    .is("deleted_at", null);
+
+  // Mutable working copy so each iteration sees the updated locked state
+  const activeSnapshot = [...(allActive ?? [])];
+
+  for (const match of affected) {
+    // Players locked in OTHER active proposed matches (not this one)
+    const lockedElsewhere = new Set<string>();
+    activeSnapshot.forEach(m => {
+      if (m.id !== match.id) {
+        lockedElsewhere.add(m.team1_player1_id);
+        lockedElsewhere.add(m.team1_player2_id);
+        lockedElsewhere.add(m.team2_player1_id);
+        lockedElsewhere.add(m.team2_player2_id);
+      }
+    });
+
+    // Eligible replacements: checked-in, not in another proposed match
+    const candidates = Object.values(checkedInById).filter(
+      p => !lockedElsewhere.has(p.id)
+    );
+
+    if (candidates.length === 0) {
+      // No one available — soft-delete and move on
+      await supabase
+        .from("proposed_matches")
+        .update({ deleted_at: new Date().toISOString() })
+        .eq("id", match.id);
+      const idx = activeSnapshot.findIndex(m => m.id === match.id);
+      if (idx >= 0) activeSnapshot.splice(idx, 1);
+      continue;
+    }
+
+    // Determine which team the departed player was on, find their teammate's ID
+    const onTeam1 =
+      match.team1_player1_id === departedPlayerId ||
+      match.team1_player2_id === departedPlayerId;
+    const teammateId = onTeam1
+      ? (match.team1_player1_id === departedPlayerId
+          ? match.team1_player2_id
+          : match.team1_player1_id)
+      : (match.team2_player1_id === departedPlayerId
+          ? match.team2_player2_id
+          : match.team2_player1_id);
+
+    const opposingSkill = onTeam1
+      ? (skillOf[match.team2_player1_id] ?? 3) + (skillOf[match.team2_player2_id] ?? 3)
+      : (skillOf[match.team1_player1_id] ?? 3) + (skillOf[match.team1_player2_id] ?? 3);
+
+    // Pick the replacement that minimises the new skill diff
+    let bestCandidate = candidates[0];
+    let bestDiff = Infinity;
+    for (const candidate of candidates) {
+      const newTeamSkill = (skillOf[teammateId] ?? 3) + (candidate.skill_level ?? 3);
+      const diff = Math.abs(newTeamSkill - opposingSkill);
+      if (diff < bestDiff) {
+        bestDiff = diff;
+        bestCandidate = candidate;
+      }
+    }
+
+    // Build update payload — replace the departed player's slot only
+    const slotKey =
+      match.team1_player1_id === departedPlayerId ? "team1_player1_id" :
+      match.team1_player2_id === departedPlayerId ? "team1_player2_id" :
+      match.team2_player1_id === departedPlayerId ? "team2_player1_id" :
+                                                    "team2_player2_id";
+
+    const updated = { ...match, [slotKey]: bestCandidate.id };
+    const newSkillDiff = Math.abs(
+      (skillOf[updated.team1_player1_id] ?? 3) + (skillOf[updated.team1_player2_id] ?? 3) -
+      (skillOf[updated.team2_player1_id] ?? 3) - (skillOf[updated.team2_player2_id] ?? 3)
+    );
+
+    await supabase
+      .from("proposed_matches")
+      .update({ [slotKey]: bestCandidate.id, avg_skill_diff: newSkillDiff })
+      .eq("id", match.id);
+
+    // Reflect the change in our working snapshot for subsequent iterations
+    const idx = activeSnapshot.findIndex(m => m.id === match.id);
+    if (idx >= 0) activeSnapshot[idx] = { ...activeSnapshot[idx], [slotKey]: bestCandidate.id };
+  }
+}
+
 function findBestMatch(available: any[], justPlayed: Set<string>, history: any[]) {
-  // To avoid C(N, 4) we pick the 'most rested' player first
-  // Rested = Not in justPlayed, and has fewest matches today
   const sortedAvailable = [...available].sort((a, b) => {
     const aRested = justPlayed.has(a.id) ? 1 : 0;
     const bRested = justPlayed.has(b.id) ? 1 : 0;
@@ -185,12 +342,9 @@ function findBestMatch(available: any[], justPlayed: Set<string>, history: any[]
   let bestMatch = null;
   let bestScore = -Infinity;
 
-  // We'll sample combinations if 'others' is large, but for 50 people C(49, 3) is 18k. 
-  // For a quick greedy, we can limit the search or just do it.
   const sampleSize = others.length > 20 ? 20 : others.length;
   const candidates = others.slice(0, sampleSize);
 
-  // Simplified combination search for the remaining 3 players
   for (let i = 0; i < candidates.length; i++) {
     for (let j = i + 1; j < candidates.length; j++) {
       for (let k = j + 1; k < candidates.length; k++) {
@@ -199,7 +353,6 @@ function findBestMatch(available: any[], justPlayed: Set<string>, history: any[]
         const p3 = candidates[j];
         const p4 = candidates[k];
 
-        // Evaluate all 3 ways to split 4 people into 2 teams
         const lineups = [
           { t1: [p1, p2], t2: [p3, p4] },
           { t1: [p1, p3], t2: [p2, p4] },
@@ -243,7 +396,6 @@ function scoreMatch(t1: any[], t2: any[], justPlayed: Set<string>, history: any[
   score -= (diff * 100);
 
   // 3. Sanity Check: Avoid "isolated" skill levels
-  // If one player is > 2.5 levels away from the average of the others
   const skills = allPlayers.map(p => p.skill_level);
   for (let i = 0; i < 4; i++) {
     const others = skills.filter((_, idx) => idx !== i);
@@ -252,40 +404,31 @@ function scoreMatch(t1: any[], t2: any[], justPlayed: Set<string>, history: any[
   }
 
   // 4. Diversity (Pairing History)
-  // Penalise exact or near-exact repetition of a previous match.
-  // "history" includes both completed matches AND already-proposed matches in the current
-  // batch, so this fires for intra-batch duplicates too.
+  // "history" includes completed matches, soft-deleted proposals, and intra-batch proposals.
+  // Same 4-player group (regardless of team split) gets -5000 — strong last-resort deterrent.
   const pids = new Set(allPlayers.map(p => p.id));
   const t1Pair = new Set([t1[0].id, t1[1].id]);
   const t2Pair = new Set([t2[0].id, t2[1].id]);
   for (const m of history) {
     const hPids = [m.team1_player1_id, m.team1_player2_id, m.team2_player1_id, m.team2_player2_id];
     const intersection = hPids.filter(id => pids.has(id));
-    // Same 4-player group regardless of team split — strong deterrent
-    if (intersection.length === 4) score -= 5000;
-    // 3-player overlap — high penalty
-    else if (intersection.length >= 3) score -= 500;
-    // Same team pairing (same two players on the same side)
+    if (intersection.length === 4) score -= 5000;        // Exact same 4-player group
+    else if (intersection.length >= 3) score -= 500;     // Near-identical group
+    // Same team pairing on same side
     const mT1Pair = new Set([m.team1_player1_id, m.team1_player2_id]);
     const mT2Pair = new Set([m.team2_player1_id, m.team2_player2_id]);
-    const t1MatchesMT1 = [...t1Pair].every(id => mT1Pair.has(id));
-    const t1MatchesMT2 = [...t1Pair].every(id => mT2Pair.has(id));
-    const t2MatchesMT1 = [...t2Pair].every(id => mT1Pair.has(id));
-    const t2MatchesMT2 = [...t2Pair].every(id => mT2Pair.has(id));
-    if (t1MatchesMT1 || t1MatchesMT2 || t2MatchesMT1 || t2MatchesMT2) score -= 150;
+    if ([...t1Pair].every(id => mT1Pair.has(id)) || [...t1Pair].every(id => mT2Pair.has(id)) ||
+        [...t2Pair].every(id => mT1Pair.has(id)) || [...t2Pair].every(id => mT2Pair.has(id))) {
+      score -= 150;
+    }
   }
 
   // 5. Phase Logic
-  const avgMatches = history.length * 4 / (history.length > 0 ? history.length : 1); // Mocked logic
-  // Mixing vs Convergence
-  const isConvergence = history.length > 10; // Simple heuristic for "late session"
-  
+  const isConvergence = history.length > 10;
   const skillRange = Math.max(...skills) - Math.min(...skills);
   if (isConvergence) {
-    // Late session: favor tighter skill groups
     score -= (skillRange * 50);
   } else {
-    // Early session: favor skill mixing (spread)
     if (skillRange >= 3) score += 100;
   }
 

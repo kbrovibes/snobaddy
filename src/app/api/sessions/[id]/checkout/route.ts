@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase-server";
+import { replacePlayerInProposedMatches } from "@/lib/db/proposed";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(
@@ -27,5 +28,9 @@ export async function POST(
     .is("checked_out_at", null);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Update any proposed matches that include the departed player
+  await replacePlayerInProposedMatches(id, targetPlayerId);
+
   return NextResponse.json({ ok: true });
 }
