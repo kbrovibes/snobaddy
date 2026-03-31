@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.11.1] - 2026-03-30
+
+### Changed
+- **GIF Favicon** — switched to `favicon.gif` (converted from `favicon.png`) for better compatibility and to resolve loading issues with the JPG version.
+
+---
+
 ## [0.11.0] - 2026-03-30
 
 ### Changed
