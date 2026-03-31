@@ -6,11 +6,22 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.9.4] — 2026-03-30
+
+### Changed
+- **Name display refined** — full names restored in "Who's Here" list and Scoreboard; first names only **strictly limited** to the Match History table
+- **Match history layout** — Team 1 (first column) is now left-aligned for better readability
+
+### Fixed
+- **Database update** — corrected the name of chinnu.n.chunni@gmail.com (fixed email address) to "Vinaya Krishnan"
+
+---
+
 ## [0.9.3] — 2026-03-30
 
 ### Changed
 - **First names only** — session scoreboard, match history, and check-in lists now show only the first name of each player to reduce visual clutter on mobile
-- **Database update** — corrected the name of chinnunchunni@gmail.com to "Vinaya Krishnan"
+- **Database update** — corrected the name of chinnu.n.chunni@gmail.com to "Vinaya Krishnan" (Attempt 1: email address was incorrect)
 
 ---
 
@@ -123,6 +134,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+[0.9.4]: https://github.com/kbrovibes/snobaddy/compare/v0.9.3...v0.9.4
 [0.9.3]: https://github.com/kbrovibes/snobaddy/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/kbrovibes/snobaddy/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/kbrovibes/snobaddy/compare/v0.9.0...v0.9.1

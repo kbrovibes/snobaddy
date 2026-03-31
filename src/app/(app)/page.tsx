@@ -158,7 +158,7 @@ export default async function Home() {
               <div className="flex flex-col gap-2">
                 {checkedInPlayers.map((p) => (
                   <div key={p.player_id} className="flex items-center justify-between">
-                    <span className="font-medium text-gray-800">{getFirstName(p.name)}</span>
+                    <span className="font-medium text-gray-800">{p.name}</span>
                     <SkillDots level={p.skill_level} />
                   </div>
                 ))}
@@ -204,7 +204,7 @@ export default async function Home() {
                   <div key={p.player_id} className="flex items-center px-1">
                     <span className="text-xs text-gray-300 w-5 shrink-0">{i + 1}</span>
                     <span className={`flex-1 text-sm font-medium truncate ${p.player_id === playerId ? "text-blue-600" : "text-gray-800"}`}>
-                      {getFirstName(p.name)}
+                      {p.name}
                     </span>
                     <span className="w-8 text-center text-sm font-bold text-green-600">{p.wins}</span>
                     <span className="w-8 text-center text-sm font-bold text-red-400">{p.losses}</span>
@@ -231,7 +231,7 @@ export default async function Home() {
               return (
                 <div key={m.id} className="text-sm">
                   <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                    <span className={`font-semibold truncate text-right ${m.winning_team === 1 ? "text-green-600" : "text-gray-400"}`}>
+                    <span className={`font-semibold truncate text-left ${m.winning_team === 1 ? "text-green-600" : "text-gray-400"}`}>
                       {team1FirstNames.join(" & ")}
                     </span>
                     <span className="text-gray-300 text-center w-6">vs</span>
