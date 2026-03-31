@@ -13,6 +13,7 @@ import CheckInButton from "@/components/CheckInButton";
 import CloseSessionButton from "@/components/CloseSessionButton";
 import RecordMatchForm from "@/components/RecordMatchForm";
 import ReopenSessionButton from "@/components/ReopenSessionButton";
+import MatchAdminControls from "@/components/MatchAdminControls";
 
 export const dynamic = "force-dynamic";
 
@@ -101,7 +102,7 @@ export default async function Home() {
       <div className="flex items-center gap-3">
         <Image src="/serve-logo.jpg" alt="Serve Sports" width={52} height={52} className="rounded-xl shrink-0" />
         <div>
-          <h1 className="text-lg font-bold text-gray-900 leading-tight">{todaySession.season.name}</h1>
+          <h1 className="text-lg font-bold text-gray-900 leading-tight">{todaySession.season?.name ?? "Tonight"}</h1>
           <p className="text-sm text-gray-500">{formatDate(todaySession.date)}</p>
         </div>
         <div className="ml-auto shrink-0">
@@ -233,6 +234,15 @@ export default async function Home() {
                 <div className="text-xs text-gray-400 mt-0.5">
                   {m.team1_score} – {m.team2_score} · {m.winning_team === 1 ? m.team1.join(" & ") : m.team2.join(" & ")} won
                 </div>
+                {isAdmin && isActive && (
+                  <MatchAdminControls
+                    matchId={m.id}
+                    team1Names={m.team1}
+                    team2Names={m.team2}
+                    team1Score={m.team1_score}
+                    team2Score={m.team2_score}
+                  />
+                )}
               </div>
             ))}
           </div>

@@ -1,7 +1,9 @@
 import { createClient } from "@/lib/supabase-server";
+import { supabase as adminDb } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 
 export async function POST() {
+  // Auth check via SSR client (reads cookies)
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -10,10 +12,11 @@ export async function POST() {
     .from("players").select("id, is_admin").eq("user_id", user.id).single();
   if (!player?.is_admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
+  // Use Pacific date — must match the date used by getTodaySession
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
 
-  // Check if a session already exists for today
-  const { data: existing } = await supabase
+  // Use service-role client for all writes (bypasses RLS)
+  const { data: existing } = await adminDb
     .from("sessions")
     .select("id, status")
     .eq("date", today)
@@ -31,7 +34,7 @@ export async function POST() {
 
   if (existing) {
     // pending → active
-    const { error } = await supabase
+    const { error } = await adminDb
       .from("sessions")
       .update({ status: "active", started_by: player.id, started_at: now })
       .eq("id", existing.id);
@@ -39,15 +42,15 @@ export async function POST() {
     return NextResponse.json({ ok: true });
   }
 
-  // No session yet — get the most recent season to link to
-  const { data: season } = await supabase
+  // No session yet — link to the most recent season
+  const { data: season } = await adminDb
     .from("seasons")
     .select("id")
     .order("start_date", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  const { error } = await supabase
+  const { error } = await adminDb
     .from("sessions")
     .insert({
       date: today,

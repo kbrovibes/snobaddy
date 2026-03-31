@@ -20,9 +20,15 @@ export interface SessionPresence {
   checked_out_at: string | null;
 }
 
+/** Today's date in Pacific time (YYYY-MM-DD). All session date logic must use this. */
+function todayPacific(): string {
+  // "en-CA" locale gives YYYY-MM-DD; timeZone ensures Pacific calendar day
+  return new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+}
+
 export async function getTodaySession(): Promise<Session | null> {
   const supabase = await createClient();
-  const today = new Date().toISOString().split("T")[0];
+  const today = todayPacific();
 
   const { data } = await supabase
     .from("sessions")
@@ -36,7 +42,7 @@ export async function getTodaySession(): Promise<Session | null> {
 
 export async function getUpcomingSession(): Promise<Session | null> {
   const supabase = await createClient();
-  const today = new Date().toISOString().split("T")[0];
+  const today = todayPacific();
 
   const { data } = await supabase
     .from("sessions")

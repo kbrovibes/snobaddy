@@ -14,6 +14,7 @@ export default function StartTodayButton() {
     const res = await fetch("/api/sessions/start-today", { method: "POST" });
     if (res.ok) {
       router.refresh();
+      setLoading(false); // router.refresh() is void — reset so button doesn't stay stuck
     } else {
       const body = await res.json();
       setError(body.error ?? "Something went wrong.");
