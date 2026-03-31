@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase-server";
+import { supabase as serviceClient } from "@/lib/supabase";
 
 export interface PlayerStats {
   id: string;
@@ -37,8 +38,7 @@ export async function getAllPlayers(): Promise<PlayerStats[]> {
 }
 
 export async function updateSkillLevel(playerId: string, skillLevel: number) {
-  const supabase = await createClient();
-  const { error } = await supabase
+  const { error } = await serviceClient
     .from("players")
     .update({ skill_level: skillLevel })
     .eq("id", playerId);

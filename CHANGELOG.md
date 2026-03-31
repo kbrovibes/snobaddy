@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.9.0] — 2026-03-30
+
+### Fixed
+- **Admin skill editing now actually saves** — was silently failing for any player other than yourself due to RLS blocking the anon client; now uses the service role client
+
+---
+
 ## [0.8.0] — 2026-03-30
 
 ### Fixed
