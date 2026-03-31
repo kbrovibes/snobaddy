@@ -285,9 +285,15 @@ export async function replacePlayerInProposedMatches(
       }
     });
 
-    // Eligible replacements: checked-in, not in another proposed match
+    // Players already filling the other 3 slots in this match (must not be picked again)
+    const alreadyInMatch = new Set(
+      [match.team1_player1_id, match.team1_player2_id, match.team2_player1_id, match.team2_player2_id]
+        .filter(id => id !== departedPlayerId)
+    );
+
+    // Eligible replacements: checked-in, not already in this match, not in another proposed match
     const candidates = Object.values(checkedInById).filter(
-      p => !lockedElsewhere.has(p.id)
+      p => !alreadyInMatch.has(p.id) && !lockedElsewhere.has(p.id)
     );
 
     if (candidates.length === 0) {

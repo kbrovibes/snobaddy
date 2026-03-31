@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.10.8] - 2026-03-31
+
+### Fixed
+- **Duplicate player in proposed match after checkout** — when finding a replacement for a checked-out player, the candidate filter now excludes the 3 players already in that match's other slots. Previously a player already in the match (e.g. Alok on T1) could be selected to fill the departed player's slot on T2, producing "Alok & X vs Alok & Y".
+
+---
+
 ## [0.10.7] - 2026-03-31
 
 ### Added
