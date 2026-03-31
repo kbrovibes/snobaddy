@@ -35,12 +35,16 @@ export default function MatchAdminControls({ matchId, team1Names, team2Names, te
       body: JSON.stringify({ team1_score: t1, team2_score: t2 }),
     });
     router.refresh();
+    setLoading(false);
+    setMode("idle");
   }
 
   async function handleDelete() {
     setLoading(true);
     await fetch(`/api/matches/${matchId}`, { method: "DELETE" });
     router.refresh();
+    setLoading(false);
+    setMode("idle");
   }
 
   if (mode === "confirming-delete") {
