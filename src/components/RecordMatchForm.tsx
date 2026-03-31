@@ -125,7 +125,7 @@ export default function RecordMatchForm({
         <option value="" disabled>Pick player…</option>
         {options(exclude.filter((id) => id !== value)).map((p) => (
           <option key={p.player_id} value={p.player_id}>
-            {p.name} {"●".repeat(p.skill_level)}{"○".repeat(5 - p.skill_level)}
+            {p.name}
           </option>
         ))}
       </select>
@@ -216,7 +216,7 @@ export default function RecordMatchForm({
                     value={score1}
                     onChange={(e) => setScore1(e.target.value)}
                     placeholder="21"
-                    className="w-full text-center text-2xl font-bold border-2 border-gray-200 rounded-xl py-3 focus:border-blue-400 outline-none"
+                    className="w-full text-center text-2xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-3 focus:border-blue-400 outline-none"
                   />
                 </div>
                 <span className="text-xl font-bold text-gray-300 mt-4">–</span>
@@ -227,7 +227,7 @@ export default function RecordMatchForm({
                     value={score2}
                     onChange={(e) => setScore2(e.target.value)}
                     placeholder="15"
-                    className="w-full text-center text-2xl font-bold border-2 border-gray-200 rounded-xl py-3 focus:border-orange-400 outline-none"
+                    className="w-full text-center text-2xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-3 focus:border-orange-400 outline-none"
                   />
                 </div>
               </div>

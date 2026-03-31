@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.10.6] - 2026-03-31
+
+### Fixed
+- **Record Match — player names no longer show skill dots** — the `●○` rating indicators have been removed from the player dropdowns on the score entry screen.
+- **Record Match — score inputs now show black text** — entered scores were rendering grey; both inputs now correctly display `text-gray-900`.
+
+---
+
 ## [0.10.5] - 2026-03-31
 
 ### Fixed
