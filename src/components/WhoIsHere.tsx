@@ -56,7 +56,7 @@ function SortHeader({
   );
 }
 
-export default function WhoIsHere({ players }: { players: Player[] }) {
+export default function WhoIsHere({ players, onlinePlayerIds }: { players: Player[]; onlinePlayerIds?: Set<string> }) {
   const [sortKey, setSortKey] = useState<SortKey>("checked_in_at");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
@@ -103,7 +103,12 @@ export default function WhoIsHere({ players }: { players: Player[] }) {
       <div className="flex flex-col gap-2">
         {sorted.map((p) => (
           <div key={p.player_id} className="flex items-center gap-2 px-1">
-            <span className="flex-1 font-medium text-gray-800 text-sm truncate">{p.name}</span>
+            <span className="flex items-center gap-1.5 flex-1 min-w-0">
+              {onlinePlayerIds?.has(p.player_id) && (
+                <span className="w-2 h-2 rounded-full bg-green-500 shrink-0" title="Online now" />
+              )}
+              <span className="font-medium text-gray-800 text-sm truncate">{p.name}</span>
+            </span>
             <div className="w-24 flex justify-center">
               <SkillDots level={p.skill_level} />
             </div>

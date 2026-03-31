@@ -7,6 +7,7 @@ import {
 } from "@/lib/db/sessions";
 import { getSessionMatches, getSessionScoreboard } from "@/lib/db/matches";
 import { getProposedMatches } from "@/lib/db/proposed";
+import { getOnlinePlayerIds } from "@/lib/db/players";
 import { createClient } from "@/lib/supabase-server";
 import StartSessionButton from "@/components/StartSessionButton";
 import CheckInButton from "@/components/CheckInButton";
@@ -62,13 +63,14 @@ export default async function SessionDetailPage({
   const needsScoreboard =
     session.status === "active" || session.status === "completed";
 
-  const [scoreboard, recentMatches, proposedMatches] = needsScoreboard
+  const [scoreboard, recentMatches, proposedMatches, onlinePlayerIds] = needsScoreboard
     ? await Promise.all([
         getSessionScoreboard(session.id),
         getSessionMatches(session.id),
         getProposedMatches(session.id),
+        getOnlinePlayerIds(checkedInPlayers.map((p) => p.player_id)),
       ])
-    : [[], [], []];
+    : [[], [], [], new Set<string>()];
 
   const isPending = session.status === "pending";
   const isActive = session.status === "active";
@@ -129,7 +131,7 @@ export default async function SessionDetailPage({
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
               Who's Here · {checkedInPlayers.length}
             </h2>
-            <WhoIsHere players={checkedInPlayers} />
+            <WhoIsHere players={checkedInPlayers} onlinePlayerIds={onlinePlayerIds as Set<string>} />
           </div>
 
           {/* Proposed matches */}

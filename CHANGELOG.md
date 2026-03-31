@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.12.2] - 2026-03-31
+
+### Added
+- **Online indicator** — a small green dot appears next to players in the "Who's Here" list when they've signed in within the last 5 minutes (i.e. app open on their phone).
+
+---
+
 ## [0.12.1] - 2026-03-31
 
 ### Fixed

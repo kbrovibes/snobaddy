@@ -71,6 +71,43 @@ export async function getAllPlayers(): Promise<PlayerStats[]> {
   });
 }
 
+/**
+ * Returns the subset of playerIds whose linked auth user signed in within the
+ * last 5 minutes. Players with no user_id (manually added) are never included.
+ * Approximate — good enough for a "who's on their phone right now" green dot.
+ */
+export async function getOnlinePlayerIds(playerIds: string[]): Promise<Set<string>> {
+  if (playerIds.length === 0) return new Set();
+
+  const { data: rows } = await serviceClient
+    .from("players")
+    .select("id, user_id")
+    .in("id", playerIds)
+    .not("user_id", "is", null);
+
+  if (!rows || rows.length === 0) return new Set();
+
+  const userIdToPlayerId = new Map<string, string>();
+  for (const row of rows) {
+    if (row.user_id) userIdToPlayerId.set(row.user_id, row.id);
+  }
+
+  const { data: authData } = await serviceClient.auth.admin.listUsers({ perPage: 1000 });
+  const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+
+  const online = new Set<string>();
+  for (const u of authData?.users ?? []) {
+    if (
+      userIdToPlayerId.has(u.id) &&
+      u.last_sign_in_at &&
+      u.last_sign_in_at > fiveMinsAgo
+    ) {
+      online.add(userIdToPlayerId.get(u.id)!);
+    }
+  }
+  return online;
+}
+
 export async function updateSkillLevel(playerId: string, skillLevel: number) {
   const { error } = await serviceClient
     .from("players")
