@@ -22,18 +22,12 @@ export async function POST() {
     .eq("date", today)
     .maybeSingle();
 
-  if (existing?.status === "active") {
-    return NextResponse.json({ ok: true, already: true });
-  }
-
-  if (existing?.status === "completed") {
-    return NextResponse.json({ error: "Today's session is already closed." }, { status: 400 });
-  }
-
   const now = new Date().toISOString();
 
   if (existing) {
-    // pending → active
+    // Clear all check-ins for a clean slate — this is a testing reset, not a real session start
+    await adminDb.from("session_players").delete().eq("session_id", existing.id);
+
     const { error } = await adminDb
       .from("sessions")
       .update({ status: "active", started_by: player.id, started_at: now })

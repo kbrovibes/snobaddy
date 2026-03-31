@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.8.0] — 2026-03-30
+
+### Fixed
+- **Start session for today** no longer inherits check-ins from a previous test run — every call now wipes the session's check-ins for a clean slate
+
+---
+
 ## [0.7.0] — 2026-03-30
 
 ### Added
