@@ -7,6 +7,13 @@ export interface Session {
   season: { id: string; name: string };
 }
 
+export interface SessionRow {
+  id: string;
+  date: string;
+  status: "pending" | "active" | "completed";
+  season: { name: string };
+}
+
 export interface CheckedInPlayer {
   player_id: string;
   name: string;
@@ -52,6 +59,44 @@ export async function getUpcomingSession(): Promise<Session | null> {
     .limit(1)
     .maybeSingle();
 
+  if (!data) return null;
+  return { ...data, season: (data.seasons as unknown as Session["season"]) };
+}
+
+export async function getActiveSession(): Promise<Session | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("sessions")
+    .select("id, date, status, seasons(id, name)")
+    .eq("status", "active")
+    .limit(1)
+    .maybeSingle();
+  if (!data) return null;
+  return { ...data, season: (data.seasons as unknown as Session["season"]) };
+}
+
+export async function getAllSessions(): Promise<SessionRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("sessions")
+    .select("id, date, status, seasons(name)")
+    .order("date", { ascending: false });
+  if (!data) return [];
+  return data.map((row) => ({
+    id: row.id,
+    date: row.date,
+    status: row.status as SessionRow["status"],
+    season: (row.seasons as unknown as { name: string }),
+  }));
+}
+
+export async function getSessionById(id: string): Promise<Session | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("sessions")
+    .select("id, date, status, seasons(id, name)")
+    .eq("id", id)
+    .maybeSingle();
   if (!data) return null;
   return { ...data, season: (data.seasons as unknown as Session["season"]) };
 }

@@ -13,13 +13,15 @@ Single source of truth for all planned and completed work.
 - [x] **02 — Session Management** · [spec](specs/02-session-management.md) · Session check-in, admin start/close/reopen
 - [x] **03 — Record a Match** · [spec](specs/03-record-match.md) · Pick 4 players, record winner, live scoreboard, admin edit/delete
 - [x] **04 — Season Leaderboard** · [spec](specs/04-season-leaderboard.md) · Cumulative W/L/win% across all sessions
-- [ ] **05 — Session Navigation** · [spec](specs/05-session-navigation.md) · Session list at `/`, per-session detail at `/session/[id]`, auto-redirect into open session on login, admin creates new session from list
-- [x] **06 — Match Generation** · [spec](specs/07-match-generation.md) · Propose next 4 matches based on presence, skill, and history — **Completed.** Algorithmic suggest/queue/record loop implemented and verified.
+- [x] **05 — Session Navigation** · [spec](specs/05-session-navigation.md) · Session list at `/`, per-session detail at `/session/[id]`, auto-redirect into open session on login, admin creates new session from list
+- [x] **07 — Match Generation** · [spec](specs/07-match-generation.md) · Propose next 4 matches based on presence, skill, and history — **Completed.** Algorithmic suggest/queue/record loop implemented and verified.
 - [ ] **08 — Ethan Mode** · [spec](specs/08-ethan-mode.md) · Easter egg: DB-persisted admin toggle that biases match suggestions (Chitra favored, Kiran Iyer skipped); banner visible to all when active
 
 ---
 
 - [ ] **06 — Soft-Delete Players** · [spec](specs/06-soft-delete-players.md) · Admin removes/restores players; deleted players hidden from all views and their matches invalidated
+
+- [ ] **Cleanup** · Remove `StartTodayButton.tsx` and `/api/sessions/start-today/route.ts` once confirmed no longer needed (superseded by `CreateSessionButton` + `/api/sessions/create`)
 
 ---
 

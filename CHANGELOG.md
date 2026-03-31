@@ -6,6 +6,17 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.12.0] - 2026-03-31
+
+### Added
+- **Session list** — the home page now shows all sessions for the season, with date and status (Closed / Active / Pending). Each row links to the session detail.
+- **Per-session detail page** — all session content (scoreboard, match log, check-in, proposed matches) now lives at `/session/[id]` instead of the home page.
+- **Auto-redirect on login** — if a session is currently active, opening the app goes directly into that session.
+- **Start New Session** — admins see a "+ Start New Session" button on the list page when no session is active. Creates today's session and navigates into it.
+- **← All Sessions** — link at the top of every session detail page to return to the list.
+
+---
+
 ## [0.11.1] - 2026-03-30
 
 ### Changed
