@@ -1,37 +1,106 @@
 "use client";
 
-import { createClient } from "@/lib/supabase-browser";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { createClient } from "@/lib/supabase-browser";
+
+type Mode = "signin" | "signup" | "reset";
 
 function LoginContent() {
   const searchParams = useSearchParams();
-  const error = searchParams.get("error");
+  const router = useRouter();
+  const hasError = searchParams.get("error");
+
+  const [mode, setMode] = useState<Mode>("signin");
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(hasError ? "Sign in failed. Please try again." : null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  function switchMode(next: Mode) {
+    setMode(next);
+    setError(null);
+    setSuccessMsg(null);
+  }
 
   async function signInWithGoogle() {
     const supabase = createClient();
     await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
   }
 
+  async function handleSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    const supabase = createClient();
+    const { error: err } = await supabase.auth.signInWithPassword({ email, password });
+    if (err) {
+      setError(err.message);
+      setLoading(false);
+    } else {
+      router.push("/");
+    }
+  }
+
+  async function handleSignUp(e: React.FormEvent) {
+    e.preventDefault();
+    if (!displayName.trim()) {
+      setError("Display name is required.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    const supabase = createClient();
+    const { error: err } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: displayName.trim() },
+        emailRedirectTo: `${window.location.origin}/auth/confirm`,
+      },
+    });
+    setLoading(false);
+    if (err) {
+      setError(err.message);
+    } else {
+      setSuccessMsg(`Check your email — we sent a confirmation link to ${email}.`);
+    }
+  }
+
+  async function handleReset(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    const supabase = createClient();
+    const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/confirm`,
+    });
+    setLoading(false);
+    if (err) {
+      setError(err.message);
+    } else {
+      setSuccessMsg("Check your email for a reset link.");
+    }
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-8 bg-gray-50">
-      <div className="flex flex-col items-center gap-2">
-        <span className="text-6xl">🏸</span>
-        <h1 className="text-3xl font-bold text-gray-900">snobaddy</h1>
+    <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 bg-gray-50">
+      {/* Logo */}
+      <div className="flex flex-col items-center gap-1">
+        <span className="text-5xl">🏸</span>
+        <h1 className="text-2xl font-bold text-gray-900">snobaddy</h1>
         <p className="text-gray-500 text-sm">Snoqualmie Badminton Club</p>
       </div>
 
-      <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-        {error && (
-          <p className="text-red-500 text-sm text-center">
-            Sign in failed. Please try again.
-          </p>
-        )}
+      <div className="flex flex-col gap-4 w-full max-w-xs">
+        {/* Google button */}
         <button
           onClick={signInWithGoogle}
           className="flex items-center justify-center gap-3 w-full px-6 py-3 bg-white border border-gray-300 rounded-lg shadow-sm text-gray-700 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors"
@@ -44,6 +113,152 @@ function LoginContent() {
           </svg>
           Sign in with Google
         </button>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-xs text-gray-400">or</span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
+
+        {/* Mode toggle (only shown for signin/signup) */}
+        {mode !== "reset" && (
+          <div className="flex bg-gray-100 rounded-lg p-0.5">
+            <button
+              onClick={() => switchMode("signin")}
+              className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                mode === "signin" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Sign in
+            </button>
+            <button
+              onClick={() => switchMode("signup")}
+              className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                mode === "signup" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Create account
+            </button>
+          </div>
+        )}
+
+        {/* Success message */}
+        {successMsg && (
+          <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-sm text-green-700 text-center">
+            {successMsg}
+          </div>
+        )}
+
+        {/* Error message */}
+        {error && (
+          <p className="text-sm text-red-500 text-center">{error}</p>
+        )}
+
+        {/* Sign in form */}
+        {mode === "signin" && !successMsg && (
+          <form onSubmit={handleSignIn} className="flex flex-col gap-3">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg disabled:opacity-40 hover:bg-blue-700 transition-colors"
+            >
+              {loading ? "Signing in…" : "Sign in"}
+            </button>
+            <button
+              type="button"
+              onClick={() => switchMode("reset")}
+              className="text-sm text-gray-400 hover:text-gray-600 transition-colors text-center"
+            >
+              Forgot password?
+            </button>
+          </form>
+        )}
+
+        {/* Sign up form */}
+        {mode === "signup" && !successMsg && (
+          <form onSubmit={handleSignUp} className="flex flex-col gap-3">
+            <input
+              type="text"
+              placeholder="Display name"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            />
+            <input
+              type="password"
+              placeholder="Password (min 6 characters)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg disabled:opacity-40 hover:bg-blue-700 transition-colors"
+            >
+              {loading ? "Creating account…" : "Create account"}
+            </button>
+          </form>
+        )}
+
+        {/* Password reset form */}
+        {mode === "reset" && !successMsg && (
+          <form onSubmit={handleReset} className="flex flex-col gap-3">
+            <p className="text-sm text-gray-600 text-center">
+              Enter your email and we&apos;ll send you a reset link.
+            </p>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg disabled:opacity-40 hover:bg-blue-700 transition-colors"
+            >
+              {loading ? "Sending…" : "Send reset link"}
+            </button>
+            <button
+              type="button"
+              onClick={() => switchMode("signin")}
+              className="text-sm text-gray-400 hover:text-gray-600 transition-colors text-center"
+            >
+              ← Back to sign in
+            </button>
+          </form>
+        )}
       </div>
     </main>
   );

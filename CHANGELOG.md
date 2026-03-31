@@ -22,6 +22,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.14.0] - 2026-03-31
+
+### Added
+- **Email sign-up** — create an account with display name, email, and password. Confirmation email sent automatically; clicking the link activates the account and lands on onboarding.
+- **Email sign-in** — sign in with email and password from the same login page.
+- **Forgot password** — "Forgot password?" link on the sign-in form sends a reset email; clicking the link lands on a new password form.
+- **Login page redesign** — single page with Google button + "Sign in / Create account" pill toggle for email. Clean inline success/error messages.
+
+---
+
 ## [0.12.3] - 2026-03-31
 
 ### Fixed
