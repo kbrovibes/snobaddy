@@ -12,9 +12,17 @@ function formatDate(dateStr: string) {
   return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 }
 
-export default async function SessionListPage() {
-  const active = await getActiveSession();
-  if (active) redirect(`/session/${active.id}`);
+export default async function SessionListPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ list?: string }>;
+}) {
+  const { list } = await searchParams;
+
+  if (!list) {
+    const active = await getActiveSession();
+    if (active) redirect(`/session/${active.id}`);
+  }
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

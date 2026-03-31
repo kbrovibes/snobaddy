@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.12.1] - 2026-03-31
+
+### Fixed
+- **← All Sessions link** — clicking it while a session was active would immediately redirect back to the session. It now always lands on the session list.
+
+---
+
 ## [0.12.0] - 2026-03-31
 
 ### Added
