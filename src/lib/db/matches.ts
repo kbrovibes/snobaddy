@@ -50,6 +50,108 @@ export async function getSessionMatches(sessionId: string): Promise<MatchRecord[
   }));
 }
 
+export interface PlayerSessionStat {
+  date: string;
+  wins: number;
+  losses: number;
+  win_pct: number;
+}
+
+export interface PlayerMatchRecord {
+  id: string;
+  date: string;
+  won: boolean;
+  partner: string;
+  opponents: [string, string];
+  my_score: number;
+  opp_score: number;
+}
+
+export async function getPlayerSessionHistory(playerId: string): Promise<PlayerSessionStat[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("matches")
+    .select(`
+      session_id, winning_team,
+      team1_player1_id, team1_player2_id,
+      team2_player1_id, team2_player2_id,
+      sessions(date)
+    `)
+    .or(`team1_player1_id.eq.${playerId},team1_player2_id.eq.${playerId},team2_player1_id.eq.${playerId},team2_player2_id.eq.${playerId}`);
+
+  if (!data) return [];
+
+  const sessionMap = new Map<string, { date: string; wins: number; losses: number }>();
+
+  for (const m of data) {
+    const session = m.sessions as unknown as { date: string };
+    const entry = sessionMap.get(m.session_id) ?? { date: session.date, wins: 0, losses: 0 };
+    const onTeam1 = m.team1_player1_id === playerId || m.team1_player2_id === playerId;
+    const won = (onTeam1 && m.winning_team === 1) || (!onTeam1 && m.winning_team === 2);
+    if (won) entry.wins++; else entry.losses++;
+    sessionMap.set(m.session_id, entry);
+  }
+
+  return Array.from(sessionMap.values())
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .map(({ date, wins, losses }) => ({
+      date,
+      wins,
+      losses,
+      win_pct: wins + losses > 0 ? Math.round((wins / (wins + losses)) * 100) : 0,
+    }));
+}
+
+export async function getPlayerMatches(
+  playerId: string,
+  page: number,
+  pageSize = 20,
+): Promise<{ matches: PlayerMatchRecord[]; total: number }> {
+  const supabase = await createClient();
+  const offset = (page - 1) * pageSize;
+
+  const { data, count } = await supabase
+    .from("matches")
+    .select(`
+      id, played_at, team1_score, team2_score, winning_team,
+      team1_player1_id, team1_player2_id,
+      team2_player1_id, team2_player2_id,
+      sessions(date),
+      t1p1:team1_player1_id(id, name),
+      t1p2:team1_player2_id(id, name),
+      t2p1:team2_player1_id(id, name),
+      t2p2:team2_player2_id(id, name)
+    `, { count: "exact" })
+    .or(`team1_player1_id.eq.${playerId},team1_player2_id.eq.${playerId},team2_player1_id.eq.${playerId},team2_player2_id.eq.${playerId}`)
+    .order("played_at", { ascending: false })
+    .range(offset, offset + pageSize - 1);
+
+  const matches = (data ?? []).map((m) => {
+    const t1p1 = m.t1p1 as unknown as { id: string; name: string };
+    const t1p2 = m.t1p2 as unknown as { id: string; name: string };
+    const t2p1 = m.t2p1 as unknown as { id: string; name: string };
+    const t2p2 = m.t2p2 as unknown as { id: string; name: string };
+    const session = m.sessions as unknown as { date: string };
+    const onTeam1 = m.team1_player1_id === playerId || m.team1_player2_id === playerId;
+    const won = (onTeam1 && m.winning_team === 1) || (!onTeam1 && m.winning_team === 2);
+    const partner = onTeam1
+      ? (m.team1_player1_id === playerId ? t1p2 : t1p1).name
+      : (m.team2_player1_id === playerId ? t2p2 : t2p1).name;
+    const opponents: [string, string] = onTeam1 ? [t2p1.name, t2p2.name] : [t1p1.name, t1p2.name];
+    return {
+      id: m.id,
+      date: session.date,
+      won,
+      partner,
+      opponents,
+      my_score: onTeam1 ? m.team1_score : m.team2_score,
+      opp_score: onTeam1 ? m.team2_score : m.team1_score,
+    };
+  });
+
+  return { matches, total: count ?? 0 };
+}
+
 export async function getSeasonMatchCount(): Promise<number> {
   const supabase = await createClient();
   const { count } = await supabase

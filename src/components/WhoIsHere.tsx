@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 interface Player {
   player_id: string;
@@ -107,7 +108,9 @@ export default function WhoIsHere({ players, onlinePlayerIds }: { players: Playe
               {onlinePlayerIds?.has(p.player_id) && (
                 <span className="w-2 h-2 rounded-full bg-green-500 shrink-0" title="Online now" />
               )}
-              <span className="font-medium text-gray-800 text-sm truncate">{p.name}</span>
+              <Link href={`/players/${p.player_id}`} className="font-medium text-blue-700 text-sm truncate hover:underline">
+                {p.name}
+              </Link>
             </span>
             <div className="w-24 flex justify-center">
               <SkillDots level={p.skill_level} />

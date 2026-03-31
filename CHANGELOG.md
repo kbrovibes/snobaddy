@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.13.0] - 2026-03-31
+
+### Added
+- **Player profile page** — tap any player name in the "Who's Here" list to open their profile at `/players/[id]`.
+- **Win % chart** — bar chart showing win percentage per session. Blue = above 50%, red = below. Horizontally scrollable on mobile.
+- **Match history** — paginated table of all matches (20 per page), showing date, W/L, partner, opponents, and score. Pagination goes all the way back.
+
+---
+
 ## [0.12.3] - 2026-03-31
 
 ### Fixed
