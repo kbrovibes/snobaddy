@@ -59,10 +59,18 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
         {matches.map((m) => (
           <div key={m.id} className="bg-white border border-blue-50 rounded-xl p-3 shadow-sm">
             <div className="flex items-center justify-between gap-2 mb-3">
-              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 flex-1 text-sm font-semibold text-gray-800">
-                <span className="truncate text-left">{m.team1_names?.map((n) => n.split(" ")[0]).join(" & ")}</span>
-                <span className="text-gray-300 font-normal text-center w-6">vs</span>
-                <span className="truncate text-left">{m.team2_names?.map((n) => n.split(" ")[0]).join(" & ")}</span>
+              <div className="grid grid-cols-[1fr_2rem_1fr] items-center gap-1 flex-1 text-sm text-gray-800">
+                <div className="text-right">
+                  {m.team1_names?.map((n, i) => (
+                    <div key={i}>{n.split(" ")[0]}</div>
+                  ))}
+                </div>
+                <div className="text-center text-gray-300 text-xs">vs</div>
+                <div className="text-left">
+                  {m.team2_names?.map((n, i) => (
+                    <div key={i}>{n.split(" ")[0]}</div>
+                  ))}
+                </div>
               </div>
               <button
                 onClick={() => handleDelete(m.id)}
