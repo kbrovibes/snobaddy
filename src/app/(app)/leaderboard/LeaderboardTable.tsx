@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { PlayerStats } from "@/lib/db/players";
 
-type SortKey = "name" | "skill_level" | "matches_played" | "wins" | "losses" | "win_pct";
+type SortKey = "name" | "matches_played" | "wins" | "losses" | "win_pct";
 type SortDir = "asc" | "desc";
 
 function winPct(p: PlayerStats) {
@@ -17,7 +17,6 @@ function formatPct(p: PlayerStats) {
 
 const COLUMNS: { key: SortKey; label: string; title: string }[] = [
   { key: "name",          label: "Player",  title: "Player"         },
-  { key: "skill_level",   label: "S",       title: "Skill Level"    },
   { key: "matches_played",label: "M",       title: "Matches played" },
   { key: "wins",          label: "W",       title: "Wins"           },
   { key: "losses",        label: "L",       title: "Losses"         },
@@ -125,9 +124,6 @@ export default function LeaderboardTable({ players }: { players: PlayerStats[] }
               </td>
               <td className="px-2 py-3 font-medium text-gray-900 truncate max-w-[120px]">
                 {player.name}
-              </td>
-              <td className="px-3 py-3 text-right tabular-nums text-gray-500 font-medium">
-                {player.skill_level}
               </td>
               <td className="px-3 py-3 text-right tabular-nums text-gray-700">{player.matches_played}</td>
               <td className="px-3 py-3 text-right tabular-nums text-gray-700">{player.wins}</td>

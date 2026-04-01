@@ -164,7 +164,7 @@ export default async function SessionDetailPage({
       {(isActive || isCompleted) && (
         <div className="bg-white rounded-xl shadow-sm px-4 py-3">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            Tonight's Scores
+            Tonight's Scores · {recentMatches.length} {recentMatches.length === 1 ? "match" : "matches"}
           </h2>
           {scoreboard.length === 0 ? (
             <p className="text-sm text-gray-400">No matches recorded yet.</p>

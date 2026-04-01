@@ -152,6 +152,67 @@ export async function getPlayerMatches(
   return { matches, total: count ?? 0 };
 }
 
+export interface PlayerMatchBySession {
+  session_id: string;
+  date: string;
+  matches: PlayerMatchRecord[];
+}
+
+export async function getPlayerMatchesBySession(playerId: string): Promise<PlayerMatchBySession[]> {
+  const supabase = await createClient();
+
+  const { data } = await supabase
+    .from("matches")
+    .select(`
+      id, played_at, session_id, team1_score, team2_score, winning_team,
+      team1_player1_id, team1_player2_id,
+      team2_player1_id, team2_player2_id,
+      sessions(date),
+      t1p1:team1_player1_id(id, name),
+      t1p2:team1_player2_id(id, name),
+      t2p1:team2_player1_id(id, name),
+      t2p2:team2_player2_id(id, name)
+    `)
+    .or(`team1_player1_id.eq.${playerId},team1_player2_id.eq.${playerId},team2_player1_id.eq.${playerId},team2_player2_id.eq.${playerId}`)
+    .order("played_at", { ascending: true });
+
+  if (!data) return [];
+
+  const sessionMap = new Map<string, { date: string; matches: PlayerMatchRecord[] }>();
+
+  for (const m of data) {
+    const t1p1 = m.t1p1 as unknown as { id: string; name: string };
+    const t1p2 = m.t1p2 as unknown as { id: string; name: string };
+    const t2p1 = m.t2p1 as unknown as { id: string; name: string };
+    const t2p2 = m.t2p2 as unknown as { id: string; name: string };
+    const session = m.sessions as unknown as { date: string };
+    const onTeam1 = m.team1_player1_id === playerId || m.team1_player2_id === playerId;
+    const won = (onTeam1 && m.winning_team === 1) || (!onTeam1 && m.winning_team === 2);
+    const partner = onTeam1
+      ? (m.team1_player1_id === playerId ? t1p2 : t1p1).name
+      : (m.team2_player1_id === playerId ? t2p2 : t2p1).name;
+    const opponents: [string, string] = onTeam1 ? [t2p1.name, t2p2.name] : [t1p1.name, t1p2.name];
+
+    const record: PlayerMatchRecord = {
+      id: m.id,
+      date: session.date,
+      won,
+      partner,
+      opponents,
+      my_score: onTeam1 ? m.team1_score : m.team2_score,
+      opp_score: onTeam1 ? m.team2_score : m.team1_score,
+    };
+
+    const entry = sessionMap.get(m.session_id) ?? { date: session.date, matches: [] };
+    entry.matches.push(record);
+    sessionMap.set(m.session_id, entry);
+  }
+
+  return Array.from(sessionMap.entries())
+    .map(([session_id, { date, matches }]) => ({ session_id, date, matches }))
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
 export async function getSeasonMatchCount(): Promise<number> {
   const supabase = await createClient();
   const { count } = await supabase

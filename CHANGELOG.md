@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.15.0] - 2026-03-31
+
+### Changed
+- **Match history grouped by session** — the player profile page now groups match history by session with a date header per session, instead of a flat paginated list.
+- **Session scoreboard shows match count** — the "Tonight's Scores" header now includes the number of matches played in the session.
+- **Leaderboard drops Skill Level column** — removed the "S" column from the season leaderboard.
+
+---
+
 ## [0.14.0] - 2026-03-31
 
 ### Added

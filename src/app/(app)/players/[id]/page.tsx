@@ -1,13 +1,10 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { getPlayerById } from "@/lib/db/players";
-import { getPlayerSessionHistory, getPlayerMatches } from "@/lib/db/matches";
+import { getPlayerSessionHistory, getPlayerMatchesBySession } from "@/lib/db/matches";
 import WinPctChart from "@/components/WinPctChart";
 import BackButton from "@/components/BackButton";
 
 export const dynamic = "force-dynamic";
-
-const PAGE_SIZE = 20;
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr + "T12:00:00");
@@ -30,24 +27,20 @@ function SkillDots({ level }: { level: number }) {
 
 export default async function PlayerProfilePage({
   params,
-  searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ page?: string }>;
 }) {
   const { id } = await params;
-  const { page: pageStr } = await searchParams;
-  const page = Math.max(1, parseInt(pageStr ?? "1") || 1);
 
   const player = await getPlayerById(id);
   if (!player) redirect("/");
 
-  const [sessionHistory, { matches, total }] = await Promise.all([
+  const [sessionHistory, matchesBySession] = await Promise.all([
     getPlayerSessionHistory(id),
-    getPlayerMatches(id, page, PAGE_SIZE),
+    getPlayerMatchesBySession(id),
   ]);
 
-  const totalPages = Math.ceil(total / PAGE_SIZE);
+  const total = matchesBySession.reduce((s, g) => s + g.matches.length, 0);
   const totalWins = sessionHistory.reduce((s, r) => s + r.wins, 0);
   const totalLosses = sessionHistory.reduce((s, r) => s + r.losses, 0);
   const overallPct = totalWins + totalLosses > 0
@@ -88,51 +81,38 @@ export default async function PlayerProfilePage({
           Match History · {total}
         </h2>
 
-        {matches.length === 0 ? (
+        {matchesBySession.length === 0 ? (
           <p className="text-sm text-gray-400">No matches yet.</p>
         ) : (
-          <div className="flex flex-col divide-y divide-gray-100">
-            {matches.map((m) => (
-              <div key={m.id} className="py-2.5">
-                <div className="flex items-center gap-2">
-                  <span className={`text-xs font-bold px-1.5 py-0.5 rounded shrink-0 ${
-                    m.won ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
-                  }`}>
-                    {m.won ? "W" : "L"}
-                  </span>
-                  <span className="text-xs text-gray-400 shrink-0">{formatDate(m.date)}</span>
-                  <span className="text-sm text-gray-700 truncate flex-1">
-                    w/ {getFirstName(m.partner)}
-                    <span className="text-gray-400"> vs </span>
-                    {m.opponents.map(getFirstName).join(" & ")}
-                  </span>
-                  <span className={`text-sm font-semibold tabular-nums shrink-0 ${m.won ? "text-green-600" : "text-red-400"}`}>
-                    {m.my_score}–{m.opp_score}
-                  </span>
+          <div className="flex flex-col gap-4">
+            {matchesBySession.map((group) => (
+              <div key={group.session_id}>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
+                  {formatDate(group.date)}
+                </p>
+                <div className="flex flex-col divide-y divide-gray-100">
+                  {group.matches.map((m) => (
+                    <div key={m.id} className="py-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs font-bold px-1.5 py-0.5 rounded shrink-0 ${
+                          m.won ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
+                        }`}>
+                          {m.won ? "W" : "L"}
+                        </span>
+                        <span className="text-sm text-gray-700 truncate flex-1">
+                          w/ {getFirstName(m.partner)}
+                          <span className="text-gray-400"> vs </span>
+                          {m.opponents.map(getFirstName).join(" & ")}
+                        </span>
+                        <span className={`text-sm font-semibold tabular-nums shrink-0 ${m.won ? "text-green-600" : "text-red-400"}`}>
+                          {m.my_score}–{m.opp_score}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
-          </div>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between pt-3 mt-1 border-t border-gray-100">
-            {page > 1 ? (
-              <Link href={`/players/${id}?page=${page - 1}`} className="text-sm text-blue-600 hover:underline">
-                ← Prev
-              </Link>
-            ) : (
-              <span className="text-sm text-gray-300">← Prev</span>
-            )}
-            <span className="text-xs text-gray-400">Page {page} of {totalPages}</span>
-            {page < totalPages ? (
-              <Link href={`/players/${id}?page=${page + 1}`} className="text-sm text-blue-600 hover:underline">
-                Next →
-              </Link>
-            ) : (
-              <span className="text-sm text-gray-300">Next →</span>
-            )}
           </div>
         )}
       </div>
