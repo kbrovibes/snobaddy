@@ -12,17 +12,6 @@ export interface PlayerStats {
   losses: number;
 }
 
-const ADMIN_EMAILS = [
-  "karthik220290@gmail.com",
-  "k4rthikr@gmail.com",
-  "swathyee86@gmail.com",
-  "kiran10a@gmail.com",
-  "sekhar.durga@gmail.com",
-];
-
-export function isAdminEmail(email: string) {
-  return ADMIN_EMAILS.includes(email);
-}
 
 export async function getAllPlayers(): Promise<PlayerStats[]> {
   const supabase = await createClient();
