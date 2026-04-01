@@ -18,7 +18,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [0.15.1] - 2026-03-31
 
 ### Changed
-- **Proposed Matches show first names** — player names in the proposed match cards are now first-name only.
+- **Proposed Matches reformatted** — player names are first-name only; team columns are equal-width with "vs" centered, matching the Matches section below.
 - **Tonight's Scores heading shows match count** — e.g. "Tonight's Scores · 7 matches".
 - **Tonight's Scores table uses full names** — the per-player scoreboard keeps full names for clarity.
 
