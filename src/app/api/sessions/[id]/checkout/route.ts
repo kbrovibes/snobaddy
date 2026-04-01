@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase-server";
-import { replacePlayerInProposedMatches } from "@/lib/db/proposed";
+import { replacePlayerInProposedMatches, backfillMatchQueue } from "@/lib/db/proposed";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(
@@ -31,6 +31,7 @@ export async function POST(
 
   // Update any proposed matches that include the departed player
   await replacePlayerInProposedMatches(id, targetPlayerId);
+  backfillMatchQueue(id).catch(() => {});
 
   return NextResponse.json({ ok: true });
 }

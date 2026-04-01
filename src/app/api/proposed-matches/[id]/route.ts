@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { deleteProposedMatch, backfillMatchQueue } from "@/lib/db/proposed";
+import { deleteProposedMatch } from "@/lib/db/proposed";
 
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const sessionId = await deleteProposedMatch(id);
-  if (sessionId) backfillMatchQueue(sessionId).catch(() => {});
+  await deleteProposedMatch(id);
   return NextResponse.json({ success: true });
 }

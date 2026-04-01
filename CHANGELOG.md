@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.15.3] - 2026-03-31
+
+### Fixed
+- **Auto-backfill scope** — queue backfill now only fires when a match is recorded with a score, or when a player checks out and their proposed match is removed. Manually deleting a proposed match and checking in no longer trigger backfill.
+
+---
+
 ## [0.15.2] - 2026-03-31
 
 ### Changed
