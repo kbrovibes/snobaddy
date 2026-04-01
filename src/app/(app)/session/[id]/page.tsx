@@ -247,7 +247,7 @@ export default async function SessionDetailPage({
           <div className="flex flex-col gap-2">
             {pastSessions.map((s) => (
               <Link key={s.id} href={`/session/${s.id}`} className="flex items-center justify-between text-sm hover:bg-gray-50 -mx-1 px-1 rounded-lg transition-colors">
-                <span className="text-gray-700">{formatDate(s.date)}</span>
+                <span className="text-blue-600">{formatDate(s.date)}</span>
                 <span className="text-gray-400 capitalize">{s.status}</span>
               </Link>
             ))}
