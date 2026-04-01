@@ -122,8 +122,11 @@ export default function LeaderboardTable({ players }: { players: PlayerStats[] }
               <td className={`px-4 py-3 text-xs font-bold text-right ${i < 3 ? "text-gray-900" : "text-gray-300"}`}>
                 {getRankBadge(i)}
               </td>
-              <td className="px-2 py-3 font-medium text-gray-900 truncate max-w-[120px]">
-                {player.name}
+              <td className="px-2 py-3 font-medium text-gray-900 max-w-[120px]">
+                <span className="flex items-center gap-1 min-w-0">
+                  <span className="truncate">{player.name}</span>
+                  {player.user_id && <span className="text-green-500 text-xs shrink-0" title="Verified account">✓</span>}
+                </span>
               </td>
               <td className="px-3 py-3 text-right tabular-nums text-gray-700">{player.matches_played}</td>
               <td className="px-3 py-3 text-right tabular-nums text-gray-700">{player.wins}</td>

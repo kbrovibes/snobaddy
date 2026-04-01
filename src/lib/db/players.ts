@@ -7,6 +7,7 @@ export interface PlayerStats {
   email: string;
   skill_level: number;
   is_admin: boolean;
+  user_id: string | null;
   matches_played: number;
   wins: number;
   losses: number;
@@ -19,7 +20,7 @@ export async function getAllPlayers(): Promise<PlayerStats[]> {
   // 1. Get all players who completed onboarding
   const { data: players, error } = await supabase
     .from("players")
-    .select("id, name, email, skill_level, is_admin")
+    .select("id, name, email, skill_level, is_admin, user_id")
     .eq("onboarding_complete", true)
     .order("name");
 

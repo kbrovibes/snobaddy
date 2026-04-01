@@ -65,6 +65,7 @@ export default async function PlayersPage() {
                 <div className="text-gray-900 flex items-center gap-1 min-w-0">
                   <span className="truncate">{player.name}</span>
                   {player.is_admin && <span className="text-blue-400 text-xs shrink-0">★</span>}
+                  {player.user_id && <span className="text-green-500 text-xs shrink-0" title="Verified account">✓</span>}
                 </div>
                 {isAdmin ? (
                   <SkillEditor playerId={player.id} current={player.skill_level} />

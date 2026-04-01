@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.15.6] - 2026-03-31
+
+### Changed
+- **Verified account badge** — players with a linked auth account now show a green ✓ next to their name on the Players page and Leaderboard. Manually-added guest players have no badge.
+
+---
+
 ## [0.15.5] - 2026-03-31
 
 ### Fixed
