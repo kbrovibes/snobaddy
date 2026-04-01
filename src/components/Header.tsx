@@ -34,9 +34,9 @@ export default function Header({ userName, playerId }: HeaderProps) {
       <div className="flex items-center gap-3">
         <button
           onClick={signOut}
-          className="text-xs text-gray-400 hover:text-red-400 transition-colors"
+          className="text-xs text-red-400 hover:text-red-600 transition-colors font-medium"
         >
-          Sign out
+          Logout
         </button>
         {playerId ? (
           <Link
