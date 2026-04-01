@@ -4,7 +4,7 @@ export interface Session {
   id: string;
   date: string;
   status: "pending" | "active" | "completed";
-  auto_generate_matches: boolean;
+  auto_generate_matches?: boolean;
   season: { id: string; name: string };
 }
 
@@ -114,7 +114,12 @@ export async function getSessionById(id: string): Promise<Session | null> {
     .eq("id", id)
     .maybeSingle();
   if (!data) return null;
-  return { ...data, season: (data.seasons as unknown as Session["season"]) };
+  const row = data as typeof data & { auto_generate_matches?: boolean };
+  return {
+    ...data,
+    auto_generate_matches: row.auto_generate_matches ?? true,
+    season: (data.seasons as unknown as Session["season"]),
+  };
 }
 
 export async function getPastSessionsThisSeason(seasonId: string, beforeDate: string) {
