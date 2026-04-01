@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.15.4] - 2026-03-31
+
+### Changed
+- **Admin badge on Players page** — admin players now show a small ★ next to their name.
+
+---
+
 ## [0.15.3] - 2026-03-31
 
 ### Fixed
