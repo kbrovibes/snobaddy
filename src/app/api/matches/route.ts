@@ -47,6 +47,6 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  backfillMatchQueue(session_id).catch(() => {});
+  await backfillMatchQueue(session_id);
   return NextResponse.json({ ok: true });
 }

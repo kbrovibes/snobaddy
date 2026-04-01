@@ -424,12 +424,22 @@ export async function replacePlayerInProposedMatches(
   }
 }
 
+function shuffled<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 function findBestMatch(available: any[], justPlayed: Set<string>, history: any[], waitMinutes: Map<string, number>) {
-  const sortedAvailable = [...available].sort((a, b) => {
-    const aRested = justPlayed.has(a.id) ? 1 : 0;
-    const bRested = justPlayed.has(b.id) ? 1 : 0;
-    return aRested - bRested;
-  });
+  // Shuffle within each group independently so the anchor varies across calls.
+  // Rested players (not just-played) still come first — the priority is preserved,
+  // but which rested player anchors the search changes each invocation.
+  const rested = shuffled(available.filter(p => !justPlayed.has(p.id)));
+  const justPlayedArr = shuffled(available.filter(p => justPlayed.has(p.id)));
+  const sortedAvailable = [...rested, ...justPlayedArr];
 
   const anchor = sortedAvailable[0];
   const others = sortedAvailable.slice(1);
@@ -520,8 +530,11 @@ function scoreMatch(t1: any[], t2: any[], justPlayed: Set<string>, history: any[
 
   // 5. Wait-time fairness: reward including players who have been waiting longer.
   // 3 pts/min — a 30-min wait adds +90, meaningful vs the -100/skill-level-diff penalty.
+  // ±10 pt jitter per player breaks scoring ties and prevents the same combination
+  // from winning every time when wait times and skills are nearly identical.
   for (const p of allPlayers) {
     score += (waitMinutes.get(p.id) ?? 0) * 3;
+    score += Math.random() * 20 - 10;
   }
 
   // 6. Phase Logic

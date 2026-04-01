@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.15.5] - 2026-03-31
+
+### Fixed
+- **Match queue backfill race condition** — backfill is now awaited before the API response returns, so the new proposed match is always visible on the next page load after recording a score.
+- **Deleting a proposed match now triggers backfill** — manually removing a match from the queue immediately generates a replacement; the queue no longer stays one short until the next score is recorded.
+- **Same pairing re-generated after deletion** — the match selection algorithm now shuffles the available player pool (within rested/just-played groups) before choosing the anchor, so different combinations are explored each call. A ±10 pt score jitter also breaks ties between equally-ranked lineups.
+
+---
+
 ## [0.15.4] - 2026-03-31
 
 ### Changed
