@@ -62,7 +62,7 @@ export default async function PlayersPage() {
                 {index + 1}
               </span>
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-gray-900 flex items-center gap-1 min-w-0">
+                <div className="text-gray-900 flex items-center gap-1 min-w-0">
                   <span className="truncate">{player.name}</span>
                   {player.is_admin && <span className="text-blue-400 text-xs shrink-0">★</span>}
                 </div>
