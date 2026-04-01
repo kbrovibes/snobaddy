@@ -154,7 +154,7 @@ export default function RecordMatchForm({
         <div className="fixed inset-0 z-50 flex flex-col bg-white">
           {/* Header */}
           <div className="flex items-center justify-between px-4 h-14 border-b border-gray-100 shrink-0">
-            <button onClick={close} className="text-gray-400 text-sm">Cancel</button>
+            <button onClick={close} className="text-red-400 text-sm font-medium">Cancel</button>
             <h2 className="font-bold text-gray-900">Record Match</h2>
             <button
               onClick={submit}
