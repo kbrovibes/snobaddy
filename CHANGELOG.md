@@ -10,7 +10,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ### Changed
 - **Match history grouped by session** — the player profile page now groups match history by session with a date header per session, instead of a flat paginated list.
-- **Session scoreboard shows match count** — the "Tonight's Scores" header now includes the number of matches played in the session.
+- **Session scoreboard shows match count** — the per-player scoreboard table now includes an "M" (matches played) column.
 - **Leaderboard drops Skill Level column** — removed the "S" column from the season leaderboard.
 
 ---

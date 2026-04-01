@@ -40,7 +40,6 @@ export default async function PlayerProfilePage({
     getPlayerMatchesBySession(id),
   ]);
 
-  const total = matchesBySession.reduce((s, g) => s + g.matches.length, 0);
   const totalWins = sessionHistory.reduce((s, r) => s + r.wins, 0);
   const totalLosses = sessionHistory.reduce((s, r) => s + r.losses, 0);
   const overallPct = totalWins + totalLosses > 0
@@ -78,7 +77,7 @@ export default async function PlayerProfilePage({
       {/* Match history */}
       <div className="bg-white rounded-xl shadow-sm px-4 py-3">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-          Match History · {total}
+          Match History
         </h2>
 
         {matchesBySession.length === 0 ? (
