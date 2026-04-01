@@ -28,6 +28,10 @@ Single source of truth for all planned and completed work.
 
 ---
 
+- [ ] **14 — Multiple Sessions Per Day** · [spec](specs/14-multi-session-per-day.md) · Allow admins to create more than one session on the same date; auto-numbered `#1`, `#2`; primarily for testing
+
+---
+
 ## Future (unspecced)
 
 - **First-name collisions** — when two checked-in players share a first name, show a disambiguating initial or last name; affects session scoreboard, match cards, and player detail page
