@@ -92,6 +92,14 @@ function getQueueCap(checkedInCount: number): number {
  * Does nothing if fewer than 8 players are checked in.
  */
 export async function backfillMatchQueue(sessionId: string): Promise<void> {
+  const { data: session } = await supabase
+    .from("sessions")
+    .select("auto_generate_matches")
+    .eq("id", sessionId)
+    .maybeSingle();
+
+  if (!session?.auto_generate_matches) return;
+
   const { count: checkedInCount } = await supabase
     .from("session_players")
     .select("*", { count: "exact", head: true })

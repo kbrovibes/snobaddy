@@ -142,6 +142,8 @@ export default async function SessionDetailPage({
             sessionId={session.id}
             matches={proposedMatches}
             checkedInPlayers={checkedInPlayers}
+            isAdmin={isAdmin}
+            autoGenerate={session.auto_generate_matches}
           />
 
           {/* Record match */}

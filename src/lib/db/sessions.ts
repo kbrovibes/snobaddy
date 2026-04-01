@@ -4,6 +4,7 @@ export interface Session {
   id: string;
   date: string;
   status: "pending" | "active" | "completed";
+  auto_generate_matches: boolean;
   season: { id: string; name: string };
 }
 
@@ -109,7 +110,7 @@ export async function getSessionById(id: string): Promise<Session | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("sessions")
-    .select("id, date, status, seasons(id, name)")
+    .select("id, date, status, auto_generate_matches, seasons(id, name)")
     .eq("id", id)
     .maybeSingle();
   if (!data) return null;

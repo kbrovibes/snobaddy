@@ -8,10 +8,13 @@ interface Props {
   sessionId: string;
   matches: ProposedMatch[];
   checkedInPlayers: any[];
+  isAdmin: boolean;
+  autoGenerate: boolean;
 }
 
-export default function ProposedMatchList({ sessionId, matches, checkedInPlayers }: Props) {
+export default function ProposedMatchList({ sessionId, matches, checkedInPlayers, isAdmin, autoGenerate }: Props) {
   const [loading, setLoading] = useState(false);
+  const [togglingAuto, setTogglingAuto] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [scoringId, setScoringId] = useState<string | null>(null);
   const [score1, setScore1] = useState("");
@@ -19,6 +22,17 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  async function toggleAutoGenerate() {
+    setTogglingAuto(true);
+    await fetch(`/api/sessions/${sessionId}/auto-generate`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ auto_generate_matches: !autoGenerate }),
+    });
+    router.refresh();
+    setTogglingAuto(false);
+  }
 
   async function handleSuggest() {
     setLoading(true);
@@ -99,15 +113,31 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
           Proposed Matches · {matches.length}
         </h2>
-        {matches.length < 4 && (
-          <button
-            onClick={handleSuggest}
-            disabled={loading}
-            className="text-xs text-blue-600 font-bold hover:underline"
-          >
-            {loading ? "Generating..." : "✨ Generate Matches"}
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {isAdmin && (
+            <button
+              onClick={toggleAutoGenerate}
+              disabled={togglingAuto}
+              className={`text-xs font-medium transition-colors ${
+                autoGenerate
+                  ? "text-blue-600 hover:text-blue-800"
+                  : "text-gray-400 hover:text-gray-600"
+              }`}
+              title={autoGenerate ? "Auto-generate is on — tap to disable" : "Auto-generate is off — tap to enable"}
+            >
+              {togglingAuto ? "..." : autoGenerate ? "⚡ Auto" : "⚡ Auto off"}
+            </button>
+          )}
+          {matches.length < 4 && (
+            <button
+              onClick={handleSuggest}
+              disabled={loading}
+              className="text-xs text-blue-600 font-bold hover:underline"
+            >
+              {loading ? "Generating..." : "✨ Generate Matches"}
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-col gap-2">
