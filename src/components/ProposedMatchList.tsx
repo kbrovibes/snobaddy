@@ -58,7 +58,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
       <div className="flex flex-col gap-2">
         {matches.map((m) => (
           <div key={m.id} className="bg-white border border-blue-50 rounded-xl p-3 shadow-sm">
-            <div className="grid grid-cols-[1fr_2rem_1fr] items-center gap-1 text-sm text-gray-800 mb-3">
+            <div className="grid grid-cols-[1fr_2rem_1fr] items-center gap-1 text-base text-gray-800 mb-3">
               <div className="text-right">
                 {m.team1_names?.map((n, i) => (
                   <div key={i}>{n.split(" ")[0]}</div>
@@ -90,7 +90,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
               </div>
               <button
                 onClick={() => handleDelete(m.id)}
-                className="flex-1 py-2 bg-gray-50 text-gray-400 text-xs font-bold rounded-lg hover:bg-red-50 hover:text-red-400 transition-colors"
+                className="flex-1 py-2 bg-red-50 text-red-400 text-xs font-bold rounded-lg hover:bg-red-100 hover:text-red-500 transition-colors"
               >
                 🗑️ Delete
               </button>
