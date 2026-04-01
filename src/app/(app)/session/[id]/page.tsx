@@ -183,7 +183,7 @@ export default async function SessionDetailPage({
                   <div key={p.player_id} className="flex items-center px-1">
                     <span className="text-xs text-gray-300 w-5 shrink-0">{i + 1}</span>
                     <span className={`flex-1 text-sm font-medium truncate ${p.player_id === playerId ? "text-blue-600" : "text-gray-800"}`}>
-                      {p.name}
+                      {getFirstName(p.name)}
                     </span>
                     <span className="w-8 text-center text-sm tabular-nums text-gray-500">{p.matches_played}</span>
                     <span className="w-8 text-center text-sm font-bold text-green-600">{p.wins}</span>
@@ -225,8 +225,8 @@ export default async function SessionDetailPage({
                   {isAdmin && isActive && (
                     <MatchAdminControls
                       matchId={m.id}
-                      team1Names={m.team1}
-                      team2Names={m.team2}
+                      team1Names={m.team1.map(getFirstName) as [string, string]}
+                      team2Names={m.team2.map(getFirstName) as [string, string]}
                       team1Score={m.team1_score}
                       team2Score={m.team2_score}
                     />

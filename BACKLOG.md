@@ -30,6 +30,8 @@ Single source of truth for all planned and completed work.
 
 ## Future (unspecced)
 
+- **First-name collisions** — when two checked-in players share a first name, show a disambiguating initial or last name; affects session scoreboard, match cards, and player detail page
+
 Add specs for these before implementing. Use the spec template in `AGENTS.md`.
 
 - **Prior seasons** — read-only history of past seasons: leaderboard, match log, prize highlights

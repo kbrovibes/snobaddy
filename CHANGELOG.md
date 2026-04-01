@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.15.1] - 2026-03-31
+
+### Changed
+- **First names only in session view** — the scoreboard and match admin controls now show first names instead of full names.
+
+---
+
 ## [0.15.0] - 2026-03-31
 
 ### Changed
