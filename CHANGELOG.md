@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.14.0] - 2026-03-31
+
+### Added
+- **Email Sign-up / Sign-in** — users can now create accounts and sign in with email/password alongside Google OAuth.
+- **Password Reset** — added a "Forgot password" flow with email reset links.
+
+---
+
 ## [0.13.1] - 2026-03-31
 
 ### Changed
