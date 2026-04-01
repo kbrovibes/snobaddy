@@ -60,7 +60,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
           <div key={m.id} className="bg-white border border-blue-50 rounded-xl p-3 shadow-sm">
             <div className="flex items-center justify-between gap-2 mb-3">
               <div className="text-sm font-medium text-gray-800 flex-1">
-                {m.team1_names?.join(" & ")} <span className="text-gray-300 font-normal mx-1">vs</span> {m.team2_names?.join(" & ")}
+                {m.team1_names?.map((n) => n.split(" ")[0]).join(" & ")} <span className="text-gray-300 font-normal mx-1">vs</span> {m.team2_names?.map((n) => n.split(" ")[0]).join(" & ")}
               </div>
               <button
                 onClick={() => handleDelete(m.id)}
