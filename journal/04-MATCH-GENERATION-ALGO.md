@@ -77,7 +77,7 @@ Checked-in count │ Queue cap │ Why
 ─────────────────┼───────────┼──────────────────────────────────────────────────
     < 8          │     0     │ Can't fill 2 full matches; no auto-generation
    8 – 11        │     2     │ One wave (both courts)
-  12 – 15        │     3     │ One wave + one overflow match
+  ≥ 12           │     4     │ Two full waves; wave 2 can reuse wave 1 players
   ≥ 16           │     4     │ Two full waves
 ```
 
@@ -127,22 +127,30 @@ Wave 2 (lock resets):
   Slot 3 (Court 2): ...
 ```
 
-### Fresh-player preference in Wave 2
+### Wave 2 uses the full pool
 
-When filling Wave 2, the algorithm first tries to form a match using **only**
-players who did NOT appear in Wave 1. This ensures that if there are ≥ 8 rested
-players, everyone plays before anyone plays twice.
+Wave 2 draws from **all checked-in players** who are not hard-locked in the other
+Wave 2 match. Wave 1 players are valid candidates — they will physically be free by
+the time Wave 2 starts.
+
+Fairness is handled by the scoring system, not by hard exclusion. Players who just
+played in Wave 1 will have lower wait times and thus lower scores, so the algorithm
+naturally prefers players who've been sitting out. But if no better option exists
+(e.g., 12 players checked in and Wave 2 slot 3 needs a 4th), Wave 1 players are
+picked without penalty.
 
 ```
-12 players checked in:
+12 players checked in (A–L):
 
-Wave 1 uses: A, B, C, D, E, F, G, H  (8 players, both courts)
-Wave 2 pool first: I, J, K, L         (4 remaining — just enough for 1 match)
+Wave 1:
+  Slot 0: A, B, C, D  ← waveLocked: {A,B,C,D}
+  Slot 1: E, F, G, H  ← waveLocked: {A,B,C,D,E,F,G,H}
 
-If only 9 players checked in:
-Wave 1 uses: A, B, C, D, E, F, G, H
-Wave 2 fresh pool: I                  (only 1 — not enough for a full match)
-Wave 2 falls back to full pool: A–I available
+Wave 2 (waveLocked clears at start of each new wave):
+  Slot 2: pool = {A–L}, picks I, J, K, L (highest scores — haven't played)
+           waveLocked: {I,J,K,L}
+  Slot 3: pool = {A–H} (I–L are locked in slot 2)
+           scoring favours whoever has waited longest among A–H
 ```
 
 ---
@@ -597,6 +605,40 @@ distributions), the same one always won.
 
 **Fix:** Added `±10 pt` jitter per player to the wait-time component. Small enough
 to never override a genuine balance decision, large enough to break scoring ties.
+
+---
+
+### Bug 6: Queue cap too conservative — 12–15 players capped at 3 matches
+
+**Symptom:** With 15 players checked in, deleting a proposed match from a 4-match
+queue did not trigger a replacement. Queue stayed at 3.
+
+**Cause:** `getQueueCap(15)` returned `3` (due to the `< 16 → 3` tier). If the
+queue had 4 matches (generated while cap was 4, or via the manual propose endpoint)
+and one was deleted, `needed = 3 - 3 = 0` → backfill no-ops. The cap was simply too
+low: 12+ players can comfortably run two full waves of 4 matches.
+
+**Fix:** Removed the `12–15 → 3` tier entirely. Cap is now `< 12 → 2`, `≥ 12 → 4`.
+
+---
+
+### Bug 7: Wave 2 hard-excluded wave 1 players from its candidate pool
+
+**Symptom:** With 12+ players, wave 2 matches sometimes failed to generate because
+the fresh-player pool didn't have enough candidates, and the fallback to the full
+pool was inconsistent.
+
+**Cause:** Wave 2 used a two-phase candidate selection:
+1. Build a "fresh" pool of players not in wave 1
+2. Only fall back to the full pool if fresh pool < 4
+
+This was well-intentioned (prioritise players who haven't played yet) but incorrect:
+wave 1 finishes before wave 2 starts, so wave 1 players are physically available.
+The hard exclusion made wave 2 generation fragile in mid-range player counts.
+
+**Fix:** Removed the fresh-preference logic entirely. Wave 2 always uses the full
+pool of non-wave-locked players. The wait-time scoring bonus naturally deprioritises
+wave 1 players (they have lower wait minutes) — no hard exclusion needed.
 
 ---
 

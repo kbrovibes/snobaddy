@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.15.7] - 2026-03-31
+
+### Fixed
+- **Queue cap for 12–15 players** — the cap was 3, so deleting a match from a 4-match queue left it permanently at 3. Now 12+ players always maintain a 4-match queue.
+- **Wave 2 candidate pool** — wave 2 matches now draw from all checked-in players (not just those who didn't play in wave 1). Wait-time scoring already deprioritises wave 1 players naturally; the hard exclusion was unnecessary and caused generation failures at mid-range player counts.
+
+---
+
 ## [0.15.6] - 2026-03-31
 
 ### Changed

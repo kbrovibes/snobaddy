@@ -83,7 +83,6 @@ function balanceTeams(players: any[]): { team1: any[]; team2: any[] } {
 function getQueueCap(checkedInCount: number): number {
   if (checkedInCount < 8) return 0;
   if (checkedInCount < 12) return 2;
-  if (checkedInCount < 16) return 3;
   return 4;
 }
 
@@ -188,11 +187,16 @@ export async function proposeNextMatches(sessionId: string, cap = 4) {
     waitMinutes.set(p.id, Math.max(0, sinceMs / 60_000));
   }
 
-  // 4. Fill up to 4 proposals using wave-based locking with fresh-player preference.
+  // 4. Fill up to cap proposals using wave-based locking.
   //
-  // Waves: only COURTS matches run at once. Within a wave, a player can't appear twice.
-  // Between waves the hard lock resets, BUT wave 2 prefers "fresh" players (not used in
-  // wave 1) before falling back to the full pool.
+  // Waves: only COURTS matches run simultaneously. Within a wave, a player can't appear
+  // in both matches (hard lock). Between waves the lock resets — all checked-in players
+  // are candidates again.
+  //
+  // Wave 2 players are drawn from the FULL pool (not just "fresh" players). Wave 1 will
+  // have finished by the time wave 2 starts, so wave 1 players are legitimate candidates
+  // for wave 2 matches. The wait-time scoring bonus naturally deprioritises players who
+  // just played in wave 1 without hard-excluding them.
   //
   // Working history = completed matches + deleted proposals + newly proposed matches.
   // Deleted proposals carry the same -5000 exact-duplicate penalty as any repeated match,
@@ -211,40 +215,25 @@ export async function proposeNextMatches(sessionId: string, cap = 4) {
     ...(deletedProposed ?? []),   // ← deleted proposals seeded here
   ];
 
-  // Players used in wave 1 (hard-locked from wave 2 preference pool, but not excluded).
-  const wave1Players = new Set<string>();
-
-  // Seed per-wave state from existing active proposals.
+  // Seed waveLocked from the tail of existing proposals that share the current wave.
   const currentWaveOffset = existingCount % COURTS;
   const waveLocked = new Set<string>();
   existingProposed?.forEach((m, idx) => {
-    const pids = [m.team1_player1_id, m.team1_player2_id, m.team2_player1_id, m.team2_player2_id];
-    if (Math.floor(idx / COURTS) === 0) pids.forEach(id => wave1Players.add(id));
-    if (idx >= existingCount - currentWaveOffset) pids.forEach(id => waveLocked.add(id));
+    if (idx >= existingCount - currentWaveOffset) {
+      [m.team1_player1_id, m.team1_player2_id, m.team2_player1_id, m.team2_player2_id]
+        .forEach(id => waveLocked.add(id));
+    }
   });
 
   for (let i = 0; i < needed; i++) {
-    const absoluteSlot = existingCount + i;
-    const slotInWave = absoluteSlot % COURTS;
-    const waveNum = Math.floor(absoluteSlot / COURTS);
+    const slotInWave = (existingCount + i) % COURTS;
 
     if (slotInWave === 0) {
-      // New wave — hard lock resets (players can play again)
+      // New wave — hard lock resets so all checked-in players are candidates again.
       waveLocked.clear();
     }
 
-    // In wave 2+, prefer players who haven't played yet (not in wave1Players).
-    // Only fall back to the full pool if there aren't 4 fresh players left.
-    let available: any[];
-    if (waveNum >= 1) {
-      const fresh = players.filter(p => !waveLocked.has(p.id) && !wave1Players.has(p.id));
-      available = fresh.length >= 4
-        ? fresh
-        : players.filter(p => !waveLocked.has(p.id));
-    } else {
-      available = players.filter(p => !waveLocked.has(p.id));
-    }
-
+    const available = players.filter(p => !waveLocked.has(p.id));
     if (available.length < 4) break;
 
     const match = findBestMatch(available, justPlayed, workingHistory, waitMinutes);
@@ -269,10 +258,7 @@ export async function proposeNextMatches(sessionId: string, cap = 4) {
         team2_player1_id: team2[0].id,
         team2_player2_id: team2[1].id,
       });
-      match.players.forEach(p => {
-        waveLocked.add(p.id);
-        if (waveNum === 0) wave1Players.add(p.id);
-      });
+      match.players.forEach(p => waveLocked.add(p.id));
     }
   }
 
