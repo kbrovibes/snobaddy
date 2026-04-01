@@ -11,9 +11,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const userName = user.user_metadata?.full_name ?? user.email ?? "Player";
 
+  const { data: player } = await supabase
+    .from("players")
+    .select("id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header userName={userName} />
+      <Header userName={userName} playerId={player?.id ?? null} />
       {/* pt-14 clears the fixed header, pb-16 clears the fixed bottom nav */}
       <main className="flex-1 pt-14 pb-16">
         {children}
