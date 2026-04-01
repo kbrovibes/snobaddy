@@ -28,6 +28,7 @@ Single source of truth for all planned and completed work.
 
 ---
 
+- [ ] **15 — God Mode** · [spec](specs/15-god-mode.md) · Super-admin role (Karthik only); first feature: Reset Session wipes all matches + proposals with confirmation
 - [ ] **14 — Multiple Sessions Per Day** · [spec](specs/14-multi-session-per-day.md) · Allow admins to create more than one session on the same date; auto-numbered `#1`, `#2`; primarily for testing
 
 ---
