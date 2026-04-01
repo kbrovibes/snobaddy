@@ -12,6 +12,7 @@ interface Props {
 
 export default function ProposedMatchList({ sessionId, matches, checkedInPlayers }: Props) {
   const [loading, setLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [scoringId, setScoringId] = useState<string | null>(null);
   const [score1, setScore1] = useState("");
   const [score2, setScore2] = useState("");
@@ -27,8 +28,10 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
   }
 
   async function handleDelete(id: string) {
+    setDeletingId(id);
     await fetch(`/api/proposed-matches/${id}`, { method: "DELETE" });
     router.refresh();
+    setDeletingId(null);
   }
 
   function startScoring(id: string) {
@@ -102,7 +105,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
             disabled={loading}
             className="text-xs text-blue-600 font-bold hover:underline"
           >
-            {loading ? "Generating..." : "+ Add Matches"}
+            {loading ? "Generating..." : "✨ Generate Matches"}
           </button>
         )}
       </div>
@@ -186,9 +189,10 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
                     </button>
                     <button
                       onClick={() => handleDelete(m.id)}
-                      className="flex-1 py-2 bg-red-50 text-red-400 text-xs font-bold rounded-lg hover:bg-red-100 hover:text-red-500 transition-colors"
+                      disabled={deletingId === m.id}
+                      className="flex-1 py-2 bg-red-50 text-red-400 text-xs font-bold rounded-lg hover:bg-red-100 hover:text-red-500 transition-colors disabled:opacity-50"
                     >
-                      🗑️ Delete
+                      {deletingId === m.id ? "Deleting..." : "🗑️ Delete"}
                     </button>
                   </>
                 )}
