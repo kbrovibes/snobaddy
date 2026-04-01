@@ -37,12 +37,72 @@ export async function getProposedMatches(sessionId: string): Promise<ProposedMat
   }));
 }
 
-/** Soft-delete so the scorer remembers and penalises re-picking the same group. */
-export async function deleteProposedMatch(id: string) {
-  await supabase
+/** Soft-delete so the scorer remembers and penalises re-picking the same group. Returns the session_id. */
+export async function deleteProposedMatch(id: string): Promise<string | null> {
+  const { data } = await supabase
     .from("proposed_matches")
     .update({ deleted_at: new Date().toISOString() })
-    .eq("id", id);
+    .eq("id", id)
+    .select("session_id")
+    .single();
+  return data?.session_id ?? null;
+}
+
+/**
+ * Enumerate all 3 possible 2v2 splits for 4 players and return the most balanced one.
+ * Tiebreak: prefer the split where skill is most evenly distributed within each team.
+ */
+function balanceTeams(players: any[]): { team1: any[]; team2: any[] } {
+  const [a, b, c, d] = players;
+  const splits = [
+    { team1: [a, b], team2: [c, d] },
+    { team1: [a, c], team2: [b, d] },
+    { team1: [a, d], team2: [b, c] },
+  ];
+
+  const skillDiff = (s: (typeof splits)[number]) =>
+    Math.abs(
+      (s.team1[0].skill_level + s.team1[1].skill_level) -
+      (s.team2[0].skill_level + s.team2[1].skill_level)
+    );
+  const intraSpread = (s: (typeof splits)[number]) =>
+    Math.abs(s.team1[0].skill_level - s.team1[1].skill_level) +
+    Math.abs(s.team2[0].skill_level - s.team2[1].skill_level);
+
+  let best = splits[0];
+  for (const split of splits.slice(1)) {
+    const d1 = skillDiff(split), d0 = skillDiff(best);
+    if (d1 < d0 || (d1 === d0 && intraSpread(split) < intraSpread(best))) {
+      best = split;
+    }
+  }
+  return best;
+}
+
+/** Max proposed matches to auto-maintain based on how many players are checked in. */
+function getQueueCap(checkedInCount: number): number {
+  if (checkedInCount < 8) return 0;
+  if (checkedInCount < 12) return 2;
+  if (checkedInCount < 16) return 3;
+  return 4;
+}
+
+/**
+ * Auto-backfill: called after check-in, match record, or proposal delete.
+ * Fills the queue up to the dynamic cap for the current checked-in count.
+ * Does nothing if fewer than 8 players are checked in.
+ */
+export async function backfillMatchQueue(sessionId: string): Promise<void> {
+  const { count: checkedInCount } = await supabase
+    .from("session_players")
+    .select("*", { count: "exact", head: true })
+    .eq("session_id", sessionId)
+    .is("checked_out_at", null);
+
+  const cap = getQueueCap(checkedInCount ?? 0);
+  if (cap === 0) return;
+
+  await proposeNextMatches(sessionId, cap);
 }
 
 const COURTS = 2; // matches that run simultaneously
@@ -57,7 +117,7 @@ const COURTS = 2; // matches that run simultaneously
  * -5000 exact-duplicate penalty fires before picking a previously-rejected group again.
  * The deleted group CAN still be selected if it's the only viable option.
  */
-export async function proposeNextMatches(sessionId: string) {
+export async function proposeNextMatches(sessionId: string, cap = 4) {
   // 1. Get current state
   const { data: checkedIn } = await supabase
     .from("session_players")
@@ -138,7 +198,7 @@ export async function proposeNextMatches(sessionId: string) {
   // Deleted proposals carry the same -5000 exact-duplicate penalty as any repeated match,
   // so the scorer strongly avoids re-picking them unless there is no other option.
   const existingCount = existingProposed?.length ?? 0;
-  const needed = 4 - existingCount;
+  const needed = cap - existingCount;
   const newProposals = [];
 
   const workingHistory: Array<{
@@ -189,20 +249,25 @@ export async function proposeNextMatches(sessionId: string) {
 
     const match = findBestMatch(available, justPlayed, workingHistory, waitMinutes);
     if (match) {
+      const { team1, team2 } = balanceTeams(match.players);
+      const balancedSkillDiff = Math.abs(
+        (team1[0].skill_level + team1[1].skill_level) -
+        (team2[0].skill_level + team2[1].skill_level)
+      );
       newProposals.push({
         session_id: sessionId,
-        team1_player1_id: match.players[0].id,
-        team1_player2_id: match.players[1].id,
-        team2_player1_id: match.players[2].id,
-        team2_player2_id: match.players[3].id,
-        avg_skill_diff: match.skillDiff
+        team1_player1_id: team1[0].id,
+        team1_player2_id: team1[1].id,
+        team2_player1_id: team2[0].id,
+        team2_player2_id: team2[1].id,
+        avg_skill_diff: balancedSkillDiff,
       });
       // Register this proposal so future slots in this batch avoid repeating it.
       workingHistory.push({
-        team1_player1_id: match.players[0].id,
-        team1_player2_id: match.players[1].id,
-        team2_player1_id: match.players[2].id,
-        team2_player2_id: match.players[3].id,
+        team1_player1_id: team1[0].id,
+        team1_player2_id: team1[1].id,
+        team2_player1_id: team2[0].id,
+        team2_player2_id: team2[1].id,
       });
       match.players.forEach(p => {
         waveLocked.add(p.id);

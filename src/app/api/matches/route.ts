@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase-server";
+import { backfillMatchQueue } from "@/lib/db/proposed";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -46,5 +47,6 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  backfillMatchQueue(session_id).catch(() => {});
   return NextResponse.json({ ok: true });
 }

@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.15.2] - 2026-03-31
+
+### Changed
+- **Team balancing** — proposed matches now always assign the 4 selected players to the most skill-balanced teams (all 3 possible 2v2 splits evaluated; tiebreak by minimising intra-team skill gap).
+- **Dynamic queue cap** — the queue auto-maintains 2 matches for 8–11 players, 3 for 12–15, 4 for 16+. No matches auto-generate until at least 8 players are checked in.
+- **Auto-backfill** — the queue automatically refills after a match is recorded, a proposed match is deleted, or a player checks in.
+
+---
+
 ## [0.15.1] - 2026-03-31
 
 ### Changed

@@ -19,7 +19,7 @@ Single source of truth for all planned and completed work.
 - [ ] **11 — Admin: Add Player** · [spec](specs/11-admin-add-player.md) · Admin adds a name + skill level from the Players page; player has no auth account (bot/guest)
 - [ ] **09 — Fix Online Indicator** · [spec](specs/09-online-indicator-fix.md) · SSR race condition + missing DB column mean green dots never appear; fix with client-side fetch after ping
 - [ ] **08 — Ethan Mode** · [spec](specs/08-ethan-mode.md) · Easter egg: DB-persisted admin toggle that biases match suggestions (Chitra favored, Kiran Iyer skipped); banner visible to all when active
-- [ ] **12 — Match Queue Improvements** · [spec](specs/12-match-queue-improvements.md) · Optimal team balancing within each match; auto-backfill queue when a match is removed; dynamic queue cap based on checked-in count (no auto-gen until 8 players)
+- [x] **12 — Match Queue Improvements** · [spec](specs/12-match-queue-improvements.md) · Optimal team balancing within each match; auto-backfill queue when a match is removed; dynamic queue cap based on checked-in count (no auto-gen until 8 players)
 - [x] **13 — UI Tweaks** · [spec](specs/13-ui-tweaks.md) · Session stats show total match count; player detail groups results by session; leaderboard drops Skill Level column
 
 ---
