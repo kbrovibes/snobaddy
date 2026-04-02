@@ -30,19 +30,6 @@ export default function OnboardingPage() {
     router.push("/");
   }
 
-  async function skip() {
-    setSaving(true);
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase
-        .from("players")
-        .update({ skill_level: 3, onboarding_complete: true })
-        .eq("user_id", user.id);
-    }
-    router.push("/");
-  }
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-6 bg-gray-50">
       <div className="flex flex-col items-center gap-2 text-center">
@@ -87,13 +74,9 @@ export default function OnboardingPage() {
         >
           {saving ? "Saving…" : "Save & Continue"}
         </button>
-        <button
-          onClick={skip}
-          disabled={saving}
-          className="w-full py-2 text-gray-400 text-sm hover:text-gray-600 transition-colors"
-        >
-          Skip for now (I'll be set to Intermediate)
-        </button>
+        <p className="text-center text-xs text-gray-400">
+          You can update this anytime from the Players page.
+        </p>
       </div>
     </main>
   );

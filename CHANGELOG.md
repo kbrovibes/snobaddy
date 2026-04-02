@@ -6,6 +6,18 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.16.0] - 2026-04-01
+
+### Fixed
+- **Email sign-up onboarding** — users who signed in via email/password without clicking their confirmation link would land in a broken state (invisible in player list, unable to check in, no onboarding prompt). The app layout now creates a player stub if none exists and hard-redirects to onboarding until `onboarding_complete` is set.
+- **Onboarding gate** — any authenticated user who hasn't completed onboarding is now redirected to `/onboarding` regardless of which path they took to get into the app.
+
+### Changed
+- **Onboarding page** — removed the "Skip for now" button. Players must pick a skill level to continue. A note is shown that it can be updated from the Players page.
+- **Default skill level for new stubs** — player records created without onboarding default to skill 2 (Casual) instead of 3 (Intermediate).
+
+---
+
 ## [0.15.7] - 2026-03-31
 
 ### Fixed
