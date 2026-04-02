@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.5] - 2026-04-01
+
+### Changed
+- **Session Awards** — odd card (e.g. 5th) now spans full width so the grid is always fully packed; card content is center-aligned.
+
+---
+
 ## [0.17.4] - 2026-03-31
 
 ### Added

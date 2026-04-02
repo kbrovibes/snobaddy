@@ -12,9 +12,9 @@ interface AwardCardProps {
   stat: string;
 }
 
-function AwardCard({ emoji, title, description, name, stat }: AwardCardProps) {
+function AwardCard({ emoji, title, description, name, stat, wide }: AwardCardProps & { wide?: boolean }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 px-4 py-3 flex flex-col gap-1">
+    <div className={`bg-white rounded-xl shadow-sm border border-gray-100 px-4 py-3 flex flex-col items-center gap-1 text-center${wide ? " col-span-2" : ""}`}>
       <span className="text-2xl">{emoji}</span>
       <span className="text-xs font-semibold text-gray-700 leading-tight">{title}</span>
       <span className="text-xs text-gray-400 leading-tight">{description}</span>
@@ -87,8 +87,8 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
         Session Awards
       </h2>
       <div className="grid grid-cols-2 gap-3">
-        {cards.map((card) => (
-          <AwardCard key={card.title} {...card} />
+        {cards.map((card, i) => (
+          <AwardCard key={card.title} {...card} wide={cards.length % 2 === 1 && i === cards.length - 1} />
         ))}
       </div>
     </div>
