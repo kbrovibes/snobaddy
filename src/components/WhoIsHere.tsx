@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Player {
   player_id: string;
@@ -57,9 +58,21 @@ function SortHeader({
   );
 }
 
-export default function WhoIsHere({ players, onlinePlayerIds }: { players: Player[]; onlinePlayerIds?: Set<string> }) {
+export default function WhoIsHere({
+  players,
+  onlinePlayerIds,
+  isAdmin,
+  sessionId,
+}: {
+  players: Player[];
+  onlinePlayerIds?: Set<string>;
+  isAdmin?: boolean;
+  sessionId?: string;
+}) {
+  const router = useRouter();
   const [sortKey, setSortKey] = useState<SortKey>("checked_in_at");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [checkingOut, setCheckingOut] = useState<string | null>(null);
 
   function handleSort(key: SortKey) {
     if (key === sortKey) {
@@ -67,6 +80,21 @@ export default function WhoIsHere({ players, onlinePlayerIds }: { players: Playe
     } else {
       setSortKey(key);
       setSortDir("asc");
+    }
+  }
+
+  async function handleCheckout(playerId: string) {
+    if (!sessionId) return;
+    setCheckingOut(playerId);
+    try {
+      await fetch(`/api/sessions/${sessionId}/checkout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ player_id: playerId }),
+      });
+      router.refresh();
+    } finally {
+      setCheckingOut(null);
     }
   }
 
@@ -96,7 +124,7 @@ export default function WhoIsHere({ players, onlinePlayerIds }: { players: Playe
         <div className="w-24 flex justify-center">
           <SortHeader label="Skill" sortKey="skill_level" current={sortKey} dir={sortDir} onSort={handleSort} />
         </div>
-        <div className="w-16 flex justify-end">
+        <div className={`flex justify-end ${isAdmin ? "w-28" : "w-16"}`}>
           <SortHeader label="Arrived" sortKey="checked_in_at" current={sortKey} dir={sortDir} onSort={handleSort} />
         </div>
       </div>
@@ -115,9 +143,22 @@ export default function WhoIsHere({ players, onlinePlayerIds }: { players: Playe
             <div className="w-24 flex justify-center">
               <SkillDots level={p.skill_level} />
             </div>
-            <span className="w-16 text-right text-xs text-gray-400 tabular-nums">
-              {formatTime(p.checked_in_at)}
-            </span>
+            {isAdmin ? (
+              <div className="w-28 flex items-center justify-end gap-2">
+                <span className="text-xs text-gray-400 tabular-nums">{formatTime(p.checked_in_at)}</span>
+                <button
+                  onClick={() => handleCheckout(p.player_id)}
+                  disabled={checkingOut === p.player_id}
+                  className="text-xs text-red-400 hover:text-red-600 font-medium disabled:opacity-40"
+                >
+                  {checkingOut === p.player_id ? "…" : "Out"}
+                </button>
+              </div>
+            ) : (
+              <span className="w-16 text-right text-xs text-gray-400 tabular-nums">
+                {formatTime(p.checked_in_at)}
+              </span>
+            )}
           </div>
         ))}
       </div>

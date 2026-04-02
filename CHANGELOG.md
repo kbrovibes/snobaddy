@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.4] - 2026-03-31
+
+### Added
+- **Sortable session scoreboard** — "Tonight's Scores" table columns (Player, M, W, L, Win%) are now clickable to sort ascending or descending. Defaults to Win% descending.
+- **Admin checkout from Who's Here** — admins now see an "Out" button next to each player in the Who's Here list, making it easy to remove someone who left without checking themselves out.
+
+---
+
 ## [0.17.3] - 2026-04-01
 
 ### Changed

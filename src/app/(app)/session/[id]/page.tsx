@@ -21,6 +21,7 @@ import WhoIsHere from "@/components/WhoIsHere";
 import BackToSessionsLink from "@/components/BackToSessionsLink";
 import OnlinePing from "@/components/OnlinePing";
 import SessionHighlights from "@/components/SessionHighlights";
+import SessionScoreboard from "@/components/SessionScoreboard";
 
 export const dynamic = "force-dynamic";
 
@@ -139,7 +140,7 @@ export default async function SessionDetailPage({
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
               Who's Here · {checkedInPlayers.length}
             </h2>
-            <WhoIsHere players={checkedInPlayers} onlinePlayerIds={onlinePlayerIds as Set<string>} />
+            <WhoIsHere players={checkedInPlayers} onlinePlayerIds={onlinePlayerIds as Set<string>} isAdmin={isAdmin} sessionId={session.id} />
           </div>
 
           {/* Proposed matches */}
@@ -174,39 +175,11 @@ export default async function SessionDetailPage({
 
       {/* Scoreboard — shown for active and completed */}
       {(isActive || isCompleted) && (
-        <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            Tonight's Scores · {recentMatches.length} {recentMatches.length === 1 ? "match" : "matches"}
-          </h2>
-          {scoreboard.length === 0 ? (
-            <p className="text-sm text-gray-400">No matches recorded yet.</p>
-          ) : (
-            <div className="flex flex-col gap-2">
-              <div className="flex text-xs text-gray-400 px-1 mb-1">
-                <span className="flex-1">Player</span>
-                <span className="w-8 text-center">M</span>
-                <span className="w-8 text-center">W</span>
-                <span className="w-8 text-center">L</span>
-                <span className="w-12 text-right">Win%</span>
-              </div>
-              {scoreboard.map((p, i) => {
-                const pct = p.matches_played ? Math.round((p.wins / p.matches_played) * 100) : 0;
-                return (
-                  <div key={p.player_id} className="flex items-center px-1">
-                    <span className="text-xs text-gray-300 w-5 shrink-0">{i + 1}</span>
-                    <span className={`flex-1 text-sm font-medium truncate ${p.player_id === playerId ? "text-blue-600" : "text-gray-800"}`}>
-                      {p.name}
-                    </span>
-                    <span className="w-8 text-center text-sm tabular-nums text-gray-500">{p.matches_played}</span>
-                    <span className="w-8 text-center text-sm font-bold text-green-600">{p.wins}</span>
-                    <span className="w-8 text-center text-sm font-bold text-red-400">{p.losses}</span>
-                    <span className="w-12 text-right text-sm text-gray-500">{pct}%</span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        <SessionScoreboard
+          scoreboard={scoreboard}
+          playerId={playerId}
+          matchCount={recentMatches.length}
+        />
       )}
 
       {/* Match history — shown for active and completed */}
