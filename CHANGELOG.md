@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.10] - 2026-04-01
+
+### Changed
+- **Session Awards** — now visible to all users (not just admins) on closed sessions.
+
+---
+
 ## [0.17.9] - 2026-04-01
 
 ### Changed

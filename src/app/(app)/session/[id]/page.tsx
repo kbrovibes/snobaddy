@@ -80,7 +80,7 @@ export default async function SessionDetailPage({
   const isActive = session.status === "active";
   const isCompleted = session.status === "completed";
 
-  const highlights = isCompleted && isAdmin
+  const highlights = isCompleted
     ? await getSessionHighlights(session.id)
     : null;
 
