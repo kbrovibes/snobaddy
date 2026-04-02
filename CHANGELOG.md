@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.6] - 2026-04-01
+
+### Changed
+- **Session Awards** — renamed four awards: The Sultan → The Slayer, Iron Shuttle → The Unstoppable, The Cannon → The Point Collector, No Mercy → The One with No Mercy. Updated emojis to match.
+
+---
+
 ## [0.17.5] - 2026-04-01
 
 ### Changed

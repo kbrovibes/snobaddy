@@ -31,8 +31,8 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
 
   if (sultan) {
     cards.push({
-      emoji: "👑",
-      title: "The Sultan",
+      emoji: "⚔️",
+      title: "The Slayer",
       description: "Most wins tonight",
       name: getFirstName(sultan.name),
       stat: `${sultan.wins} win${sultan.wins !== 1 ? "s" : ""}`,
@@ -41,8 +41,8 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
 
   if (ironShuttle) {
     cards.push({
-      emoji: "🦾",
-      title: "Iron Shuttle",
+      emoji: "🚀",
+      title: "The Unstoppable",
       description: "Most matches played",
       name: getFirstName(ironShuttle.name),
       stat: `${ironShuttle.matches} matches`,
@@ -61,8 +61,8 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
 
   if (cannon) {
     cards.push({
-      emoji: "💥",
-      title: "The Cannon",
+      emoji: "🎯",
+      title: "The Point Collector",
       description: "Most points scored",
       name: getFirstName(cannon.name),
       stat: `${cannon.points} pts`,
@@ -71,8 +71,8 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
 
   if (noMercy) {
     cards.push({
-      emoji: "😤",
-      title: "No Mercy",
+      emoji: "⚡",
+      title: "The One with No Mercy",
       description: "Biggest winning margin",
       name: noMercy.team.map(getFirstName).join(" & "),
       stat: `${noMercy.score} (gap ${noMercy.margin})`,
