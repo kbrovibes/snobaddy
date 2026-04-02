@@ -38,7 +38,7 @@ Single source of truth for all planned and completed work.
 ## Future (unspecced)
 
 - **First-name collisions** — when two checked-in players share a first name, show a disambiguating initial or last name; affects session scoreboard, match cards, and player detail page
-- **17 — Match Generation Audit Log** · [spec](specs/17-match-generation-audit-log.md) · Per-match decision log (players considered, scores, runners-up); zero-latency JSONB approach; admin ℹ️ button on proposed match cards
+- **18 — Match Generation Audit Log** · [spec](specs/18-match-generation-audit-log.md) · Per-match decision log (players considered, scores, runners-up); zero-latency JSONB approach; admin ℹ️ button on proposed match cards
 - **Long-wait player indicator (admin only)** — surface players who haven't been in a match for a long time; leaning toward contextual hint near proposed matches when a long-waiting player was skipped, but placement TBD
 
 Add specs for these before implementing. Use the spec template in `AGENTS.md`.
