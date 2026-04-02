@@ -7,16 +7,18 @@ function getFirstName(fullName: string) {
 interface AwardCardProps {
   emoji: string;
   title: string;
+  description: string;
   name: string;
   stat: string;
 }
 
-function AwardCard({ emoji, title, name, stat }: AwardCardProps) {
+function AwardCard({ emoji, title, description, name, stat }: AwardCardProps) {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 px-4 py-3 flex flex-col gap-1">
       <span className="text-2xl">{emoji}</span>
-      <span className="text-xs text-gray-400 font-medium leading-tight">{title}</span>
-      <span className="text-sm font-bold text-gray-900 leading-tight">{name}</span>
+      <span className="text-xs font-semibold text-gray-700 leading-tight">{title}</span>
+      <span className="text-xs text-gray-400 leading-tight">{description}</span>
+      <span className="text-sm font-bold text-gray-900 leading-tight mt-1">{name}</span>
       <span className="text-xs text-gray-400">{stat}</span>
     </div>
   );
@@ -31,6 +33,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
     cards.push({
       emoji: "👑",
       title: "The Sultan",
+      description: "Most wins tonight",
       name: getFirstName(sultan.name),
       stat: `${sultan.wins} win${sultan.wins !== 1 ? "s" : ""}`,
     });
@@ -40,6 +43,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
     cards.push({
       emoji: "🦾",
       title: "Iron Shuttle",
+      description: "Most matches played",
       name: getFirstName(ironShuttle.name),
       stat: `${ironShuttle.matches} matches`,
     });
@@ -49,6 +53,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
     cards.push({
       emoji: "🧊",
       title: "The Untouchable",
+      description: "Best win rate (min 3 matches)",
       name: getFirstName(untouchable.name),
       stat: `${untouchable.winPct}% win rate`,
     });
@@ -58,8 +63,9 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
     cards.push({
       emoji: "💥",
       title: "The Cannon",
+      description: "Most points scored",
       name: getFirstName(cannon.name),
-      stat: `${cannon.points} pts scored`,
+      stat: `${cannon.points} pts`,
     });
   }
 
@@ -67,8 +73,9 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
     cards.push({
       emoji: "😤",
       title: "No Mercy",
+      description: "Biggest winning margin",
       name: noMercy.team.map(getFirstName).join(" & "),
-      stat: `${noMercy.score} (margin ${noMercy.margin})`,
+      stat: `${noMercy.score} (gap ${noMercy.margin})`,
     });
   }
 

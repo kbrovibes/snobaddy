@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.3] - 2026-04-01
+
+### Changed
+- **Session Awards** — each card now shows a short description of what the award means.
+
+---
+
 ## [0.17.2] - 2026-04-01
 
 ### Changed
