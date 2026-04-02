@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.2] - 2026-04-01
+
+### Changed
+- **Session Awards** — cards now display in a 2-column grid instead of a horizontal scroll row.
+
+---
+
 ## [0.17.1] - 2026-04-01
 
 ### Fixed

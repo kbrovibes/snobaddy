@@ -13,7 +13,7 @@ interface AwardCardProps {
 
 function AwardCard({ emoji, title, name, stat }: AwardCardProps) {
   return (
-    <div className="flex-shrink-0 w-36 bg-white rounded-xl shadow-sm border border-gray-100 px-4 py-3 flex flex-col gap-1">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 px-4 py-3 flex flex-col gap-1">
       <span className="text-2xl">{emoji}</span>
       <span className="text-xs text-gray-400 font-medium leading-tight">{title}</span>
       <span className="text-sm font-bold text-gray-900 leading-tight">{name}</span>
@@ -79,7 +79,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
       <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
         Session Awards
       </h2>
-      <div className="flex gap-3 overflow-x-auto pb-1 -mx-4 px-4">
+      <div className="grid grid-cols-2 gap-3">
         {cards.map((card) => (
           <AwardCard key={card.title} {...card} />
         ))}
