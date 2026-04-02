@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.7] - 2026-04-01
+
+### Changed
+- **Session Awards** — 5 cards now lay out in 2 rows (3 + 2) instead of 3 rows; player name font size increased.
+
+---
+
 ## [0.17.6] - 2026-04-01
 
 ### Changed
