@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.1] - 2026-04-01
+
+### Fixed
+- **Session Awards** — build error caused by `isCompleted` being used before its declaration; variable ordering corrected.
+
+---
+
 ## [0.17.0] - 2026-03-31
 
 ### Added

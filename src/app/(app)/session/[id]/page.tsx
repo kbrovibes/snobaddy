@@ -75,13 +75,13 @@ export default async function SessionDetailPage({
       ])
     : [[], [], [], new Set<string>()];
 
-  const highlights = isCompleted && isAdmin
-    ? await getSessionHighlights(session.id)
-    : null;
-
   const isPending = session.status === "pending";
   const isActive = session.status === "active";
   const isCompleted = session.status === "completed";
+
+  const highlights = isCompleted && isAdmin
+    ? await getSessionHighlights(session.id)
+    : null;
 
   return (
     <div className="flex flex-col gap-4 px-4 py-4">
