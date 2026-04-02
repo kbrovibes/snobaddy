@@ -16,8 +16,8 @@ function AwardCard({ emoji, title, description, name, stat, colSpan }: AwardCard
   return (
     <div className={`bg-white rounded-xl shadow-sm border border-gray-100 px-4 py-3 flex flex-col items-center gap-1 text-center${colSpan ? ` ${colSpan}` : ""}`}>
       <span className="text-2xl">{emoji}</span>
-      <span className="text-xs font-semibold text-gray-700 leading-tight">{title}</span>
-      <span className="text-xs text-gray-400 leading-tight">{description}</span>
+      <span className="text-xs font-semibold text-gray-700 leading-tight min-h-[2rem] flex items-center justify-center">{title}</span>
+      <span className="text-xs text-gray-400 leading-tight min-h-[2rem] flex items-center justify-center">{description}</span>
       <span className="text-base font-bold text-gray-900 leading-tight mt-1">{name}</span>
       <span className="text-xs text-gray-400">{stat}</span>
     </div>

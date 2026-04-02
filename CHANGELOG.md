@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.8] - 2026-04-01
+
+### Fixed
+- **Session Awards** — title and description lines now have a minimum height so name and stat stay vertically aligned across cards in the same row.
+
+---
+
 ## [0.17.7] - 2026-04-01
 
 ### Changed
