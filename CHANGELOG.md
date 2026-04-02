@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.9] - 2026-04-01
+
+### Changed
+- **Session Awards** — "The One with No Mercy" renamed to "The Ones with No Mercy" (team award).
+
+---
+
 ## [0.17.8] - 2026-04-01
 
 ### Fixed

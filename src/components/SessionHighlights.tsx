@@ -72,7 +72,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
   if (noMercy) {
     cards.push({
       emoji: "⚡",
-      title: "The One with No Mercy",
+      title: "The Ones with No Mercy",
       description: "Biggest winning margin",
       name: noMercy.team.map(getFirstName).join(" & "),
       stat: `${noMercy.score} (gap ${noMercy.margin})`,
