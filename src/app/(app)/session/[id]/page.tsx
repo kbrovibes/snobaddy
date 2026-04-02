@@ -6,7 +6,7 @@ import {
   getCheckedInPlayers,
   getPastSessionsThisSeason,
 } from "@/lib/db/sessions";
-import { getSessionMatches, getSessionScoreboard } from "@/lib/db/matches";
+import { getSessionMatches, getSessionScoreboard, getSessionHighlights } from "@/lib/db/matches";
 import { getProposedMatches } from "@/lib/db/proposed";
 import { getOnlinePlayerIds } from "@/lib/db/players";
 import { createClient } from "@/lib/supabase-server";
@@ -20,6 +20,7 @@ import ProposedMatchList from "@/components/ProposedMatchList";
 import WhoIsHere from "@/components/WhoIsHere";
 import BackToSessionsLink from "@/components/BackToSessionsLink";
 import OnlinePing from "@/components/OnlinePing";
+import SessionHighlights from "@/components/SessionHighlights";
 
 export const dynamic = "force-dynamic";
 
@@ -73,6 +74,10 @@ export default async function SessionDetailPage({
         getOnlinePlayerIds(checkedInPlayers.map((p) => p.player_id)),
       ])
     : [[], [], [], new Set<string>()];
+
+  const highlights = isCompleted && isAdmin
+    ? await getSessionHighlights(session.id)
+    : null;
 
   const isPending = session.status === "pending";
   const isActive = session.status === "active";
@@ -156,10 +161,15 @@ export default async function SessionDetailPage({
 
       {/* Completed session */}
       {isCompleted && (
-        <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 flex items-center justify-between">
-          <p className="text-sm text-gray-500">Session closed. No new matches can be recorded.</p>
-          {isAdmin && <ReopenSessionButton sessionId={session.id} />}
-        </div>
+        <>
+          {highlights && highlights.totalMatches >= 3 && (
+            <SessionHighlights highlights={highlights} />
+          )}
+          <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 flex items-center justify-between">
+            <p className="text-sm text-gray-500">Session closed. No new matches can be recorded.</p>
+            {isAdmin && <ReopenSessionButton sessionId={session.id} />}
+          </div>
+        </>
       )}
 
       {/* Scoreboard — shown for active and completed */}

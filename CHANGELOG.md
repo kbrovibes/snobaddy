@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.0] - 2026-03-31
+
+### Added
+- **Session Awards** — when a session is closed, admins see a row of award cards at the top of the session page: The Sultan (most wins), Iron Shuttle (most matches), The Untouchable (best win rate, min 3 matches), The Cannon (most points scored), and No Mercy (biggest margin of victory). Requires at least 3 matches in the session.
+
+---
+
 ## [0.16.0] - 2026-04-01
 
 ### Fixed

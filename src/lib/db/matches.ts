@@ -213,6 +213,123 @@ export async function getPlayerMatchesBySession(playerId: string): Promise<Playe
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 
+export interface SessionHighlights {
+  totalMatches: number;
+  sultan: { name: string; wins: number } | null;
+  ironShuttle: { name: string; matches: number } | null;
+  untouchable: { name: string; winPct: number; matches: number } | null;
+  cannon: { name: string; points: number } | null;
+  noMercy: { team: [string, string]; margin: number; score: string } | null;
+}
+
+export async function getSessionHighlights(sessionId: string): Promise<SessionHighlights> {
+  const supabase = await createClient();
+
+  const { data: matches } = await supabase
+    .from("matches")
+    .select(`
+      team1_player1_id, team1_player2_id,
+      team2_player1_id, team2_player2_id,
+      winning_team, team1_score, team2_score,
+      t1p1:team1_player1_id(name),
+      t1p2:team1_player2_id(name),
+      t2p1:team2_player1_id(name),
+      t2p2:team2_player2_id(name)
+    `)
+    .eq("session_id", sessionId);
+
+  const rows = matches ?? [];
+  const totalMatches = rows.length;
+
+  if (totalMatches < 3) {
+    return { totalMatches, sultan: null, ironShuttle: null, untouchable: null, cannon: null, noMercy: null };
+  }
+
+  // Per-player stats
+  const playerWins = new Map<string, number>();
+  const playerMatches = new Map<string, number>();
+  const playerPoints = new Map<string, number>();
+  const playerNames = new Map<string, string>();
+
+  // No Mercy: biggest margin
+  let maxMargin = -1;
+  let noMercyTeam: [string, string] | null = null;
+  let noMercyScore = "";
+
+  for (const m of rows) {
+    const t1p1 = m.t1p1 as unknown as { name: string };
+    const t1p2 = m.t1p2 as unknown as { name: string };
+    const t2p1 = m.t2p1 as unknown as { name: string };
+    const t2p2 = m.t2p2 as unknown as { name: string };
+
+    const team1Ids = [m.team1_player1_id, m.team1_player2_id];
+    const team2Ids = [m.team2_player1_id, m.team2_player2_id];
+    const team1Names: [string, string] = [t1p1.name, t1p2.name];
+    const team2Names: [string, string] = [t2p1.name, t2p2.name];
+
+    playerNames.set(m.team1_player1_id, t1p1.name);
+    playerNames.set(m.team1_player2_id, t1p2.name);
+    playerNames.set(m.team2_player1_id, t2p1.name);
+    playerNames.set(m.team2_player2_id, t2p2.name);
+
+    const winners = m.winning_team === 1 ? team1Ids : team2Ids;
+    const losers = m.winning_team === 1 ? team2Ids : team1Ids;
+
+    for (const pid of winners) {
+      playerWins.set(pid, (playerWins.get(pid) ?? 0) + 1);
+    }
+    for (const pid of [...winners, ...losers]) {
+      playerMatches.set(pid, (playerMatches.get(pid) ?? 0) + 1);
+    }
+
+    // Points per player = their team's score in this match
+    for (const pid of team1Ids) {
+      playerPoints.set(pid, (playerPoints.get(pid) ?? 0) + m.team1_score);
+    }
+    for (const pid of team2Ids) {
+      playerPoints.set(pid, (playerPoints.get(pid) ?? 0) + m.team2_score);
+    }
+
+    // No Mercy margin
+    const margin = Math.abs(m.team1_score - m.team2_score);
+    if (margin > maxMargin) {
+      maxMargin = margin;
+      const winnerTeamNames = m.winning_team === 1 ? team1Names : team2Names;
+      noMercyTeam = winnerTeamNames;
+      noMercyScore = `${Math.max(m.team1_score, m.team2_score)}–${Math.min(m.team1_score, m.team2_score)}`;
+    }
+  }
+
+  // The Sultan: most wins (tie-break: alphabetical)
+  const sultanEntry = Array.from(playerWins.entries())
+    .sort((a, b) => b[1] - a[1] || (playerNames.get(a[0]) ?? "").localeCompare(playerNames.get(b[0]) ?? ""))[0];
+
+  // Iron Shuttle: most matches played
+  const ironEntry = Array.from(playerMatches.entries())
+    .sort((a, b) => b[1] - a[1] || (playerNames.get(a[0]) ?? "").localeCompare(playerNames.get(b[0]) ?? ""))[0];
+
+  // The Untouchable: best win rate (min 3 matches)
+  const untouchableEntry = Array.from(playerMatches.entries())
+    .filter(([, m]) => m >= 3)
+    .map(([pid, m]) => ({ pid, m, pct: (playerWins.get(pid) ?? 0) / m }))
+    .sort((a, b) => b.pct - a.pct || (playerNames.get(a.pid) ?? "").localeCompare(playerNames.get(b.pid) ?? ""))[0] ?? null;
+
+  // The Cannon: most points scored
+  const cannonEntry = Array.from(playerPoints.entries())
+    .sort((a, b) => b[1] - a[1] || (playerNames.get(a[0]) ?? "").localeCompare(playerNames.get(b[0]) ?? ""))[0];
+
+  return {
+    totalMatches,
+    sultan: sultanEntry ? { name: playerNames.get(sultanEntry[0]) ?? "", wins: sultanEntry[1] } : null,
+    ironShuttle: ironEntry ? { name: playerNames.get(ironEntry[0]) ?? "", matches: ironEntry[1] } : null,
+    untouchable: untouchableEntry
+      ? { name: playerNames.get(untouchableEntry.pid) ?? "", winPct: Math.round(untouchableEntry.pct * 100), matches: untouchableEntry.m }
+      : null,
+    cannon: cannonEntry ? { name: playerNames.get(cannonEntry[0]) ?? "", points: cannonEntry[1] } : null,
+    noMercy: noMercyTeam ? { team: noMercyTeam, margin: maxMargin, score: noMercyScore } : null,
+  };
+}
+
 export async function getSeasonMatchCount(): Promise<number> {
   const supabase = await createClient();
   const { count } = await supabase
