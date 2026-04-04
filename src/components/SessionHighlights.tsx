@@ -34,7 +34,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
       emoji: "⚔️",
       title: "The Slayer",
       description: "Most wins tonight",
-      name: getFirstName(sultan.name),
+      name: sultan.names.map(getFirstName).join(", "),
       stat: `${sultan.wins} win${sultan.wins !== 1 ? "s" : ""}`,
     });
   }
@@ -44,7 +44,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
       emoji: "🚀",
       title: "The Unstoppable",
       description: "Most matches played",
-      name: getFirstName(ironShuttle.name),
+      name: ironShuttle.names.map(getFirstName).join(", "),
       stat: `${ironShuttle.matches} matches`,
     });
   }
@@ -54,7 +54,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
       emoji: "🧊",
       title: "The Untouchable",
       description: "Best win rate (min 3 matches)",
-      name: getFirstName(untouchable.name),
+      name: untouchable.names.map(getFirstName).join(", "),
       stat: `${untouchable.winPct}% win rate`,
     });
   }
@@ -64,7 +64,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
       emoji: "🎯",
       title: "The Point Collector",
       description: "Most points scored",
-      name: getFirstName(cannon.name),
+      name: cannon.names.map(getFirstName).join(", "),
       stat: `${cannon.points} pts`,
     });
   }

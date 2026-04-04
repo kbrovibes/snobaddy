@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.14] - 2026-04-03
+
+### Changed
+- **Session Awards** — when multiple players tie for an award, all of their names are shown alphabetically, separated by commas.
+
+---
+
 ## [0.17.13] - 2026-04-03
 
 ### Changed

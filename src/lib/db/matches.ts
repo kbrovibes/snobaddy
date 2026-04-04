@@ -215,10 +215,10 @@ export async function getPlayerMatchesBySession(playerId: string): Promise<Playe
 
 export interface SessionHighlights {
   totalMatches: number;
-  sultan: { name: string; wins: number } | null;
-  ironShuttle: { name: string; matches: number } | null;
-  untouchable: { name: string; winPct: number; matches: number } | null;
-  cannon: { name: string; points: number } | null;
+  sultan: { names: string[]; wins: number } | null;
+  ironShuttle: { names: string[]; matches: number } | null;
+  untouchable: { names: string[]; winPct: number; matches: number } | null;
+  cannon: { names: string[]; points: number } | null;
   noMercy: { team: [string, string]; margin: number; score: string } | null;
 }
 
@@ -300,32 +300,45 @@ export async function getSessionHighlights(sessionId: string): Promise<SessionHi
     }
   }
 
-  // The Sultan: most wins (tie-break: alphabetical)
-  const sultanEntry = Array.from(playerWins.entries())
-    .sort((a, b) => b[1] - a[1] || (playerNames.get(a[0]) ?? "").localeCompare(playerNames.get(b[0]) ?? ""))[0];
+  // The Sultan: most wins — all tied players alphabetically
+  const maxWins = Math.max(...Array.from(playerWins.values()));
+  const sultanNames = Array.from(playerWins.entries())
+    .filter(([, w]) => w === maxWins)
+    .map(([pid]) => playerNames.get(pid) ?? "")
+    .sort();
 
-  // Iron Shuttle: most matches played
-  const ironEntry = Array.from(playerMatches.entries())
-    .sort((a, b) => b[1] - a[1] || (playerNames.get(a[0]) ?? "").localeCompare(playerNames.get(b[0]) ?? ""))[0];
+  // Iron Shuttle: most matches played — all tied players alphabetically
+  const maxMatchesVal = Math.max(...Array.from(playerMatches.values()));
+  const ironNames = Array.from(playerMatches.entries())
+    .filter(([, m]) => m === maxMatchesVal)
+    .map(([pid]) => playerNames.get(pid) ?? "")
+    .sort();
 
-  // The Untouchable: best win rate (min 3 matches)
-  const untouchableEntry = Array.from(playerMatches.entries())
+  // The Untouchable: best win rate (min 3 matches) — all tied players alphabetically
+  const qualifiedRates = Array.from(playerMatches.entries())
     .filter(([, m]) => m >= 3)
-    .map(([pid, m]) => ({ pid, m, pct: (playerWins.get(pid) ?? 0) / m }))
-    .sort((a, b) => b.pct - a.pct || (playerNames.get(a.pid) ?? "").localeCompare(playerNames.get(b.pid) ?? ""))[0] ?? null;
+    .map(([pid, m]) => ({ pid, m, pct: Math.round(((playerWins.get(pid) ?? 0) / m) * 100) }));
+  const topPct = qualifiedRates.length ? Math.max(...qualifiedRates.map(e => e.pct)) : null;
+  const topEntry = qualifiedRates.find(e => e.pct === topPct) ?? null;
+  const untouchableNames = topPct !== null
+    ? qualifiedRates.filter(e => e.pct === topPct).map(e => playerNames.get(e.pid) ?? "").sort()
+    : [];
 
-  // The Cannon: most points scored
-  const cannonEntry = Array.from(playerPoints.entries())
-    .sort((a, b) => b[1] - a[1] || (playerNames.get(a[0]) ?? "").localeCompare(playerNames.get(b[0]) ?? ""))[0];
+  // The Cannon: most points scored — all tied players alphabetically
+  const maxPoints = Math.max(...Array.from(playerPoints.values()));
+  const cannonNames = Array.from(playerPoints.entries())
+    .filter(([, pts]) => pts === maxPoints)
+    .map(([pid]) => playerNames.get(pid) ?? "")
+    .sort();
 
   return {
     totalMatches,
-    sultan: sultanEntry ? { name: playerNames.get(sultanEntry[0]) ?? "", wins: sultanEntry[1] } : null,
-    ironShuttle: ironEntry ? { name: playerNames.get(ironEntry[0]) ?? "", matches: ironEntry[1] } : null,
-    untouchable: untouchableEntry
-      ? { name: playerNames.get(untouchableEntry.pid) ?? "", winPct: Math.round(untouchableEntry.pct * 100), matches: untouchableEntry.m }
+    sultan: sultanNames.length ? { names: sultanNames, wins: maxWins } : null,
+    ironShuttle: ironNames.length ? { names: ironNames, matches: maxMatchesVal } : null,
+    untouchable: untouchableNames.length
+      ? { names: untouchableNames, winPct: topPct!, matches: topEntry!.m }
       : null,
-    cannon: cannonEntry ? { name: playerNames.get(cannonEntry[0]) ?? "", points: cannonEntry[1] } : null,
+    cannon: cannonNames.length ? { names: cannonNames, points: maxPoints } : null,
     noMercy: noMercyTeam ? { team: noMercyTeam, margin: maxMargin, score: noMercyScore } : null,
   };
 }
