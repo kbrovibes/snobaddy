@@ -4,7 +4,7 @@ export function VerifiedBadge() {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 20 20"
-      className="inline-block w-3.5 h-3.5 shrink-0 align-middle"
+      className="inline-block w-3.5 h-3.5 shrink-0 align-middle ml-1"
       aria-label="Verified account"
       role="img"
     >
@@ -24,6 +24,6 @@ export function VerifiedBadge() {
 /** Admin badge */
 export function AdminBadge() {
   return (
-    <span className="text-xs shrink-0" title="Admin">🛡️</span>
+    <span className="text-xs shrink-0 ml-1" title="Admin">🛡️</span>
   );
 }

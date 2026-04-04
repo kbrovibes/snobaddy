@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.18.1] - 2026-04-04
+
+### Changed
+- **Player badges** — added spacing between player name and the verified/admin badges.
+
+---
+
 ## [0.18.0] - 2026-04-04
 
 ### Added
