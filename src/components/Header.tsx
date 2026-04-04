@@ -7,9 +7,10 @@ import { useRouter } from "next/navigation";
 interface HeaderProps {
   userName: string;
   playerId: string | null;
+  isAdmin: boolean;
 }
 
-export default function Header({ userName, playerId }: HeaderProps) {
+export default function Header({ userName, playerId, isAdmin }: HeaderProps) {
   const router = useRouter();
 
   async function signOut() {
@@ -41,13 +42,13 @@ export default function Header({ userName, playerId }: HeaderProps) {
         {playerId ? (
           <Link
             href={`/players/${playerId}`}
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-semibold"
+            className={`flex items-center justify-center w-8 h-8 rounded-full ${isAdmin ? "bg-red-600" : "bg-blue-600"} text-white text-sm font-semibold`}
             title={userName}
           >
             {initials}
           </Link>
         ) : (
-          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-semibold">
+          <div className={`flex items-center justify-center w-8 h-8 rounded-full ${isAdmin ? "bg-red-600" : "bg-blue-600"} text-white text-sm font-semibold`}>
             {initials}
           </div>
         )}

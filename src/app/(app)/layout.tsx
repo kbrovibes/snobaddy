@@ -42,7 +42,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header userName={userName} playerId={player.id} />
+      <Header userName={userName} playerId={player.id} isAdmin={player.is_admin ?? false} />
       {/* pt-14 clears the fixed header, pb-16 clears the fixed bottom nav */}
       <main className="flex-1 pt-14 pb-16">
         {children}

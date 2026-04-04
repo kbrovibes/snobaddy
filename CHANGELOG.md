@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.16] - 2026-04-03
+
+### Changed
+- **Admin badge** — admin users now see a red avatar in the top-right corner instead of blue, making it easy to know when you're logged in with admin privileges.
+
+---
+
 ## [0.17.15] - 2026-04-03
 
 ### Changed
