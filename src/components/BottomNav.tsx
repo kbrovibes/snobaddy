@@ -4,17 +4,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Session", icon: "🏸" },
-  { href: "/players", label: "Players", icon: "👥" },
-  { href: "/leaderboard", label: "Leaderboard", icon: "🏆" },
+  { href: "/", label: "Session", icon: "🏸", adminOnly: false },
+  { href: "/players", label: "Players", icon: "👥", adminOnly: true },
+  { href: "/leaderboard", label: "Leaderboard", icon: "🏆", adminOnly: false },
 ];
 
-export default function BottomNav() {
+export default function BottomNav({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
+  const visibleItems = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 flex bg-white border-t border-gray-100">
-      {NAV_ITEMS.map(({ href, label, icon }) => {
+      {visibleItems.map(({ href, label, icon }) => {
         const active = pathname === href;
         return (
           <Link

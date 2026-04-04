@@ -14,7 +14,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   let { data: player } = await supabase
     .from("players")
-    .select("id, onboarding_complete")
+    .select("id, onboarding_complete, is_admin")
     .eq("user_id", user.id)
     .maybeSingle();
 
@@ -47,7 +47,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <main className="flex-1 pt-14 pb-16">
         {children}
       </main>
-      <BottomNav />
+      <BottomNav isAdmin={player?.is_admin ?? false} />
     </div>
   );
 }

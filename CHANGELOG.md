@@ -10,6 +10,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ### Changed
 - **Close Session** — closing a session now automatically checks out all players who are still marked as present.
+- **Players tab** — now only visible to admins in the bottom navigation.
 
 ---
 
