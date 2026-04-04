@@ -14,6 +14,14 @@ export async function POST(
   if (!player?.is_admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const { id } = await params;
+
+  // Auto-checkout all players still present
+  await supabase
+    .from("session_players")
+    .update({ checked_out_at: new Date().toISOString() })
+    .eq("session_id", id)
+    .is("checked_out_at", null);
+
   const { error } = await supabase
     .from("sessions")
     .update({ status: "completed" })

@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.12] - 2026-04-03
+
+### Changed
+- **Close Session** — closing a session now automatically checks out all players who are still marked as present.
+
+---
+
 ## [0.17.11] - 2026-04-03
 
 ### Fixed
