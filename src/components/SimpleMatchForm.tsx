@@ -91,6 +91,7 @@ export default function SimpleMatchForm({
 
   return (
     <div className="bg-white rounded-xl shadow-sm px-4 py-3 flex flex-col gap-3">
+      <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Record a Score</h2>
       {/* 3-col layout: winners | vs | losers */}
       <div className="grid grid-cols-[1fr_2rem_1fr] items-start gap-2">
         {/* Winners */}
