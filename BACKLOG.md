@@ -16,6 +16,7 @@ Single source of truth for all planned and completed work.
 - [x] **05 — Session Navigation** · [spec](specs/05-session-navigation.md) · Session list at `/`, per-session detail at `/session/[id]`, auto-redirect into open session on login, admin creates new session from list
 - [x] **07 — Match Generation** · [spec](specs/07-match-generation.md) · Propose next 4 matches based on presence, skill, and history — **Completed.** Algorithmic suggest/queue/record loop implemented and verified.
 - [x] **10 — Email Auth** · [spec](specs/10-email-auth.md) · Email sign-up/sign-in alongside Google OAuth; forgot-password reset flow
+- [ ] **19 — Simple Score Tracking** · [spec](specs/19-simple-score-tracking.md) · Per-session toggle (default on) replaces Generate Matches + score form with a minimal winner/loser picker; records 21–15 internally
 - [ ] **11 — Admin: Add Player** · [spec](specs/11-admin-add-player.md) · Admin adds a name + skill level from the Players page; player has no auth account (bot/guest)
 - [ ] **09 — Fix Online Indicator** · [spec](specs/09-online-indicator-fix.md) · SSR race condition + missing DB column mean green dots never appear; fix with client-side fetch after ping
 - [ ] **08 — Ethan Mode** · [spec](specs/08-ethan-mode.md) · Easter egg: DB-persisted admin toggle that biases match suggestions (Chitra favored, Kiran Iyer skipped); banner visible to all when active
