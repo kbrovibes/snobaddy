@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.21] - 2026-04-04
+
+### Changed
+- **Admin Panel** — moved from `/players` to `/admin`. Non-admin users who navigate to `/admin` are redirected to the session page.
+
+---
+
 ## [0.17.20] - 2026-04-04
 
 ### Changed

@@ -1,29 +1,30 @@
 import { getAllPlayers } from "@/lib/db/players";
 import { createClient } from "@/lib/supabase-server";
 import { getTodaySession, getSessionPresence } from "@/lib/db/sessions";
+import { redirect } from "next/navigation";
 import PlayerCheckinCard from "@/components/PlayerCheckinCard";
 
 export const dynamic = "force-dynamic";
 
-export default async function PlayersPage() {
+export default async function AdminPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const { data: currentPlayer } = await supabase
     .from("players").select("is_admin").eq("user_id", user!.id).single();
 
-  const isAdmin = currentPlayer?.is_admin ?? false;
+  if (!currentPlayer?.is_admin) redirect("/");
 
   const [players, todaySession] = await Promise.all([
     getAllPlayers(),
-    isAdmin ? getTodaySession() : Promise.resolve(null),
+    getTodaySession(),
   ]);
 
-  const presence = isAdmin && todaySession?.status === "active"
+  const presence = todaySession?.status === "active"
     ? await getSessionPresence(todaySession.id)
     : [];
 
   const presenceMap = new Map(presence.map((p) => [p.player_id, p]));
-  const sessionActive = isAdmin && todaySession?.status === "active";
+  const sessionActive = todaySession?.status === "active";
 
   return (
     <div className="px-4 py-4 pb-20">
