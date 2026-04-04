@@ -109,12 +109,30 @@ export async function getAllSessions(): Promise<SessionRow[]> {
 
 export async function getSessionById(id: string): Promise<Session | null> {
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("sessions")
     .select("id, date, status, auto_generate_matches, simple_score_tracking, seasons(id, name)")
     .eq("id", id)
     .maybeSingle();
-  if (!data) return null;
+
+  // If the query errored (e.g. column not yet migrated), retry without new column
+  if (error || !data) {
+    if (!error) return null; // no error, just no row
+    const { data: fallback } = await supabase
+      .from("sessions")
+      .select("id, date, status, auto_generate_matches, seasons(id, name)")
+      .eq("id", id)
+      .maybeSingle();
+    if (!fallback) return null;
+    const fb = fallback as typeof fallback & { auto_generate_matches?: boolean };
+    return {
+      ...fallback,
+      auto_generate_matches: fb.auto_generate_matches ?? true,
+      simple_score_tracking: true,
+      season: (fallback.seasons as unknown as Session["season"]),
+    };
+  }
+
   const row = data as typeof data & { auto_generate_matches?: boolean; simple_score_tracking?: boolean };
   return {
     ...data,

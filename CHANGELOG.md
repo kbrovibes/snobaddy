@@ -8,6 +8,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [0.18.1] - 2026-04-04
 
+### Fixed
+- **Session page** — no longer crashes into an infinite redirect loop when the `simple_score_tracking` DB column hasn't been migrated yet; falls back gracefully with simple mode defaulting to on.
+
 ### Changed
 - **Player badges** — added spacing between player name and the verified/admin badges.
 
