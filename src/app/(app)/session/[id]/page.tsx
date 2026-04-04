@@ -23,6 +23,8 @@ import BackToSessionsLink from "@/components/BackToSessionsLink";
 import OnlinePing from "@/components/OnlinePing";
 import SessionHighlights from "@/components/SessionHighlights";
 import SessionScoreboard from "@/components/SessionScoreboard";
+import SimpleModeToggle from "@/components/SimpleModeToggle";
+import SimpleMatchForm from "@/components/SimpleMatchForm";
 
 export const dynamic = "force-dynamic";
 
@@ -99,7 +101,10 @@ export default async function SessionDetailPage({
           <h1 className="text-lg font-bold text-gray-900 leading-tight">{session.season?.name ?? "Tonight"}</h1>
           <p className="text-sm text-gray-500">{formatDate(session.date)}</p>
         </div>
-        <div className="ml-auto shrink-0">
+        <div className="ml-auto shrink-0 flex items-center gap-2">
+          {isActive && isAdmin && (
+            <SimpleModeToggle sessionId={session.id} simpleMode={session.simple_score_tracking} />
+          )}
           {isActive && (
             <span className="flex items-center gap-1.5 text-xs font-semibold text-green-700 bg-green-100 px-2.5 py-1 rounded-full">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
@@ -145,17 +150,21 @@ export default async function SessionDetailPage({
             <WhoIsHere players={checkedInPlayers} onlinePlayerIds={onlinePlayerIds as Set<string>} isAdmin={isAdmin} sessionId={session.id} />
           </div>
 
-          {/* Proposed matches */}
-          <ProposedMatchList
-            sessionId={session.id}
-            matches={proposedMatches}
-            checkedInPlayers={checkedInPlayers}
-            isAdmin={isAdmin}
-            autoGenerate={session.auto_generate_matches ?? true}
-          />
-
-          {/* Record match */}
-          <RecordMatchForm sessionId={session.id} checkedInPlayers={checkedInPlayers} />
+          {/* Match entry — simple mode or full mode */}
+          {session.simple_score_tracking ? (
+            <SimpleMatchForm sessionId={session.id} checkedInPlayers={checkedInPlayers} />
+          ) : (
+            <>
+              <ProposedMatchList
+                sessionId={session.id}
+                matches={proposedMatches}
+                checkedInPlayers={checkedInPlayers}
+                isAdmin={isAdmin}
+                autoGenerate={session.auto_generate_matches ?? true}
+              />
+              <RecordMatchForm sessionId={session.id} checkedInPlayers={checkedInPlayers} />
+            </>
+          )}
 
           {/* Admin: close session */}
           {isAdmin && <CloseSessionButton sessionId={session.id} />}

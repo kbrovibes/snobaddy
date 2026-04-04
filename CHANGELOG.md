@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.18.0] - 2026-04-04
+
+### Added
+- **Simple Score Tracking** — new per-session mode (default on) for quick win/loss recording without score entry or match generation.
+  - Admins see a **⚡ Simple / 🔢 Full** toggle in the session header; setting persists per session.
+  - In simple mode: a compact "Record a Win" form replaces the Generate Matches queue and full score form. Pick 2 winners and 2 losers, hit Save. Score is stored internally as 21–15.
+  - In full mode: existing Generate Matches + score entry flow is unchanged.
+
+---
+
 ## [0.17.22] - 2026-04-04
 
 ### Changed

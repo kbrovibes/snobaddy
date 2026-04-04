@@ -5,6 +5,7 @@ export interface Session {
   date: string;
   status: "pending" | "active" | "completed";
   auto_generate_matches?: boolean;
+  simple_score_tracking: boolean;
   season: { id: string; name: string };
 }
 
@@ -45,7 +46,7 @@ export async function getTodaySession(): Promise<Session | null> {
     .maybeSingle();
 
   if (!data) return null;
-  return { ...data, season: (data.seasons as unknown as Session["season"]) };
+  return { ...data, simple_score_tracking: true, season: (data.seasons as unknown as Session["season"]) };
 }
 
 export async function getUpcomingSession(): Promise<Session | null> {
@@ -61,7 +62,7 @@ export async function getUpcomingSession(): Promise<Session | null> {
     .maybeSingle();
 
   if (!data) return null;
-  return { ...data, season: (data.seasons as unknown as Session["season"]) };
+  return { ...data, simple_score_tracking: true, season: (data.seasons as unknown as Session["season"]) };
 }
 
 export async function getActiveSession(): Promise<Session | null> {
@@ -73,7 +74,7 @@ export async function getActiveSession(): Promise<Session | null> {
     .limit(1)
     .maybeSingle();
   if (!data) return null;
-  return { ...data, season: (data.seasons as unknown as Session["season"]) };
+  return { ...data, simple_score_tracking: true, season: (data.seasons as unknown as Session["season"]) };
 }
 
 export async function getAllSessions(): Promise<SessionRow[]> {
@@ -110,14 +111,15 @@ export async function getSessionById(id: string): Promise<Session | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("sessions")
-    .select("id, date, status, auto_generate_matches, seasons(id, name)")
+    .select("id, date, status, auto_generate_matches, simple_score_tracking, seasons(id, name)")
     .eq("id", id)
     .maybeSingle();
   if (!data) return null;
-  const row = data as typeof data & { auto_generate_matches?: boolean };
+  const row = data as typeof data & { auto_generate_matches?: boolean; simple_score_tracking?: boolean };
   return {
     ...data,
     auto_generate_matches: row.auto_generate_matches ?? true,
+    simple_score_tracking: row.simple_score_tracking ?? true,
     season: (data.seasons as unknown as Session["season"]),
   };
 }
