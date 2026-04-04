@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.11] - 2026-04-03
+
+### Fixed
+- **Tonight's Scores** — scoreboard now shows all players who attended the session, including those who checked out early.
+
+---
+
 ## [0.17.10] - 2026-04-01
 
 ### Changed

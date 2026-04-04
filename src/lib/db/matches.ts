@@ -341,12 +341,11 @@ export async function getSeasonMatchCount(): Promise<number> {
 export async function getSessionScoreboard(sessionId: string): Promise<PlayerSessionStats[]> {
   const supabase = await createClient();
 
-  // Get all checked-in players for this session
+  // Get all players who attended this session (regardless of checkout status)
   const { data: checkedIn } = await supabase
     .from("session_players")
     .select("player_id, players(name, skill_level)")
-    .eq("session_id", sessionId)
-    .is("checked_out_at", null);
+    .eq("session_id", sessionId);
 
   const { data: matches } = await supabase
     .from("matches")
