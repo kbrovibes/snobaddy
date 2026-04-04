@@ -35,7 +35,7 @@ export default function SimpleModeToggle({
           : "bg-gray-100 text-gray-500 hover:bg-gray-200"
       }`}
     >
-      {simpleMode ? "⚡ Simple" : "🔢 Full"}
+      {simpleMode ? "✓ Simplify Scores" : "Simplify Scores"}
     </button>
   );
 }
