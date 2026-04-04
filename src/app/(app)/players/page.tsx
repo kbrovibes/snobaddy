@@ -1,8 +1,7 @@
 import { getAllPlayers } from "@/lib/db/players";
 import { createClient } from "@/lib/supabase-server";
 import { getTodaySession, getSessionPresence } from "@/lib/db/sessions";
-import SkillEditor from "@/components/SkillEditor";
-import AdminPresenceToggle from "@/components/AdminPresenceToggle";
+import PlayerCheckinCard from "@/components/PlayerCheckinCard";
 
 export const dynamic = "force-dynamic";
 
@@ -33,67 +32,38 @@ export default async function PlayersPage() {
         <span className="text-sm text-gray-400">{players.length} players</span>
       </div>
 
-      <div className="overflow-x-auto -mx-4">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-gray-100">
-              <th className="w-8 px-4 py-2 text-left text-xs font-medium text-gray-400">#</th>
-              <th className="px-2 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wide">Name</th>
-              <th className="px-3 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wide">Skill</th>
-              {sessionActive ? (
-                <th className="px-3 py-2 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Presence</th>
-              ) : (
-                <>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">W</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">L</th>
-                </>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {players.map((player, index) => {
-              const p = presenceMap.get(player.id);
-              const presenceStatus = !p ? "absent" : p.checked_out_at ? "checked-out" : "present";
-
-              return (
-                <tr key={player.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                  <td className="px-4 py-3 text-xs font-medium text-gray-300 text-right">{index + 1}</td>
-                  <td className="px-2 py-3">
-                    <span className="flex items-center gap-1 min-w-0">
-                      <span className="font-medium text-gray-900 truncate">{player.name}</span>
-                      {player.is_admin && <span className="text-blue-400 text-xs shrink-0">★</span>}
-                      {player.user_id && <span className="text-green-500 text-xs shrink-0" title="Verified account">✓</span>}
-                    </span>
-                  </td>
-                  <td className="px-3 py-3 text-center">
-                    <SkillEditor playerId={player.id} current={player.skill_level} />
-                  </td>
-                  {sessionActive ? (
-                    <td className="px-3 py-3 text-right">
-                      <AdminPresenceToggle
-                        sessionId={todaySession!.id}
-                        playerId={player.id}
-                        initialStatus={presenceStatus}
-                      />
-                    </td>
-                  ) : (
-                    <>
-                      <td className="px-3 py-3 text-right tabular-nums text-gray-700">{player.wins}</td>
-                      <td className="px-3 py-3 text-right tabular-nums text-gray-700">{player.losses}</td>
-                    </>
-                  )}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-
-        {players.length === 0 && (
-          <p className="text-center text-gray-400 text-sm py-12">
-            No players yet.
-          </p>
+      <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+        Player Check-ins
+        {sessionActive && (
+          <span className="ml-2 normal-case font-normal text-green-600">· Session active</span>
         )}
-      </div>
+      </h2>
+
+      {players.length === 0 ? (
+        <p className="text-center text-gray-400 text-sm py-12">No players yet.</p>
+      ) : (
+        <div className="grid grid-cols-3 gap-2">
+          {players.map((player) => {
+            const p = presenceMap.get(player.id);
+            const initialStatus = !p ? "absent" : p.checked_out_at ? "checked-out" : "present";
+
+            return (
+              <PlayerCheckinCard
+                key={player.id}
+                playerId={player.id}
+                name={player.name}
+                skillLevel={player.skill_level}
+                isAdminPlayer={player.is_admin ?? false}
+                hasUserAccount={!!player.user_id}
+                wins={player.wins}
+                losses={player.losses}
+                sessionId={sessionActive ? todaySession!.id : undefined}
+                initialStatus={initialStatus}
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.20] - 2026-04-04
+
+### Changed
+- **Admin Panel** — player list redesigned as a 3-column card grid under "Player Check-ins" heading.
+- **Admin Panel** — checked-in players now show a green card background and a ✓ badge so it's instantly clear who is present.
+- **Admin Panel** — "Check In" (blue, solid) and "Check Out" (red, outline) buttons are full-width inside each card.
+- **Admin Panel** — when no session is active, cards show each player's W/L record instead of action buttons.
+
+---
+
 ## [0.17.19] - 2026-04-03
 
 ### Fixed
