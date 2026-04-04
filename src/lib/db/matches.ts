@@ -354,44 +354,48 @@ export async function getSeasonMatchCount(): Promise<number> {
 export async function getSessionScoreboard(sessionId: string): Promise<PlayerSessionStats[]> {
   const supabase = await createClient();
 
-  // Get all players who attended this session (regardless of checkout status)
-  const { data: checkedIn } = await supabase
-    .from("session_players")
-    .select("player_id, players(name, skill_level)")
-    .eq("session_id", sessionId);
-
   const { data: matches } = await supabase
     .from("matches")
-    .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team")
+    .select(`
+      team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team,
+      t1p1:team1_player1_id(name, skill_level),
+      t1p2:team1_player2_id(name, skill_level),
+      t2p1:team2_player1_id(name, skill_level),
+      t2p2:team2_player2_id(name, skill_level)
+    `)
     .eq("session_id", sessionId);
 
   const stats = new Map<string, PlayerSessionStats>();
 
-  for (const row of checkedIn ?? []) {
-    const p = row.players as unknown as { name: string; skill_level: number };
-    stats.set(row.player_id, {
-      player_id: row.player_id,
-      name: p.name,
-      skill_level: p.skill_level,
-      wins: 0,
-      losses: 0,
-      matches_played: 0,
-    });
+  function ensurePlayer(id: string, player: { name: string; skill_level: number }) {
+    if (!stats.has(id)) {
+      stats.set(id, { player_id: id, name: player.name, skill_level: player.skill_level, wins: 0, losses: 0, matches_played: 0 });
+    }
   }
 
   for (const m of matches ?? []) {
+    const t1p1 = m.t1p1 as unknown as { name: string; skill_level: number };
+    const t1p2 = m.t1p2 as unknown as { name: string; skill_level: number };
+    const t2p1 = m.t2p1 as unknown as { name: string; skill_level: number };
+    const t2p2 = m.t2p2 as unknown as { name: string; skill_level: number };
+
+    ensurePlayer(m.team1_player1_id, t1p1);
+    ensurePlayer(m.team1_player2_id, t1p2);
+    ensurePlayer(m.team2_player1_id, t2p1);
+    ensurePlayer(m.team2_player2_id, t2p2);
+
     const team1 = [m.team1_player1_id, m.team1_player2_id];
     const team2 = [m.team2_player1_id, m.team2_player2_id];
     const winners = m.winning_team === 1 ? team1 : team2;
     const losers = m.winning_team === 1 ? team2 : team1;
 
     for (const pid of winners) {
-      const s = stats.get(pid);
-      if (s) { s.wins++; s.matches_played++; }
+      const s = stats.get(pid)!;
+      s.wins++; s.matches_played++;
     }
     for (const pid of losers) {
-      const s = stats.get(pid);
-      if (s) { s.losses++; s.matches_played++; }
+      const s = stats.get(pid)!;
+      s.losses++; s.matches_played++;
     }
   }
 

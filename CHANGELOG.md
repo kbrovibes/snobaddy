@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.19] - 2026-04-03
+
+### Fixed
+- **Tonight's Scores** — scoreboard now only lists players who played at least one match, not everyone who checked in.
+
+---
+
 ## [0.17.18] - 2026-04-03
 
 ### Changed
