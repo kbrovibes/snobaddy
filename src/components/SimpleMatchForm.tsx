@@ -64,51 +64,52 @@ export default function SimpleMatchForm({
     setSaving(false);
   }
 
-  const PlayerSelect = ({
+  function PlayerSelect({
     value,
     onChange,
     exclude,
-    label,
   }: {
     value: string;
     onChange: (v: string) => void;
     exclude: string[];
-    label: string;
-  }) => (
-    <div className="flex-1">
-      <label className="text-xs text-gray-400 mb-1 block">{label}</label>
+  }) {
+    return (
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full border rounded-lg px-3 py-2.5 text-sm bg-white font-medium ${
+        className={`w-full border rounded-lg px-2 py-2 text-sm bg-white font-medium ${
           value ? "border-blue-400 text-gray-900" : "border-gray-200 text-gray-400"
         }`}
       >
-        <option value="" disabled>Pick player…</option>
+        <option value="" disabled>Pick…</option>
         {options(exclude.filter((id) => id !== value)).map((p) => (
           <option key={p.player_id} value={p.player_id}>{p.name}</option>
         ))}
       </select>
-    </div>
-  );
+    );
+  }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm px-4 py-4 flex flex-col gap-4">
-      <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Record a Win</h2>
-
-      <div className="flex flex-col gap-3">
-        <p className="text-xs font-semibold text-green-600 uppercase tracking-wide">Winners</p>
-        <div className="flex gap-2">
-          <PlayerSelect value={w1} onChange={setW1} exclude={[w2, l1, l2]} label="Player 1" />
-          <PlayerSelect value={w2} onChange={setW2} exclude={[w1, l1, l2]} label="Player 2" />
+    <div className="bg-white rounded-xl shadow-sm px-4 py-3 flex flex-col gap-3">
+      {/* 3-col layout: winners | vs | losers */}
+      <div className="grid grid-cols-[1fr_2rem_1fr] items-start gap-2">
+        {/* Winners */}
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-bold text-green-600 uppercase tracking-wide">Winners</span>
+          <PlayerSelect value={w1} onChange={setW1} exclude={[w2, l1, l2]} />
+          <PlayerSelect value={w2} onChange={setW2} exclude={[w1, l1, l2]} />
         </div>
-      </div>
 
-      <div className="flex flex-col gap-3">
-        <p className="text-xs font-semibold text-red-400 uppercase tracking-wide">Losers</p>
-        <div className="flex gap-2">
-          <PlayerSelect value={l1} onChange={setL1} exclude={[w1, w2, l2]} label="Player 3" />
-          <PlayerSelect value={l2} onChange={setL2} exclude={[w1, w2, l1]} label="Player 4" />
+        {/* VS */}
+        <div className="flex items-center justify-center h-full pt-5">
+          <span className="text-xs font-bold text-gray-300">vs</span>
+        </div>
+
+        {/* Losers */}
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-bold text-transparent uppercase tracking-wide select-none">–</span>
+          <PlayerSelect value={l1} onChange={setL1} exclude={[w1, w2, l2]} />
+          <PlayerSelect value={l2} onChange={setL2} exclude={[w1, w2, l1]} />
         </div>
       </div>
 
@@ -118,13 +119,13 @@ export default function SimpleMatchForm({
         <button
           onClick={save}
           disabled={!canSave || saving}
-          className="flex-1 py-2.5 bg-blue-600 text-white font-semibold rounded-xl text-sm hover:bg-blue-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex-1 py-2 bg-blue-600 text-white font-semibold rounded-xl text-sm hover:bg-blue-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {saving ? "Saving…" : "Save"}
         </button>
         <button
           onClick={clear}
-          className="px-5 py-2.5 bg-gray-100 text-gray-600 font-semibold rounded-xl text-sm hover:bg-gray-200 transition-colors"
+          className="px-4 py-2 bg-gray-100 text-gray-600 font-semibold rounded-xl text-sm hover:bg-gray-200 transition-colors"
         >
           Clear
         </button>
