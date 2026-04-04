@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.17] - 2026-04-03
+
+### Added
+- **Leaderboard awards** — two season award cards above the stats table:
+  - 🏸 **Badminton Nut** — player with the most matches played this season
+  - 🎯 **Nut Cracker** — best win rate among players who've played at least half as many matches as the Badminton Nut
+- **Leaderboard winner** — 🏆 badge and row highlight in the table now follow the Nut Cracker eligibility rule rather than raw win %.
+
+---
+
 ## [0.17.16] - 2026-04-03
 
 ### Changed
