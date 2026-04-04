@@ -21,6 +21,7 @@ export default function Header({ userName, playerId, isAdmin }: HeaderProps) {
 
   const initials = userName
     .split(" ")
+    .filter((n) => /^[a-zA-Z]/.test(n))
     .map((n) => n[0])
     .slice(0, 2)
     .join("")
