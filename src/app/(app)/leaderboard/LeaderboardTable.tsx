@@ -71,17 +71,18 @@ export default function LeaderboardTable({ players }: { players: PlayerStats[] }
     );
   }
 
+  const maxMatchesId = sorted.reduce((best, p) =>
+    p.matches_played > (best?.matches_played ?? -1) ? p : best
+  , sorted[0])?.id;
+
   function getRankColor(index: number) {
-    if (index === 0) return "bg-yellow-50 border-yellow-100"; // Gold
-    if (index === 1) return "bg-slate-50 border-slate-100";  // Silver
-    if (index === 2) return "bg-orange-50 border-orange-100"; // Bronze
+    if (index === 0) return "bg-yellow-50 border-yellow-100";
     return "border-gray-50";
   }
 
-  function getRankBadge(index: number) {
-    if (index === 0) return "🥇";
-    if (index === 1) return "🥈";
-    if (index === 2) return "🥉";
+  function getRankBadge(index: number, playerId: string) {
+    if (index === 0) return "🏆";
+    if (playerId === maxMatchesId) return "🥜";
     return index + 1;
   }
 
@@ -119,8 +120,8 @@ export default function LeaderboardTable({ players }: { players: PlayerStats[] }
               key={player.id}
               className={`border-b hover:bg-gray-100/50 transition-colors ${getRankColor(i)}`}
             >
-              <td className={`px-4 py-3 text-xs font-bold text-right ${i < 3 ? "text-gray-900" : "text-gray-300"}`}>
-                {getRankBadge(i)}
+              <td className={`px-4 py-3 text-xs font-bold text-right ${i === 0 || player.id === maxMatchesId ? "text-gray-900" : "text-gray-300"}`}>
+                {getRankBadge(i, player.id)}
               </td>
               <td className="px-2 py-3 font-medium text-gray-900 max-w-[120px]">
                 <span className="flex items-center gap-1 min-w-0">

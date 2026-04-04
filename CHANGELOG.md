@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.13] - 2026-04-03
+
+### Changed
+- **Leaderboard** — #1 rank badge is now 🏆; silver and bronze medals removed (just numbers). The player with the most matches played earns the 🥜 badge.
+
+---
+
 ## [0.17.12] - 2026-04-03
 
 ### Changed
