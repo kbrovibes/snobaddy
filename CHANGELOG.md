@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.18] - 2026-04-03
+
+### Changed
+- **Admin Panel** — Players tab renamed to "Admin". Page title updated to "Admin Panel".
+- **Admin Panel** — player list redesigned as a minimalist flat table (consistent with session and leaderboard views).
+- **Admin Panel** — presence buttons replaced with explicit "Check In" and "Check Out" buttons so the action is always unambiguous.
+
+---
+
 ## [0.17.17] - 2026-04-03
 
 ### Added

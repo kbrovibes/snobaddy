@@ -18,25 +18,26 @@ export default function AdminPresenceToggle({
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  async function toggle() {
+  async function checkIn() {
     setLoading(true);
-    if (status === "present") {
-      // Check out
-      await fetch(`/api/sessions/${sessionId}/checkout`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ player_id: playerId }),
-      });
-      setStatus("checked-out");
-    } else {
-      // Check in (or re-check in after checkout)
-      await fetch(`/api/sessions/${sessionId}/checkin`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ player_id: playerId }),
-      });
-      setStatus("present");
-    }
+    await fetch(`/api/sessions/${sessionId}/checkin`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ player_id: playerId }),
+    });
+    setStatus("present");
+    setLoading(false);
+    router.refresh();
+  }
+
+  async function checkOut() {
+    setLoading(true);
+    await fetch(`/api/sessions/${sessionId}/checkout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ player_id: playerId }),
+    });
+    setStatus("checked-out");
     setLoading(false);
     router.refresh();
   }
@@ -44,34 +45,22 @@ export default function AdminPresenceToggle({
   if (status === "present") {
     return (
       <button
-        onClick={toggle}
+        onClick={checkOut}
         disabled={loading}
-        className="text-xs px-2.5 py-1 rounded-full bg-green-100 text-green-700 font-medium whitespace-nowrap"
+        className="text-xs px-3 py-1.5 rounded-lg bg-red-50 text-red-600 font-medium border border-red-100 hover:bg-red-100 transition-colors disabled:opacity-40 whitespace-nowrap"
       >
-        {loading ? "…" : "✓ Here · Leave"}
-      </button>
-    );
-  }
-
-  if (status === "checked-out") {
-    return (
-      <button
-        onClick={toggle}
-        disabled={loading}
-        className="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 font-medium whitespace-nowrap"
-      >
-        {loading ? "…" : "Left · Re-add"}
+        {loading ? "…" : "Check Out"}
       </button>
     );
   }
 
   return (
     <button
-      onClick={toggle}
+      onClick={checkIn}
       disabled={loading}
-      className="text-xs px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 font-medium whitespace-nowrap"
+      className="text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 font-medium border border-blue-100 hover:bg-blue-100 transition-colors disabled:opacity-40 whitespace-nowrap"
     >
-      {loading ? "…" : "+ Check In"}
+      {loading ? "…" : "Check In"}
     </button>
   );
 }
