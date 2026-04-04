@@ -10,6 +10,7 @@ import { getSessionMatches, getSessionScoreboard, getSessionHighlights } from "@
 import { getProposedMatches } from "@/lib/db/proposed";
 import { getOnlinePlayerIds } from "@/lib/db/players";
 import { createClient } from "@/lib/supabase-server";
+import { buildNameMap, shortName } from "@/lib/display-name";
 import StartSessionButton from "@/components/StartSessionButton";
 import CheckInButton from "@/components/CheckInButton";
 import CloseSessionButton from "@/components/CloseSessionButton";
@@ -30,9 +31,6 @@ function formatDate(dateStr: string) {
   return d.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
 }
 
-function getFirstName(fullName: string) {
-  return fullName.split(" ")[0];
-}
 
 export default async function SessionDetailPage({
   params,
@@ -83,6 +81,10 @@ export default async function SessionDetailPage({
   const highlights = isCompleted
     ? await getSessionHighlights(session.id)
     : null;
+
+  // Build display name map from all session players (scoreboard covers everyone who played)
+  const allSessionNames = (scoreboard as { name: string }[]).map((p) => p.name);
+  const nameMap = buildNameMap(allSessionNames);
 
   return (
     <div className="flex flex-col gap-4 px-4 py-4">
@@ -164,7 +166,7 @@ export default async function SessionDetailPage({
       {isCompleted && (
         <>
           {highlights && highlights.totalMatches >= 3 && (
-            <SessionHighlights highlights={highlights} />
+            <SessionHighlights highlights={highlights} nameMap={nameMap} />
           )}
           <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 flex items-center justify-between">
             <p className="text-sm text-gray-500">Session closed. No new matches can be recorded.</p>
@@ -190,28 +192,28 @@ export default async function SessionDetailPage({
           </h2>
           <div className="flex flex-col gap-3">
             {recentMatches.map((m) => {
-              const team1FirstNames = m.team1.map(getFirstName);
-              const team2FirstNames = m.team2.map(getFirstName);
-              const winnerFirstNames = m.winning_team === 1 ? team1FirstNames : team2FirstNames;
+              const team1Names = m.team1.map((n) => shortName(n, nameMap));
+              const team2Names = m.team2.map((n) => shortName(n, nameMap));
+              const winnerNames = m.winning_team === 1 ? team1Names : team2Names;
               return (
                 <div key={m.id} className="text-sm">
                   <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
                     <span className={`font-semibold truncate text-left ${m.winning_team === 1 ? "text-green-600" : "text-gray-400"}`}>
-                      {team1FirstNames.join(" & ")}
+                      {team1Names.join(" & ")}
                     </span>
                     <span className="text-gray-300 text-center w-6">vs</span>
                     <span className={`font-semibold truncate text-left ${m.winning_team === 2 ? "text-green-600" : "text-gray-400"}`}>
-                      {team2FirstNames.join(" & ")}
+                      {team2Names.join(" & ")}
                     </span>
                   </div>
                   <div className="text-xs text-gray-400 mt-0.5">
-                    {m.team1_score} – {m.team2_score} · {winnerFirstNames.join(" & ")} won
+                    {m.team1_score} – {m.team2_score} · {winnerNames.join(" & ")} won
                   </div>
                   {isAdmin && isActive && (
                     <MatchAdminControls
                       matchId={m.id}
-                      team1Names={m.team1.map(getFirstName) as [string, string]}
-                      team2Names={m.team2.map(getFirstName) as [string, string]}
+                      team1Names={m.team1.map((n) => shortName(n, nameMap)) as [string, string]}
+                      team2Names={m.team2.map((n) => shortName(n, nameMap)) as [string, string]}
                       team1Score={m.team1_score}
                       team2Score={m.team2_score}
                     />

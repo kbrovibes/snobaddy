@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ProposedMatch } from "@/lib/db/proposed";
+import { buildNameMap, shortName } from "@/lib/display-name";
 
 interface Props {
   sessionId: string;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function ProposedMatchList({ sessionId, matches, checkedInPlayers, isAdmin, autoGenerate }: Props) {
+  const nameMap = buildNameMap(checkedInPlayers.map((p: any) => p.name));
   const [loading, setLoading] = useState(false);
   const [togglingAuto, setTogglingAuto] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -149,13 +151,13 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
               <div className="grid grid-cols-[1fr_2rem_1fr] items-center gap-1 text-base text-gray-800 mb-3">
                 <div className="text-right">
                   {m.team1_names?.map((n, i) => (
-                    <div key={i}>{n.split(" ")[0]}</div>
+                    <div key={i}>{shortName(n, nameMap)}</div>
                   ))}
                 </div>
                 <div className="text-center text-gray-300 text-xs">vs</div>
                 <div className="text-left">
                   {m.team2_names?.map((n, i) => (
-                    <div key={i}>{n.split(" ")[0]}</div>
+                    <div key={i}>{shortName(n, nameMap)}</div>
                   ))}
                 </div>
               </div>

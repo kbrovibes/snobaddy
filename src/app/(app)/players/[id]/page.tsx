@@ -3,6 +3,7 @@ import { getPlayerById } from "@/lib/db/players";
 import { getPlayerSessionHistory, getPlayerMatchesBySession } from "@/lib/db/matches";
 import WinPctChart from "@/components/WinPctChart";
 import BackButton from "@/components/BackButton";
+import { buildNameMap, shortName } from "@/lib/display-name";
 
 export const dynamic = "force-dynamic";
 
@@ -11,9 +12,6 @@ function formatDate(dateStr: string) {
   return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 }
 
-function getFirstName(fullName: string) {
-  return fullName.split(" ")[0];
-}
 
 function SkillDots({ level }: { level: number }) {
   return (
@@ -39,6 +37,12 @@ export default async function PlayerProfilePage({
     getPlayerSessionHistory(id),
     getPlayerMatchesBySession(id),
   ]);
+
+  // Collect all names from match history to build disambiguation map
+  const allMatchNames = matchesBySession.flatMap((g) =>
+    g.matches.flatMap((m) => [m.partner, ...m.opponents])
+  );
+  const nameMap = buildNameMap(allMatchNames);
 
   const totalWins = sessionHistory.reduce((s, r) => s + r.wins, 0);
   const totalLosses = sessionHistory.reduce((s, r) => s + r.losses, 0);
@@ -99,9 +103,9 @@ export default async function PlayerProfilePage({
                           {m.won ? "W" : "L"}
                         </span>
                         <span className="text-sm text-gray-700 truncate flex-1">
-                          w/ {getFirstName(m.partner)}
+                          w/ {shortName(m.partner, nameMap)}
                           <span className="text-gray-400"> vs </span>
-                          {m.opponents.map(getFirstName).join(" & ")}
+                          {m.opponents.map((n) => shortName(n, nameMap)).join(" & ")}
                         </span>
                         <span className={`text-sm font-semibold tabular-nums shrink-0 ${m.won ? "text-green-600" : "text-red-400"}`}>
                           {m.my_score}–{m.opp_score}

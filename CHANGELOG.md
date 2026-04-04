@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.15] - 2026-04-03
+
+### Changed
+- **Name display** — players who share a first name now show a last name initial to disambiguate (e.g. "KiranB" and "KiranI"). Applies everywhere short names are used: match history, proposed matches, session awards, and player profile.
+
+---
+
 ## [0.17.14] - 2026-04-03
 
 ### Changed

@@ -1,8 +1,5 @@
 import { SessionHighlights as Highlights } from "@/lib/db/matches";
-
-function getFirstName(fullName: string) {
-  return fullName.split(" ")[0];
-}
+import { shortName } from "@/lib/display-name";
 
 interface AwardCardProps {
   emoji: string;
@@ -24,7 +21,7 @@ function AwardCard({ emoji, title, description, name, stat, colSpan }: AwardCard
   );
 }
 
-export default function SessionHighlights({ highlights }: { highlights: Highlights }) {
+export default function SessionHighlights({ highlights, nameMap }: { highlights: Highlights; nameMap: Map<string, string> }) {
   const { sultan, ironShuttle, untouchable, cannon, noMercy } = highlights;
 
   const cards: AwardCardProps[] = [];
@@ -34,7 +31,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
       emoji: "⚔️",
       title: "The Slayer",
       description: "Most wins tonight",
-      name: sultan.names.map(getFirstName).join(", "),
+      name: sultan.names.map((n) => shortName(n, nameMap)).join(", "),
       stat: `${sultan.wins} win${sultan.wins !== 1 ? "s" : ""}`,
     });
   }
@@ -44,7 +41,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
       emoji: "🚀",
       title: "The Unstoppable",
       description: "Most matches played",
-      name: ironShuttle.names.map(getFirstName).join(", "),
+      name: ironShuttle.names.map((n) => shortName(n, nameMap)).join(", "),
       stat: `${ironShuttle.matches} matches`,
     });
   }
@@ -54,7 +51,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
       emoji: "🧊",
       title: "The Untouchable",
       description: "Best win rate (min 3 matches)",
-      name: untouchable.names.map(getFirstName).join(", "),
+      name: untouchable.names.map((n) => shortName(n, nameMap)).join(", "),
       stat: `${untouchable.winPct}% win rate`,
     });
   }
@@ -64,7 +61,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
       emoji: "🎯",
       title: "The Point Collector",
       description: "Most points scored",
-      name: cannon.names.map(getFirstName).join(", "),
+      name: cannon.names.map((n) => shortName(n, nameMap)).join(", "),
       stat: `${cannon.points} pts`,
     });
   }
@@ -74,7 +71,7 @@ export default function SessionHighlights({ highlights }: { highlights: Highligh
       emoji: "⚡",
       title: "The Ones with No Mercy",
       description: "Biggest winning margin",
-      name: noMercy.team.map(getFirstName).join(" & "),
+      name: noMercy.team.map((n) => shortName(n, nameMap)).join(" & "),
       stat: `${noMercy.score} (gap ${noMercy.margin})`,
     });
   }
