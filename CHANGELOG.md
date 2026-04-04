@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.17.22] - 2026-04-04
+
+### Changed
+- **Player badges** — verified accounts now show an Instagram-style blue circle checkmark (SVG) instead of a plain green ✓.
+- **Player badges** — admin indicator changed from ★ to 🛡️ and now appears after the verified badge.
+- Both badges updated consistently across the leaderboard and admin panel.
+
+---
+
 ## [0.17.21] - 2026-04-04
 
 ### Changed

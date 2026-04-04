@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { PlayerStats } from "@/lib/db/players";
+import { VerifiedBadge, AdminBadge } from "@/components/PlayerBadges";
 
 type SortKey = "name" | "matches_played" | "wins" | "losses" | "win_pct";
 type SortDir = "asc" | "desc";
@@ -130,7 +131,8 @@ export default function LeaderboardTable({
               <td className="px-2 py-3 font-medium text-gray-900 max-w-[120px]">
                 <span className="flex items-center gap-1 min-w-0">
                   <span className="truncate">{player.name}</span>
-                  {player.user_id && <span className="text-green-500 text-xs shrink-0" title="Verified account">✓</span>}
+                  {player.user_id && <VerifiedBadge />}
+                  {player.is_admin && <AdminBadge />}
                 </span>
               </td>
               <td className="px-3 py-3 text-right tabular-nums text-gray-700">{player.matches_played}</td>

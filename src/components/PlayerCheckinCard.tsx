@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import SkillEditor from "./SkillEditor";
+import { VerifiedBadge, AdminBadge } from "./PlayerBadges";
 
 type Status = "absent" | "present" | "checked-out";
 
@@ -79,8 +80,8 @@ export default function PlayerCheckinCard({
       {/* Row 1: Name */}
       <div className="text-sm font-semibold text-gray-900 truncate pr-5 leading-tight">
         {name}
-        {isAdminPlayer && <span className="text-blue-400 ml-1 text-xs">★</span>}
-        {hasUserAccount && <span className="text-green-500 ml-0.5 text-xs" title="Verified">✓</span>}
+        {hasUserAccount && <VerifiedBadge />}
+        {isAdminPlayer && <AdminBadge />}
       </div>
 
       {/* Row 2: Skill (editable) */}
