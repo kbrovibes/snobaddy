@@ -18,6 +18,7 @@ Single source of truth for all planned and completed work.
 - [x] **10 — Email Auth** · [spec](specs/10-email-auth.md) · Email sign-up/sign-in alongside Google OAuth; forgot-password reset flow
 - [x] **19 — Simple Score Tracking** · [spec](specs/19-simple-score-tracking.md) · Per-session toggle (default on) replaces Generate Matches + score form with a minimal winner/loser picker; records 21–15 internally
 - [x] **11 — Admin: Add Player** · [spec](specs/11-admin-add-player.md) · Admin adds a name + skill level from the Players page; player has no auth account (bot/guest)
+- [ ] **21 — Performance & UX Optimizations** · [spec](specs/21-optimizations.md) · DB indexes, SQL aggregation for leaderboard, parallelised queries, useMemo fixes, poem Suspense, optimistic UI, batch API call
 - [ ] **09 — Fix Online Indicator** · [spec](specs/09-online-indicator-fix.md) · SSR race condition + missing DB column mean green dots never appear; fix with client-side fetch after ping
 - [ ] **08 — Ethan Mode** · [spec](specs/08-ethan-mode.md) · Easter egg: DB-persisted admin toggle that biases match suggestions (Chitra favored, Kiran Iyer skipped); banner visible to all when active
 - [x] **12 — Match Queue Improvements** · [spec](specs/12-match-queue-improvements.md) · Optimal team balancing within each match; auto-backfill queue when a match is removed; dynamic queue cap based on checked-in count (no auto-gen until 8 players)
