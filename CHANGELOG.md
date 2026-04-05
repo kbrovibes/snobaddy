@@ -6,6 +6,20 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.19.1] - 2026-04-04
+
+### Changed
+- **Admin panel** — player names on check-in cards are now links to the player's profile page.
+
+---
+
+## [0.19.0] - 2026-04-04
+
+### Added
+- **Player poems** — each player's profile now shows a short AI-generated funny poem below their name. Poems are persisted in a new `player_poems` table and regenerate automatically when a player's match count changes by 3 or more.
+
+---
+
 ## [0.18.1] - 2026-04-04
 
 ### Fixed

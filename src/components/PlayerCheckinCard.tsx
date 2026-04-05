@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import SkillEditor from "./SkillEditor";
 import { VerifiedBadge, AdminBadge } from "./PlayerBadges";
 
@@ -64,7 +65,7 @@ export default function PlayerCheckinCard({
 
   return (
     <div
-      className={`relative rounded-xl border px-3 py-3 flex flex-col gap-2 transition-colors ${
+      className={`relative rounded-xl border px-2 py-2 flex flex-col gap-1.5 transition-colors ${
         present
           ? "bg-green-50 border-green-200"
           : "bg-white border-gray-100"
@@ -72,14 +73,16 @@ export default function PlayerCheckinCard({
     >
       {/* Check-in badge */}
       {present && (
-        <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-bold leading-none">
+        <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center text-white text-[10px] font-bold leading-none">
           ✓
         </span>
       )}
 
       {/* Row 1: Name */}
-      <div className="text-sm font-semibold text-gray-900 truncate pr-5 leading-tight">
-        {name}
+      <div className="text-xs font-semibold text-gray-900 leading-tight pr-5">
+        <Link href={`/players/${playerId}`} className="hover:underline break-words">
+          {name}
+        </Link>
         {hasUserAccount && <VerifiedBadge />}
         {isAdminPlayer && <AdminBadge />}
       </div>

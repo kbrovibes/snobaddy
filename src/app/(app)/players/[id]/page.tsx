@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
-import { getPlayerById } from "@/lib/db/players";
+import { getPlayerById, getPlayerPoem, upsertPlayerPoem } from "@/lib/db/players";
 import { getPlayerSessionHistory, getPlayerMatchesBySession } from "@/lib/db/matches";
+import { generatePlayerPoem } from "@/lib/ai/poem";
 import WinPctChart from "@/components/WinPctChart";
 import BackButton from "@/components/BackButton";
 import { buildNameMap, shortName } from "@/lib/display-name";
@@ -46,9 +47,25 @@ export default async function PlayerProfilePage({
 
   const totalWins = sessionHistory.reduce((s, r) => s + r.wins, 0);
   const totalLosses = sessionHistory.reduce((s, r) => s + r.losses, 0);
-  const overallPct = totalWins + totalLosses > 0
-    ? Math.round((totalWins / (totalWins + totalLosses)) * 100)
+  const totalMatches = totalWins + totalLosses;
+  const overallPct = totalMatches > 0
+    ? Math.round((totalWins / totalMatches) * 100)
     : 0;
+
+  // Fetch or generate poem — regenerate when match count has changed by 3+
+  let poem: string | null = null;
+  try {
+    const saved = await getPlayerPoem(id);
+    const stale = !saved || Math.abs(totalMatches - saved.matches_at_generation) >= 3;
+    if (stale) {
+      poem = await generatePlayerPoem(player.name, totalWins, totalLosses);
+      await upsertPlayerPoem(id, poem, totalMatches);
+    } else {
+      poem = saved.poem;
+    }
+  } catch {
+    // poem is non-critical — silently skip if generation fails
+  }
 
   return (
     <div className="flex flex-col gap-4 px-4 py-4">
@@ -56,18 +73,25 @@ export default async function PlayerProfilePage({
       <BackButton />
 
       {/* Player header */}
-      <div className="bg-white rounded-xl shadow-sm px-4 py-4 flex items-center gap-4">
-        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xl font-bold shrink-0">
-          {player.name.charAt(0).toUpperCase()}
+      <div className="bg-white rounded-xl shadow-sm px-4 py-4">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xl font-bold shrink-0">
+            {player.name.charAt(0).toUpperCase()}
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg font-bold text-gray-900 truncate">{player.name}</h1>
+            <SkillDots level={player.skill_level} />
+          </div>
+          <div className="text-right shrink-0">
+            <p className="text-2xl font-bold text-gray-900">{overallPct}%</p>
+            <p className="text-xs text-gray-400">{totalWins}W {totalLosses}L</p>
+          </div>
         </div>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-lg font-bold text-gray-900 truncate">{player.name}</h1>
-          <SkillDots level={player.skill_level} />
-        </div>
-        <div className="text-right shrink-0">
-          <p className="text-2xl font-bold text-gray-900">{overallPct}%</p>
-          <p className="text-xs text-gray-400">{totalWins}W {totalLosses}L</p>
-        </div>
+        {poem && (
+          <p className="mt-3 text-sm italic text-gray-500 border-t border-gray-100 pt-3 leading-relaxed">
+            {poem}
+          </p>
+        )}
       </div>
 
       {/* Win % chart */}

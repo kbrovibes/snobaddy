@@ -104,3 +104,28 @@ export async function updateSkillLevel(playerId: string, skillLevel: number) {
     .eq("id", playerId);
   if (error) throw new Error(error.message);
 }
+
+export async function getPlayerPoem(
+  playerId: string
+): Promise<{ poem: string; matches_at_generation: number } | null> {
+  const { data } = await serviceClient
+    .from("player_poems")
+    .select("poem, matches_at_generation")
+    .eq("player_id", playerId)
+    .maybeSingle();
+  return data ?? null;
+}
+
+export async function upsertPlayerPoem(
+  playerId: string,
+  poem: string,
+  matchCount: number
+): Promise<void> {
+  const { error } = await serviceClient
+    .from("player_poems")
+    .upsert(
+      { player_id: playerId, poem, matches_at_generation: matchCount, created_at: new Date().toISOString() },
+      { onConflict: "player_id" }
+    );
+  if (error) throw new Error(error.message);
+}
