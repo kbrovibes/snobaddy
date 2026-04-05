@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.20.1] - 2026-04-04
+
+### Changed
+- **God Mode toggle** — A ⚡ OFF/ON button appears in the Admin Panel header for God Mode users only. Off by default: no delete buttons, no removed-players section. Toggle on to reveal full God Mode UI.
+
+---
+
 ## [0.20.0] - 2026-04-04
 
 ### Added
