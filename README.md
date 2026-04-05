@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/serve-logo.jpg" alt="Serve Sports" />
+  <img src="public/serve-logo.jpg" alt="Serve Sports" width="480" />
 </p>
 
 <h1 align="center">snobaddy</h1>
