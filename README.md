@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/serve-logo.jpg" alt="Serve Sports" width="160" style="border-radius: 24px;" />
+  <img src="public/serve-logo.jpg" alt="Serve Sports" width="220" />
 </p>
 
 <h1 align="center">snobaddy</h1>
@@ -13,6 +13,21 @@
   <a href="https://churchontheridge.churchcenter.com/registrations/events/category/35751">
     Serve Snoqualmie Sports →
   </a>
+</p>
+
+---
+
+## Screenshots
+
+<p align="center">
+  <img src="screenshots/snobaddy-screen-1.jpeg" width="180" />
+  <img src="screenshots/snobaddy-screen-2.jpeg" width="180" />
+  <img src="screenshots/snobaddy-screen-3.jpeg" width="180" />
+</p>
+<p align="center">
+  <img src="screenshots/snobaddy-screen-4.jpeg" width="180" />
+  <img src="screenshots/snobaddy-screen-5.jpeg" width="180" />
+  <img src="screenshots/snobaddy-screen-6.jpeg" width="180" />
 </p>
 
 ---
