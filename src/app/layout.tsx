@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SnoBaddy Dashboard",
+  title: "Serve Snoqualmie Badminton",
   description: "Badminton session and season tracker for snoqualmie club",
   icons: {
     icon: "/favicon.gif",

@@ -31,7 +31,7 @@ export default function Header({ userName, playerId, isAdmin }: HeaderProps) {
     <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 h-14 bg-white border-b border-gray-100">
       <Link href="/" className="flex items-center gap-2">
         <span className="text-xl">🏸</span>
-        <span className="font-bold text-gray-900 text-lg">snobaddy</span>
+        <span className="font-bold text-gray-900 text-lg">Serve Snoqualmie Badminton</span>
       </Link>
       <div className="flex items-center gap-3">
         <button
