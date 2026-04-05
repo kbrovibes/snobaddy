@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.19.3] - 2026-04-03
+
+### Changed
+- **Win/Loss Only toggle** — moved from session header into the "Record a Score" card as an iOS-style toggle, visible to admins only.
+
+---
+
 ## [0.19.2] - 2026-04-04
 
 ### Changed

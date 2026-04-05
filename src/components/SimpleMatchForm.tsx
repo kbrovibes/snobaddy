@@ -14,34 +14,60 @@ const EMPTY = "";
 export default function SimpleMatchForm({
   sessionId,
   checkedInPlayers,
+  isAdmin,
+  simpleMode,
 }: {
   sessionId: string;
   checkedInPlayers: Player[];
+  isAdmin: boolean;
+  simpleMode: boolean;
 }) {
   const [w1, setW1] = useState(EMPTY);
   const [w2, setW2] = useState(EMPTY);
   const [l1, setL1] = useState(EMPTY);
   const [l2, setL2] = useState(EMPTY);
+  const [score1, setScore1] = useState("");
+  const [score2, setScore2] = useState("");
   const [saving, setSaving] = useState(false);
+  const [toggling, setToggling] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
   const selected = [w1, w2, l1, l2];
-  const canSave = selected.every(Boolean) && new Set(selected).size === 4;
+  const canSave = simpleMode
+    ? selected.every(Boolean) && new Set(selected).size === 4
+    : selected.every(Boolean) && new Set(selected).size === 4 &&
+      score1 !== "" && score2 !== "" &&
+      parseInt(score1) !== parseInt(score2);
 
   function clear() {
     setW1(EMPTY); setW2(EMPTY); setL1(EMPTY); setL2(EMPTY);
-    setError("");
+    setScore1(""); setScore2(""); setError("");
   }
 
   function options(exclude: string[]) {
     return checkedInPlayers.filter((p) => !exclude.includes(p.player_id));
   }
 
+  async function toggleMode() {
+    setToggling(true);
+    await fetch(`/api/sessions/${sessionId}/simple-mode`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ simple_score_tracking: !simpleMode }),
+    });
+    router.refresh();
+    setToggling(false);
+  }
+
   async function save() {
     if (!canSave) return;
     setSaving(true);
     setError("");
+
+    const s1 = simpleMode ? 21 : parseInt(score1);
+    const s2 = simpleMode ? 15 : parseInt(score2);
+
     try {
       const res = await fetch("/api/matches", {
         method: "POST",
@@ -50,8 +76,8 @@ export default function SimpleMatchForm({
           session_id: sessionId,
           team1: [w1, w2],
           team2: [l1, l2],
-          team1_score: 21,
-          team2_score: 15,
+          team1_score: s1,
+          team2_score: s2,
         }),
       });
       const data = await res.json();
@@ -91,28 +117,63 @@ export default function SimpleMatchForm({
 
   return (
     <div className="bg-white rounded-xl shadow-sm px-4 py-3 flex flex-col gap-3">
-      <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Record a Score</h2>
+
+      {/* Header row: title + admin toggle */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Record a Score</h2>
+        {isAdmin && (
+          <button
+            onClick={toggleMode}
+            disabled={toggling}
+            className="flex items-center gap-2 disabled:opacity-50"
+          >
+            <span className="text-xs text-gray-500">Win/Loss Only</span>
+            <span className={`relative inline-flex w-10 h-6 rounded-full transition-colors duration-200 ${simpleMode ? "bg-blue-500" : "bg-gray-200"}`}>
+              <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${simpleMode ? "translate-x-4" : "translate-x-0"}`} />
+            </span>
+          </button>
+        )}
+      </div>
+
       {/* 3-col layout: winners | vs | losers */}
       <div className="grid grid-cols-[1fr_2rem_1fr] items-start gap-2">
-        {/* Winners */}
         <div className="flex flex-col gap-1.5">
           <span className="text-xs font-bold text-green-600 uppercase tracking-wide">Winners</span>
           <PlayerSelect value={w1} onChange={setW1} exclude={[w2, l1, l2]} />
           <PlayerSelect value={w2} onChange={setW2} exclude={[w1, l1, l2]} />
         </div>
 
-        {/* VS */}
         <div className="flex items-center justify-center h-full pt-5">
           <span className="text-xs font-bold text-gray-300">vs</span>
         </div>
 
-        {/* Losers */}
         <div className="flex flex-col gap-1.5">
           <span className="text-xs font-bold text-transparent uppercase tracking-wide select-none">–</span>
           <PlayerSelect value={l1} onChange={setL1} exclude={[w1, w2, l2]} />
           <PlayerSelect value={l2} onChange={setL2} exclude={[w1, w2, l1]} />
         </div>
       </div>
+
+      {/* Score fields — only in full mode */}
+      {!simpleMode && (
+        <div className="flex items-center gap-3">
+          <input
+            type="number" min="0" max="99"
+            value={score1}
+            onChange={(e) => setScore1(e.target.value)}
+            placeholder="21"
+            className="flex-1 text-center text-xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-2.5 focus:border-blue-400 outline-none"
+          />
+          <span className="text-lg font-bold text-gray-300">–</span>
+          <input
+            type="number" min="0" max="99"
+            value={score2}
+            onChange={(e) => setScore2(e.target.value)}
+            placeholder="15"
+            className="flex-1 text-center text-xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-2.5 focus:border-blue-400 outline-none"
+          />
+        </div>
+      )}
 
       {error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
