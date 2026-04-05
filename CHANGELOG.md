@@ -11,6 +11,10 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ### Fixed
 - **Match history** — disambiguated names now show as "Kiran-I" / "Kiran-B" instead of "KiranI" / "KiranB".
 
+### Changed
+- **Win/Loss Only toggle** — now visible to all users (not just admins); non-admins see it as read-only.
+- **Score saved feedback** — "Score saved!" green text appears for 1.5 seconds after a match is recorded before the form clears.
+
 ---
 
 ## [0.19.3] - 2026-04-03

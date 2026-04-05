@@ -29,6 +29,7 @@ export default function SimpleMatchForm({
   const [score1, setScore1] = useState("");
   const [score2, setScore2] = useState("");
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [toggling, setToggling] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -50,6 +51,7 @@ export default function SimpleMatchForm({
   }
 
   async function toggleMode() {
+    if (!isAdmin) return;
     setToggling(true);
     await fetch(`/api/sessions/${sessionId}/simple-mode`, {
       method: "PATCH",
@@ -82,8 +84,12 @@ export default function SimpleMatchForm({
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Failed to save."); setSaving(false); return; }
-      clear();
-      router.refresh();
+      setSaved(true);
+      setTimeout(() => {
+        setSaved(false);
+        clear();
+        router.refresh();
+      }, 1500);
     } catch {
       setError("An unexpected error occurred.");
     }
@@ -118,21 +124,19 @@ export default function SimpleMatchForm({
   return (
     <div className="bg-white rounded-xl shadow-sm px-4 py-3 flex flex-col gap-3">
 
-      {/* Header row: title + admin toggle */}
+      {/* Header row: title + toggle */}
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Record a Score</h2>
-        {isAdmin && (
-          <button
-            onClick={toggleMode}
-            disabled={toggling}
-            className="flex items-center gap-2 disabled:opacity-50"
-          >
-            <span className="text-xs text-gray-500">Win/Loss Only</span>
-            <span className={`relative inline-flex w-10 h-6 rounded-full transition-colors duration-200 ${simpleMode ? "bg-blue-500" : "bg-gray-200"}`}>
-              <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${simpleMode ? "translate-x-4" : "translate-x-0"}`} />
-            </span>
-          </button>
-        )}
+        <button
+          onClick={toggleMode}
+          disabled={toggling || !isAdmin}
+          className={`flex items-center gap-2 ${isAdmin ? "disabled:opacity-50" : "opacity-60 cursor-default"}`}
+        >
+          <span className="text-xs text-gray-500">Win/Loss Only</span>
+          <span className={`relative inline-flex w-10 h-6 rounded-full transition-colors duration-200 ${simpleMode ? "bg-blue-500" : "bg-gray-200"}`}>
+            <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${simpleMode ? "translate-x-4" : "translate-x-0"}`} />
+          </span>
+        </button>
       </div>
 
       {/* 3-col layout: winners | vs | losers */}
@@ -176,11 +180,12 @@ export default function SimpleMatchForm({
       )}
 
       {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+      {saved && <p className="text-sm text-green-600 font-medium text-center">Score saved!</p>}
 
       <div className="flex gap-2">
         <button
           onClick={save}
-          disabled={!canSave || saving}
+          disabled={!canSave || saving || saved}
           className="flex-1 py-2 bg-blue-600 text-white font-semibold rounded-xl text-sm hover:bg-blue-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {saving ? "Saving…" : "Save"}
