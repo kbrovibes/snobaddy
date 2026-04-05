@@ -19,21 +19,45 @@ export interface PlayerSessionStats {
   matches_played: number;
 }
 
+async function getDeletedPlayerIds(supabase: Awaited<ReturnType<typeof createClient>>): Promise<Set<string>> {
+  const { data } = await supabase
+    .from("players")
+    .select("id")
+    .not("deleted_at", "is", null);
+  return new Set((data ?? []).map((p: { id: string }) => p.id));
+}
+
+function hasDeletedPlayer(
+  m: { team1_player1_id: string; team1_player2_id: string; team2_player1_id: string; team2_player2_id: string },
+  deletedIds: Set<string>
+): boolean {
+  return (
+    deletedIds.has(m.team1_player1_id) ||
+    deletedIds.has(m.team1_player2_id) ||
+    deletedIds.has(m.team2_player1_id) ||
+    deletedIds.has(m.team2_player2_id)
+  );
+}
+
 export async function getSessionMatches(sessionId: string): Promise<MatchRecord[]> {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("matches")
-    .select(`
-      id, played_at, team1_score, team2_score, winning_team,
-      t1p1:team1_player1_id(name),
-      t1p2:team1_player2_id(name),
-      t2p1:team2_player1_id(name),
-      t2p2:team2_player2_id(name)
-    `)
-    .eq("session_id", sessionId)
-    .order("played_at", { ascending: false });
+  const [{ data }, deletedIds] = await Promise.all([
+    supabase
+      .from("matches")
+      .select(`
+        id, played_at, team1_score, team2_score, winning_team,
+        team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id,
+        t1p1:team1_player1_id(name),
+        t1p2:team1_player2_id(name),
+        t2p1:team2_player1_id(name),
+        t2p2:team2_player2_id(name)
+      `)
+      .eq("session_id", sessionId)
+      .order("played_at", { ascending: false }),
+    getDeletedPlayerIds(supabase),
+  ]);
 
-  return (data ?? []).map((m) => ({
+  return (data ?? []).filter((m) => !hasDeletedPlayer(m, deletedIds)).map((m) => ({
     id: m.id,
     played_at: m.played_at,
     team1_score: m.team1_score,
@@ -354,16 +378,19 @@ export async function getSeasonMatchCount(): Promise<number> {
 export async function getSessionScoreboard(sessionId: string): Promise<PlayerSessionStats[]> {
   const supabase = await createClient();
 
-  const { data: matches } = await supabase
-    .from("matches")
-    .select(`
-      team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team,
-      t1p1:team1_player1_id(name, skill_level),
-      t1p2:team1_player2_id(name, skill_level),
-      t2p1:team2_player1_id(name, skill_level),
-      t2p2:team2_player2_id(name, skill_level)
-    `)
-    .eq("session_id", sessionId);
+  const [{ data: matches }, deletedIds] = await Promise.all([
+    supabase
+      .from("matches")
+      .select(`
+        team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team,
+        t1p1:team1_player1_id(name, skill_level),
+        t1p2:team1_player2_id(name, skill_level),
+        t2p1:team2_player1_id(name, skill_level),
+        t2p2:team2_player2_id(name, skill_level)
+      `)
+      .eq("session_id", sessionId),
+    getDeletedPlayerIds(supabase),
+  ]);
 
   const stats = new Map<string, PlayerSessionStats>();
 
@@ -373,7 +400,7 @@ export async function getSessionScoreboard(sessionId: string): Promise<PlayerSes
     }
   }
 
-  for (const m of matches ?? []) {
+  for (const m of (matches ?? []).filter((m) => !hasDeletedPlayer(m, deletedIds))) {
     const t1p1 = m.t1p1 as unknown as { name: string; skill_level: number };
     const t1p2 = m.t1p2 as unknown as { name: string; skill_level: number };
     const t2p1 = m.t2p1 as unknown as { name: string; skill_level: number };

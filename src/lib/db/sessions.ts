@@ -154,21 +154,31 @@ export async function getPastSessionsThisSeason(seasonId: string, beforeDate: st
   return data ?? [];
 }
 
-// Players currently present (checked in, not checked out)
+// Players currently present (checked in, not checked out), excluding deleted players
 export async function getCheckedInPlayers(sessionId: string): Promise<CheckedInPlayer[]> {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("session_players")
-    .select("player_id, checked_in_at, players(name, skill_level)")
-    .eq("session_id", sessionId)
-    .is("checked_out_at", null)
-    .order("checked_in_at");
+  const [{ data }, { data: deletedData }] = await Promise.all([
+    supabase
+      .from("session_players")
+      .select("player_id, checked_in_at, players(name, skill_level)")
+      .eq("session_id", sessionId)
+      .is("checked_out_at", null)
+      .order("checked_in_at"),
+    supabase
+      .from("players")
+      .select("id")
+      .not("deleted_at", "is", null),
+  ]);
 
-  return (data ?? []).map((row) => ({
-    player_id: row.player_id,
-    checked_in_at: row.checked_in_at,
-    ...(row.players as unknown as { name: string; skill_level: number }),
-  }));
+  const deletedIds = new Set((deletedData ?? []).map((p) => p.id));
+
+  return (data ?? [])
+    .filter((row) => !deletedIds.has(row.player_id))
+    .map((row) => ({
+      player_id: row.player_id,
+      checked_in_at: row.checked_in_at,
+      ...(row.players as unknown as { name: string; skill_level: number }),
+    }));
 }
 
 // All presence records for a session (for admin players view)

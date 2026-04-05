@@ -14,29 +14,45 @@ export interface PlayerStats {
 }
 
 
-export async function getAllPlayers(): Promise<PlayerStats[]> {
+export async function getActivePlayers(): Promise<PlayerStats[]> {
   const supabase = await createClient();
-  
-  // 1. Get all players who completed onboarding
-  const { data: players, error } = await supabase
-    .from("players")
-    .select("id, name, email, skill_level, is_admin, user_id")
-    .eq("onboarding_complete", true)
-    .order("name");
+
+  const [
+    { data: players, error },
+    { data: matches },
+    { data: deletedData },
+  ] = await Promise.all([
+    supabase
+      .from("players")
+      .select("id, name, email, skill_level, is_admin, user_id")
+      .eq("onboarding_complete", true)
+      .is("deleted_at", null)
+      .order("name"),
+    supabase
+      .from("matches")
+      .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team"),
+    supabase
+      .from("players")
+      .select("id")
+      .not("deleted_at", "is", null),
+  ]);
 
   if (error) throw new Error(error.message);
   if (!players) return [];
 
-  // 2. Get all matches for aggregation
-  // In a larger app, we would do this via a database view or RPC, 
-  // but for MVP scale, in-memory aggregation is fast and simple.
-  const { data: matches } = await supabase
-    .from("matches")
-    .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team");
+  const deletedIds = new Set((deletedData ?? []).map((p) => p.id));
 
   const statsMap = new Map<string, { wins: number; losses: number; played: number }>();
-  
+
   for (const m of matches ?? []) {
+    // Skip any match involving a deleted player
+    if (
+      deletedIds.has(m.team1_player1_id) ||
+      deletedIds.has(m.team1_player2_id) ||
+      deletedIds.has(m.team2_player1_id) ||
+      deletedIds.has(m.team2_player2_id)
+    ) continue;
+
     const t1 = [m.team1_player1_id, m.team1_player2_id];
     const t2 = [m.team2_player1_id, m.team2_player2_id];
     const winners = m.winning_team === 1 ? t1 : t2;
@@ -65,6 +81,41 @@ export async function getAllPlayers(): Promise<PlayerStats[]> {
       losses: s.losses,
     };
   });
+}
+
+/** @deprecated Use getActivePlayers() instead */
+export const getAllPlayers = getActivePlayers;
+
+export interface DeletedPlayer {
+  id: string;
+  name: string;
+  skill_level: number;
+}
+
+export async function getDeletedPlayers(): Promise<DeletedPlayer[]> {
+  const { data, error } = await serviceClient
+    .from("players")
+    .select("id, name, skill_level")
+    .not("deleted_at", "is", null)
+    .order("deleted_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
+
+export async function deletePlayer(id: string): Promise<void> {
+  const { error } = await serviceClient
+    .from("players")
+    .update({ deleted_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+export async function restorePlayer(id: string): Promise<void> {
+  const { error } = await serviceClient
+    .from("players")
+    .update({ deleted_at: null })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
 }
 
 /**

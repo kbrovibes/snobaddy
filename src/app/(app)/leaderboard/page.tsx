@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { getAllPlayers } from "@/lib/db/players";
+import { getActivePlayers } from "@/lib/db/players";
 import { getSeasonMatchCount } from "@/lib/db/matches";
 import LeaderboardTable from "./LeaderboardTable";
 import { buildNameMap, shortName } from "@/lib/display-name";
@@ -27,7 +27,7 @@ function AwardCard({ emoji, title, description, name, stat }: AwardCardProps) {
 
 export default async function LeaderboardPage() {
   const [allPlayers, totalMatches] = await Promise.all([
-    getAllPlayers(),
+    getActivePlayers(),
     getSeasonMatchCount(),
   ]);
 

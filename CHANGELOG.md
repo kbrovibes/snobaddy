@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.20.0] - 2026-04-04
+
+### Added
+- **Add Player** — Admins can add players directly from the Admin Panel (name + skill level, no account required). New players appear immediately and can be checked in.
+- **Remove Player** — Admins can remove a player from the Admin Panel with an inline confirmation. Removed players disappear from all views, check-ins, and match history.
+- **Restore Player** — A "Removed players" section (God Mode only) at the bottom of the Admin Panel shows removed players and lets God Mode users restore them.
+- **God Mode** — `is_god_mode` column added to players; currently granted to Karthik Rajan. Gates the removed-players section and future privileged features.
+
+---
+
 ## [0.19.5] - 2026-04-04
 
 ### Fixed
