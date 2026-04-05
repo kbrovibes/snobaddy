@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.20.3] - 2026-04-04
+
+### Changed
+- **Who's Here** — "Out" button renamed to "Checkout".
+- **Record a Score** — Winners and Losers columns now each sit inside a bordered card (green tint for Winners, gray for Losers) making the team grouping visually clear. "Losers" label added to match the "Winners" label.
+
+---
+
 ## [0.20.2] - 2026-04-04
 
 ### Fixed

@@ -151,7 +151,7 @@ export default function WhoIsHere({
                   disabled={checkingOut === p.player_id}
                   className="text-xs text-red-400 hover:text-red-600 font-medium disabled:opacity-40"
                 >
-                  {checkingOut === p.player_id ? "…" : "Out"}
+                  {checkingOut === p.player_id ? "…" : "Checkout"}
                 </button>
               </div>
             ) : (
