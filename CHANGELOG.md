@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.20.4] - 2026-04-04
+
+### Changed
+- **Record a Score** — "Winners" → "Winning Team"; opposing column label removed.
+
+---
+
 ## [0.20.3] - 2026-04-04
 
 ### Changed
