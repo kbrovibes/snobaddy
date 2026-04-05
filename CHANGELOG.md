@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.20.5] - 2026-04-04
+
+### Changed
+- **Leaderboard** — player names are now links to their profile pages.
+
+---
+
 ## [0.20.4] - 2026-04-04
 
 ### Changed

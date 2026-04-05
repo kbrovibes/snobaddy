@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { PlayerStats } from "@/lib/db/players";
 import { VerifiedBadge, AdminBadge } from "@/components/PlayerBadges";
 
@@ -130,7 +131,9 @@ export default function LeaderboardTable({
               </td>
               <td className="px-2 py-3 font-medium text-gray-900 max-w-[120px]">
                 <span className="flex items-center gap-1 min-w-0">
-                  <span className="truncate">{player.name}</span>
+                  <Link href={`/players/${player.id}`} className="truncate text-blue-700 hover:underline">
+                    {player.name}
+                  </Link>
                   {player.user_id && <VerifiedBadge />}
                   {player.is_admin && <AdminBadge />}
                 </span>
