@@ -15,7 +15,7 @@ export function buildNameMap(fullNames: string[]): Map<string, string> {
     const parts = name.split(" ");
     const first = parts[0];
     if ((firstNameCount.get(first) ?? 0) > 1 && parts.length > 1) {
-      map.set(name, `${first}${parts[1][0]}`);
+      map.set(name, `${first}-${parts[1][0]}`);
     } else {
       map.set(name, first);
     }

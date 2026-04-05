@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.19.3] - 2026-04-04
+
+### Fixed
+- **Match history** — disambiguated names now show as "Kiran-I" / "Kiran-B" instead of "KiranI" / "KiranB".
+
+---
+
 ## [0.19.2] - 2026-04-04
 
 ### Changed
