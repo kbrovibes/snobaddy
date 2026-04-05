@@ -38,13 +38,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "skill_level must be 1–5" }, { status: 400 });
   }
 
+  // email is NOT NULL in DB; generate a unique placeholder for bot players
+  const slug = name.trim().toLowerCase().replace(/\s+/g, ".").replace(/[^a-z0-9.]/g, "");
+  const suffix = Math.random().toString(36).slice(2, 7);
+  const fakeEmail = `${slug}.${suffix}@example.com`;
+
   const { data: newPlayer, error } = await serviceClient
     .from("players")
     .insert({
       name: name.trim(),
       skill_level,
       user_id: null,
-      email: null,
+      email: fakeEmail,
       is_admin: false,
       onboarding_complete: true,
     })

@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.20.2] - 2026-04-04
+
+### Fixed
+- **Add Player** — name input now shows black text instead of grey; bot players are created with a unique `@example.com` placeholder email to satisfy the DB's NOT NULL constraint.
+
+---
+
 ## [0.20.1] - 2026-04-04
 
 ### Changed
