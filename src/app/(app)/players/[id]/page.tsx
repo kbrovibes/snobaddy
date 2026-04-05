@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getPlayerById, getPlayerPoem, upsertPlayerPoem } from "@/lib/db/players";
+import { getPlayerById, getPlayerPoem, getPlayerPoemContext, upsertPlayerPoem } from "@/lib/db/players";
 import { getPlayerSessionHistory, getPlayerMatchesBySession } from "@/lib/db/matches";
 import { generatePlayerPoem } from "@/lib/ai/poem";
 import WinPctChart from "@/components/WinPctChart";
@@ -58,7 +58,8 @@ export default async function PlayerProfilePage({
     const saved = await getPlayerPoem(id);
     const stale = !saved || Math.abs(totalMatches - saved.matches_at_generation) >= 3;
     if (stale) {
-      poem = await generatePlayerPoem(player.name, totalWins, totalLosses);
+      const poemContext = await getPlayerPoemContext(id);
+      poem = await generatePlayerPoem(player.name, poemContext);
       await upsertPlayerPoem(id, poem, totalMatches);
     } else {
       poem = saved.poem;

@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.19.2] - 2026-04-04
+
+### Changed
+- **Player poems** — poems now reference recent session results and a player's most frequent partner, making them more personal and specific.
+
+---
+
 ## [0.19.1] - 2026-04-04
 
 ### Changed

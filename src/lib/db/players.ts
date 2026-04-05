@@ -105,6 +105,65 @@ export async function updateSkillLevel(playerId: string, skillLevel: number) {
   if (error) throw new Error(error.message);
 }
 
+export interface PlayerPoemContext {
+  wins: number;
+  losses: number;
+  recentSessions: Array<{ date: string; wins: number; losses: number }>;
+  topPartner: string | null;
+}
+
+export async function getPlayerPoemContext(playerId: string): Promise<PlayerPoemContext> {
+  const { data } = await serviceClient
+    .from("matches")
+    .select(`
+      winning_team, session_id,
+      team1_player1_id, team1_player2_id,
+      team2_player1_id, team2_player2_id,
+      sessions(date),
+      t1p1:team1_player1_id(name),
+      t1p2:team1_player2_id(name),
+      t2p1:team2_player1_id(name),
+      t2p2:team2_player2_id(name)
+    `)
+    .or(`team1_player1_id.eq.${playerId},team1_player2_id.eq.${playerId},team2_player1_id.eq.${playerId},team2_player2_id.eq.${playerId}`);
+
+  const matches = data ?? [];
+  let wins = 0;
+  let losses = 0;
+  const partnerCount = new Map<string, number>();
+  const sessionMap = new Map<string, { date: string; wins: number; losses: number }>();
+
+  for (const m of matches) {
+    const onTeam1 = m.team1_player1_id === playerId || m.team1_player2_id === playerId;
+    const won = (onTeam1 && m.winning_team === 1) || (!onTeam1 && m.winning_team === 2);
+    if (won) wins++; else losses++;
+
+    const t1p1 = (m.t1p1 as unknown as { name: string }).name;
+    const t1p2 = (m.t1p2 as unknown as { name: string }).name;
+    const t2p1 = (m.t2p1 as unknown as { name: string }).name;
+    const t2p2 = (m.t2p2 as unknown as { name: string }).name;
+    const partner = onTeam1
+      ? (m.team1_player1_id === playerId ? t1p2 : t1p1)
+      : (m.team2_player1_id === playerId ? t2p2 : t2p1);
+    partnerCount.set(partner, (partnerCount.get(partner) ?? 0) + 1);
+
+    const session = m.sessions as unknown as { date: string };
+    const entry = sessionMap.get(m.session_id) ?? { date: session.date, wins: 0, losses: 0 };
+    if (won) entry.wins++; else entry.losses++;
+    sessionMap.set(m.session_id, entry);
+  }
+
+  const recentSessions = Array.from(sessionMap.values())
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 3);
+
+  const topPartner = partnerCount.size > 0
+    ? Array.from(partnerCount.entries()).sort((a, b) => b[1] - a[1])[0][0]
+    : null;
+
+  return { wins, losses, recentSessions, topPartner };
+}
+
 export async function getPlayerPoem(
   playerId: string
 ): Promise<{ poem: string; matches_at_generation: number } | null> {
