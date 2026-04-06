@@ -231,7 +231,7 @@ export default function TallyEntryForm({
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept=".jpg,.jpeg,.png,.heic,.webp"
               className="hidden"
               onChange={handlePhotoUpload}
             />
@@ -267,7 +267,7 @@ export default function TallyEntryForm({
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept=".jpg,.jpeg,.png,.heic,.webp"
                 capture="environment"
                 className="hidden"
                 onChange={handlePhotoUpload}
