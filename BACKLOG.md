@@ -40,6 +40,7 @@ Single source of truth for all planned and completed work.
 ---
 
 - [x] **22 — Test Sessions** · [spec](specs/22-test-sessions.md) · Flag sessions as test (auto on non-Mon/Thu); admin toggle on session detail; admin-local filter on leaderboard + session list
+- [x] **24 — God Mode Control Panel** · [spec](specs/24-control-panel.md) · Live Supabase DB metrics (size, table rows, auth users) + Vercel account/deployment status; accessible from Admin Panel; God Mode only
 
 ## Future (unspecced)
 
