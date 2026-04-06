@@ -8,7 +8,8 @@ import {
 } from "@/lib/db/sessions";
 import { getSessionMatches, getSessionScoreboard, getSessionHighlights } from "@/lib/db/matches";
 import { getProposedMatches } from "@/lib/db/proposed";
-import { getOnlinePlayerIds } from "@/lib/db/players";
+import { getOnlinePlayerIds, getActivePlayerList } from "@/lib/db/players";
+import { getSessionTally, type TallyEntry } from "@/lib/db/tally";
 import { createClient } from "@/lib/supabase-server";
 import { buildNameMap, shortName } from "@/lib/display-name";
 import StartSessionButton from "@/components/StartSessionButton";
@@ -25,6 +26,8 @@ import SessionHighlights from "@/components/SessionHighlights";
 import SessionScoreboard from "@/components/SessionScoreboard";
 import SimpleMatchForm from "@/components/SimpleMatchForm";
 import TestSessionToggle from "@/components/TestSessionToggle";
+import TallyScoreboard from "@/components/TallyScoreboard";
+import TallyEntryForm from "@/components/TallyEntryForm";
 
 export const dynamic = "force-dynamic";
 
@@ -64,21 +67,22 @@ export default async function SessionDetailPage({
 
   const pastSessions = await getPastSessionsThisSeason(session.season.id, session.date);
 
-  const needsScoreboard =
-    session.status === "active" || session.status === "completed";
-
-  const [scoreboard, recentMatches, proposedMatches, onlinePlayerIds] = needsScoreboard
-    ? await Promise.all([
-        getSessionScoreboard(session.id),
-        getSessionMatches(session.id),
-        getProposedMatches(session.id),
-        getOnlinePlayerIds(checkedInPlayers.map((p) => p.player_id)),
-      ])
-    : [[], [], [], new Set<string>()];
-
   const isPending = session.status === "pending";
   const isActive = session.status === "active";
   const isCompleted = session.status === "completed";
+  const needsScoreboard = isActive || isCompleted;
+
+  const [scoreboard, recentMatches, proposedMatches, onlinePlayerIds, tallyRows, formPlayers] =
+    needsScoreboard
+      ? await Promise.all([
+          getSessionScoreboard(session.id),
+          getSessionMatches(session.id),
+          getProposedMatches(session.id),
+          getOnlinePlayerIds(checkedInPlayers.map((p) => p.player_id)),
+          isCompleted ? getSessionTally(session.id) : Promise.resolve([] as TallyEntry[]),
+          isCompleted && isAdmin ? getActivePlayerList() : Promise.resolve([] as { id: string; name: string }[]),
+        ])
+      : [[], [], [], new Set<string>(), [], []];
 
   const highlights = isCompleted
     ? await getSessionHighlights(session.id)
@@ -187,15 +191,37 @@ export default async function SessionDetailPage({
             <p className="text-sm text-gray-500">Session closed. No new matches can be recorded.</p>
             {isAdmin && <ReopenSessionButton sessionId={session.id} />}
           </div>
+          {/* Tally entry: shown when no matches recorded yet */}
+          {isAdmin && (recentMatches as unknown[]).length === 0 && (tallyRows as TallyEntry[]).length === 0 && (
+            <TallyEntryForm
+              sessionId={session.id}
+              allPlayers={formPlayers as { id: string; name: string }[]}
+            />
+          )}
         </>
       )}
 
-      {/* Scoreboard — shown for active and completed */}
-      {(isActive || isCompleted) && (
+      {/* Tally scoreboard — shown for completed sessions with tally data (no match records) */}
+      {isCompleted && (tallyRows as TallyEntry[]).length > 0 && (
+        <>
+          <TallyScoreboard entries={tallyRows as TallyEntry[]} />
+          {isAdmin && (
+            <TallyEntryForm
+              sessionId={session.id}
+              allPlayers={formPlayers as { id: string; name: string }[]}
+              initialEntries={tallyRows as TallyEntry[]}
+              isEdit
+            />
+          )}
+        </>
+      )}
+
+      {/* Match scoreboard — shown for active sessions, or completed sessions with match records */}
+      {(isActive || isCompleted) && (tallyRows as TallyEntry[]).length === 0 && (
         <SessionScoreboard
           scoreboard={scoreboard}
           playerId={playerId}
-          matchCount={recentMatches.length}
+          matchCount={(recentMatches as unknown[]).length}
         />
       )}
 

@@ -33,6 +33,7 @@ export async function getActivePlayers(
     { data: players, error },
     { data: matches },
     { data: deletedData },
+    { data: tallies },
   ] = await Promise.all([
     supabase
       .from("players")
@@ -45,6 +46,9 @@ export async function getActivePlayers(
       .from("players")
       .select("id")
       .not("deleted_at", "is", null),
+    supabase
+      .from("session_tally")
+      .select("player_id, wins, losses"),
   ]);
 
   if (error) throw new Error(error.message);
@@ -82,6 +86,15 @@ export async function getActivePlayers(
     }
   }
 
+  // Add tally-session stats (sessions where no individual matches were recorded)
+  for (const t of tallies ?? []) {
+    const s = statsMap.get(t.player_id) ?? { wins: 0, losses: 0, played: 0 };
+    s.wins += t.wins;
+    s.losses += t.losses;
+    s.played += t.wins + t.losses;
+    statsMap.set(t.player_id, s);
+  }
+
   return players.map((p) => {
     const s = statsMap.get(p.id) ?? { wins: 0, losses: 0, played: 0 };
     return {
@@ -91,6 +104,17 @@ export async function getActivePlayers(
       losses: s.losses,
     };
   });
+}
+
+export async function getActivePlayerList(): Promise<Array<{ id: string; name: string }>> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("players")
+    .select("id, name")
+    .eq("onboarding_complete", true)
+    .is("deleted_at", null)
+    .order("name");
+  return data ?? [];
 }
 
 /** @deprecated Use getActivePlayers() instead */
