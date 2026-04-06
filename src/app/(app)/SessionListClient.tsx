@@ -74,7 +74,7 @@ export default function SessionListClient({
           ) : s.status === "pending" ? (
             <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Upcoming</span>
           ) : (
-            <span className="text-xs text-gray-400">Closed</span>
+            <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">Finalized</span>
           )}
           <span className="text-gray-300 text-sm">→</span>
         </div>

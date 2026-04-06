@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.8] - 2026-04-06
+
+### Changed
+- **Session list & session detail** — "Closed" badge renamed to "Finalized" with indigo color.
+
+---
+
 ## [0.22.7] - 2026-04-06
 
 ### Fixed

@@ -131,8 +131,8 @@ export default async function SessionDetailPage({
             </span>
           )}
           {isCompleted && (
-            <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">
-              Closed
+            <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">
+              Finalized
             </span>
           )}
         </div>
