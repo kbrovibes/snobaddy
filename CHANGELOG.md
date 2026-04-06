@@ -9,7 +9,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [0.23.2] - 2026-04-06
 
 ### Changed
-- **Combined stats chart** — Player profile now shows a single stacked bar chart (wins green, losses red) with win % labeled above each bar, replacing the two separate charts.
+- **Combined stats chart** — Player profile now shows a single stacked bar chart (wins green, losses red), replacing the two separate charts.
 
 ### Added
 - **Exclude test sessions** — Test session data is filtered out of player profile stats and match history by default. Admins see an iOS-style toggle to include them.

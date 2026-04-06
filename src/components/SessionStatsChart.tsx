@@ -48,7 +48,6 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
 
         {data.map((s, i) => {
           const x = i * (BAR_W + GAP);
-          const total = s.wins + s.losses;
           const winH = Math.round((s.wins / maxMatches) * CHART_H);
           const lossH = Math.round((s.losses / maxMatches) * CHART_H);
           const totalBarH = winH + lossH;
@@ -58,7 +57,7 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
 
           return (
             <g key={s.date}>
-              <title>{shortDate(s.date)}: {s.wins}W {s.losses}L — {s.win_pct}% win rate</title>
+              <title>{shortDate(s.date)}: {s.wins}W {s.losses}L</title>
 
               {/* Wins (green, top portion) */}
               {winH > 0 && (
@@ -77,20 +76,6 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
               {lossH >= 14 && (
                 <text x={x + BAR_W / 2} y={lossY + 11} textAnchor="middle" fontSize={9} fill="white" fontWeight="600">
                   {s.losses}
-                </text>
-              )}
-
-              {/* Win % label above bar */}
-              {total > 0 && (
-                <text
-                  x={x + BAR_W / 2}
-                  y={winY - 3}
-                  textAnchor="middle"
-                  fontSize={8}
-                  fill={s.win_pct >= 50 ? "#16a34a" : "#dc2626"}
-                  fontWeight="600"
-                >
-                  {s.win_pct}%
                 </text>
               )}
 
