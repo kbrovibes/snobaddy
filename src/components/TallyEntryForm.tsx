@@ -178,7 +178,6 @@ export default function TallyEntryForm({
 
   const hasUnmatched = rows.some((r) => r.unmatched);
   const canSave =
-    rows.length > 0 &&
     !hasUnmatched &&
     rows.every((r) => r.wins !== "" && r.losses !== "");
 
