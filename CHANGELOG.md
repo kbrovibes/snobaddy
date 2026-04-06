@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.11] - 2026-04-06
+
+### Fixed
+- **Session detail** — "Past Sessions" list at the bottom of a session page no longer includes test sessions.
+
+---
+
 ## [0.22.10] - 2026-04-06
 
 ### Changed

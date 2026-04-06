@@ -142,6 +142,7 @@ export async function getPastSessionsThisSeason(seasonId: string, beforeDate: st
     .from("sessions")
     .select("id, date, status")
     .eq("season_id", seasonId)
+    .eq("is_test_session", false)
     .lt("date", beforeDate)
     .order("date", { ascending: false })
     .limit(10);
