@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.23.0] - 2026-04-06
+
+### Added
+- **Reset Session** (God Mode only) — ⚡ Reset Session button on active session pages. Fetches live match and proposal counts, shows a confirmation dialog, then hard-deletes all matches and proposed matches for the session. Check-ins are unaffected.
+
+---
+
 ## [0.22.13] - 2026-04-06
 
 ### Added

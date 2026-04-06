@@ -29,6 +29,7 @@ import TestSessionToggle from "@/components/TestSessionToggle";
 import TallyScoreboard from "@/components/TallyScoreboard";
 import TallyEntryForm from "@/components/TallyEntryForm";
 import TallyHighlights from "@/components/TallyHighlights";
+import ResetSessionButton from "@/components/ResetSessionButton";
 
 export const dynamic = "force-dynamic";
 
@@ -181,6 +182,8 @@ export default async function SessionDetailPage({
             />
           )}
 
+          {/* God Mode: reset session */}
+          {isGodMode && <ResetSessionButton sessionId={session.id} />}
           {/* Admin: close session */}
           {isAdmin && <CloseSessionButton sessionId={session.id} />}
         </>
