@@ -37,6 +37,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.21] - 2026-04-06
+
+### Fixed
+- **Tally photo extraction** — Replaced assistant prefill (unsupported by Sonnet 4.6) with regex extraction of the outermost JSON object, handling any preamble the model adds.
+
+---
+
 ## [0.22.20] - 2026-04-06
 
 ### Fixed

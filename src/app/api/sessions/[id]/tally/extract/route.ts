@@ -202,19 +202,16 @@ export async function POST(
             { type: "text", text: EXTRACTION_PROMPT },
           ],
         },
-        // Prefill the assistant turn with "{" — forces the model to continue with JSON
-        // and makes it impossible to prepend conversational text.
-        { role: "assistant", content: [{ type: "text", text: "{" }] },
       ],
     });
 
     // Find the text block — Sonnet 4.6 may prepend a thinking block so content[0] is not always text
     const textBlock = response.content.find((b) => b.type === "text") as { type: "text"; text: string } | undefined;
     if (!textBlock) throw new Error("No text block in model response");
-    // Re-attach the prefilled "{" since the response only contains what follows it
-    const text = ("{" + textBlock.text).trim();
-    // Strip markdown fences if model adds them despite instructions
-    const cleaned = text.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
+    // Extract the outermost JSON object — handles any preamble/postamble the model adds
+    const jsonMatch = textBlock.text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error("No JSON object found in model response");
+    const cleaned = jsonMatch[0];
     const parsed = JSON.parse(cleaned);
     rawPlayers = parsed.players ?? [];
     extractedDate = parsed.date ?? null;
