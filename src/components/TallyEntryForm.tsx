@@ -4,12 +4,22 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { TallyEntry } from "@/lib/db/tally";
 
+const MODEL_LABELS: Record<string, string> = {
+  "claude-haiku-4-5-20251001": "Haiku 4.5",
+  "claude-sonnet-4-6": "Sonnet 4.6",
+};
+
+function modelLabel(modelId: string): string {
+  return MODEL_LABELS[modelId] ?? modelId.split("-").slice(-2).join(" ");
+}
+
 interface Props {
   sessionId: string;
   allPlayers: Array<{ id: string; name: string }>;
   initialEntries?: TallyEntry[];
   isEdit?: boolean;
   isGodMode?: boolean;
+  tallyModel?: string;
 }
 
 type FormRow = {
@@ -33,6 +43,7 @@ export default function TallyEntryForm({
   initialEntries,
   isEdit,
   isGodMode,
+  tallyModel,
 }: Props) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -235,16 +246,23 @@ export default function TallyEntryForm({
               className="hidden"
               onChange={handlePhotoUpload}
             />
-            <button
-              onClick={() => {
-                setOpen(true);
-                setTimeout(() => fileInputRef.current?.click(), 50);
-              }}
-              className="px-4 py-3 rounded-xl text-sm font-semibold border-2 border-dashed border-purple-200 text-purple-500 hover:border-purple-400 hover:text-purple-600 transition-colors"
-              title="Import from photo"
-            >
-              📷
-            </button>
+            <div className="flex flex-col items-center gap-1">
+              <button
+                onClick={() => {
+                  setOpen(true);
+                  setTimeout(() => fileInputRef.current?.click(), 50);
+                }}
+                className="px-4 py-3 rounded-xl text-sm font-semibold border-2 border-dashed border-purple-200 text-purple-500 hover:border-purple-400 hover:text-purple-600 transition-colors"
+                title="Import from photo"
+              >
+                📷
+              </button>
+              {tallyModel && (
+                <span className="text-[10px] font-medium text-purple-400 leading-none">
+                  {modelLabel(tallyModel)}
+                </span>
+              )}
+            </div>
           </>
         )}
       </div>
@@ -271,13 +289,20 @@ export default function TallyEntryForm({
                 className="hidden"
                 onChange={handlePhotoUpload}
               />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={extracting}
-                className="text-xs font-medium text-purple-600 hover:text-purple-700 disabled:opacity-50"
-              >
-                {extracting ? "Extracting…" : "📷 Import from photo"}
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={extracting}
+                  className="text-xs font-medium text-purple-600 hover:text-purple-700 disabled:opacity-50"
+                >
+                  {extracting ? "Extracting…" : "📷 Import from photo"}
+                </button>
+                {tallyModel && !extracting && (
+                  <span className="text-[10px] font-medium text-white bg-purple-400 px-1.5 py-0.5 rounded-full leading-none">
+                    {modelLabel(tallyModel)}
+                  </span>
+                )}
+              </div>
             </>
           )}
           <button onClick={handleCancel} className="text-xs text-gray-400 hover:text-gray-600">

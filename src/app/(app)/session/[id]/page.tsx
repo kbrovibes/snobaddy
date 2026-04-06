@@ -10,6 +10,7 @@ import { getSessionMatches, getSessionScoreboard, getSessionHighlights } from "@
 import { getProposedMatches } from "@/lib/db/proposed";
 import { getOnlinePlayerIds, getActivePlayerList } from "@/lib/db/players";
 import { getSessionTally, type TallyEntry } from "@/lib/db/tally";
+import { getAppSetting } from "@/lib/db/settings";
 import { createClient } from "@/lib/supabase-server";
 import { buildNameMap, shortName } from "@/lib/display-name";
 import StartSessionButton from "@/components/StartSessionButton";
@@ -58,6 +59,10 @@ export default async function SessionDetailPage({
   const isAdmin = currentPlayer?.is_admin ?? false;
   const isGodMode = (currentPlayer as unknown as { is_god_mode?: boolean } | null)?.is_god_mode ?? false;
   const playerId = currentPlayer?.id;
+
+  const tallyModel = isGodMode
+    ? (await getAppSetting("tally_extraction_model")) ?? "claude-haiku-4-5-20251001"
+    : null;
 
   const session = await getSessionById(id);
   if (!session) redirect("/");
@@ -205,6 +210,7 @@ export default async function SessionDetailPage({
               sessionId={session.id}
               allPlayers={formPlayers as { id: string; name: string }[]}
               isGodMode={isGodMode}
+              tallyModel={tallyModel ?? undefined}
             />
           )}
         </>
@@ -227,6 +233,7 @@ export default async function SessionDetailPage({
               initialEntries={tallyRows as TallyEntry[]}
               isEdit
               isGodMode={isGodMode}
+              tallyModel={tallyModel ?? undefined}
             />
           )}
         </>

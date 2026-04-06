@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.23.3] - 2026-04-06
+
+### Added
+- **Tally model indicator** — God Mode users see the active AI model name (e.g. "Haiku 4.5") as a small label next to the 📷 camera button on session pages. Other admins and regular users see nothing.
+
+---
+
 ## [0.23.2] - 2026-04-06
 
 ### Changed
