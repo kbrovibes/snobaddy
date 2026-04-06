@@ -30,7 +30,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         is_admin: false,
         onboarding_complete: false,
       })
-      .select("id, name, onboarding_complete, is_admin")
+      .select("id, name, onboarding_complete, is_admin, is_god_mode")
       .single();
     player = newPlayer;
   }
