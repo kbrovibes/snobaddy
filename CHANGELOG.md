@@ -6,10 +6,17 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.1] - 2026-04-06
+
+### Changed
+- **Tally Photo Import** — Unmatched players now shown in red (not amber) with the raw board name as a hint. Save is blocked until all red rows are resolved or deleted. A yellow warning appears when wins ≠ losses totals (sanity check). Prompt updated with tally-mark-specific counting rules for better accuracy.
+
+---
+
 ## [0.22.0] - 2026-04-06
 
 ### Added
-- **Tally Photo Import (God Mode)** — On sessions with tally mode, Karthik can tap 📷 to upload a whiteboard photo. Gemini AI extracts player names and W/L counts and pre-fills the tally form. Unmatched names are highlighted in amber for manual resolution. Photos are stored in Supabase Storage and viewable via "Source photo →" link.
+- **Tally Photo Import (God Mode)** — On sessions with tally mode, Karthik can tap 📷 to upload a whiteboard photo. Gemini AI extracts player names and W/L counts and pre-fills the tally form. Unmatched names are highlighted for manual resolution. Photos are stored in Supabase Storage and viewable via "Source photo →" link.
 
 ---
 
