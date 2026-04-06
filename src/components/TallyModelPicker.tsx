@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const MODELS = [
   { id: "claude-3-haiku-20240307",    label: "Haiku",  sub: "Fast · ~$0.001/photo" },
-  { id: "claude-3-5-sonnet-20241022", label: "Sonnet", sub: "Best · ~$0.02/photo" },
+  { id: "claude-3-sonnet-20240229",   label: "Sonnet", sub: "Best · ~$0.01/photo" },
 ];
 
 export default function TallyModelPicker({ current }: { current: string }) {

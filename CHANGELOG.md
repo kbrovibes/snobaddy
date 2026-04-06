@@ -27,6 +27,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.16] - 2026-04-06
+
+### Fixed
+- **Tally model picker** — Sonnet option now uses `claude-3-sonnet-20240229` (available on all tiers).
+
+---
+
 ## [0.22.15] - 2026-04-06
 
 ### Fixed
