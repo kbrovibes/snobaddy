@@ -8,10 +8,9 @@ interface HeaderProps {
   userName: string;
   playerId: string | null;
   isAdmin: boolean;
-  isGodMode?: boolean;
 }
 
-export default function Header({ userName, playerId, isAdmin, isGodMode }: HeaderProps) {
+export default function Header({ userName, playerId, isAdmin }: HeaderProps) {
   const router = useRouter();
 
   async function signOut() {
@@ -38,11 +37,6 @@ export default function Header({ userName, playerId, isAdmin, isGodMode }: Heade
         </div>
       </Link>
       <div className="flex items-center gap-3">
-        {isGodMode && (
-          <Link href="/admin/control-panel" className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded hover:bg-purple-100 transition-colors">
-            ⚙ Panel
-          </Link>
-        )}
         <button
           onClick={signOut}
           className="text-xs text-blue-600 hover:text-blue-800 transition-colors font-medium"

@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.6] - 2026-04-06
+
+### Changed
+- **Control Panel** — Moved entry point from the top header bar into the Admin Panel page. God Mode users see a "Control Panel" card at the top of Admin Panel linking to `/admin/control-panel`.
+
+---
+
 ## [0.22.5] - 2026-04-06
 
 ### Changed
