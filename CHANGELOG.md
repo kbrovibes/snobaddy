@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.23.1] - 2026-04-06
+
+### Performance
+- **DB indexes** — Added 4 indexes covering the most-hit query patterns: session match history, check-in list, session list, and leaderboard/player queries. Fifth index (`last_seen_at`) deferred until the online indicator feature is built.
+
+---
+
 ## [0.23.0] - 2026-04-06
 
 ### Added
