@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.20.6] - 2026-04-05
+
+### Fixed
+- **Record a Score** — In full score mode (Win/Loss Only toggle OFF), the first column no longer shows the green "Winning Team" border and label. Both columns show neutral styling ("Team 1" / "Team 2") and the winner is determined by the scores entered.
+
+---
+
 ## [0.20.5] - 2026-04-04
 
 ### Changed

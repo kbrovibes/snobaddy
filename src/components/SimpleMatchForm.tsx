@@ -141,8 +141,14 @@ export default function SimpleMatchForm({
 
       {/* 3-col layout: winners | vs | losers */}
       <div className="grid grid-cols-[1fr_2rem_1fr] items-start gap-2">
-        <div className="flex flex-col gap-1.5 border border-green-200 bg-green-50/40 rounded-xl px-2.5 py-2">
-          <span className="text-xs font-bold text-green-600 uppercase tracking-wide">Winning Team</span>
+        <div className={`flex flex-col gap-1.5 border rounded-xl px-2.5 py-2 ${
+          simpleMode ? "border-green-200 bg-green-50/40" : "border-gray-200 bg-gray-50/40"
+        }`}>
+          <span className={`text-xs font-bold uppercase tracking-wide ${
+            simpleMode ? "text-green-600" : "text-blue-600"
+          }`}>
+            {simpleMode ? "Winning Team" : "Team 1"}
+          </span>
           <PlayerSelect value={w1} onChange={setW1} exclude={[w2, l1, l2]} />
           <PlayerSelect value={w2} onChange={setW2} exclude={[w1, l1, l2]} />
         </div>
@@ -152,7 +158,9 @@ export default function SimpleMatchForm({
         </div>
 
         <div className="flex flex-col gap-1.5 border border-gray-200 bg-gray-50/40 rounded-xl px-2.5 py-2">
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-wide select-none">&nbsp;</span>
+          <span className="text-xs font-bold text-gray-400 uppercase tracking-wide select-none">
+            {simpleMode ? <>&nbsp;</> : "Team 2"}
+          </span>
           <PlayerSelect value={l1} onChange={setL1} exclude={[w1, w2, l2]} />
           <PlayerSelect value={l2} onChange={setL2} exclude={[w1, w2, l1]} />
         </div>
