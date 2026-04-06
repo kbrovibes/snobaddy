@@ -38,6 +38,8 @@ Single source of truth for all planned and completed work.
 
 ---
 
+- [ ] **22 — Test Sessions** · [spec](specs/22-test-sessions.md) · Flag sessions as test (auto on non-Mon/Thu); admin toggle on session detail; admin-local filter on leaderboard + session list
+
 ## Future (unspecced)
 
 - **First-name collisions** — when two checked-in players share a first name, show a disambiguating initial or last name; affects session scoreboard, match cards, and player detail page
