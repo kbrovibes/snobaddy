@@ -30,6 +30,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.19] - 2026-04-06
+
+### Fixed
+- **Tally photo extraction** — Sonnet 4.6 returns a thinking block before the text block; the code now finds the text block correctly instead of blindly reading index 0, which was causing JSON parse errors.
+
+---
+
 ## [0.22.18] - 2026-04-06
 
 ### Fixed

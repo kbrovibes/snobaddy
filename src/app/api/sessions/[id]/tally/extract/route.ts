@@ -205,7 +205,10 @@ export async function POST(
       ],
     });
 
-    const text = (response.content[0] as { type: string; text: string }).text.trim();
+    // Find the text block — Sonnet 4.6 may prepend a thinking block so content[0] is not always text
+    const textBlock = response.content.find((b) => b.type === "text") as { type: "text"; text: string } | undefined;
+    if (!textBlock) throw new Error("No text block in model response");
+    const text = textBlock.text.trim();
     // Strip markdown fences if model adds them despite instructions
     const cleaned = text.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
     const parsed = JSON.parse(cleaned);
