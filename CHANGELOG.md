@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.21.2] - 2026-04-05
+
+### Fixed
+- **Session list** — Upcoming sessions (e.g. Monday 4/6) were disappearing when a same-day session was created. Removed the broken date-cutoff logic; all sessions are now always returned.
+
+### Changed
+- **Session list** — Split into **Upcoming** and **Past Sessions** sections. Upcoming sessions show "Opens at 6pm" and an "Upcoming" badge instead of "Pending".
+
+---
+
 ## [0.21.1] - 2026-04-05
 
 ### Changed
