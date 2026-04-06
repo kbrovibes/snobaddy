@@ -22,12 +22,13 @@ export async function GET(
 
   const { id } = await params;
 
-  const [{ count: matches }, { count: proposed }] = await Promise.all([
+  const [{ count: matches }, { count: proposed }, { count: tally }] = await Promise.all([
     serviceClient.from("matches").select("id", { count: "exact", head: true }).eq("session_id", id),
     serviceClient.from("proposed_matches").select("id", { count: "exact", head: true }).eq("session_id", id),
+    serviceClient.from("session_tally").select("player_id", { count: "exact", head: true }).eq("session_id", id),
   ]);
 
-  return NextResponse.json({ matches: matches ?? 0, proposed: proposed ?? 0 });
+  return NextResponse.json({ matches: matches ?? 0, proposed: proposed ?? 0, tally: tally ?? 0 });
 }
 
 // POST — hard delete all matches + proposed matches for the session
@@ -40,10 +41,11 @@ export async function POST(
 
   const { id } = await params;
 
-  const [{ count: deletedMatches }, { count: deletedProposed }] = await Promise.all([
+  const [{ count: deletedMatches }, { count: deletedProposed }, { count: deletedTally }] = await Promise.all([
     serviceClient.from("matches").delete({ count: "exact" }).eq("session_id", id),
     serviceClient.from("proposed_matches").delete({ count: "exact" }).eq("session_id", id),
+    serviceClient.from("session_tally").delete({ count: "exact" }).eq("session_id", id),
   ]);
 
-  return NextResponse.json({ deleted_matches: deletedMatches ?? 0, deleted_proposed: deletedProposed ?? 0 });
+  return NextResponse.json({ deleted_matches: deletedMatches ?? 0, deleted_proposed: deletedProposed ?? 0, deleted_tally: deletedTally ?? 0 });
 }

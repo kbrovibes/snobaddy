@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 export default function ResetSessionButton({ sessionId }: { sessionId: string }) {
   const router = useRouter();
-  const [counts, setCounts] = useState<{ matches: number; proposed: number } | null>(null);
+  const [counts, setCounts] = useState<{ matches: number; proposed: number; tally: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [confirming, setConfirming] = useState(false);
 
@@ -45,6 +45,9 @@ export default function ResetSessionButton({ sessionId }: { sessionId: string })
               <ul className="mt-1 ml-4 list-disc flex flex-col gap-0.5 text-gray-700">
                 <li>{counts.matches} recorded match{counts.matches !== 1 ? "es" : ""}</li>
                 <li>{counts.proposed} proposed match{counts.proposed !== 1 ? "es" : ""}</li>
+                {counts.tally > 0 && (
+                  <li>{counts.tally} tally entr{counts.tally !== 1 ? "ies" : "y"}</li>
+                )}
               </ul>
             </div>
             <p className="text-xs text-gray-400">Check-ins will not be affected. This cannot be undone.</p>

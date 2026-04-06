@@ -11,6 +11,11 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ### Added
 - **PWA / Add to Home Screen** — App is now installable on iPhone and Android. Open in Safari/Chrome, tap Share → "Add to Home Screen". Launches full-screen with no browser chrome.
 
+### Changed
+- **Close Session button** — now teal/green instead of red, reflecting it's a positive "wrap up" action rather than a destructive one.
+- **Reset Session button** — moved below Close Session during active sessions; also now available on completed (closed) sessions for God Mode users, enabling recovery from tally-mode sessions.
+- **Reset clears tally data** — resetting a session now also deletes any tally entries (not just match records and proposed matches). The confirmation dialog lists tally entries when present.
+
 ---
 
 ## [0.24.0] - 2026-04-06
