@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.10] - 2026-04-06
+
+### Changed
+- **Finalized badge** — Changed color from indigo to teal to avoid clash with the blue Upcoming badge.
+
+---
+
 ## [0.22.9] - 2026-04-06
 
 ### Fixed
