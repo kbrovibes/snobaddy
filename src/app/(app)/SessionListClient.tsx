@@ -73,6 +73,8 @@ export default function SessionListClient({
             <span className="text-xs font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">Active</span>
           ) : s.status === "pending" ? (
             <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Upcoming</span>
+          ) : s.match_count === 0 && s.tally_count === 0 ? (
+            <span className="text-xs font-semibold text-red-400 bg-red-50 px-2 py-0.5 rounded-full">No Data</span>
           ) : (
             <span className="text-xs font-semibold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full">Finalized</span>
           )}

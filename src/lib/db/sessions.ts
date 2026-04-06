@@ -17,6 +17,8 @@ export interface SessionRow {
   status: "pending" | "active" | "completed";
   is_test_session: boolean;
   season: { name: string };
+  match_count: number;
+  tally_count: number;
 }
 
 export interface CheckedInPlayer {
@@ -85,7 +87,7 @@ export async function getAllSessions(): Promise<SessionRow[]> {
 
   const { data } = await supabase
     .from("sessions")
-    .select("id, date, status, is_test_session, seasons(name)")
+    .select("id, date, status, is_test_session, seasons(name), matches(count), session_tally(count)")
     .order("date", { ascending: false });
   if (!data) return [];
   return data.map((row) => ({
@@ -94,6 +96,8 @@ export async function getAllSessions(): Promise<SessionRow[]> {
     status: row.status as SessionRow["status"],
     is_test_session: row.is_test_session ?? false,
     season: (row.seasons as unknown as { name: string }),
+    match_count: (row.matches as unknown as { count: number }[])?.[0]?.count ?? 0,
+    tally_count: (row.session_tally as unknown as { count: number }[])?.[0]?.count ?? 0,
   }));
 }
 

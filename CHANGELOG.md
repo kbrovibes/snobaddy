@@ -30,6 +30,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.17] - 2026-04-06
+
+### Added
+- **Session list** — Finalized sessions with no matches and no tally data now show a light red "No Data" badge instead of "Finalized".
+
+---
+
 ## [0.22.16] - 2026-04-06
 
 ### Fixed
