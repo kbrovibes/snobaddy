@@ -4,11 +4,12 @@ interface SessionStat {
   date: string;
   wins: number;
   losses: number;
+  win_pct: number;
 }
 
 const BAR_W = 28;
 const GAP = 6;
-const CHART_H = 96;
+const CHART_H = 100;
 const LABEL_H = 20;
 const TOTAL_H = CHART_H + LABEL_H;
 
@@ -17,7 +18,7 @@ function shortDate(dateStr: string) {
   return d.toLocaleDateString("en-US", { month: "numeric", day: "numeric" });
 }
 
-export default function WinsLossesChart({ data }: { data: SessionStat[] }) {
+export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
   if (data.length === 0) {
     return <p className="text-sm text-gray-400">No match data yet.</p>;
   }
@@ -38,20 +39,28 @@ export default function WinsLossesChart({ data }: { data: SessionStat[] }) {
         </span>
       </div>
       <svg width={totalW} height={TOTAL_H} className="block">
+        {/* 50% reference line */}
+        <line
+          x1={0} y1={CHART_H / 2}
+          x2={totalW} y2={CHART_H / 2}
+          stroke="#e5e7eb" strokeDasharray="3 2"
+        />
+
         {data.map((s, i) => {
           const x = i * (BAR_W + GAP);
           const total = s.wins + s.losses;
           const winH = Math.round((s.wins / maxMatches) * CHART_H);
           const lossH = Math.round((s.losses / maxMatches) * CHART_H);
+          const totalBarH = winH + lossH;
 
-          const winY = CHART_H - winH - lossH;
+          const winY = CHART_H - totalBarH;
           const lossY = CHART_H - lossH;
 
           return (
             <g key={s.date}>
-              <title>{shortDate(s.date)}: {s.wins}W {s.losses}L ({total} matches)</title>
+              <title>{shortDate(s.date)}: {s.wins}W {s.losses}L — {s.win_pct}% win rate</title>
 
-              {/* Wins (green, on top) */}
+              {/* Wins (green, top portion) */}
               {winH > 0 && (
                 <rect x={x} y={winY} width={BAR_W} height={winH} rx={2} fill="#4ade80" opacity={0.9} />
               )}
@@ -61,13 +70,27 @@ export default function WinsLossesChart({ data }: { data: SessionStat[] }) {
                 </text>
               )}
 
-              {/* Losses (red, on bottom) */}
+              {/* Losses (red, bottom portion) */}
               {lossH > 0 && (
                 <rect x={x} y={lossY} width={BAR_W} height={lossH} rx={2} fill="#f87171" opacity={0.85} />
               )}
               {lossH >= 14 && (
                 <text x={x + BAR_W / 2} y={lossY + 11} textAnchor="middle" fontSize={9} fill="white" fontWeight="600">
                   {s.losses}
+                </text>
+              )}
+
+              {/* Win % label above bar */}
+              {total > 0 && (
+                <text
+                  x={x + BAR_W / 2}
+                  y={winY - 3}
+                  textAnchor="middle"
+                  fontSize={8}
+                  fill={s.win_pct >= 50 ? "#16a34a" : "#dc2626"}
+                  fontWeight="600"
+                >
+                  {s.win_pct}%
                 </text>
               )}
 

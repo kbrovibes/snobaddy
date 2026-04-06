@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase-server";
 import { getPlayerById, getPlayerPoem, getPlayerPoemContext, upsertPlayerPoem } from "@/lib/db/players";
 import { getPlayerSessionHistory, getPlayerMatchesBySession } from "@/lib/db/matches";
 import { generatePlayerPoem } from "@/lib/ai/poem";
-import WinPctChart from "@/components/WinPctChart";
-import WinsLossesChart from "@/components/WinsLossesChart";
+import SessionStatsChart from "@/components/SessionStatsChart";
 import BackButton from "@/components/BackButton";
+import IncludeTestToggle from "@/components/IncludeTestToggle";
 import { buildNameMap, shortName } from "@/lib/display-name";
 
 export const dynamic = "force-dynamic";
@@ -27,17 +28,29 @@ function SkillDots({ level }: { level: number }) {
 
 export default async function PlayerProfilePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ test?: string }>;
 }) {
-  const { id } = await params;
+  const [{ id }, { test }] = await Promise.all([params, searchParams]);
+  const includeTestSessions = test === "1";
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: currentPlayer } = await supabase
+    .from("players")
+    .select("is_admin")
+    .eq("user_id", user!.id)
+    .maybeSingle();
+  const isAdmin = currentPlayer?.is_admin ?? false;
 
   const player = await getPlayerById(id);
   if (!player) redirect("/");
 
   const [sessionHistory, matchesBySession] = await Promise.all([
-    getPlayerSessionHistory(id),
-    getPlayerMatchesBySession(id),
+    getPlayerSessionHistory(id, { includeTestSessions }),
+    getPlayerMatchesBySession(id, { includeTestSessions }),
   ]);
 
   // Collect all names from match history to build disambiguation map
@@ -96,20 +109,15 @@ export default async function PlayerProfilePage({
         )}
       </div>
 
-      {/* Wins & Losses chart */}
+      {/* Stats chart */}
       <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-          Wins &amp; Losses by Session
-        </h2>
-        <WinsLossesChart data={sessionHistory} />
-      </div>
-
-      {/* Win % chart */}
-      <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-          Win % by Session
-        </h2>
-        <WinPctChart data={sessionHistory} />
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+            Stats by Session
+          </h2>
+          {isAdmin && <IncludeTestToggle enabled={includeTestSessions} />}
+        </div>
+        <SessionStatsChart data={sessionHistory} />
       </div>
 
       {/* Match history */}

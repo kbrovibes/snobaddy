@@ -91,15 +91,19 @@ export interface PlayerMatchRecord {
   opp_score: number;
 }
 
-export async function getPlayerSessionHistory(playerId: string): Promise<PlayerSessionStat[]> {
+export async function getPlayerSessionHistory(
+  playerId: string,
+  options?: { includeTestSessions?: boolean },
+): Promise<PlayerSessionStat[]> {
   const supabase = await createClient();
+  const includeTest = options?.includeTestSessions ?? false;
   const { data } = await supabase
     .from("matches")
     .select(`
       session_id, winning_team,
       team1_player1_id, team1_player2_id,
       team2_player1_id, team2_player2_id,
-      sessions(date)
+      sessions(date, is_test_session)
     `)
     .or(`team1_player1_id.eq.${playerId},team1_player2_id.eq.${playerId},team2_player1_id.eq.${playerId},team2_player2_id.eq.${playerId}`);
 
@@ -108,7 +112,8 @@ export async function getPlayerSessionHistory(playerId: string): Promise<PlayerS
   const sessionMap = new Map<string, { date: string; wins: number; losses: number }>();
 
   for (const m of data) {
-    const session = m.sessions as unknown as { date: string };
+    const session = m.sessions as unknown as { date: string; is_test_session: boolean };
+    if (!includeTest && session.is_test_session) continue;
     const entry = sessionMap.get(m.session_id) ?? { date: session.date, wins: 0, losses: 0 };
     const onTeam1 = m.team1_player1_id === playerId || m.team1_player2_id === playerId;
     const won = (onTeam1 && m.winning_team === 1) || (!onTeam1 && m.winning_team === 2);
@@ -182,8 +187,12 @@ export interface PlayerMatchBySession {
   matches: PlayerMatchRecord[];
 }
 
-export async function getPlayerMatchesBySession(playerId: string): Promise<PlayerMatchBySession[]> {
+export async function getPlayerMatchesBySession(
+  playerId: string,
+  options?: { includeTestSessions?: boolean },
+): Promise<PlayerMatchBySession[]> {
   const supabase = await createClient();
+  const includeTest = options?.includeTestSessions ?? false;
 
   const { data } = await supabase
     .from("matches")
@@ -191,7 +200,7 @@ export async function getPlayerMatchesBySession(playerId: string): Promise<Playe
       id, played_at, session_id, team1_score, team2_score, winning_team,
       team1_player1_id, team1_player2_id,
       team2_player1_id, team2_player2_id,
-      sessions(date),
+      sessions(date, is_test_session),
       t1p1:team1_player1_id(id, name),
       t1p2:team1_player2_id(id, name),
       t2p1:team2_player1_id(id, name),
@@ -209,7 +218,8 @@ export async function getPlayerMatchesBySession(playerId: string): Promise<Playe
     const t1p2 = m.t1p2 as unknown as { id: string; name: string };
     const t2p1 = m.t2p1 as unknown as { id: string; name: string };
     const t2p2 = m.t2p2 as unknown as { id: string; name: string };
-    const session = m.sessions as unknown as { date: string };
+    const session = m.sessions as unknown as { date: string; is_test_session: boolean };
+    if (!includeTest && session.is_test_session) continue;
     const onTeam1 = m.team1_player1_id === playerId || m.team1_player2_id === playerId;
     const won = (onTeam1 && m.winning_team === 1) || (!onTeam1 && m.winning_team === 2);
     const partner = onTeam1
