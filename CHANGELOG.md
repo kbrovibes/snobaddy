@@ -10,6 +10,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ### Added
 - **PWA / Add to Home Screen** — App is now installable on iPhone and Android. Open in Safari/Chrome, tap Share → "Add to Home Screen". Launches full-screen with no browser chrome.
+- **Club crest icon** — PWA and Apple touch icon now use the Serve Snoqualmie club crest (`serve-icon.png`).
 
 ### Changed
 - **Close Session button** — now teal/green instead of red, reflecting it's a positive "wrap up" action rather than a destructive one.

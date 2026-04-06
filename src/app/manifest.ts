@@ -12,15 +12,10 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: "portrait",
     icons: [
       {
-        src: "/serve-logo.jpg",
-        sizes: "720x405",
-        type: "image/jpeg",
-      },
-      {
-        src: "/favicon.gif",
-        sizes: "any",
-        type: "image/gif",
-        purpose: "any",
+        src: "/serve-icon.png",
+        sizes: "308x310",
+        type: "image/png",
+        purpose: "any maskable",
       },
     ],
   };
