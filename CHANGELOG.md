@@ -30,6 +30,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.18] - 2026-04-06
+
+### Fixed
+- **Tally model picker** — Corrected model IDs to ones actually available on this account: `claude-haiku-4-5-20251001` and `claude-sonnet-4-6` (verified via API).
+
+---
+
 ## [0.22.17] - 2026-04-06
 
 ### Added

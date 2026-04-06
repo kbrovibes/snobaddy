@@ -168,7 +168,7 @@ export async function POST(
     .eq("id", sessionId);
 
   // Read model choice from DB (falls back to haiku if not set)
-  const modelId = (await getAppSetting("tally_extraction_model")) ?? "claude-3-haiku-20240307";
+  const modelId = (await getAppSetting("tally_extraction_model")) ?? "claude-haiku-4-5-20251001";
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
