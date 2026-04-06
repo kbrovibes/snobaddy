@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.21.1] - 2026-04-05
+
+### Changed
+- **Leaderboard** — "Include Test Sessions" toggle now sits above the award cards so toggling it flips the entire leaderboard view: award winners, player count, table stats, and match total all update together.
+
+---
+
 ## [0.21.0] - 2026-04-05
 
 ### Added
