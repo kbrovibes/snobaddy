@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase-server";
 import { supabase as adminDb } from "@/lib/supabase";
 import { getActivePlayerList } from "@/lib/db/players";
+import { getAppSetting } from "@/lib/db/settings";
 import { NextResponse, type NextRequest } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Anthropic from "@anthropic-ai/sdk";
 
 const MAX_BYTES = 10 * 1024 * 1024; // 10MB
 
@@ -166,33 +167,45 @@ export async function POST(
     .update({ tally_photo_path: storagePath })
     .eq("id", sessionId);
 
-  // Call Gemini vision
-  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  // Read model choice from DB (falls back to haiku if not set)
+  const modelId = (await getAppSetting("tally_extraction_model")) ?? "claude-3-5-haiku-20241022";
+
+  const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { error: "AI extraction not configured (missing GOOGLE_GENERATIVE_AI_API_KEY)" },
+      { error: "AI extraction not configured (missing ANTHROPIC_API_KEY)" },
       { status: 503 }
     );
   }
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const anthropic = new Anthropic({ apiKey });
 
   let rawPlayers: Array<{ name: string; wins: number; losses: number }> = [];
   let extractedDate: string | null = null;
 
   try {
-    const result = await model.generateContent([
-      EXTRACTION_PROMPT,
-      {
-        inlineData: {
-          mimeType: file.type as "image/jpeg" | "image/png" | "image/webp",
-          data: buffer.toString("base64"),
+    const response = await anthropic.messages.create({
+      model: modelId,
+      max_tokens: 1024,
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "image",
+              source: {
+                type: "base64",
+                media_type: file.type as "image/jpeg" | "image/png" | "image/webp",
+                data: buffer.toString("base64"),
+              },
+            },
+            { type: "text", text: EXTRACTION_PROMPT },
+          ],
         },
-      },
-    ]);
+      ],
+    });
 
-    const text = result.response.text().trim();
+    const text = (response.content[0] as { type: string; text: string }).text.trim();
     // Strip markdown fences if model adds them despite instructions
     const cleaned = text.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
     const parsed = JSON.parse(cleaned);

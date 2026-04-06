@@ -2,6 +2,8 @@ export const dynamic = "force-dynamic";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase-server";
+import { getAppSetting } from "@/lib/db/settings";
+import TallyModelPicker from "@/components/TallyModelPicker";
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
@@ -117,14 +119,16 @@ export default async function ControlPanelPage() {
 
   if (!currentPlayer?.is_god_mode) redirect("/");
 
-  const [sb, vercel] = await Promise.allSettled([
+  const [sb, vercel, tallyModel] = await Promise.allSettled([
     getSupabaseMetrics(),
     getVercelMetrics(),
+    getAppSetting("tally_extraction_model"),
   ]);
 
-  const sbData  = sb.status  === "fulfilled" ? sb.value  : null;
-  const vData   = vercel.status === "fulfilled" ? vercel.value : null;
-  const sbError = sb.status  === "rejected"  ? String(sb.reason)  : null;
+  const sbData      = sb.status       === "fulfilled" ? sb.value        : null;
+  const vData       = vercel.status   === "fulfilled" ? vercel.value    : null;
+  const currentModel = tallyModel.status === "fulfilled" ? (tallyModel.value ?? "claude-3-5-haiku-20241022") : "claude-3-5-haiku-20241022";
+  const sbError     = sb.status       === "rejected"  ? String(sb.reason) : null;
 
   return (
     <div className="px-4 py-4 pb-20 flex flex-col gap-4">
@@ -132,6 +136,11 @@ export default async function ControlPanelPage() {
         <h1 className="text-xl font-bold text-gray-900">Control Panel</h1>
         <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">GOD MODE</span>
       </div>
+
+      {/* ── AI Settings ── */}
+      <Card title="Tally — AI Model">
+        <TallyModelPicker current={currentModel} />
+      </Card>
 
       {/* ── Supabase ── */}
       <Card title="Supabase — Database">

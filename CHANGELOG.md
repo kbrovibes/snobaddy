@@ -20,6 +20,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.14] - 2026-04-06
+
+### Changed
+- **Tally photo extraction** — Switched from Google Gemini to Claude (Haiku by default). Cost is ~$0.003 per photo.
+
+### Added
+- **Control Panel — AI Model picker** — God mode users can switch the tally extraction model between Haiku and Sonnet. Takes effect immediately on the next upload.
+
+---
+
 ## [0.22.13] - 2026-04-06
 
 ### Added
