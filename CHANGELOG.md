@@ -37,6 +37,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.20] - 2026-04-06
+
+### Fixed
+- **Tally photo extraction** — Sonnet 4.6 was prepending conversational text before the JSON. Fixed using assistant prefill: seeding the response with `{` forces the model to output pure JSON with no preamble.
+
+---
+
 ## [0.22.19] - 2026-04-06
 
 ### Fixed
