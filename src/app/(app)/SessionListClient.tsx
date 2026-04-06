@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { SessionRow } from "@/lib/db/sessions";
+
+const LS_KEY = "snobaddy:show-test-sessions";
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr + "T12:00:00");
@@ -21,6 +24,18 @@ export default function SessionListClient({
   sessions: SessionRow[];
   isAdmin: boolean;
 }) {
+  const [showTest, setShowTest] = useState(false);
+
+  useEffect(() => {
+    try { setShowTest(localStorage.getItem(LS_KEY) === "true"); } catch {}
+  }, []);
+
+  function toggleShowTest() {
+    const next = !showTest;
+    setShowTest(next);
+    try { localStorage.setItem(LS_KEY, String(next)); } catch {}
+  }
+
   const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
 
   const real    = sessions.filter(s => !s.is_test_session);
@@ -93,10 +108,21 @@ export default function SessionListClient({
 
           {isAdmin && tests.length > 0 && (
             <div>
-              <SectionLabel label="Test Sessions" />
-              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                {tests.map((s) => <SessionRow key={s.id} s={s} />)}
+              <div className="flex items-center justify-between px-1 mb-1">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Test Sessions</p>
+                <button
+                  onClick={toggleShowTest}
+                  className="relative inline-flex w-9 h-5 rounded-full transition-colors duration-200 focus:outline-none"
+                  style={{ background: showTest ? "#f97316" : "#e5e7eb" }}
+                >
+                  <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showTest ? "translate-x-4" : "translate-x-0"}`} />
+                </button>
               </div>
+              {showTest && (
+                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                  {tests.map((s) => <SessionRow key={s.id} s={s} />)}
+                </div>
+              )}
             </div>
           )}
         </div>

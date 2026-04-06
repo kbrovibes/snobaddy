@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.7] - 2026-04-06
+
+### Fixed
+- **Session list** — Restored the Test Sessions toggle. The "Test Sessions" section header now has an inline on/off toggle (saved per device); sessions are hidden until toggled on.
+
+---
+
 ## [0.22.6] - 2026-04-06
 
 ### Changed
