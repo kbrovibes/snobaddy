@@ -27,6 +27,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.15] - 2026-04-06
+
+### Fixed
+- **Tally photo extraction** — Switched to `claude-3-haiku-20240307` which is available on all Anthropic account tiers.
+
+---
+
 ## [0.22.14] - 2026-04-06
 
 ### Changed

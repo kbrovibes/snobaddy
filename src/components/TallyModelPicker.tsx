@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 const MODELS = [
-  { id: "claude-3-5-haiku-20241022",  label: "Haiku",  sub: "Fast · ~$0.003/photo" },
+  { id: "claude-3-haiku-20240307",    label: "Haiku",  sub: "Fast · ~$0.001/photo" },
   { id: "claude-3-5-sonnet-20241022", label: "Sonnet", sub: "Best · ~$0.02/photo" },
 ];
 
