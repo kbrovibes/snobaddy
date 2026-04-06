@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.5] - 2026-04-06
+
+### Changed
+- **Session list** — Test sessions (admin only) now appear in their own "Test Sessions" section at the bottom, separate from Past Sessions. The "Show Test Sessions" toggle is removed — test sessions are always visible to admins in their own section.
+
+---
+
 ## [0.22.4] - 2026-04-06
 
 ### Fixed

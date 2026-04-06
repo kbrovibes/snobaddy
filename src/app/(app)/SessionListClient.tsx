@@ -1,10 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { SessionRow } from "@/lib/db/sessions";
-
-const LS_KEY = "snobaddy:show-test-sessions";
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr + "T12:00:00");
@@ -24,30 +21,19 @@ export default function SessionListClient({
   sessions: SessionRow[];
   isAdmin: boolean;
 }) {
-  const [showTest, setShowTest] = useState(false);
-
-  useEffect(() => {
-    try { setShowTest(localStorage.getItem(LS_KEY) === "true"); } catch {}
-  }, []);
-
-  function toggleShowTest() {
-    const next = !showTest;
-    setShowTest(next);
-    try { localStorage.setItem(LS_KEY, String(next)); } catch {}
-  }
-
-  const visible = sessions.filter((s) => isAdmin && showTest ? true : !s.is_test_session);
-
   const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
 
+  const real    = sessions.filter(s => !s.is_test_session);
+  const tests   = sessions.filter(s => s.is_test_session);
+
   // Only the single nearest future pending session goes in Upcoming
-  const nextPending = [...visible]
+  const nextPending = [...real]
     .filter(s => s.status === "pending" && s.date >= todayStr)
     .sort((a, b) => a.date.localeCompare(b.date))[0];
   const upcoming = nextPending ? [nextPending] : [];
 
   // Past = completed/active + any pending sessions with a past date
-  const past = visible.filter(s => s.status !== "pending" || s.date < todayStr);
+  const past = real.filter(s => s.status !== "pending" || s.date < todayStr);
   // already ordered date desc from the DB
 
   function SessionRow({ s }: { s: SessionRow }) {
@@ -83,20 +69,7 @@ export default function SessionListClient({
 
   return (
     <>
-      {isAdmin && (
-        <div className="flex items-center justify-end gap-2 -mt-2">
-          <span className="text-xs text-gray-400">Show Test Sessions</span>
-          <button
-            onClick={toggleShowTest}
-            className="relative inline-flex w-9 h-5 rounded-full transition-colors duration-200 focus:outline-none"
-            style={{ background: showTest ? "#f97316" : "#e5e7eb" }}
-          >
-            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showTest ? "translate-x-4" : "translate-x-0"}`} />
-          </button>
-        </div>
-      )}
-
-      {upcoming.length === 0 && past.length === 0 ? (
+      {upcoming.length === 0 && past.length === 0 && (!isAdmin || tests.length === 0) ? (
         <p className="text-sm text-gray-400 text-center py-8">No sessions yet.</p>
       ) : (
         <div className="flex flex-col gap-4">
@@ -114,6 +87,15 @@ export default function SessionListClient({
               <SectionLabel label="Past Sessions" />
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                 {past.map((s) => <SessionRow key={s.id} s={s} />)}
+              </div>
+            </div>
+          )}
+
+          {isAdmin && tests.length > 0 && (
+            <div>
+              <SectionLabel label="Test Sessions" />
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                {tests.map((s) => <SessionRow key={s.id} s={s} />)}
               </div>
             </div>
           )}
