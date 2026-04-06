@@ -13,6 +13,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.21.5] - 2026-04-05
+
+### Added
+- **Control Panel** (God Mode only) — new page at `/admin/control-panel` showing live Supabase DB size (with progress bar vs 500 MB free tier), table row counts, auth user count, Vercel plan, and recent deployment statuses.
+
+---
+
 ## [0.21.4] - 2026-04-05
 
 ### Changed
