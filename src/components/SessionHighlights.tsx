@@ -9,7 +9,7 @@ interface AwardCardProps {
   stat: string;
 }
 
-function AwardCard({ emoji, title, description, name, stat, colSpan }: AwardCardProps & { colSpan?: string }) {
+export function AwardCard({ emoji, title, description, name, stat, colSpan }: AwardCardProps & { colSpan?: string }) {
   return (
     <div className={`bg-white rounded-xl shadow-sm border border-gray-100 px-4 py-3 flex flex-col items-center gap-1 text-center${colSpan ? ` ${colSpan}` : ""}`}>
       <span className="text-2xl">{emoji}</span>

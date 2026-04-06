@@ -28,6 +28,7 @@ import SimpleMatchForm from "@/components/SimpleMatchForm";
 import TestSessionToggle from "@/components/TestSessionToggle";
 import TallyScoreboard from "@/components/TallyScoreboard";
 import TallyEntryForm from "@/components/TallyEntryForm";
+import TallyHighlights from "@/components/TallyHighlights";
 
 export const dynamic = "force-dynamic";
 
@@ -89,8 +90,11 @@ export default async function SessionDetailPage({
     ? await getSessionHighlights(session.id)
     : null;
 
-  // Build display name map from all session players (scoreboard covers everyone who played)
-  const allSessionNames = (scoreboard as { name: string }[]).map((p) => p.name);
+  // Build display name map from all session players (scoreboard + tally entries)
+  const allSessionNames = [
+    ...(scoreboard as { name: string }[]).map((p) => p.name),
+    ...(tallyRows as TallyEntry[]).map((e) => e.player_name),
+  ];
   const nameMap = buildNameMap(allSessionNames);
 
   return (
@@ -206,6 +210,7 @@ export default async function SessionDetailPage({
       {/* Tally scoreboard — shown for completed sessions with tally data (no match records) */}
       {isCompleted && (tallyRows as TallyEntry[]).length > 0 && (
         <>
+          <TallyHighlights entries={tallyRows as TallyEntry[]} nameMap={nameMap} />
           <TallyScoreboard
             entries={tallyRows as TallyEntry[]}
             sessionId={session.id}

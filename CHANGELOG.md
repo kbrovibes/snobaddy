@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.3] - 2026-04-06
+
+### Added
+- **Tally session awards** — Closed tally-mode sessions now show Session Awards cards: The Slayer (most wins), The Unstoppable (most matches), and The Untouchable (best win rate, min 3 matches). Uses the same card layout as match-based sessions.
+
+---
+
 ## [0.22.2] - 2026-04-06
 
 ### Added
