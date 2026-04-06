@@ -34,7 +34,7 @@ Single source of truth for all planned and completed work.
 
 - [x] **16 — Email Onboarding Fix** · [spec](specs/16-email-onboarding-fix.md) · Hard onboarding gate in app layout; create player stub if missing; remove skip button; default skill 2
 - [x] **15 — God Mode** · [spec](specs/15-god-mode.md) · Super-admin role (Karthik only); first feature: Reset Session wipes all matches + proposals with confirmation
-- [ ] **20 — Edit Player** · [spec](specs/20-edit-player.md) · God Mode only; inline edit form on player detail page to change name and skill level
+- [x] **20 — Edit Player** · [spec](specs/20-edit-player.md) · God Mode only; inline edit form on player detail page to change name and skill level
 - [ ] **14 — Multiple Sessions Per Day** · [spec](specs/14-multi-session-per-day.md) · Allow admins to create more than one session on the same date; auto-numbered `#1`, `#2`; primarily for testing
 - [x] **17 — Session Highlights** · [spec](specs/17-session-highlights.md) · Award cards for closed sessions: Sultan, Iron Shuttle, Untouchable, Cannon, No Mercy; admin-only; shown at top of completed session view
 

@@ -190,6 +190,14 @@ export async function updateSkillLevel(playerId: string, skillLevel: number) {
   if (error) throw new Error(error.message);
 }
 
+export async function updatePlayerName(playerId: string, name: string) {
+  const { error } = await serviceClient
+    .from("players")
+    .update({ name: name.trim() })
+    .eq("id", playerId);
+  if (error) throw new Error(error.message);
+}
+
 export interface PlayerPoemContext {
   wins: number;
   losses: number;

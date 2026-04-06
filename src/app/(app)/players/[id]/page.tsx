@@ -6,6 +6,7 @@ import { generatePlayerPoem } from "@/lib/ai/poem";
 import SessionStatsChart from "@/components/SessionStatsChart";
 import BackButton from "@/components/BackButton";
 import IncludeTestToggle from "@/components/IncludeTestToggle";
+import EditPlayerForm from "@/components/EditPlayerForm";
 import { buildNameMap, shortName } from "@/lib/display-name";
 
 export const dynamic = "force-dynamic";
@@ -40,10 +41,11 @@ export default async function PlayerProfilePage({
   const { data: { user } } = await supabase.auth.getUser();
   const { data: currentPlayer } = await supabase
     .from("players")
-    .select("is_admin")
+    .select("is_admin, is_god_mode")
     .eq("user_id", user!.id)
     .maybeSingle();
   const isAdmin = currentPlayer?.is_admin ?? false;
+  const isGodMode = (currentPlayer as { is_god_mode?: boolean } | null)?.is_god_mode ?? false;
 
   const player = await getPlayerById(id);
   if (!player) redirect("/");
@@ -94,8 +96,18 @@ export default async function PlayerProfilePage({
             {player.name.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-bold text-gray-900 truncate">{player.name}</h1>
-            <SkillDots level={player.skill_level} />
+            {isGodMode ? (
+              <EditPlayerForm
+                playerId={id}
+                currentName={player.name}
+                currentSkillLevel={player.skill_level}
+              />
+            ) : (
+              <>
+                <h1 className="text-lg font-bold text-gray-900 truncate">{player.name}</h1>
+                <SkillDots level={player.skill_level} />
+              </>
+            )}
           </div>
           <div className="text-right shrink-0">
             <p className="text-2xl font-bold text-gray-900">{overallPct}%</p>

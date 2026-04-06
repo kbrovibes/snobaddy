@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.0] - 2026-04-06
+
+### Added
+- **Edit Player (God Mode)** — God Mode users see a ✏️ button on any player profile page. Tapping it opens an inline form to rename the player and change their skill level. Save is disabled until something changes. Regular admins and non-admins see no edit controls.
+
+---
+
 ## [0.23.3] - 2026-04-06
 
 ### Added
