@@ -38,7 +38,7 @@ Single source of truth for all planned and completed work.
 
 ---
 
-- [ ] **22 — Test Sessions** · [spec](specs/22-test-sessions.md) · Flag sessions as test (auto on non-Mon/Thu); admin toggle on session detail; admin-local filter on leaderboard + session list
+- [x] **22 — Test Sessions** · [spec](specs/22-test-sessions.md) · Flag sessions as test (auto on non-Mon/Thu); admin toggle on session detail; admin-local filter on leaderboard + session list
 
 ## Future (unspecced)
 

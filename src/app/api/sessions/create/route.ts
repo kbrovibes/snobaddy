@@ -11,8 +11,11 @@ export async function POST() {
     .from("players").select("id, is_admin").eq("user_id", user.id).single();
   if (!player?.is_admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
-  const now = new Date().toISOString();
+  const now = new Date();
+  const today = now.toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+  const dow = now.toLocaleDateString("en-US", { timeZone: "America/Los_Angeles", weekday: "long" });
+  const isTestSession = dow !== "Monday" && dow !== "Thursday";
+  const nowIso = now.toISOString();
 
   // Enforce no-duplicate-active: if any session OTHER than today's is active, block it
   const { data: activeSession } = await adminDb
@@ -41,7 +44,7 @@ export async function POST() {
     await adminDb.from("session_players").delete().eq("session_id", existing.id);
     const { error } = await adminDb
       .from("sessions")
-      .update({ status: "active", started_by: player.id, started_at: now })
+      .update({ status: "active", started_by: player.id, started_at: nowIso, is_test_session: isTestSession })
       .eq("id", existing.id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json({ id: existing.id });
@@ -62,7 +65,8 @@ export async function POST() {
       status: "active",
       season_id: season?.id ?? null,
       started_by: player.id,
-      started_at: now,
+      started_at: nowIso,
+      is_test_session: isTestSession,
     })
     .select("id")
     .single();

@@ -4,6 +4,7 @@ import { getActivePlayers } from "@/lib/db/players";
 import { getSeasonMatchCount } from "@/lib/db/matches";
 import LeaderboardTable from "./LeaderboardTable";
 import { buildNameMap, shortName } from "@/lib/display-name";
+import { createClient } from "@/lib/supabase-server";
 
 interface AwardCardProps {
   emoji: string;
@@ -26,12 +27,21 @@ function AwardCard({ emoji, title, description, name, stat }: AwardCardProps) {
 }
 
 export default async function LeaderboardPage() {
-  const [allPlayers, totalMatches] = await Promise.all([
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: currentPlayer } = await supabase
+    .from("players").select("is_admin").eq("user_id", user!.id).maybeSingle();
+  const isAdmin = currentPlayer?.is_admin ?? false;
+
+  const [allPlayers, allPlayersWithTest, totalMatches, totalMatchesWithTest] = await Promise.all([
     getActivePlayers(),
+    getActivePlayers({ includeTestSessions: true }),
     getSeasonMatchCount(),
+    getSeasonMatchCount({ includeTestSessions: true }),
   ]);
 
   const activePlayers = allPlayers.filter(p => p.matches_played > 0);
+  const activePlayersWithTest = allPlayersWithTest.filter(p => p.matches_played > 0);
 
   const nameMap = buildNameMap(activePlayers.map(p => p.name));
 
@@ -86,18 +96,14 @@ export default async function LeaderboardPage() {
 
       <LeaderboardTable
         players={activePlayers}
+        playersWithTest={activePlayersWithTest}
         nutCrackerId={nutCracker?.id ?? null}
         badmintonNutId={badmintonNut?.id ?? null}
+        totalMatches={totalMatches}
+        totalMatchesWithTest={totalMatchesWithTest}
+        isAdmin={isAdmin}
       />
-
-      <div className="mt-8 pt-8 border-t border-gray-100 text-center">
-        <div className="text-sm text-gray-400">
-          Total matches recorded this season
-        </div>
-        <div className="text-2xl font-bold text-gray-900 mt-1">
-          {totalMatches}
-        </div>
-      </div>
     </div>
   );
 }
+

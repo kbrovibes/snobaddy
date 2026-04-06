@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { PlayerStats } from "@/lib/db/players";
 import { VerifiedBadge, AdminBadge } from "@/components/PlayerBadges";
+
+const LS_KEY = "snobaddy:leaderboard-show-test";
 
 type SortKey = "name" | "matches_played" | "wins" | "losses" | "win_pct";
 type SortDir = "asc" | "desc";
@@ -27,15 +29,37 @@ const COLUMNS: { key: SortKey; label: string; title: string }[] = [
 
 export default function LeaderboardTable({
   players,
+  playersWithTest,
   nutCrackerId,
   badmintonNutId,
+  totalMatches,
+  totalMatchesWithTest,
+  isAdmin,
 }: {
   players: PlayerStats[];
+  playersWithTest: PlayerStats[];
   nutCrackerId: string | null;
   badmintonNutId: string | null;
+  totalMatches: number;
+  totalMatchesWithTest: number;
+  isAdmin: boolean;
 }) {
   const [sortKey, setSortKey] = useState<SortKey>("win_pct");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [showTest, setShowTest] = useState(false);
+
+  useEffect(() => {
+    try { setShowTest(localStorage.getItem(LS_KEY) === "true"); } catch {}
+  }, []);
+
+  function toggleShowTest() {
+    const next = !showTest;
+    setShowTest(next);
+    try { localStorage.setItem(LS_KEY, String(next)); } catch {}
+  }
+
+  const activePlayers = showTest ? playersWithTest : players;
+  const matchCount = showTest ? totalMatchesWithTest : totalMatches;
 
   function handleSort(key: SortKey) {
     if (key === sortKey) {
@@ -46,7 +70,7 @@ export default function LeaderboardTable({
     }
   }
 
-  const sorted = [...players].sort((a, b) => {
+  const sorted = [...activePlayers].sort((a, b) => {
     let av: number | string;
     let bv: number | string;
 
@@ -92,7 +116,7 @@ export default function LeaderboardTable({
     return index + 1;
   }
 
-  if (players.length === 0) {
+  if (activePlayers.length === 0) {
     return (
       <p className="text-center text-gray-400 text-sm py-12">
         No active players yet.
@@ -101,6 +125,19 @@ export default function LeaderboardTable({
   }
 
   return (
+    <>
+    {isAdmin && (
+      <div className="flex items-center justify-end gap-2 mb-3">
+        <span className="text-xs text-gray-400">Include Test Sessions</span>
+        <button
+          onClick={toggleShowTest}
+          className="relative inline-flex w-9 h-5 rounded-full transition-colors duration-200 focus:outline-none"
+          style={{ background: showTest ? "#f97316" : "#e5e7eb" }}
+        >
+          <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showTest ? "translate-x-4" : "translate-x-0"}`} />
+        </button>
+      </div>
+    )}
     <div className="overflow-x-auto -mx-4">
       <table className="w-full text-sm">
         <thead>
@@ -149,5 +186,15 @@ export default function LeaderboardTable({
         </tbody>
       </table>
     </div>
+
+    <div className="mt-8 pt-8 border-t border-gray-100 text-center">
+      <div className="text-sm text-gray-400">
+        Total matches recorded this season
+      </div>
+      <div className="text-2xl font-bold text-gray-900 mt-1">
+        {matchCount}
+      </div>
+    </div>
+    </>
   );
 }

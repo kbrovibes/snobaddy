@@ -367,11 +367,21 @@ export async function getSessionHighlights(sessionId: string): Promise<SessionHi
   };
 }
 
-export async function getSeasonMatchCount(): Promise<number> {
+export async function getSeasonMatchCount(options?: { includeTestSessions?: boolean }): Promise<number> {
   const supabase = await createClient();
+  const includeTest = options?.includeTestSessions ?? false;
+
+  if (includeTest) {
+    const { count } = await supabase
+      .from("matches")
+      .select("*", { count: "exact", head: true });
+    return count ?? 0;
+  }
+
   const { count } = await supabase
     .from("matches")
-    .select("*", { count: "exact", head: true });
+    .select("*, sessions!inner(is_test_session)", { count: "exact", head: true })
+    .eq("sessions.is_test_session", false);
   return count ?? 0;
 }
 

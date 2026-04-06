@@ -14,8 +14,20 @@ export interface PlayerStats {
 }
 
 
-export async function getActivePlayers(): Promise<PlayerStats[]> {
+export async function getActivePlayers(
+  options?: { includeTestSessions?: boolean }
+): Promise<PlayerStats[]> {
   const supabase = await createClient();
+  const includeTest = options?.includeTestSessions ?? false;
+
+  const matchesQuery = includeTest
+    ? supabase
+        .from("matches")
+        .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team")
+    : supabase
+        .from("matches")
+        .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team, sessions!inner(is_test_session)")
+        .eq("sessions.is_test_session", false);
 
   const [
     { data: players, error },
@@ -28,9 +40,7 @@ export async function getActivePlayers(): Promise<PlayerStats[]> {
       .eq("onboarding_complete", true)
       .is("deleted_at", null)
       .order("name"),
-    supabase
-      .from("matches")
-      .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team"),
+    matchesQuery,
     supabase
       .from("players")
       .select("id")

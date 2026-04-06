@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.21.0] - 2026-04-05
+
+### Added
+- **Test Sessions** — Sessions created on a non-Monday/Thursday are automatically flagged as test sessions. Admins can toggle the flag on any session from the session header.
+- **Session list** — Admins see a "Show Test Sessions" toggle (off by default, saved per device). Test sessions are hidden from non-admins.
+- **Leaderboard** — Admins see an "Include Test Sessions" toggle (off by default, saved per device). When on, stats and match totals include test session data. Non-admins always see stats excluding test sessions.
+
+---
+
 ## [0.20.6] - 2026-04-05
 
 ### Fixed

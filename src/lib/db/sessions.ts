@@ -6,6 +6,7 @@ export interface Session {
   status: "pending" | "active" | "completed";
   auto_generate_matches?: boolean;
   simple_score_tracking: boolean;
+  is_test_session: boolean;
   season: { id: string; name: string };
 }
 
@@ -13,6 +14,7 @@ export interface SessionRow {
   id: string;
   date: string;
   status: "pending" | "active" | "completed";
+  is_test_session: boolean;
   season: { name: string };
 }
 
@@ -41,7 +43,7 @@ export async function getTodaySession(): Promise<Session | null> {
 
   const { data } = await supabase
     .from("sessions")
-    .select("id, date, status, seasons(id, name)")
+    .select("id, date, status, is_test_session, seasons(id, name)")
     .eq("date", today)
     .maybeSingle();
 
@@ -55,7 +57,7 @@ export async function getUpcomingSession(): Promise<Session | null> {
 
   const { data } = await supabase
     .from("sessions")
-    .select("id, date, status, seasons(id, name)")
+    .select("id, date, status, is_test_session, seasons(id, name)")
     .gt("date", today)
     .order("date")
     .limit(1)
@@ -69,7 +71,7 @@ export async function getActiveSession(): Promise<Session | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("sessions")
-    .select("id, date, status, seasons(id, name)")
+    .select("id, date, status, is_test_session, seasons(id, name)")
     .eq("status", "active")
     .limit(1)
     .maybeSingle();
@@ -95,7 +97,7 @@ export async function getAllSessions(): Promise<SessionRow[]> {
 
   const { data } = await supabase
     .from("sessions")
-    .select("id, date, status, seasons(name)")
+    .select("id, date, status, is_test_session, seasons(name)")
     .lte("date", cutoff)
     .order("date", { ascending: false });
   if (!data) return [];
@@ -103,6 +105,7 @@ export async function getAllSessions(): Promise<SessionRow[]> {
     id: row.id,
     date: row.date,
     status: row.status as SessionRow["status"],
+    is_test_session: row.is_test_session ?? false,
     season: (row.seasons as unknown as { name: string }),
   }));
 }
@@ -111,11 +114,11 @@ export async function getSessionById(id: string): Promise<Session | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("sessions")
-    .select("id, date, status, auto_generate_matches, simple_score_tracking, seasons(id, name)")
+    .select("id, date, status, auto_generate_matches, simple_score_tracking, is_test_session, seasons(id, name)")
     .eq("id", id)
     .maybeSingle();
 
-  // If the query errored (e.g. column not yet migrated), retry without new column
+  // If the query errored (e.g. column not yet migrated), retry without new columns
   if (error || !data) {
     if (!error) return null; // no error, just no row
     const { data: fallback } = await supabase
@@ -129,15 +132,17 @@ export async function getSessionById(id: string): Promise<Session | null> {
       ...fallback,
       auto_generate_matches: fb.auto_generate_matches ?? true,
       simple_score_tracking: true,
+      is_test_session: false,
       season: (fallback.seasons as unknown as Session["season"]),
     };
   }
 
-  const row = data as typeof data & { auto_generate_matches?: boolean; simple_score_tracking?: boolean };
+  const row = data as typeof data & { auto_generate_matches?: boolean; simple_score_tracking?: boolean; is_test_session?: boolean };
   return {
     ...data,
     auto_generate_matches: row.auto_generate_matches ?? true,
     simple_score_tracking: row.simple_score_tracking ?? true,
+    is_test_session: row.is_test_session ?? false,
     season: (data.seasons as unknown as Session["season"]),
   };
 }
