@@ -164,6 +164,11 @@ Two hooks enforce changelog discipline:
 2. Create or update `releases/v{version}-{slug}.md` with technical detail
 3. Stage those files and commit again
 
+**When `CHANGELOG.md` has a merge conflict**, do NOT merge the two entries into one. Instead:
+1. Give the incoming change its own version number (increment the patch: e.g. `0.24.0` → `0.24.1`)
+2. Keep both version blocks as separate entries
+3. Resolve the conflict marker so each version has its own clean `## [x.y.z]` heading
+
 ## Agent Protocol
 
 **Read `AGENTS.md` before starting any coding work.** It contains the full protocol for implementing features, writing specs, and maintaining the changelog.
