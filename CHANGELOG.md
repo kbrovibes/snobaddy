@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.23.2] - 2026-04-06
+
+### Added
+- **Wins & Losses chart** — Player profile page now shows a stacked bar chart of wins (green) and losses (red) per session, above the existing win % chart.
+
+---
+
 ## [0.23.1] - 2026-04-06
 
 ### Performance

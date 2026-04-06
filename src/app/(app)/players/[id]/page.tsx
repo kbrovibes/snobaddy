@@ -3,6 +3,7 @@ import { getPlayerById, getPlayerPoem, getPlayerPoemContext, upsertPlayerPoem } 
 import { getPlayerSessionHistory, getPlayerMatchesBySession } from "@/lib/db/matches";
 import { generatePlayerPoem } from "@/lib/ai/poem";
 import WinPctChart from "@/components/WinPctChart";
+import WinsLossesChart from "@/components/WinsLossesChart";
 import BackButton from "@/components/BackButton";
 import { buildNameMap, shortName } from "@/lib/display-name";
 
@@ -93,6 +94,14 @@ export default async function PlayerProfilePage({
             {poem}
           </p>
         )}
+      </div>
+
+      {/* Wins & Losses chart */}
+      <div className="bg-white rounded-xl shadow-sm px-4 py-3">
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          Wins &amp; Losses by Session
+        </h2>
+        <WinsLossesChart data={sessionHistory} />
       </div>
 
       {/* Win % chart */}
