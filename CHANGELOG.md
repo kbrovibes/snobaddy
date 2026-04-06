@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.2] - 2026-04-06
+
+### Added
+- **Control Panel link** — God Mode users now see a "⚙ Panel" link in the header that goes directly to `/admin/control-panel`.
+
+---
+
 ## [0.22.1] - 2026-04-06
 
 ### Changed
