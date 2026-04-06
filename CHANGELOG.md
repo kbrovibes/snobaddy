@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.1] - 2026-04-06
+
+### Added
+- **PWA / Add to Home Screen** — App is now installable on iPhone and Android. Open in Safari/Chrome, tap Share → "Add to Home Screen". Launches full-screen with no browser chrome.
+
+---
+
 ## [0.24.0] - 2026-04-06
 
 ### Added

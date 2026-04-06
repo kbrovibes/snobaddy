@@ -17,6 +17,15 @@ export const metadata: Metadata = {
   description: "Badminton session and season tracker for snoqualmie club",
   icons: {
     icon: "/favicon.gif",
+    apple: "/serve-logo.jpg",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Snobaddy",
+    statusBarStyle: "default",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
   },
 };
 
