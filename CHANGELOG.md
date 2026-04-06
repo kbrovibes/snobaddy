@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.9] - 2026-04-06
+
+### Fixed
+- **Tally photo import** — On iPhone, tapping "Import from photo" now opens the file picker (photo library or camera) instead of launching the camera directly.
+
+---
+
 ## [0.22.8] - 2026-04-06
 
 ### Changed
