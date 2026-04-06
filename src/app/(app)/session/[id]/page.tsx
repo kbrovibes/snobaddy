@@ -49,11 +49,12 @@ export default async function SessionDetailPage({
 
   const { data: currentPlayer } = await supabase
     .from("players")
-    .select("id, is_admin")
+    .select("id, is_admin, is_god_mode")
     .eq("user_id", user!.id)
     .maybeSingle();
 
   const isAdmin = currentPlayer?.is_admin ?? false;
+  const isGodMode = (currentPlayer as unknown as { is_god_mode?: boolean } | null)?.is_god_mode ?? false;
   const playerId = currentPlayer?.id;
 
   const session = await getSessionById(id);
@@ -196,6 +197,7 @@ export default async function SessionDetailPage({
             <TallyEntryForm
               sessionId={session.id}
               allPlayers={formPlayers as { id: string; name: string }[]}
+              isGodMode={isGodMode}
             />
           )}
         </>
@@ -204,13 +206,19 @@ export default async function SessionDetailPage({
       {/* Tally scoreboard — shown for completed sessions with tally data (no match records) */}
       {isCompleted && (tallyRows as TallyEntry[]).length > 0 && (
         <>
-          <TallyScoreboard entries={tallyRows as TallyEntry[]} />
+          <TallyScoreboard
+            entries={tallyRows as TallyEntry[]}
+            sessionId={session.id}
+            isGodMode={isGodMode}
+            hasPhoto={!!session.tally_photo_path}
+          />
           {isAdmin && (
             <TallyEntryForm
               sessionId={session.id}
               allPlayers={formPlayers as { id: string; name: string }[]}
               initialEntries={tallyRows as TallyEntry[]}
               isEdit
+              isGodMode={isGodMode}
             />
           )}
         </>

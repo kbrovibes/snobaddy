@@ -6,6 +6,20 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.0] - 2026-04-06
+
+### Added
+- **Tally Photo Import (God Mode)** — On sessions with tally mode, Karthik can tap 📷 to upload a whiteboard photo. Gemini AI extracts player names and W/L counts and pre-fills the tally form. Unmatched names are highlighted in amber for manual resolution. Photos are stored in Supabase Storage and viewable via "Source photo →" link.
+
+---
+
+## [0.21.4] - 2026-04-05
+
+### Changed
+- **Tally Scoreboard** — All columns now sortable (Player, M, W, L, Win%); default sort is wins descending. Added match count (M) column. Player names link to their profile page.
+
+---
+
 ## [0.21.3] - 2026-04-06
 
 ### Changed
