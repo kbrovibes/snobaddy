@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.4] - 2026-04-06
+
+### Fixed
+- **Session list** — Pending sessions with a past date now appear in Past Sessions instead of being hidden. Previously they were excluded from both Upcoming and Past sections.
+
+---
+
 ## [0.22.3] - 2026-04-06
 
 ### Added

@@ -38,13 +38,16 @@ export default function SessionListClient({
 
   const visible = sessions.filter((s) => isAdmin && showTest ? true : !s.is_test_session);
 
-  // only the single nearest pending session
+  const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+
+  // Only the single nearest future pending session goes in Upcoming
   const nextPending = [...visible]
-    .filter(s => s.status === "pending")
+    .filter(s => s.status === "pending" && s.date >= todayStr)
     .sort((a, b) => a.date.localeCompare(b.date))[0];
   const upcoming = nextPending ? [nextPending] : [];
 
-  const past = visible.filter(s => s.status !== "pending");
+  // Past = completed/active + any pending sessions with a past date
+  const past = visible.filter(s => s.status !== "pending" || s.date < todayStr);
   // already ordered date desc from the DB
 
   function SessionRow({ s }: { s: SessionRow }) {
