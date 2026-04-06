@@ -38,9 +38,13 @@ export default function SessionListClient({
 
   const visible = sessions.filter((s) => isAdmin && showTest ? true : !s.is_test_session);
 
-  // pending = upcoming; active/completed = past
+  // pending within next 7 days = upcoming; active/completed = past
+  const in7Days = new Date();
+  in7Days.setDate(in7Days.getDate() + 7);
+  const cutoff = in7Days.toLocaleDateString("en-CA"); // YYYY-MM-DD
+
   const upcoming = [...visible]
-    .filter(s => s.status === "pending")
+    .filter(s => s.status === "pending" && s.date <= cutoff)
     .sort((a, b) => a.date.localeCompare(b.date)); // nearest first
 
   const past = visible.filter(s => s.status !== "pending");

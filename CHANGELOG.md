@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.21.3] - 2026-04-06
+
+### Changed
+- **Session list** — Upcoming section only shows sessions within the next 7 days.
+
+---
+
 ## [0.21.2] - 2026-04-05
 
 ### Fixed
