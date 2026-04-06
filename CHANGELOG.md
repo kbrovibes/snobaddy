@@ -19,6 +19,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Test Sessions** — Sessions created on a non-Monday/Thursday are automatically flagged as test sessions. Admins can toggle the flag on any session from the session header.
 - **Session list** — Admins see a "Show Test Sessions" toggle (off by default, saved per device). Test sessions are hidden from non-admins.
 - **Leaderboard** — Admins see an "Include Test Sessions" toggle (off by default, saved per device). When on, stats and match totals include test session data. Non-admins always see stats excluding test sessions.
+- **Tally Mode** — Admins can now enter final W/L tallies for sessions where individual matches were never recorded. On any completed session with no match history, a new "Enter Final Scores" button appears. Pick players, enter their win and loss counts, and save. The session shows a tally scoreboard (W/L/Win%) and the totals roll up into the season leaderboard alongside match-recorded sessions.
 
 ---
 
