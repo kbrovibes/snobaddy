@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.12] - 2026-04-06
+
+### Fixed
+- **Tally photo extraction** — Updated Gemini model from `gemini-1.5-flash` (deprecated) to `gemini-2.0-flash`.
+
+---
+
 ## [0.22.11] - 2026-04-06
 
 ### Fixed
