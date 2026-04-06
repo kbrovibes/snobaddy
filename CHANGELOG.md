@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.22.13] - 2026-04-06
+
+### Added
+- **Tally correction logging** — When a tally is saved after photo import, the raw AI extraction and any previous tally values are recorded in `tally_correction_log`. This data will be used to improve photo recognition over time.
+
+---
+
 ## [0.22.12] - 2026-04-06
 
 ### Fixed

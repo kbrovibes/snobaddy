@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase-server";
 import { supabase as adminDb } from "@/lib/supabase";
-import { upsertSessionTally } from "@/lib/db/tally";
+import { upsertSessionTally, logTallyCorrection } from "@/lib/db/tally";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(
@@ -32,10 +32,10 @@ export async function POST(
     );
   }
 
-  // Session must exist and be completed
+  // Session must exist and be completed; also fetch extraction snapshot for logging
   const { data: session } = await adminDb
     .from("sessions")
-    .select("status")
+    .select("status, tally_extraction_raw")
     .eq("id", sessionId)
     .single();
   if (!session) return NextResponse.json({ error: "Session not found" }, { status: 404 });
@@ -76,10 +76,28 @@ export async function POST(
     }
   }
 
+  // Snapshot existing tally before overwriting (null = first save)
+  const { data: existingRows } = await adminDb
+    .from("session_tally")
+    .select("player_id, wins, losses")
+    .eq("session_id", sessionId);
+  const previousTally = existingRows && existingRows.length > 0 ? existingRows : null;
+
   try {
     await upsertSessionTally(sessionId, entries);
   } catch (err) {
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  }
+
+  // Log whenever a photo extraction exists — captures both first saves and edits
+  if (session.tally_extraction_raw) {
+    await logTallyCorrection({
+      sessionId,
+      savedBy: player.id,
+      aiExtraction: session.tally_extraction_raw,
+      previousTally,
+      savedTally: entries,
+    });
   }
 
   return NextResponse.json({ ok: true });

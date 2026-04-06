@@ -203,6 +203,12 @@ export async function POST(
     return NextResponse.json({ error: "AI extraction failed: " + message }, { status: 500 });
   }
 
+  // Persist raw AI output so we can later diff against what was actually saved
+  await adminDb
+    .from("sessions")
+    .update({ tally_extraction_raw: rawPlayers })
+    .eq("id", sessionId);
+
   // Server-side name matching against the roster
   const allPlayers = await getActivePlayerList();
 

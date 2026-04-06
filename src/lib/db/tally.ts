@@ -24,6 +24,22 @@ export async function getSessionTally(sessionId: string): Promise<TallyEntry[]> 
   }));
 }
 
+export async function logTallyCorrection(opts: {
+  sessionId: string;
+  savedBy: string;
+  aiExtraction: unknown;
+  previousTally: unknown;
+  savedTally: unknown;
+}): Promise<void> {
+  await adminDb.from("tally_correction_log").insert({
+    session_id: opts.sessionId,
+    saved_by: opts.savedBy,
+    ai_extraction: opts.aiExtraction,
+    previous_tally: opts.previousTally,
+    saved_tally: opts.savedTally,
+  });
+}
+
 /**
  * Full replacement: deletes all existing tally rows for the session,
  * then inserts the new batch. Idempotent — safe to call on re-save.
