@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.30] - 2026-04-07
+
+### Changed
+- **Players list — Check In / Check Out buttons** — now styled as plain text links matching the Logout button in the header (`text-sky-600` / `text-red-600`), instead of pill buttons with backgrounds and borders.
+
+---
+
 ## [0.24.29] - 2026-04-07
 
 ### Added
