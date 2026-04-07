@@ -133,6 +133,7 @@ export async function getPlayerSessionHistory(
     const session = t.sessions as unknown as { date: string; is_test_session: boolean };
     if (!includeTest && session.is_test_session) continue;
     if (sessionMap.has(t.session_id)) continue; // already covered by match records
+    if (t.wins === 0 && t.losses === 0) continue; // skip empty tally entries
     sessionMap.set(t.session_id, { date: session.date, wins: t.wins, losses: t.losses });
   }
 
@@ -272,6 +273,7 @@ export async function getPlayerMatchesBySession(
     const session = t.sessions as unknown as { date: string; is_test_session: boolean };
     if (!includeTest && session.is_test_session) continue;
     if (sessionMap.has(t.session_id)) continue;
+    if (t.wins === 0 && t.losses === 0) continue; // skip empty tally entries
     results.push({
       session_id: t.session_id,
       date: session.date,

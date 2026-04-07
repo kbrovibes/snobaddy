@@ -29,6 +29,13 @@ export async function getActivePlayers(
         .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team, sessions!inner(is_test_session)")
         .eq("sessions.is_test_session", false);
 
+  const talliesQuery = includeTest
+    ? supabase.from("session_tally").select("player_id, wins, losses")
+    : supabase
+        .from("session_tally")
+        .select("player_id, wins, losses, sessions!inner(is_test_session)")
+        .eq("sessions.is_test_session", false);
+
   const [
     { data: players, error },
     { data: matches },
@@ -46,9 +53,7 @@ export async function getActivePlayers(
       .from("players")
       .select("id")
       .not("deleted_at", "is", null),
-    supabase
-      .from("session_tally")
-      .select("player_id, wins, losses"),
+    talliesQuery,
   ]);
 
   if (error) throw new Error(error.message);
@@ -88,6 +93,7 @@ export async function getActivePlayers(
 
   // Add tally-session stats (sessions where no individual matches were recorded)
   for (const t of tallies ?? []) {
+    if (t.wins === 0 && t.losses === 0) continue;
     const s = statsMap.get(t.player_id) ?? { wins: 0, losses: 0, played: 0 };
     s.wins += t.wins;
     s.losses += t.losses;
