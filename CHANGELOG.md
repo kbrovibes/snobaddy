@@ -6,6 +6,20 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.19] - 2026-04-06
+
+### Changed
+- **Player profile — Stats by Session** — the current in-progress session now appears in the chart and match history alongside completed ones. Dates for live sessions are highlighted in blue with an asterisk (`*`), and a legend reading "* Session in progress" appears under the section heading.
+
+---
+
+## [0.24.18] - 2026-04-06
+
+### Changed
+- **Player poems** — regenerated for all 35 players using improved context: non-test sessions only, includes tally-session results (not just individual match records). Players who only appear in test sessions (Kiran Bertil, Vasu, Vinaya, Chitra) get a playful "QA tester on the court" poem instead.
+
+---
+
 ## [0.24.17] - 2026-04-06
 
 ### Changed

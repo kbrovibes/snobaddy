@@ -6,6 +6,7 @@ interface SessionStat {
   losses: number;
   win_pct: number;
   absent?: boolean;
+  isOpen?: boolean;
 }
 
 const BAR_W = 28;
@@ -53,11 +54,11 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
           if (s.absent) {
             return (
               <g key={s.date}>
-                <title>{shortDate(s.date)}: Did not play</title>
+                <title>{shortDate(s.date)}: {s.isOpen ? "In progress" : "Did not play"}</title>
                 {/* Thin gray stub to mark the session */}
-                <rect x={x} y={CHART_H - 4} width={BAR_W} height={4} rx={1} fill="#e5e7eb" />
-                <text x={x + BAR_W / 2} y={CHART_H + 14} textAnchor="middle" fontSize={9} fill="#d1d5db">
-                  {shortDate(s.date)}
+                <rect x={x} y={CHART_H - 4} width={BAR_W} height={4} rx={1} fill={s.isOpen ? "#93c5fd" : "#e5e7eb"} />
+                <text x={x + BAR_W / 2} y={CHART_H + 14} textAnchor="middle" fontSize={9} fill={s.isOpen ? "#93c5fd" : "#d1d5db"}>
+                  {shortDate(s.date)}{s.isOpen ? "*" : ""}
                 </text>
               </g>
             );
@@ -72,7 +73,7 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
 
           return (
             <g key={s.date}>
-              <title>{shortDate(s.date)}: {s.wins}W {s.losses}L</title>
+              <title>{shortDate(s.date)}{s.isOpen ? "*" : ""}: {s.wins}W {s.losses}L{s.isOpen ? " (in progress)" : ""}</title>
 
               {/* Wins (green, top portion) */}
               {winH > 0 && (
@@ -95,8 +96,8 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
               )}
 
               {/* Date label */}
-              <text x={x + BAR_W / 2} y={CHART_H + 14} textAnchor="middle" fontSize={9} fill="#9ca3af">
-                {shortDate(s.date)}
+              <text x={x + BAR_W / 2} y={CHART_H + 14} textAnchor="middle" fontSize={9} fill={s.isOpen ? "#60a5fa" : "#9ca3af"}>
+                {shortDate(s.date)}{s.isOpen ? "*" : ""}
               </text>
             </g>
           );

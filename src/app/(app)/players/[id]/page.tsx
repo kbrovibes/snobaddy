@@ -108,12 +108,17 @@ export default async function PlayerProfilePage({
 
       {/* Stats chart */}
       <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
             Stats by Session
           </h2>
           {isAdmin && <IncludeTestToggle enabled={includeTestSessions} />}
         </div>
+        {sessionHistory.some((s) => s.isOpen) ? (
+          <p className="text-xs text-blue-400 mt-1 mb-3">* Session in progress</p>
+        ) : (
+          <div className="mb-3" />
+        )}
         <SessionStatsChart data={sessionHistory} />
       </div>
 
@@ -129,8 +134,8 @@ export default async function PlayerProfilePage({
           <div className="flex flex-col gap-4">
             {matchesBySession.map((group) => (
               <div key={group.session_id}>
-                <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${group.absent ? "text-gray-300" : "text-gray-400"}`}>
-                  {formatDate(group.date)}
+                <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${group.absent ? "text-gray-300" : group.isOpen ? "text-blue-400" : "text-gray-400"}`}>
+                  {formatDate(group.date)}{group.isOpen ? "*" : ""}
                 </p>
                 {group.absent ? (
                   <p className="text-sm text-gray-300">Did not play</p>

@@ -83,6 +83,7 @@ export interface PlayerSessionStat {
   losses: number;
   win_pct: number;
   absent?: boolean;
+  isOpen?: boolean;
 }
 
 export interface PlayerMatchRecord {
@@ -106,8 +107,13 @@ export async function getPlayerSessionHistory(
     ? supabase.from("sessions").select("id, date").eq("status", "completed").order("date")
     : supabase.from("sessions").select("id, date").eq("status", "completed").eq("is_test_session", false).order("date");
 
-  const [{ data: allSessions }, { data: matchData }, { data: tallyData }] = await Promise.all([
+  const activeSessionQuery = includeTest
+    ? supabase.from("sessions").select("id, date").eq("status", "active").maybeSingle()
+    : supabase.from("sessions").select("id, date").eq("status", "active").eq("is_test_session", false).maybeSingle();
+
+  const [{ data: allSessions }, { data: activeSession }, { data: matchData }, { data: tallyData }] = await Promise.all([
     allSessionsQuery,
+    activeSessionQuery,
     supabase
       .from("matches")
       .select(`
@@ -124,9 +130,12 @@ export async function getPlayerSessionHistory(
   ]);
 
   // Pre-populate every completed session as absent
-  const sessionMap = new Map<string, { date: string; wins: number; losses: number; absent: boolean }>();
+  const sessionMap = new Map<string, { date: string; wins: number; losses: number; absent: boolean; isOpen?: boolean }>();
   for (const s of allSessions ?? []) {
     sessionMap.set(s.id, { date: s.date, wins: 0, losses: 0, absent: true });
+  }
+  if (activeSession) {
+    sessionMap.set(activeSession.id, { date: activeSession.date, wins: 0, losses: 0, absent: true, isOpen: true });
   }
 
   for (const m of matchData ?? []) {
@@ -153,11 +162,12 @@ export async function getPlayerSessionHistory(
 
   return Array.from(sessionMap.values())
     .sort((a, b) => a.date.localeCompare(b.date))
-    .map(({ date, wins, losses, absent }) => ({
+    .map(({ date, wins, losses, absent, isOpen }) => ({
       date,
       wins,
       losses,
       absent,
+      isOpen,
       win_pct: wins + losses > 0 ? Math.round((wins / (wins + losses)) * 100) : 0,
     }));
 }
@@ -220,6 +230,7 @@ export interface PlayerMatchBySession {
   tallyWins?: number;
   tallyLosses?: number;
   absent?: boolean;
+  isOpen?: boolean;
 }
 
 export async function getPlayerMatchesBySession(
@@ -233,8 +244,13 @@ export async function getPlayerMatchesBySession(
     ? supabase.from("sessions").select("id, date").eq("status", "completed").order("date")
     : supabase.from("sessions").select("id, date").eq("status", "completed").eq("is_test_session", false).order("date");
 
-  const [{ data: allSessions }, { data }, { data: tallyData }] = await Promise.all([
+  const activeSessionQuery = includeTest
+    ? supabase.from("sessions").select("id, date").eq("status", "active").maybeSingle()
+    : supabase.from("sessions").select("id, date").eq("status", "active").eq("is_test_session", false).maybeSingle();
+
+  const [{ data: allSessions }, { data: activeSession }, { data }, { data: tallyData }] = await Promise.all([
     allSessionsQuery,
+    activeSessionQuery,
     supabase
       .from("matches")
       .select(`
@@ -256,10 +272,13 @@ export async function getPlayerMatchesBySession(
   ]);
 
   // Pre-populate every completed session as absent
-  type SessionEntry = { date: string; matches: PlayerMatchRecord[]; isTally?: boolean; tallyWins?: number; tallyLosses?: number; absent: boolean };
+  type SessionEntry = { date: string; matches: PlayerMatchRecord[]; isTally?: boolean; tallyWins?: number; tallyLosses?: number; absent: boolean; isOpen?: boolean };
   const sessionMap = new Map<string, SessionEntry>();
   for (const s of allSessions ?? []) {
     sessionMap.set(s.id, { date: s.date, matches: [], absent: true });
+  }
+  if (activeSession) {
+    sessionMap.set(activeSession.id, { date: activeSession.date, matches: [], absent: true, isOpen: true });
   }
 
   for (const m of data ?? []) {
@@ -306,8 +325,8 @@ export async function getPlayerMatchesBySession(
   }
 
   return Array.from(sessionMap.entries())
-    .map(([session_id, { date, matches, isTally, tallyWins, tallyLosses, absent }]) => ({
-      session_id, date, matches, isTally, tallyWins, tallyLosses, absent,
+    .map(([session_id, { date, matches, isTally, tallyWins, tallyLosses, absent, isOpen }]) => ({
+      session_id, date, matches, isTally, tallyWins, tallyLosses, absent, isOpen,
     }))
     .sort((a, b) => b.date.localeCompare(a.date));
 }
