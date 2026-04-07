@@ -11,11 +11,11 @@ interface AwardCardProps {
 
 export function AwardCard({ emoji, title, description, name, stat, colSpan }: AwardCardProps & { colSpan?: string }) {
   return (
-    <div className={`bg-white rounded-xl shadow-sm border border-gray-100 px-4 py-3 flex flex-col items-center gap-1 text-center${colSpan ? ` ${colSpan}` : ""}`}>
-      <span className="text-2xl">{emoji}</span>
-      <span className="text-xs font-semibold text-gray-700 leading-tight min-h-[2rem] flex items-center justify-center">{title}</span>
-      <span className="text-xs text-gray-400 leading-tight min-h-[2rem] flex items-center justify-center">{description}</span>
-      <span className="text-base font-bold text-gray-900 leading-tight mt-1">{name}</span>
+    <div className={`bg-white rounded-xl shadow-sm border border-gray-100 px-3 py-2 flex flex-col items-center gap-0.5 text-center${colSpan ? ` ${colSpan}` : ""}`}>
+      <span className="text-xl">{emoji}</span>
+      <span className="text-xs font-semibold text-gray-700 leading-tight min-h-[1.5rem] flex items-center justify-center">{title}</span>
+      <span className="text-xs text-gray-400 leading-tight min-h-[1.5rem] flex items-center justify-center">{description}</span>
+      <span className="text-sm font-bold text-gray-900 leading-tight">{name}</span>
       <span className="text-xs text-gray-400">{stat}</span>
     </div>
   );
@@ -83,7 +83,7 @@ export default function SessionHighlights({ highlights, nameMap }: { highlights:
       <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
         Session Awards
       </h2>
-      <div className="grid grid-cols-6 gap-3">
+      <div className="grid grid-cols-6 gap-2">
         {cards.map((card, i) => {
           // 5 cards: first 3 span 2 cols each (row 1), last 2 span 3 cols each (row 2)
           // 4 cards: all span 3 cols (2+2)
