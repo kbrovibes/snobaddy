@@ -292,7 +292,7 @@ export async function getPlayerPoemContext(playerId: string): Promise<PlayerPoem
     ? Array.from(partnerCount.entries()).sort((a, b) => b[1] - a[1])[0][0]
     : null;
 
-  return { wins, losses, recentSessions, topPartner };
+  return { wins, losses, recentSessions, topPartner, onlyTestSessions };
 }
 
 export async function getPlayerPoem(

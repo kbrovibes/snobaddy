@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.24] - 2026-04-07
+
+### Fixed
+- Vercel builds failing: `nextjs-toploader` missing from lockfile; `getPlayerPoemContext` missing `onlyTestSessions` in return value.
+
+---
+
 ## [0.24.23] - 2026-04-07
 
 ### Fixed
