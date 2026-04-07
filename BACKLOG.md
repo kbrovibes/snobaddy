@@ -8,6 +8,8 @@ Single source of truth for all planned and completed work.
 
 ## Queue
 
+- [x] **25 — Reset Session Backup** · [spec](specs/25-reset-backup.md) · Snapshot all session data to `session_reset_backups` before every Wipe & Reset; append-only, multiple wipes per session each fully backed up
+
 - [x] **00 — Auth & Onboarding** · [spec](specs/00-auth-onboarding.md) · Google login, first-time skill setup, all routes protected
 - [x] **01 — Player Registry** · [spec](specs/01-player-registry.md) · View all players, admin skill editor, admin presence toggle
 - [x] **02 — Session Management** · [spec](specs/02-session-management.md) · Session check-in, admin start/close/reopen

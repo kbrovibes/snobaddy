@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.13] - 2026-04-06
+
+### Added
+- **Reset Session Backup** — every Wipe & Reset now saves a full JSON snapshot of all matches (with player names), tally rows, and proposed matches to a `session_reset_backups` table before deleting anything. If the backup fails, the reset is aborted — data is never deleted without a backup. Multiple wipes on the same session each produce their own snapshot.
+
+---
+
 ## [0.24.12] - 2026-04-06
 
 ### Fixed
