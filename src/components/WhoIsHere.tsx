@@ -78,7 +78,7 @@ export default function WhoIsHere({
   const [checkingOut, setCheckingOut] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
 
-  const PREVIEW = 4;
+  const PREVIEW = 2;
 
   function handleSort(key: SortKey) {
     if (key === sortKey) {

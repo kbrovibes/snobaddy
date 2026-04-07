@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.11] - 2026-04-06
+
+### Changed
+- **Who's Here** — preview reduced from 4 to 2 rows; remaining players shown under "See More".
+
+---
+
 ## [0.24.10] - 2026-04-06
 
 ### Changed
