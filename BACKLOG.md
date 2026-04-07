@@ -8,6 +8,8 @@ Single source of truth for all planned and completed work.
 
 ## Queue
 
+- [ ] **26 — Smash Theme + Theme Switching** · [spec](specs/26-smash-theme.md) · CSS-variable token system, Smash visual theme, god-mode-only toggle with localStorage persistence
+
 - [x] **25 — Reset Session Backup** · [spec](specs/25-reset-backup.md) · Snapshot all session data to `session_reset_backups` before every Wipe & Reset; append-only, multiple wipes per session each fully backed up
 
 - [x] **00 — Auth & Onboarding** · [spec](specs/00-auth-onboarding.md) · Google login, first-time skill setup, all routes protected
