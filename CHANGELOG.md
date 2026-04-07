@@ -8,9 +8,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [0.24.2] - 2026-04-06
 
+<<<<<<< Updated upstream
 ### Added
 - **Auto-refresh** — Active session pages refresh every 5 seconds automatically. An iOS-style "Live" toggle in the top-right lets you turn it off. Preference is remembered across visits.
 - **Player profile links** — Player names in Tonight's Scores are now tappable links to their profile pages.
+=======
+### Fixed
+- **Player name missing on profile** — God Mode users saw only a ✏️ button with no player name or skill dots. Name and skill level now always display; the edit button appears alongside the name for God Mode users only.
+>>>>>>> Stashed changes
 
 ---
 

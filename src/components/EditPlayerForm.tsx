@@ -7,9 +7,20 @@ interface Props {
   playerId: string;
   currentName: string;
   currentSkillLevel: number;
+  isGodMode?: boolean;
 }
 
-export default function EditPlayerForm({ playerId, currentName, currentSkillLevel }: Props) {
+function SkillDots({ level }: { level: number }) {
+  return (
+    <span className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <span key={i} className={`text-xs ${i <= level ? "text-blue-500" : "text-gray-200"}`}>●</span>
+      ))}
+    </span>
+  );
+}
+
+export default function EditPlayerForm({ playerId, currentName, currentSkillLevel, isGodMode }: Props) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(currentName);
@@ -58,19 +69,27 @@ export default function EditPlayerForm({ playerId, currentName, currentSkillLeve
 
   if (!open) {
     return (
-      <button
-        onClick={() => setOpen(true)}
-        className="text-gray-300 hover:text-gray-500 transition-colors shrink-0"
-        title="Edit player"
-        aria-label="Edit player"
-      >
-        ✏️
-      </button>
+      <div className="flex flex-col gap-0.5">
+        <div className="flex items-center gap-2">
+          <h1 className="text-lg font-bold text-gray-900 truncate">{currentName}</h1>
+          {isGodMode && (
+            <button
+              onClick={() => setOpen(true)}
+              className="text-gray-300 hover:text-gray-500 transition-colors shrink-0"
+              title="Edit player"
+              aria-label="Edit player"
+            >
+              ✏️
+            </button>
+          )}
+        </div>
+        <SkillDots level={currentSkillLevel} />
+      </div>
     );
   }
 
   return (
-    <div className="flex-1 min-w-0 flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
         <input
           ref={inputRef}

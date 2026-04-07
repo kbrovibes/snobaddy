@@ -17,15 +17,6 @@ function formatDate(dateStr: string) {
 }
 
 
-function SkillDots({ level }: { level: number }) {
-  return (
-    <span className="flex gap-0.5">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <span key={i} className={`text-xs ${i <= level ? "text-blue-500" : "text-gray-200"}`}>●</span>
-      ))}
-    </span>
-  );
-}
 
 export default async function PlayerProfilePage({
   params,
@@ -96,18 +87,12 @@ export default async function PlayerProfilePage({
             {player.name.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            {isGodMode ? (
-              <EditPlayerForm
-                playerId={id}
-                currentName={player.name}
-                currentSkillLevel={player.skill_level}
-              />
-            ) : (
-              <>
-                <h1 className="text-lg font-bold text-gray-900 truncate">{player.name}</h1>
-                <SkillDots level={player.skill_level} />
-              </>
-            )}
+            <EditPlayerForm
+              playerId={id}
+              currentName={player.name}
+              currentSkillLevel={player.skill_level}
+              isGodMode={isGodMode}
+            />
           </div>
           <div className="text-right shrink-0">
             <p className="text-2xl font-bold text-gray-900">{overallPct}%</p>
