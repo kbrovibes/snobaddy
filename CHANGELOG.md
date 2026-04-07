@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.12] - 2026-04-06
+
+### Fixed
+- **Player profile** — stats chart and W/L totals now include sessions that were recorded as tallies (3/23, 3/26, 3/30). Match history shows these sessions as a "3W 4L (tally)" summary since individual match records don't exist for them. Leaderboard was already correct.
+
+---
+
 ## [0.24.11] - 2026-04-06
 
 ### Changed

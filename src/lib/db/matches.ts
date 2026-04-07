@@ -100,21 +100,26 @@ export async function getPlayerSessionHistory(
 ): Promise<PlayerSessionStat[]> {
   const supabase = await createClient();
   const includeTest = options?.includeTestSessions ?? false;
-  const { data } = await supabase
-    .from("matches")
-    .select(`
-      session_id, winning_team,
-      team1_player1_id, team1_player2_id,
-      team2_player1_id, team2_player2_id,
-      sessions(date, is_test_session)
-    `)
-    .or(`team1_player1_id.eq.${playerId},team1_player2_id.eq.${playerId},team2_player1_id.eq.${playerId},team2_player2_id.eq.${playerId}`);
 
-  if (!data) return [];
+  const [{ data: matchData }, { data: tallyData }] = await Promise.all([
+    supabase
+      .from("matches")
+      .select(`
+        session_id, winning_team,
+        team1_player1_id, team1_player2_id,
+        team2_player1_id, team2_player2_id,
+        sessions(date, is_test_session)
+      `)
+      .or(`team1_player1_id.eq.${playerId},team1_player2_id.eq.${playerId},team2_player1_id.eq.${playerId},team2_player2_id.eq.${playerId}`),
+    supabase
+      .from("session_tally")
+      .select("session_id, wins, losses, sessions(date, is_test_session)")
+      .eq("player_id", playerId),
+  ]);
 
   const sessionMap = new Map<string, { date: string; wins: number; losses: number }>();
 
-  for (const m of data) {
+  for (const m of matchData ?? []) {
     const session = m.sessions as unknown as { date: string; is_test_session: boolean };
     if (!includeTest && session.is_test_session) continue;
     const entry = sessionMap.get(m.session_id) ?? { date: session.date, wins: 0, losses: 0 };
@@ -122,6 +127,13 @@ export async function getPlayerSessionHistory(
     const won = (onTeam1 && m.winning_team === 1) || (!onTeam1 && m.winning_team === 2);
     if (won) entry.wins++; else entry.losses++;
     sessionMap.set(m.session_id, entry);
+  }
+
+  for (const t of tallyData ?? []) {
+    const session = t.sessions as unknown as { date: string; is_test_session: boolean };
+    if (!includeTest && session.is_test_session) continue;
+    if (sessionMap.has(t.session_id)) continue; // already covered by match records
+    sessionMap.set(t.session_id, { date: session.date, wins: t.wins, losses: t.losses });
   }
 
   return Array.from(sessionMap.values())
@@ -188,6 +200,9 @@ export interface PlayerMatchBySession {
   session_id: string;
   date: string;
   matches: PlayerMatchRecord[];
+  isTally?: boolean;
+  tallyWins?: number;
+  tallyLosses?: number;
 }
 
 export async function getPlayerMatchesBySession(
@@ -197,26 +212,30 @@ export async function getPlayerMatchesBySession(
   const supabase = await createClient();
   const includeTest = options?.includeTestSessions ?? false;
 
-  const { data } = await supabase
-    .from("matches")
-    .select(`
-      id, played_at, session_id, team1_score, team2_score, winning_team,
-      team1_player1_id, team1_player2_id,
-      team2_player1_id, team2_player2_id,
-      sessions(date, is_test_session),
-      t1p1:team1_player1_id(id, name),
-      t1p2:team1_player2_id(id, name),
-      t2p1:team2_player1_id(id, name),
-      t2p2:team2_player2_id(id, name)
-    `)
-    .or(`team1_player1_id.eq.${playerId},team1_player2_id.eq.${playerId},team2_player1_id.eq.${playerId},team2_player2_id.eq.${playerId}`)
-    .order("played_at", { ascending: true });
-
-  if (!data) return [];
+  const [{ data }, { data: tallyData }] = await Promise.all([
+    supabase
+      .from("matches")
+      .select(`
+        id, played_at, session_id, team1_score, team2_score, winning_team,
+        team1_player1_id, team1_player2_id,
+        team2_player1_id, team2_player2_id,
+        sessions(date, is_test_session),
+        t1p1:team1_player1_id(id, name),
+        t1p2:team1_player2_id(id, name),
+        t2p1:team2_player1_id(id, name),
+        t2p2:team2_player2_id(id, name)
+      `)
+      .or(`team1_player1_id.eq.${playerId},team1_player2_id.eq.${playerId},team2_player1_id.eq.${playerId},team2_player2_id.eq.${playerId}`)
+      .order("played_at", { ascending: true }),
+    supabase
+      .from("session_tally")
+      .select("session_id, wins, losses, sessions(date, is_test_session)")
+      .eq("player_id", playerId),
+  ]);
 
   const sessionMap = new Map<string, { date: string; matches: PlayerMatchRecord[] }>();
 
-  for (const m of data) {
+  for (const m of data ?? []) {
     const t1p1 = m.t1p1 as unknown as { id: string; name: string };
     const t1p2 = m.t1p2 as unknown as { id: string; name: string };
     const t2p1 = m.t2p1 as unknown as { id: string; name: string };
@@ -245,9 +264,25 @@ export async function getPlayerMatchesBySession(
     sessionMap.set(m.session_id, entry);
   }
 
-  return Array.from(sessionMap.entries())
-    .map(([session_id, { date, matches }]) => ({ session_id, date, matches }))
-    .sort((a, b) => b.date.localeCompare(a.date));
+  const results: PlayerMatchBySession[] = Array.from(sessionMap.entries())
+    .map(([session_id, { date, matches }]) => ({ session_id, date, matches }));
+
+  // Add tally-only sessions (those not already covered by individual match records)
+  for (const t of tallyData ?? []) {
+    const session = t.sessions as unknown as { date: string; is_test_session: boolean };
+    if (!includeTest && session.is_test_session) continue;
+    if (sessionMap.has(t.session_id)) continue;
+    results.push({
+      session_id: t.session_id,
+      date: session.date,
+      matches: [],
+      isTally: true,
+      tallyWins: t.wins,
+      tallyLosses: t.losses,
+    });
+  }
+
+  return results.sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export interface SessionHighlights {

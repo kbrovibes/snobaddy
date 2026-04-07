@@ -132,27 +132,35 @@ export default async function PlayerProfilePage({
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
                   {formatDate(group.date)}
                 </p>
-                <div className="flex flex-col divide-y divide-gray-100">
-                  {group.matches.map((m) => (
-                    <div key={m.id} className="py-2.5">
-                      <div className="flex items-center gap-2">
-                        <span className={`text-xs font-bold px-1.5 py-0.5 rounded shrink-0 ${
-                          m.won ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
-                        }`}>
-                          {m.won ? "W" : "L"}
-                        </span>
-                        <span className="text-sm text-gray-700 truncate flex-1">
-                          w/ {shortName(m.partner, nameMap)}
-                          <span className="text-gray-400"> vs </span>
-                          {m.opponents.map((n) => shortName(n, nameMap)).join(" & ")}
-                        </span>
-                        <span className={`text-sm font-semibold tabular-nums shrink-0 ${m.won ? "text-green-600" : "text-red-400"}`}>
-                          {m.my_score}–{m.opp_score}
-                        </span>
+                {group.isTally ? (
+                  <p className="text-sm text-gray-500">
+                    <span className="font-semibold text-green-700">{group.tallyWins}W</span>
+                    {" "}<span className="font-semibold text-red-500">{group.tallyLosses}L</span>
+                    <span className="text-gray-400 ml-1 text-xs">(tally)</span>
+                  </p>
+                ) : (
+                  <div className="flex flex-col divide-y divide-gray-100">
+                    {group.matches.map((m) => (
+                      <div key={m.id} className="py-2.5">
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs font-bold px-1.5 py-0.5 rounded shrink-0 ${
+                            m.won ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
+                          }`}>
+                            {m.won ? "W" : "L"}
+                          </span>
+                          <span className="text-sm text-gray-700 truncate flex-1">
+                            w/ {shortName(m.partner, nameMap)}
+                            <span className="text-gray-400"> vs </span>
+                            {m.opponents.map((n) => shortName(n, nameMap)).join(" & ")}
+                          </span>
+                          <span className={`text-sm font-semibold tabular-nums shrink-0 ${m.won ? "text-green-600" : "text-red-400"}`}>
+                            {m.my_score}–{m.opp_score}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
