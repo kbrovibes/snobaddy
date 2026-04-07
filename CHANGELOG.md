@@ -34,6 +34,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.18] - 2026-04-06
+
+### Added
+- **Navigation loading indicator** — a thin blue progress bar appears at the top of the screen whenever a link click triggers a page load, so it's always clear something is happening.
+
+---
+
 ## [0.24.17] - 2026-04-06
 
 ### Changed
