@@ -8,8 +8,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [0.24.24] - 2026-04-07
 
+<<<<<<< Updated upstream
 ### Fixed
 - Vercel builds failing: `nextjs-toploader` missing from lockfile; `getPlayerPoemContext` missing `onlyTestSessions` in return value.
+=======
+### Changed
+- **Login page** — replaced "snobaddy" text logo with the same logo block used in the header (Serve Sports image + "Serve Snoqualmie" / "Badminton" lockup).
+>>>>>>> Stashed changes
 
 ---
 

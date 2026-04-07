@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase-browser";
 
 type Mode = "signin" | "signup" | "reset";
@@ -93,10 +94,12 @@ function LoginContent() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 bg-gray-50">
       {/* Logo */}
-      <div className="flex flex-col items-center gap-1">
-        <span className="text-5xl">🏸</span>
-        <h1 className="text-2xl font-bold text-gray-900">snobaddy</h1>
-        <p className="text-gray-500 text-sm">Snoqualmie Badminton Club</p>
+      <div className="flex items-center gap-3">
+        <Image src="/serve-logo.jpg" alt="Serve Sports" width={56} height={56} className="rounded-xl shrink-0" />
+        <div className="flex flex-col leading-tight">
+          <span className="font-bold text-gray-900 text-2xl">Serve Snoqualmie</span>
+          <span className="font-black text-gray-900 text-xs tracking-[0.2em] uppercase">Badminton</span>
+        </div>
       </div>
 
       <div className="flex flex-col gap-4 w-full max-w-xs">
