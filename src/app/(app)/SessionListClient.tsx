@@ -55,7 +55,7 @@ export default function SessionListClient({
     return (
       <Link
         href={`/session/${s.id}`}
-        className="flex items-center justify-between px-4 py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors"
+        className="flex items-center justify-between px-4 py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 active:bg-sky-50 transition-colors"
       >
         <div className="flex flex-col gap-0.5">
           <div className="flex items-center gap-2">

@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.23] - 2026-04-07
+
+### Fixed
+- **Link tap feedback** — tapping any link or nav tab now shows immediate visual feedback (sky highlight or opacity drop) before the page loads. Also bumped the navigation progress bar from 3px to 4px for visibility.
+
+---
+
 ## [0.24.22] - 2026-04-06
 
 ### Changed

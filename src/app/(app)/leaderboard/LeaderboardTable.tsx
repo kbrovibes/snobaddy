@@ -212,7 +212,7 @@ export default function LeaderboardTable({
                   </td>
                   <td className="px-2 py-1.5 font-medium text-gray-900 max-w-[120px]">
                     <span className="flex items-center gap-1 min-w-0">
-                      <Link href={`/players/${player.id}`} className="truncate text-sky-700 hover:underline">
+                      <Link href={`/players/${player.id}`} className="truncate text-sky-700 hover:underline active:opacity-60">
                         {player.name}
                       </Link>
                       {player.user_id && <VerifiedBadge />}

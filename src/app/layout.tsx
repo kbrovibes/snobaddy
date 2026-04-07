@@ -42,7 +42,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <NextTopLoader color="#0ea5e9" height={3} showSpinner={false} />
+        <NextTopLoader color="#0ea5e9" height={4} showSpinner={false} />
         <PullToRefresh />
         {children}
       </body>
