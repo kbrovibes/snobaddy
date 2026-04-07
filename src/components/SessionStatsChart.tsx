@@ -5,6 +5,7 @@ interface SessionStat {
   wins: number;
   losses: number;
   win_pct: number;
+  absent?: boolean;
 }
 
 const BAR_W = 28;
@@ -48,6 +49,20 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
 
         {data.map((s, i) => {
           const x = i * (BAR_W + GAP);
+
+          if (s.absent) {
+            return (
+              <g key={s.date}>
+                <title>{shortDate(s.date)}: Did not play</title>
+                {/* Thin gray stub to mark the session */}
+                <rect x={x} y={CHART_H - 4} width={BAR_W} height={4} rx={1} fill="#e5e7eb" />
+                <text x={x + BAR_W / 2} y={CHART_H + 14} textAnchor="middle" fontSize={9} fill="#d1d5db">
+                  {shortDate(s.date)}
+                </text>
+              </g>
+            );
+          }
+
           const winH = Math.round((s.wins / maxMatches) * CHART_H);
           const lossH = Math.round((s.losses / maxMatches) * CHART_H);
           const totalBarH = winH + lossH;

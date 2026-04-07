@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.17] - 2026-04-06
+
+### Changed
+- **Player profile — Stats chart** — all completed sessions now appear as bars, including ones the player missed. Absent sessions render as a thin gray stub so attendance gaps are visible at a glance.
+- **Player profile — Match history** — sessions the player didn't attend now show as dimmed "Did not play" entries. Same filter applies: test sessions included/excluded based on the toggle.
+
+---
+
 ## [0.24.16] - 2026-04-06
 
 ### Changed

@@ -129,10 +129,12 @@ export default async function PlayerProfilePage({
           <div className="flex flex-col gap-4">
             {matchesBySession.map((group) => (
               <div key={group.session_id}>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
+                <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${group.absent ? "text-gray-300" : "text-gray-400"}`}>
                   {formatDate(group.date)}
                 </p>
-                {group.isTally ? (
+                {group.absent ? (
+                  <p className="text-sm text-gray-300">Did not play</p>
+                ) : group.isTally ? (
                   <p className="text-sm text-gray-500">
                     <span className="font-semibold text-green-700">{group.tallyWins}W</span>
                     {" "}<span className="font-semibold text-red-500">{group.tallyLosses}L</span>
