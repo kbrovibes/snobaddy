@@ -3,8 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function AddPlayerForm() {
-  const [open, setOpen] = useState(false);
+export default function AddPlayerForm({
+  forceOpen,
+  onClose,
+}: {
+  forceOpen?: boolean;
+  onClose?: () => void;
+}) {
+  const [open, setOpen] = useState(forceOpen ?? false);
   const [name, setName] = useState("");
   const [skill, setSkill] = useState(3);
   const [loading, setLoading] = useState(false);
@@ -26,6 +32,7 @@ export default function AddPlayerForm() {
       setName("");
       setSkill(3);
       setOpen(false);
+      onClose?.();
       router.refresh();
     } else {
       const data = await res.json();
@@ -34,18 +41,7 @@ export default function AddPlayerForm() {
     setLoading(false);
   }
 
-  if (!open) {
-    return (
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={() => setOpen(true)}
-          className="text-sm px-3 py-1.5 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 transition-colors"
-        >
-          + Add Player
-        </button>
-      </div>
-    );
-  }
+  if (!open) return null;
 
   return (
     <form
@@ -88,7 +84,7 @@ export default function AddPlayerForm() {
       <div className="flex gap-2">
         <button
           type="button"
-          onClick={() => { setOpen(false); setError(null); }}
+          onClick={() => { setOpen(false); setError(null); onClose?.(); }}
           className="flex-1 text-sm py-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors"
         >
           Cancel

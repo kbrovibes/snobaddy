@@ -27,6 +27,7 @@ export default function AdminPageContent({
   isGodMode,
 }: Props) {
   const [godModeActive, setGodModeActive] = useState(false);
+  const [addPlayerOpen, setAddPlayerOpen] = useState(false);
 
   const presenceMap = useMemo(
     () => new Map(presence.map((p) => [p.player_id, p])),
@@ -66,21 +67,31 @@ export default function AdminPageContent({
             <span className="text-base">⚙️</span>
             <div>
               <p className="text-sm font-semibold text-purple-900">Control Panel</p>
-              <p className="text-xs text-purple-500">Supabase &amp; Vercel metrics</p>
+              <p className="text-xs text-purple-500">Settings for nerds — Supabase, Vercel &amp; Claude</p>
             </div>
           </div>
           <span className="text-purple-300 text-sm">→</span>
         </Link>
       )}
 
-      <AddPlayerForm />
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+          Player Check-ins
+          {sessionActive && (
+            <span className="ml-2 normal-case font-normal text-green-600">· Session active</span>
+          )}
+        </h2>
+        <button
+          onClick={() => setAddPlayerOpen(true)}
+          className="text-sm font-medium text-blue-500 hover:text-blue-700 transition-colors"
+        >
+          + Add Player
+        </button>
+      </div>
 
-      <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-        Player Check-ins
-        {sessionActive && (
-          <span className="ml-2 normal-case font-normal text-green-600">· Session active</span>
-        )}
-      </h2>
+      {addPlayerOpen && (
+        <AddPlayerForm forceOpen onClose={() => setAddPlayerOpen(false)} />
+      )}
 
       {players.length === 0 ? (
         <p className="text-center text-gray-400 text-sm py-12">No players yet.</p>

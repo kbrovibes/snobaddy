@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.7] - 2026-04-06
+
+### Changed
+- **Control Panel caption** — subtext updated to "Settings for nerds — Supabase, Vercel & Claude".
+- **Add Player** — moved from a standalone button above the grid to a compact text link (`+ Add Player`) on the right side of the "Player Check-ins" header row. Form still expands inline below the header when tapped.
+
+---
+
 ## [0.24.6] - 2026-04-06
 
 ### Changed
