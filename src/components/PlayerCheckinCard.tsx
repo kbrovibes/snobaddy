@@ -78,8 +78,8 @@ export default function PlayerCheckinCard({
         </span>
       )}
 
-      {/* Row 1: Name */}
-      <div className="text-xs font-semibold text-gray-900 leading-tight pr-5">
+      {/* Row 1: Name — fixed 2-line height so all cards align */}
+      <div className="text-xs font-semibold text-gray-900 leading-tight pr-5 min-h-[2rem]">
         <Link href={`/players/${playerId}`} className="hover:underline break-words">
           {name}
         </Link>
@@ -98,7 +98,7 @@ export default function PlayerCheckinCard({
           <button
             onClick={checkOut}
             disabled={loading}
-            className="w-full text-xs py-1.5 rounded-lg border border-red-200 bg-white text-red-500 font-medium hover:bg-red-50 transition-colors disabled:opacity-40"
+            className="w-full text-xs py-1 rounded-lg border border-red-200 bg-white text-red-500 font-medium hover:bg-red-50 transition-colors disabled:opacity-40"
           >
             {loading ? "…" : "Check Out"}
           </button>
@@ -106,7 +106,7 @@ export default function PlayerCheckinCard({
           <button
             onClick={checkIn}
             disabled={loading}
-            className="w-full text-xs py-1.5 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors disabled:opacity-40"
+            className="w-full text-xs py-1 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors disabled:opacity-40"
           >
             {loading ? "…" : "Check In"}
           </button>

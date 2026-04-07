@@ -8,8 +8,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [0.24.5] - 2026-04-06
 
+<<<<<<< Updated upstream
 ### Added
 - **Pull-to-refresh** — In the installed PWA (iOS/Android), pull down from the top of any page to refresh it. A spinner appears as you pull and spins while refreshing. Has no effect in a regular browser (uses the browser's native gesture instead).
+=======
+### Fixed
+- **Player check-in card alignment** — Cards with single-line names were shorter than cards with two-line names, misaligning the skill dots and buttons across the grid. Name area now has a fixed 2-line minimum height so all rows line up. Check In / Check Out buttons also slightly smaller (`py-1` instead of `py-1.5`).
+>>>>>>> Stashed changes
 
 ---
 
