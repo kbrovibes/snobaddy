@@ -111,39 +111,44 @@ export default async function SessionDetailPage({
       <BackToSessionsLink />
 
       {/* Season header */}
-      <div className="flex items-center gap-3">
-        <Image src="/serve-logo.jpg" alt="Serve Sports" width={52} height={52} className="rounded-xl shrink-0" />
-        <div>
-          <h1 className="text-lg font-bold text-gray-900 leading-tight">{session.season?.name ?? "Tonight"}</h1>
-          <div className="flex items-center gap-2">
-            <p className="text-sm text-gray-500">{formatDate(session.date)}</p>
-            {isAdmin && session.is_test_session && (
-              <span className="text-xs font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">TEST</span>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-3">
+          <Image src="/serve-logo.jpg" alt="Serve Sports" width={52} height={52} className="rounded-xl shrink-0" />
+          <div>
+            <h1 className="text-lg font-bold text-gray-900 leading-tight">{session.season?.name ?? "Tonight"}</h1>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-gray-500">{formatDate(session.date)}</p>
+              {isAdmin && session.is_test_session && (
+                <span className="text-xs font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">TEST</span>
+              )}
+            </div>
+          </div>
+          <div className="ml-auto shrink-0">
+            {isActive && (
+              <span className="flex items-center gap-1.5 text-xs font-semibold text-green-700 bg-green-100 px-2.5 py-1 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                Ongoing
+              </span>
+            )}
+            {isPending && (
+              <span className="text-xs font-semibold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full">
+                Starting soon
+              </span>
+            )}
+            {isCompleted && (
+              <span className="text-xs font-semibold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full">
+                Finalized
+              </span>
             )}
           </div>
         </div>
-        <div className="ml-auto shrink-0 flex items-center gap-2">
-          {isActive && <AutoRefreshToggle />}
-          {isAdmin && (
+        {/* Admin toggles — own row, right-aligned */}
+        {isAdmin && (
+          <div className="flex items-center justify-end gap-3">
+            {isActive && <AutoRefreshToggle />}
             <TestSessionToggle sessionId={session.id} isTestSession={session.is_test_session} />
-          )}
-          {isActive && (
-            <span className="flex items-center gap-1.5 text-xs font-semibold text-green-700 bg-green-100 px-2.5 py-1 rounded-full">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              Ongoing
-            </span>
-          )}
-          {isPending && (
-            <span className="text-xs font-semibold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full">
-              Starting soon
-            </span>
-          )}
-          {isCompleted && (
-            <span className="text-xs font-semibold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full">
-              Finalized
-            </span>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Admin: start session */}

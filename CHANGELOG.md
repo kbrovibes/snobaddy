@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.3] - 2026-04-06
+
+### Changed
+- **Session header toggles** — Auto-refresh and Test Session toggles now sit on their own row below the session status badge, right-aligned. Previously they were squeezed into the same row as "Ongoing" / "Finalized".
+
+---
+
 ## [0.24.2] - 2026-04-06
 
 <<<<<<< Updated upstream
