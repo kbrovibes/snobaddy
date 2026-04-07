@@ -189,8 +189,6 @@ export default async function SessionDetailPage({
 
           {/* Admin: close session */}
           {isAdmin && <CloseSessionButton sessionId={session.id} />}
-          {/* God Mode: reset session */}
-          {isGodMode && <ResetSessionButton sessionId={session.id} />}
         </>
       )}
 
@@ -204,8 +202,6 @@ export default async function SessionDetailPage({
             <p className="text-sm text-gray-500">Session closed. No new matches can be recorded.</p>
             {isAdmin && <ReopenSessionButton sessionId={session.id} />}
           </div>
-          {/* God Mode: reset session data even after close */}
-          {isGodMode && <ResetSessionButton sessionId={session.id} />}
           {/* Tally entry: shown when no matches recorded yet */}
           {isAdmin && (recentMatches as unknown[]).length === 0 && (tallyRows as TallyEntry[]).length === 0 && (
             <TallyEntryForm
@@ -238,6 +234,7 @@ export default async function SessionDetailPage({
               tallyModel={tallyModel ?? undefined}
             />
           )}
+          {isGodMode && <ResetSessionButton sessionId={session.id} />}
         </>
       )}
 
@@ -289,6 +286,11 @@ export default async function SessionDetailPage({
             })}
           </div>
         </div>
+      )}
+
+      {/* God Mode: reset — shown below scores for active/completed-with-matches */}
+      {isGodMode && (isActive || (isCompleted && (tallyRows as TallyEntry[]).length === 0)) && (
+        <ResetSessionButton sessionId={session.id} />
       )}
 
       {/* Past sessions this season */}
