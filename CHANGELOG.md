@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.32] - 2026-04-07
+
+### Changed
+- **Who's Here table** — check-in time font reduced to 10px so the time and Checkout button fit on a single line.
+
+---
+
 ## [0.24.31] - 2026-04-07
 
 ### Fixed

@@ -153,7 +153,7 @@ export default function WhoIsHere({
             </div>
             {isAdmin ? (
               <div className="w-28 flex items-center justify-end gap-2">
-                <span className="text-xs text-stone-400 tabular-nums">{formatTime(p.checked_in_at)}</span>
+                <span className="text-[10px] text-stone-400 tabular-nums">{formatTime(p.checked_in_at)}</span>
                 <button
                   onClick={() => handleCheckout(p.player_id)}
                   disabled={checkingOut === p.player_id}
