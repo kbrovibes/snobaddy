@@ -421,18 +421,28 @@ export async function getSeasonMatchCount(options?: { includeTestSessions?: bool
   const supabase = await createClient();
   const includeTest = options?.includeTestSessions ?? false;
 
-  if (includeTest) {
-    const { count } = await supabase
-      .from("matches")
-      .select("*", { count: "exact", head: true });
-    return count ?? 0;
-  }
+  const matchQuery = includeTest
+    ? supabase.from("matches").select("*", { count: "exact", head: true })
+    : supabase
+        .from("matches")
+        .select("*, sessions!inner(is_test_session)", { count: "exact", head: true })
+        .eq("sessions.is_test_session", false);
 
-  const { count } = await supabase
-    .from("matches")
-    .select("*, sessions!inner(is_test_session)", { count: "exact", head: true })
-    .eq("sessions.is_test_session", false);
-  return count ?? 0;
+  const tallyQuery = includeTest
+    ? supabase.from("session_tally").select("wins")
+    : supabase
+        .from("session_tally")
+        .select("wins, sessions!inner(is_test_session)")
+        .eq("sessions.is_test_session", false);
+
+  const [{ count: matchCount }, { data: tallyData }] = await Promise.all([matchQuery, tallyQuery]);
+
+  // Each match has 2 winners; tally stores per-player wins so total matches = SUM(wins) / 2
+  const tallyMatchCount = Math.floor(
+    (tallyData ?? []).reduce((sum, t) => sum + (t.wins ?? 0), 0) / 2
+  );
+
+  return (matchCount ?? 0) + tallyMatchCount;
 }
 
 export async function getSessionScoreboard(sessionId: string): Promise<PlayerSessionStats[]> {

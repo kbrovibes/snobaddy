@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.14] - 2026-04-06
+
+### Fixed
+- **Leaderboard season total** — "Total matches this season" now includes tally sessions (previously only counted full match-recording sessions, causing individual player totals to appear higher than the season count)
+
+---
+
 ## [0.24.13] - 2026-04-06
 
 <<<<<<< Updated upstream
