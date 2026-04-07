@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.8] - 2026-04-06
+
+### Changed
+- **Control Panel** — moved from a card inside Admin Panel to its own ⚙️ tab in the bottom nav, after Leaderboard. Only visible to God Mode users.
+
+---
+
 ## [0.24.7] - 2026-04-06
 
 ### Changed

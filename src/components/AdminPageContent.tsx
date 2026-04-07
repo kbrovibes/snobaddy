@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Link from "next/link";
 import PlayerCheckinCard from "@/components/PlayerCheckinCard";
 import AddPlayerForm from "@/components/AddPlayerForm";
 import DeletePlayerButton from "@/components/DeletePlayerButton";
@@ -58,23 +57,8 @@ export default function AdminPageContent({
         </div>
       </div>
 
-      {isGodMode && (
-        <Link
-          href="/admin/control-panel"
-          className="flex items-center justify-between bg-purple-50 border border-purple-100 rounded-xl px-4 py-3 mb-4 hover:bg-purple-100 transition-colors"
-        >
-          <div className="flex items-center gap-2">
-            <span className="text-base">⚙️</span>
-            <div>
-              <p className="text-sm font-semibold text-purple-900">Control Panel</p>
-              <p className="text-xs text-purple-500">Settings for nerds — Supabase, Vercel &amp; Claude</p>
-            </div>
-          </div>
-          <span className="text-purple-300 text-sm">→</span>
-        </Link>
-      )}
 
-      <div className="flex items-center justify-between mb-3">
+<div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
           Player Check-ins
           {sessionActive && (

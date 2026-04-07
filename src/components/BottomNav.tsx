@@ -4,14 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Session", icon: "🏸", adminOnly: false },
-  { href: "/admin", label: "Admin", icon: "👥", adminOnly: true },
-  { href: "/leaderboard", label: "Leaderboard", icon: "🏆", adminOnly: false },
+  { href: "/", label: "Session", icon: "🏸", adminOnly: false, godModeOnly: false },
+  { href: "/admin", label: "Admin", icon: "👥", adminOnly: true, godModeOnly: false },
+  { href: "/leaderboard", label: "Leaderboard", icon: "🏆", adminOnly: false, godModeOnly: false },
+  { href: "/admin/control-panel", label: "Control Panel", icon: "⚙️", adminOnly: false, godModeOnly: true },
 ];
 
-export default function BottomNav({ isAdmin }: { isAdmin: boolean }) {
+export default function BottomNav({ isAdmin, isGodMode }: { isAdmin: boolean; isGodMode: boolean }) {
   const pathname = usePathname();
-  const visibleItems = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
+  const visibleItems = NAV_ITEMS.filter(
+    (item) => (!item.adminOnly || isAdmin) && (!item.godModeOnly || isGodMode)
+  );
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 flex bg-white border-t border-gray-100">

@@ -45,7 +45,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <main className="flex-1 pt-14 pb-16">
         {children}
       </main>
-      <BottomNav isAdmin={player?.is_admin ?? false} />
+      <BottomNav isAdmin={player?.is_admin ?? false} isGodMode={player?.is_god_mode ?? false} />
     </div>
   );
 }
