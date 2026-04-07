@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.25] - 2026-04-07
+
+### Changed
+- **Login page** — removed image from logo, text-only lockup now.
+
+---
+
 ## [0.24.24] - 2026-04-07
 
 <<<<<<< Updated upstream
