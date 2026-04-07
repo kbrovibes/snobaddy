@@ -121,7 +121,7 @@ export default async function SessionDetailPage({
           <div>
             {adjacentSessions.newer ? (
               <Link href={`/session/${adjacentSessions.newer.id}`} className="text-blue-600 hover:underline">
-                ‹ {new Date(adjacentSessions.newer.date + "T12:00:00").toLocaleDateString("en-US", { month: "numeric", day: "numeric" })} Session
+                ‹ {new Date(adjacentSessions.newer.date + "T12:00:00").toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" })} Session
               </Link>
             ) : (
               <span className="text-gray-300">‹ Session</span>
@@ -130,7 +130,7 @@ export default async function SessionDetailPage({
           <div>
             {adjacentSessions.older ? (
               <Link href={`/session/${adjacentSessions.older.id}`} className="text-blue-600 hover:underline">
-                {new Date(adjacentSessions.older.date + "T12:00:00").toLocaleDateString("en-US", { month: "numeric", day: "numeric" })} Session ›
+                {new Date(adjacentSessions.older.date + "T12:00:00").toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" })} Session ›
               </Link>
             ) : (
               <span className="text-gray-300">Session ›</span>
