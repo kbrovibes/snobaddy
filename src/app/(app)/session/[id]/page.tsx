@@ -126,9 +126,9 @@ export default async function SessionDetailPage({
           </div>
           <div className="ml-auto shrink-0">
             {isActive && (
-              <span className="flex items-center gap-1.5 text-xs font-semibold text-green-700 bg-green-100 px-2.5 py-1 rounded-full">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                Ongoing
+              <span className="flex items-center gap-1.5 text-xs font-semibold text-white bg-blue-700 px-2.5 py-1 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-white/80 animate-pulse" />
+                In Progress
               </span>
             )}
             {isPending && (

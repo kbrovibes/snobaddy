@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.15] - 2026-04-06
+
+### Changed
+- **Session badges** — "Active" renamed to "In Progress" with a dark blue filled badge and pulsing dot, making it visually distinct from the teal "Finalized" badge. Updated on both the session list and session detail pages.
+
+---
+
 ## [0.24.14] - 2026-04-06
 
 ### Fixed
