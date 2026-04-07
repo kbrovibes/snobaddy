@@ -76,7 +76,6 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
         <>
           {/* Header */}
           <div className="flex items-center px-1 mb-1">
-            <span className="w-5 shrink-0" />
             {COLUMNS.map(({ key, label, className }) => (
               <button
                 key={key}
@@ -95,11 +94,10 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
               const pct = p.matches_played ? Math.round((p.wins / p.matches_played) * 100) : 0;
               return (
                 <div key={p.player_id} className="flex items-center px-1">
-                  <span className="text-xs text-gray-300 w-5 shrink-0" />
                   <span className="flex-1 flex items-center gap-1 min-w-0">
                     <Link
                       href={`/players/${p.player_id}`}
-                      className={`text-sm font-medium truncate hover:underline underline-offset-2 ${p.player_id === playerId ? "text-blue-600" : "text-gray-800"}`}
+                      className={`text-sm font-medium truncate hover:underline underline-offset-2 ${p.player_id === playerId ? "text-blue-600" : "text-blue-700"}`}
                     >
                       {p.name}
                     </Link>
