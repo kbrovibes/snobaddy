@@ -32,6 +32,7 @@ import TallyEntryForm from "@/components/TallyEntryForm";
 import TallyHighlights from "@/components/TallyHighlights";
 import ResetSessionButton from "@/components/ResetSessionButton";
 import AutoRefreshToggle from "@/components/AutoRefreshToggle";
+import FinalizeSessionButton from "@/components/FinalizeSessionButton";
 
 export const dynamic = "force-dynamic";
 
@@ -168,6 +169,14 @@ export default async function SessionDetailPage({
         <>
           {/* Check-in */}
           <CheckInButton sessionId={session.id} alreadyCheckedIn={isCheckedIn} />
+
+          {/* Finalize prompt — admin only, after 10pm PST, no activity in 20min */}
+          {isAdmin && !session.is_test_session && (
+            <FinalizeSessionButton
+              sessionId={session.id}
+              lastMatchAt={(recentMatches as { played_at?: string }[])[0]?.played_at ?? null}
+            />
+          )}
 
           {/* Who's here */}
           <div className="bg-white rounded-xl shadow-sm px-4 py-3">
