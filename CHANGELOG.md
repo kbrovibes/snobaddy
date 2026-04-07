@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.6] - 2026-04-06
+
+### Changed
+- **Session header toggles** — Labels updated ("Live" → "Auto Refresh", "Test" → "Testing Only") and moved to the left of the switch on both toggles.
+
+---
+
 ## [0.24.5] - 2026-04-06
 
 <<<<<<< Updated upstream
