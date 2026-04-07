@@ -9,7 +9,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [0.24.21] - 2026-04-06
 
 ### Changed
-- **Session detail page** — added Newer / Older navigation links at the top, flanking the "All Sessions" back link. Skips test sessions. Disabled (gray) when at the newest or oldest session.
+- **Session detail page** — session nav is two rows: "All Sessions" on its own line, then `‹ MM/DD Session` and `MM/DD Session ›` below for adjacent non-test sessions. Grayed out at boundaries.
 
 ---
 

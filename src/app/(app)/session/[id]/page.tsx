@@ -115,25 +115,27 @@ export default async function SessionDetailPage({
       <OnlinePing />
 
       {/* Session nav */}
-      <div className="flex items-center justify-between text-sm">
-        <div className="w-24">
-          {adjacentSessions.newer ? (
-            <Link href={`/session/${adjacentSessions.newer.id}`} className="text-blue-600 hover:underline">
-              ← Newer
-            </Link>
-          ) : (
-            <span className="text-gray-300">← Newer</span>
-          )}
-        </div>
+      <div className="flex flex-col gap-1">
         <BackToSessionsLink />
-        <div className="w-24 text-right">
-          {adjacentSessions.older ? (
-            <Link href={`/session/${adjacentSessions.older.id}`} className="text-blue-600 hover:underline">
-              Older →
-            </Link>
-          ) : (
-            <span className="text-gray-300">Older →</span>
-          )}
+        <div className="flex items-center justify-between text-sm">
+          <div>
+            {adjacentSessions.newer ? (
+              <Link href={`/session/${adjacentSessions.newer.id}`} className="text-blue-600 hover:underline">
+                ‹ {new Date(adjacentSessions.newer.date + "T12:00:00").toLocaleDateString("en-US", { month: "numeric", day: "numeric" })} Session
+              </Link>
+            ) : (
+              <span className="text-gray-300">‹ Session</span>
+            )}
+          </div>
+          <div>
+            {adjacentSessions.older ? (
+              <Link href={`/session/${adjacentSessions.older.id}`} className="text-blue-600 hover:underline">
+                {new Date(adjacentSessions.older.date + "T12:00:00").toLocaleDateString("en-US", { month: "numeric", day: "numeric" })} Session ›
+              </Link>
+            ) : (
+              <span className="text-gray-300">Session ›</span>
+            )}
+          </div>
         </div>
       </div>
 
