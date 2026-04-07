@@ -65,7 +65,7 @@ export default function PlayerCheckinCard({
 
   return (
     <div
-      className={`relative rounded-xl border px-2 py-2 flex flex-col gap-1.5 transition-colors ${
+      className={`relative rounded-xl border px-2 py-1.5 flex flex-col gap-1 transition-colors ${
         present
           ? "bg-green-50 border-green-200"
           : "bg-white border-gray-100"
@@ -98,7 +98,11 @@ export default function PlayerCheckinCard({
           <button
             onClick={checkOut}
             disabled={loading}
+<<<<<<< Updated upstream
             className="w-full text-xs py-1 rounded-lg border border-red-200 bg-white text-red-500 font-medium hover:bg-red-50 transition-colors disabled:opacity-40"
+=======
+            className="text-xs px-2.5 py-1 rounded-lg border border-red-200 bg-white text-red-500 font-medium hover:bg-red-50 transition-colors disabled:opacity-40"
+>>>>>>> Stashed changes
           >
             {loading ? "…" : "Check Out"}
           </button>
@@ -106,7 +110,11 @@ export default function PlayerCheckinCard({
           <button
             onClick={checkIn}
             disabled={loading}
+<<<<<<< Updated upstream
             className="w-full text-xs py-1 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors disabled:opacity-40"
+=======
+            className="text-xs px-2.5 py-1 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors disabled:opacity-40"
+>>>>>>> Stashed changes
           >
             {loading ? "…" : "Check In"}
           </button>
