@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.5] - 2026-04-06
+
+### Added
+- **Pull-to-refresh** — In the installed PWA (iOS/Android), pull down from the top of any page to refresh it. A spinner appears as you pull and spins while refreshing. Has no effect in a regular browser (uses the browser's native gesture instead).
+
+---
+
 ## [0.24.4] - 2026-04-06
 
 ### Fixed
