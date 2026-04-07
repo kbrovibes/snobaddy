@@ -43,13 +43,13 @@ export default function ResetPasswordPage() {
           onChange={(e) => setPassword(e.target.value)}
           required
           minLength={6}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white"
         />
         {error && <p className="text-sm text-red-500">{error}</p>}
         <button
           type="submit"
           disabled={loading || !password}
-          className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg disabled:opacity-40 hover:bg-blue-700 transition-colors"
+          className="w-full py-3 bg-sky-600 text-white font-semibold rounded-lg disabled:opacity-40 hover:bg-sky-700 transition-colors"
         >
           {loading ? "Updating…" : "Update password"}
         </button>

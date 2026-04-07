@@ -58,7 +58,7 @@ export default function AdminPresenceToggle({
     <button
       onClick={checkIn}
       disabled={loading}
-      className="text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 font-medium border border-blue-100 hover:bg-blue-100 transition-colors disabled:opacity-40 whitespace-nowrap"
+      className="text-xs px-3 py-1.5 rounded-lg bg-sky-50 text-sky-600 font-medium border border-sky-100 hover:bg-sky-100 transition-colors disabled:opacity-40 whitespace-nowrap"
     >
       {loading ? "…" : "Check In"}
     </button>

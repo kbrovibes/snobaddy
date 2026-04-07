@@ -122,7 +122,7 @@ export default function LeaderboardTable({
 
   function indicator(key: SortKey) {
     if (key !== sortKey) return <span className="text-gray-300 ml-0.5">↕</span>;
-    return <span className="text-blue-500 ml-0.5">{sortDir === "asc" ? "↑" : "↓"}</span>;
+    return <span className="text-sky-500 ml-0.5">{sortDir === "asc" ? "↑" : "↓"}</span>;
   }
 
   function getRankColor(playerId: string) {
@@ -194,7 +194,7 @@ export default function LeaderboardTable({
                     onClick={() => handleSort(key)}
                     className={`py-2 text-xs font-semibold uppercase tracking-wide cursor-pointer select-none whitespace-nowrap
                       ${key === "name" ? "px-2 text-left" : "px-3 text-right"}
-                      ${sortKey === key ? "text-blue-600" : "text-gray-400 hover:text-gray-700"}`}
+                      ${sortKey === key ? "text-sky-600" : "text-gray-400 hover:text-gray-700"}`}
                   >
                     {label}{indicator(key)}
                   </th>
@@ -212,7 +212,7 @@ export default function LeaderboardTable({
                   </td>
                   <td className="px-2 py-1.5 font-medium text-gray-900 max-w-[120px]">
                     <span className="flex items-center gap-1 min-w-0">
-                      <Link href={`/players/${player.id}`} className="truncate text-blue-700 hover:underline">
+                      <Link href={`/players/${player.id}`} className="truncate text-sky-700 hover:underline">
                         {player.name}
                       </Link>
                       {player.user_id && <VerifiedBadge />}

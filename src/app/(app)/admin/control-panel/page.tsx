@@ -105,7 +105,7 @@ function ProgressBar({ pct }: { pct: number }) {
 function DeployBadge({ state }: { state: string }) {
   if (state === "READY")   return <span className="text-xs font-semibold text-green-700 bg-green-100 px-1.5 py-0.5 rounded">Ready</span>;
   if (state === "ERROR")   return <span className="text-xs font-semibold text-red-600   bg-red-50   px-1.5 py-0.5 rounded">Error</span>;
-  if (state === "BUILDING")return <span className="text-xs font-semibold text-blue-600  bg-blue-50  px-1.5 py-0.5 rounded">Building</span>;
+  if (state === "BUILDING")return <span className="text-xs font-semibold text-sky-600  bg-sky-50  px-1.5 py-0.5 rounded">Building</span>;
   return <span className="text-xs text-gray-400">{state}</span>;
 }
 

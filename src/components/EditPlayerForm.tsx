@@ -14,7 +14,7 @@ function SkillDots({ level }: { level: number }) {
   return (
     <span className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((i) => (
-        <span key={i} className={`text-xs ${i <= level ? "text-blue-500" : "text-gray-200"}`}>●</span>
+        <span key={i} className={`text-xs ${i <= level ? "text-sky-500" : "text-gray-200"}`}>●</span>
       ))}
     </span>
   );
@@ -97,12 +97,12 @@ export default function EditPlayerForm({ playerId, currentName, currentSkillLeve
           value={name}
           onChange={(e) => setName(e.target.value)}
           maxLength={50}
-          className="flex-1 min-w-0 border border-gray-300 rounded-lg px-2 py-1 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="flex-1 min-w-0 border border-gray-300 rounded-lg px-2 py-1 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-400"
         />
         <button
           onClick={handleSave}
           disabled={!canSave || saving}
-          className="text-blue-600 hover:text-blue-700 disabled:opacity-30 disabled:cursor-not-allowed text-base shrink-0"
+          className="text-sky-600 hover:text-sky-700 disabled:opacity-30 disabled:cursor-not-allowed text-base shrink-0"
           title="Save"
           aria-label="Save"
         >
@@ -116,7 +116,7 @@ export default function EditPlayerForm({ playerId, currentName, currentSkillLeve
           <button
             key={i}
             onClick={() => setSkillLevel(i)}
-            className={`text-sm transition-colors ${i <= skillLevel ? "text-blue-500" : "text-gray-200"}`}
+            className={`text-sm transition-colors ${i <= skillLevel ? "text-sky-500" : "text-gray-200"}`}
             aria-label={`Skill level ${i}`}
           >
             ●

@@ -56,7 +56,7 @@ export default function AddPlayerForm({
           placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-200"
           autoFocus
         />
       </div>
@@ -70,7 +70,7 @@ export default function AddPlayerForm({
               type="button"
               onClick={() => setSkill(level)}
               className={`text-base leading-none transition-colors ${
-                level <= skill ? "text-blue-500" : "text-gray-200"
+                level <= skill ? "text-sky-500" : "text-gray-200"
               }`}
             >
               ●
@@ -92,7 +92,7 @@ export default function AddPlayerForm({
         <button
           type="submit"
           disabled={!name.trim() || loading}
-          className="flex-1 text-sm py-2 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 transition-colors disabled:opacity-40"
+          className="flex-1 text-sm py-2 rounded-lg bg-sky-500 text-white font-medium hover:bg-sky-600 transition-colors disabled:opacity-40"
         >
           {loading ? "Adding…" : "Add Player"}
         </button>

@@ -75,7 +75,7 @@ export default function PullToRefresh() {
         style={{ opacity: refreshing ? 1 : progress, transform: `scale(${0.5 + progress * 0.5})` }}
       >
         <svg
-          className={`w-4 h-4 ${refreshing ? "animate-spin text-blue-500" : triggered ? "text-blue-500" : "text-gray-400"}`}
+          className={`w-4 h-4 ${refreshing ? "animate-spin text-sky-500" : triggered ? "text-sky-500" : "text-gray-400"}`}
           viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}
         >
           {refreshing ? (

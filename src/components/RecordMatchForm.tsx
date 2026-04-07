@@ -118,7 +118,7 @@ export default function RecordMatchForm({
         onChange={(e) => onChange(e.target.value)}
         className={`w-full border rounded-lg px-3 py-2.5 text-sm bg-white font-medium ${
           value
-            ? "border-blue-400 text-gray-900"
+            ? "border-sky-400 text-gray-900"
             : "border-gray-200 text-gray-400"
         }`}
       >
@@ -143,8 +143,8 @@ export default function RecordMatchForm({
       <button
         onClick={() => setOpen(true)}
         className={variant === "primary"
-          ? "w-full py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
-          : "w-full py-2 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-100 transition-colors"
+          ? "w-full py-3 bg-sky-600 text-white font-semibold rounded-xl hover:bg-sky-700 transition-colors"
+          : "w-full py-2 bg-sky-50 text-sky-600 text-xs font-bold rounded-lg hover:bg-sky-100 transition-colors"
         }
       >
         {label}
@@ -159,7 +159,7 @@ export default function RecordMatchForm({
             <button
               onClick={submit}
               disabled={saving}
-              className="text-blue-600 font-semibold text-sm disabled:opacity-40"
+              className="text-sky-600 font-semibold text-sm disabled:opacity-40"
             >
               {saving ? "Saving…" : "Save"}
             </button>
@@ -169,7 +169,7 @@ export default function RecordMatchForm({
             {/* Team 1 */}
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wide text-blue-600">Team 1</span>
+                <span className="text-xs font-bold uppercase tracking-wide text-sky-600">Team 1</span>
               </div>
               <div className="flex gap-2">
                 <PlayerSelect
@@ -210,13 +210,13 @@ export default function RecordMatchForm({
               <span className="text-xs font-bold uppercase tracking-wide text-gray-400">Final Score</span>
               <div className="flex items-center gap-3">
                 <div className="flex-1 flex flex-col items-center">
-                  <span className="text-xs text-blue-500 font-medium mb-1">Team 1</span>
+                  <span className="text-xs text-sky-500 font-medium mb-1">Team 1</span>
                   <input
                     type="number" min="0" max="99"
                     value={score1}
                     onChange={(e) => setScore1(e.target.value)}
                     placeholder="21"
-                    className="w-full text-center text-2xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-3 focus:border-blue-400 outline-none"
+                    className="w-full text-center text-2xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-3 focus:border-sky-400 outline-none"
                   />
                 </div>
                 <span className="text-xl font-bold text-gray-300 mt-4">–</span>

@@ -93,7 +93,7 @@ export default function PlayerCheckinCard({
         <button
           onClick={checkIn}
           disabled={loading || !sessionId}
-          className="text-xs px-2.5 py-1 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors disabled:opacity-50"
+          className="text-xs px-2.5 py-1 rounded-lg bg-sky-500 text-white font-semibold hover:bg-sky-600 transition-colors disabled:opacity-50"
         >
           {loading ? "…" : "Check In"}
         </button>

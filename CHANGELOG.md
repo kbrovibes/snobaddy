@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.22] - 2026-04-06
+
+### Changed
+- **Color scheme** — replaced all blue (`blue-*`) with sky (`sky-*`) throughout the app for a lighter, more modern feel.
+
+---
+
 ## [0.24.21] - 2026-04-06
 
 ### Changed

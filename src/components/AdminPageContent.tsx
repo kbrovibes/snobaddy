@@ -67,7 +67,7 @@ export default function AdminPageContent({
         </h2>
         <button
           onClick={() => setAddPlayerOpen(true)}
-          className="text-sm font-medium text-blue-500 hover:text-blue-700 transition-colors"
+          className="text-sm font-medium text-sky-500 hover:text-sky-700 transition-colors"
         >
           + Add Player
         </button>

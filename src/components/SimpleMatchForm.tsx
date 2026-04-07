@@ -110,7 +110,7 @@ export default function SimpleMatchForm({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={`w-full border rounded-lg px-2 py-2 text-sm bg-white font-medium ${
-          value ? "border-blue-400 text-gray-900" : "border-gray-200 text-gray-400"
+          value ? "border-sky-400 text-gray-900" : "border-gray-200 text-gray-400"
         }`}
       >
         <option value="" disabled>Pick…</option>
@@ -133,7 +133,7 @@ export default function SimpleMatchForm({
           className={`flex items-center gap-2 ${isAdmin ? "disabled:opacity-50" : "opacity-60 cursor-default"}`}
         >
           <span className="text-xs text-gray-500">Win/Loss Only</span>
-          <span className={`relative inline-flex w-10 h-6 rounded-full transition-colors duration-200 ${simpleMode ? "bg-blue-500" : "bg-gray-200"}`}>
+          <span className={`relative inline-flex w-10 h-6 rounded-full transition-colors duration-200 ${simpleMode ? "bg-sky-500" : "bg-gray-200"}`}>
             <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${simpleMode ? "translate-x-4" : "translate-x-0"}`} />
           </span>
         </button>
@@ -145,7 +145,7 @@ export default function SimpleMatchForm({
           simpleMode ? "border-green-200 bg-green-50/40" : "border-gray-200 bg-gray-50/40"
         }`}>
           <span className={`text-xs font-bold uppercase tracking-wide ${
-            simpleMode ? "text-green-600" : "text-blue-600"
+            simpleMode ? "text-green-600" : "text-sky-600"
           }`}>
             {simpleMode ? "Winning Team" : "Team 1"}
           </span>
@@ -174,7 +174,7 @@ export default function SimpleMatchForm({
             value={score1}
             onChange={(e) => setScore1(e.target.value)}
             placeholder="21"
-            className="flex-1 text-center text-xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-2.5 focus:border-blue-400 outline-none"
+            className="flex-1 text-center text-xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-2.5 focus:border-sky-400 outline-none"
           />
           <span className="text-lg font-bold text-gray-300">–</span>
           <input
@@ -182,7 +182,7 @@ export default function SimpleMatchForm({
             value={score2}
             onChange={(e) => setScore2(e.target.value)}
             placeholder="15"
-            className="flex-1 text-center text-xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-2.5 focus:border-blue-400 outline-none"
+            className="flex-1 text-center text-xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-2.5 focus:border-sky-400 outline-none"
           />
         </div>
       )}
@@ -194,7 +194,7 @@ export default function SimpleMatchForm({
         <button
           onClick={save}
           disabled={!canSave || saving || saved}
-          className="flex-1 py-2 bg-blue-600 text-white font-semibold rounded-xl text-sm hover:bg-blue-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex-1 py-2 bg-sky-600 text-white font-semibold rounded-xl text-sm hover:bg-sky-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {saving ? "Saving…" : "Save"}
         </button>

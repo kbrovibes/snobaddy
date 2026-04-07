@@ -40,7 +40,7 @@ export default function Header({ userName, playerId, isAdmin, isGodMode }: Heade
       <div className="flex items-center gap-3">
         <button
           onClick={signOut}
-          className="text-xs text-blue-600 hover:text-blue-800 transition-colors font-medium"
+          className="text-xs text-sky-600 hover:text-sky-800 transition-colors font-medium"
         >
           Logout
         </button>
@@ -55,13 +55,13 @@ export default function Header({ userName, playerId, isAdmin, isGodMode }: Heade
         {playerId ? (
           <Link
             href={`/players/${playerId}`}
-            className={`flex items-center justify-center w-8 h-8 rounded-full ${isAdmin ? "bg-red-600" : "bg-blue-600"} text-white text-sm font-semibold`}
+            className={`flex items-center justify-center w-8 h-8 rounded-full ${isAdmin ? "bg-red-600" : "bg-sky-600"} text-white text-sm font-semibold`}
             title={userName}
           >
             {initials}
           </Link>
         ) : (
-          <div className={`flex items-center justify-center w-8 h-8 rounded-full ${isAdmin ? "bg-red-600" : "bg-blue-600"} text-white text-sm font-semibold`}>
+          <div className={`flex items-center justify-center w-8 h-8 rounded-full ${isAdmin ? "bg-red-600" : "bg-sky-600"} text-white text-sm font-semibold`}>
             {initials}
           </div>
         )}

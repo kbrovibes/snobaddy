@@ -102,7 +102,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
     return (
       <button
         onClick={handleSuggest}
-        className="w-full py-3 bg-white border-2 border-dashed border-blue-200 text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-colors flex items-center justify-center gap-2"
+        className="w-full py-3 bg-white border-2 border-dashed border-sky-200 text-sky-600 font-semibold rounded-xl hover:bg-sky-50 transition-colors flex items-center justify-center gap-2"
       >
         ✨ Generate Matches
       </button>
@@ -122,7 +122,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
               disabled={togglingAuto}
               className={`text-xs font-medium transition-colors ${
                 autoGenerate
-                  ? "text-blue-600 hover:text-blue-800"
+                  ? "text-sky-600 hover:text-sky-800"
                   : "text-gray-400 hover:text-gray-600"
               }`}
               title={autoGenerate ? "Auto-generate is on — tap to disable" : "Auto-generate is off — tap to enable"}
@@ -134,7 +134,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
             <button
               onClick={handleSuggest}
               disabled={loading}
-              className="text-xs text-blue-600 font-bold hover:underline"
+              className="text-xs text-sky-600 font-bold hover:underline"
             >
               {loading ? "Generating..." : "✨ Generate Matches"}
             </button>
@@ -146,7 +146,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
         {matches.map((m) => {
           const isScoring = scoringId === m.id;
           return (
-            <div key={m.id} className="bg-white border border-blue-50 rounded-xl px-3 py-2 shadow-sm">
+            <div key={m.id} className="bg-white border border-sky-50 rounded-xl px-3 py-2 shadow-sm">
               {/* Team names — inline, centred "vs" */}
               <div className="grid grid-cols-[1fr_2rem_1fr] items-center gap-1 mb-1.5">
                 <p className="text-xs font-semibold text-gray-800 text-right truncate">
@@ -169,7 +169,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
                       value={score1}
                       onChange={(e) => setScore1(e.target.value)}
                       placeholder="0"
-                      className="w-full text-center text-xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-2 focus:border-blue-400 outline-none"
+                      className="w-full text-center text-xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-2 focus:border-sky-400 outline-none"
                     />
                     <div className="text-center text-gray-300 text-xs">–</div>
                     <input
@@ -179,7 +179,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
                       value={score2}
                       onChange={(e) => setScore2(e.target.value)}
                       placeholder="0"
-                      className="w-full text-center text-xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-2 focus:border-blue-400 outline-none"
+                      className="w-full text-center text-xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-2 focus:border-sky-400 outline-none"
                     />
                   </div>
                   {error && (
@@ -195,7 +195,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
                     <button
                       onClick={() => handleSave(m)}
                       disabled={saving}
-                      className="flex-1 py-1 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                      className="flex-1 py-1 bg-sky-600 text-white text-xs font-bold rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50"
                     >
                       {saving ? "Saving..." : "✅ Save"}
                     </button>
@@ -211,7 +211,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
                   <>
                     <button
                       onClick={() => startScoring(m.id)}
-                      className="flex-1 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-100 transition-colors"
+                      className="flex-1 py-1 bg-sky-50 text-sky-600 text-xs font-bold rounded-lg hover:bg-sky-100 transition-colors"
                     >
                       🏸 Record Score
                     </button>

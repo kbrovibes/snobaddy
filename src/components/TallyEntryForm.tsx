@@ -222,7 +222,7 @@ export default function TallyEntryForm({
       return (
         <button
           onClick={() => setOpen(true)}
-          className="text-sm font-medium text-blue-600 hover:text-blue-700 underline-offset-2 hover:underline"
+          className="text-sm font-medium text-sky-600 hover:text-sky-700 underline-offset-2 hover:underline"
         >
           Edit Tallies
         </button>
@@ -232,7 +232,7 @@ export default function TallyEntryForm({
       <div className="flex gap-2">
         <button
           onClick={() => setOpen(true)}
-          className="flex-1 py-3 rounded-xl text-sm font-semibold border-2 border-dashed border-gray-200 text-gray-500 hover:border-blue-300 hover:text-blue-600 transition-colors"
+          className="flex-1 py-3 rounded-xl text-sm font-semibold border-2 border-dashed border-gray-200 text-gray-500 hover:border-sky-300 hover:text-sky-600 transition-colors"
         >
           + Enter Final Scores
         </button>
@@ -360,7 +360,7 @@ export default function TallyEntryForm({
                 inputMode="numeric"
                 value={row.wins}
                 onChange={(e) => updateRow(i, "wins", e.target.value)}
-                className="border border-gray-200 rounded-lg text-center text-sm py-1.5 w-full text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="border border-gray-200 rounded-lg text-center text-sm py-1.5 w-full text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-400"
               />
               <input
                 type="number"
@@ -368,7 +368,7 @@ export default function TallyEntryForm({
                 inputMode="numeric"
                 value={row.losses}
                 onChange={(e) => updateRow(i, "losses", e.target.value)}
-                className="border border-gray-200 rounded-lg text-center text-sm py-1.5 w-full text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="border border-gray-200 rounded-lg text-center text-sm py-1.5 w-full text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-400"
               />
               <button
                 onClick={() => removeRow(i)}
@@ -387,7 +387,7 @@ export default function TallyEntryForm({
         <select
           onChange={handleAddPlayer}
           defaultValue=""
-          className="border border-gray-200 rounded-lg text-sm px-3 py-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+          className="border border-gray-200 rounded-lg text-sm px-3 py-2 text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white"
         >
           <option value="" disabled>+ Add player…</option>
           {availablePlayers.map((p) => (
@@ -425,7 +425,7 @@ export default function TallyEntryForm({
       <button
         onClick={handleSave}
         disabled={!canSave || saving || extracting}
-        className="w-full py-2.5 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="w-full py-2.5 rounded-xl text-sm font-semibold bg-sky-600 text-white hover:bg-sky-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         {saving ? "Saving…" : "Save Tallies"}
       </button>

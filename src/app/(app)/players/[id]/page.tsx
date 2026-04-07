@@ -83,7 +83,7 @@ export default async function PlayerProfilePage({
       {/* Player header */}
       <div className="bg-white rounded-xl shadow-sm px-4 py-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xl font-bold shrink-0">
+          <div className="w-12 h-12 rounded-full bg-sky-100 flex items-center justify-center text-sky-700 text-xl font-bold shrink-0">
             {player.name.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
@@ -129,7 +129,7 @@ export default async function PlayerProfilePage({
           <div className="flex flex-col gap-4">
             {matchesBySession.map((group) => (
               <div key={group.session_id}>
-                <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${group.absent ? "text-gray-300" : group.isOpen ? "text-blue-400" : "text-gray-400"}`}>
+                <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${group.absent ? "text-gray-300" : group.isOpen ? "text-sky-400" : "text-gray-400"}`}>
                   {formatDate(group.date)}{group.isOpen ? "*" : ""}
                 </p>
                 {group.absent ? (

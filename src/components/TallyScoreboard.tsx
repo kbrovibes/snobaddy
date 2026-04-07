@@ -77,7 +77,7 @@ export default function TallyScoreboard({ entries, sessionId, isGodMode, hasPhot
 
   function indicator(key: SortKey) {
     if (key !== sortKey) return <span className="text-gray-300 ml-0.5">↕</span>;
-    return <span className="text-blue-500 ml-0.5">{sortDir === "asc" ? "↑" : "↓"}</span>;
+    return <span className="text-sky-500 ml-0.5">{sortDir === "asc" ? "↑" : "↓"}</span>;
   }
 
   return (
@@ -97,7 +97,7 @@ export default function TallyScoreboard({ entries, sessionId, isGodMode, hasPhot
                 key={key}
                 onClick={() => handleSort(key)}
                 className={`${className} text-xs font-semibold uppercase tracking-wide cursor-pointer select-none whitespace-nowrap
-                  ${sortKey === key ? "text-blue-600" : "text-gray-400 hover:text-gray-700"}`}
+                  ${sortKey === key ? "text-sky-600" : "text-gray-400 hover:text-gray-700"}`}
               >
                 {label}{indicator(key)}
               </button>
@@ -114,7 +114,7 @@ export default function TallyScoreboard({ entries, sessionId, isGodMode, hasPhot
                   <span className="text-xs text-gray-300 w-5 shrink-0" />
                   <Link
                     href={`/players/${e.player_id}`}
-                    className="flex-1 text-sm font-medium truncate text-blue-600 hover:underline"
+                    className="flex-1 text-sm font-medium truncate text-sky-600 hover:underline"
                   >
                     {e.player_name}
                   </Link>

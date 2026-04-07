@@ -41,7 +41,7 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
           Losses
         </span>
         {hasOpenSession && (
-          <span className="flex items-center gap-1 text-xs text-blue-400">
+          <span className="flex items-center gap-1 text-xs text-sky-400">
             * In progress
           </span>
         )}

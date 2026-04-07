@@ -62,7 +62,7 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
 
   function indicator(key: SortKey) {
     if (key !== sortKey) return <span className="text-gray-300 ml-0.5">↕</span>;
-    return <span className="text-blue-500 ml-0.5">{sortDir === "asc" ? "↑" : "↓"}</span>;
+    return <span className="text-sky-500 ml-0.5">{sortDir === "asc" ? "↑" : "↓"}</span>;
   }
 
   return (
@@ -81,7 +81,7 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
                 key={key}
                 onClick={() => handleSort(key)}
                 className={`${className} text-xs font-semibold uppercase tracking-wide cursor-pointer select-none whitespace-nowrap
-                  ${sortKey === key ? "text-blue-600" : "text-gray-400 hover:text-gray-700"}`}
+                  ${sortKey === key ? "text-sky-600" : "text-gray-400 hover:text-gray-700"}`}
               >
                 {label}{indicator(key)}
               </button>
@@ -97,7 +97,7 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
                   <span className="flex-1 flex items-center gap-1 min-w-0">
                     <Link
                       href={`/players/${p.player_id}`}
-                      className={`text-sm font-medium truncate hover:underline underline-offset-2 ${p.player_id === playerId ? "text-blue-600" : "text-blue-700"}`}
+                      className={`text-sm font-medium truncate hover:underline underline-offset-2 ${p.player_id === playerId ? "text-sky-600" : "text-sky-700"}`}
                     >
                       {p.name}
                     </Link>

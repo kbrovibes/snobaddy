@@ -120,7 +120,7 @@ export default async function SessionDetailPage({
         <div className="flex items-center justify-between text-sm">
           <div>
             {adjacentSessions.newer ? (
-              <Link href={`/session/${adjacentSessions.newer.id}`} className="text-blue-600 hover:underline">
+              <Link href={`/session/${adjacentSessions.newer.id}`} className="text-sky-600 hover:underline">
                 ‹ {new Date(adjacentSessions.newer.date + "T12:00:00").toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" })} Session
               </Link>
             ) : (
@@ -129,7 +129,7 @@ export default async function SessionDetailPage({
           </div>
           <div>
             {adjacentSessions.older ? (
-              <Link href={`/session/${adjacentSessions.older.id}`} className="text-blue-600 hover:underline">
+              <Link href={`/session/${adjacentSessions.older.id}`} className="text-sky-600 hover:underline">
                 {new Date(adjacentSessions.older.date + "T12:00:00").toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" })} Session ›
               </Link>
             ) : (
@@ -154,7 +154,7 @@ export default async function SessionDetailPage({
           </div>
           <div className="ml-auto shrink-0">
             {isActive && (
-              <span className="flex items-center gap-1.5 text-xs font-semibold text-white bg-blue-700 px-2.5 py-1 rounded-full">
+              <span className="flex items-center gap-1.5 text-xs font-semibold text-white bg-sky-700 px-2.5 py-1 rounded-full">
                 <span className="w-2 h-2 rounded-full bg-white/80 animate-pulse" />
                 In Progress
               </span>
@@ -345,7 +345,7 @@ export default async function SessionDetailPage({
           <div className="flex flex-col gap-2">
             {pastSessions.map((s) => (
               <Link key={s.id} href={`/session/${s.id}`} className="flex items-center justify-between text-sm hover:bg-gray-50 -mx-1 px-1 rounded-lg transition-colors">
-                <span className="text-blue-600">{formatDate(s.date)}</span>
+                <span className="text-sky-600">{formatDate(s.date)}</span>
                 <span className="text-gray-400 capitalize">{s.status}</span>
               </Link>
             ))}

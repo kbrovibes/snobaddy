@@ -48,7 +48,7 @@ export default function OnboardingPage() {
             disabled={saving}
             className={`flex items-center gap-4 px-4 py-3 rounded-xl border-2 transition-colors text-left ${
               selected === value
-                ? "border-blue-500 bg-blue-50"
+                ? "border-sky-500 bg-sky-50"
                 : "border-gray-200 bg-white hover:border-gray-300"
             }`}
           >
@@ -59,7 +59,7 @@ export default function OnboardingPage() {
             </div>
             <div className="ml-auto flex gap-0.5">
               {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} className={`text-xs ${i < value ? "text-blue-500" : "text-gray-200"}`}>●</span>
+                <span key={i} className={`text-xs ${i < value ? "text-sky-500" : "text-gray-200"}`}>●</span>
               ))}
             </div>
           </button>
@@ -70,7 +70,7 @@ export default function OnboardingPage() {
         <button
           onClick={() => selected && save(selected)}
           disabled={!selected || saving}
-          className="w-full py-3 bg-blue-600 text-white font-semibold rounded-xl disabled:opacity-40 hover:bg-blue-700 transition-colors"
+          className="w-full py-3 bg-sky-600 text-white font-semibold rounded-xl disabled:opacity-40 hover:bg-sky-700 transition-colors"
         >
           {saving ? "Saving…" : "Save & Continue"}
         </button>

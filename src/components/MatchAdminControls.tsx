@@ -92,7 +92,7 @@ export default function MatchAdminControls({ matchId, team1Names, team2Names, te
         <button
           onClick={handleSave}
           disabled={loading || !valid}
-          className="text-blue-600 font-semibold underline disabled:opacity-40"
+          className="text-sky-600 font-semibold underline disabled:opacity-40"
         >
           {loading ? "Saving…" : "Save"}
         </button>
@@ -105,7 +105,7 @@ export default function MatchAdminControls({ matchId, team1Names, team2Names, te
 
   return (
     <div className="flex items-center gap-3 mt-1">
-      <button onClick={enterEdit} className="text-xs text-blue-500 hover:underline">
+      <button onClick={enterEdit} className="text-xs text-sky-500 hover:underline">
         Edit scores
       </button>
       <button onClick={() => setMode("confirming-delete")} className="text-xs text-red-400 hover:underline">

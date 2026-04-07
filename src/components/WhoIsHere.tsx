@@ -30,7 +30,7 @@ function SkillDots({ level }: { level: number }) {
   return (
     <span className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((i) => (
-        <span key={i} className={`text-xs ${i <= level ? "text-blue-500" : "text-gray-200"}`}>●</span>
+        <span key={i} className={`text-xs ${i <= level ? "text-sky-500" : "text-gray-200"}`}>●</span>
       ))}
     </span>
   );
@@ -50,7 +50,7 @@ function SortHeader({
     <button
       onClick={() => onSort(sortKey)}
       className={`flex items-center gap-0.5 text-xs font-semibold uppercase tracking-wide select-none ${
-        active ? "text-blue-500" : "text-gray-400 hover:text-gray-600"
+        active ? "text-sky-500" : "text-gray-400 hover:text-gray-600"
       }`}
     >
       {label}
@@ -142,7 +142,7 @@ export default function WhoIsHere({
               {onlinePlayerIds?.has(p.player_id) && (
                 <span className="w-2 h-2 rounded-full bg-green-500 shrink-0" title="Online now" />
               )}
-              <Link href={`/players/${p.player_id}`} className="font-medium text-blue-700 text-sm truncate hover:underline">
+              <Link href={`/players/${p.player_id}`} className="font-medium text-sky-700 text-sm truncate hover:underline">
                 {p.name}
               </Link>
               {p.user_id && <VerifiedBadge />}
@@ -174,7 +174,7 @@ export default function WhoIsHere({
       {sorted.length > PREVIEW && (
         <button
           onClick={() => setExpanded(e => !e)}
-          className="mt-2 text-xs text-blue-500 hover:text-blue-700 font-medium"
+          className="mt-2 text-xs text-sky-500 hover:text-sky-700 font-medium"
         >
           {expanded ? "See Less" : `See More (${sorted.length - PREVIEW} more)`}
         </button>

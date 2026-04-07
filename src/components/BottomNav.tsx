@@ -22,7 +22,7 @@ export default function BottomNav({ isAdmin, isGodMode }: { isAdmin: boolean; is
             key={href}
             href={href}
             className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-3 text-xs font-medium transition-colors ${
-              active ? "text-blue-600" : "text-gray-400"
+              active ? "text-sky-600" : "text-gray-400"
             }`}
           >
             <span className="text-xl leading-none">{icon}</span>
