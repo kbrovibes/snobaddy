@@ -7,29 +7,36 @@ export async function generatePlayerPoem(
   name: string,
   context: PlayerPoemContext
 ): Promise<string> {
-  const { wins, losses, recentSessions, topPartner } = context;
+  const { wins, losses, recentSessions, topPartner, onlyTestSessions } = context;
   const totalMatches = wins + losses;
 
-  const lines: string[] = [];
+  let prompt: string;
 
-  if (totalMatches === 0) {
-    lines.push(`${name} is brand new to the court with no matches yet`);
+  if (onlyTestSessions) {
+    prompt = `Write a funny, light-hearted 2–3 line poem about a badminton player named ${name} who has only ever played in test sessions — they're more of a quality-assurance expert than an actual player. Make it playful and self-aware, as if they're a professional app tester who somehow ended up on a badminton court. Keep it warm and friendly, not insulting. Use their name. Return only the poem, no title or preamble.`;
   } else {
-    lines.push(`${name} has ${wins} win${wins !== 1 ? "s" : ""} and ${losses} loss${losses !== 1 ? "es" : ""} across ${totalMatches} matches`);
-  }
+    const lines: string[] = [];
 
-  if (recentSessions.length > 0) {
-    const sessionSummaries = recentSessions.map(
-      (s) => `${s.wins}W-${s.losses}L on ${s.date}`
-    );
-    lines.push(`Recent sessions: ${sessionSummaries.join(", ")}`);
-  }
+    if (totalMatches === 0) {
+      lines.push(`${name} is brand new to the court with no matches yet`);
+    } else {
+      lines.push(`${name} has ${wins} win${wins !== 1 ? "s" : ""} and ${losses} loss${losses !== 1 ? "es" : ""} across ${totalMatches} matches`);
+    }
 
-  if (topPartner) {
-    lines.push(`Favourite partner: ${topPartner}`);
-  }
+    if (recentSessions.length > 0) {
+      const sessionSummaries = recentSessions.map(
+        (s) => `${s.wins}W-${s.losses}L on ${s.date}`
+      );
+      lines.push(`Recent sessions: ${sessionSummaries.join(", ")}`);
+    }
 
-  const context_str = lines.join(". ");
+    if (topPartner) {
+      lines.push(`Favourite doubles partner: ${topPartner}`);
+    }
+
+    const context_str = lines.join(". ");
+    prompt = `Write a funny, light-hearted 2–3 line poem about a badminton player named ${name}. Context: ${context_str}. Use their name in the poem. Reference something specific from their stats or partner if interesting. Keep it warm, witty, and rhyming — nothing controversial, insulting, or edgy. Return only the poem, no title or preamble.`;
+  }
 
   const message = await client.messages.create({
     model: "claude-haiku-4-5-20251001",
@@ -37,7 +44,7 @@ export async function generatePlayerPoem(
     messages: [
       {
         role: "user",
-        content: `Write a funny, light-hearted 2–3 line poem about a badminton player named ${name}. Context about them: ${context_str}. Use their name in the poem. Reference something specific from their stats or partner if interesting. Make it witty and rhyme. Return only the poem, no title or preamble.`,
+        content: prompt,
       },
     ],
   });

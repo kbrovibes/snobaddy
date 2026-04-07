@@ -209,30 +209,51 @@ export interface PlayerPoemContext {
   losses: number;
   recentSessions: Array<{ date: string; wins: number; losses: number }>;
   topPartner: string | null;
+  onlyTestSessions: boolean; // true = player has real data only in test sessions
 }
 
 export async function getPlayerPoemContext(playerId: string): Promise<PlayerPoemContext> {
-  const { data } = await serviceClient
-    .from("matches")
-    .select(`
-      winning_team, session_id,
-      team1_player1_id, team1_player2_id,
-      team2_player1_id, team2_player2_id,
-      sessions(date),
-      t1p1:team1_player1_id(name),
-      t1p2:team1_player2_id(name),
-      t2p1:team2_player1_id(name),
-      t2p2:team2_player2_id(name)
-    `)
-    .or(`team1_player1_id.eq.${playerId},team1_player2_id.eq.${playerId},team2_player1_id.eq.${playerId},team2_player2_id.eq.${playerId}`);
+  // Fetch individual matches (non-test + test, so we can detect test-only players)
+  const [{ data: allMatchData }, { data: realMatchData }, { data: tallyData }] = await Promise.all([
+    serviceClient
+      .from("matches")
+      .select("session_id, sessions(is_test_session)")
+      .or(`team1_player1_id.eq.${playerId},team1_player2_id.eq.${playerId},team2_player1_id.eq.${playerId},team2_player2_id.eq.${playerId}`),
+    serviceClient
+      .from("matches")
+      .select(`
+        winning_team, session_id,
+        team1_player1_id, team1_player2_id,
+        team2_player1_id, team2_player2_id,
+        sessions!inner(date, is_test_session),
+        t1p1:team1_player1_id(name),
+        t1p2:team1_player2_id(name),
+        t2p1:team2_player1_id(name),
+        t2p2:team2_player2_id(name)
+      `)
+      .or(`team1_player1_id.eq.${playerId},team1_player2_id.eq.${playerId},team2_player1_id.eq.${playerId},team2_player2_id.eq.${playerId}`)
+      .eq("sessions.is_test_session", false),
+    serviceClient
+      .from("session_tally")
+      .select("session_id, wins, losses, sessions(date, is_test_session)")
+      .eq("player_id", playerId),
+  ]);
 
-  const matches = data ?? [];
+  // Detect test-only: has any matches/tallies but all are from test sessions
+  const hasAnyData = (allMatchData ?? []).length > 0 || (tallyData ?? []).length > 0;
+  const hasRealMatchData = (realMatchData ?? []).length > 0;
+  const hasRealTallyData = (tallyData ?? []).some(
+    (t) => !(t.sessions as unknown as { is_test_session: boolean })?.is_test_session
+  );
+  const onlyTestSessions = hasAnyData && !hasRealMatchData && !hasRealTallyData;
+
   let wins = 0;
   let losses = 0;
   const partnerCount = new Map<string, number>();
   const sessionMap = new Map<string, { date: string; wins: number; losses: number }>();
 
-  for (const m of matches) {
+  // Individual match records (non-test only)
+  for (const m of realMatchData ?? []) {
     const onTeam1 = m.team1_player1_id === playerId || m.team1_player2_id === playerId;
     const won = (onTeam1 && m.winning_team === 1) || (!onTeam1 && m.winning_team === 2);
     if (won) wins++; else losses++;
@@ -250,6 +271,17 @@ export async function getPlayerPoemContext(playerId: string): Promise<PlayerPoem
     const entry = sessionMap.get(m.session_id) ?? { date: session.date, wins: 0, losses: 0 };
     if (won) entry.wins++; else entry.losses++;
     sessionMap.set(m.session_id, entry);
+  }
+
+  // Tally records (non-test only) — add sessions not already covered by individual matches
+  for (const t of tallyData ?? []) {
+    const session = t.sessions as unknown as { date: string; is_test_session: boolean };
+    if (session.is_test_session) continue;
+    wins += t.wins;
+    losses += t.losses;
+    if (!sessionMap.has(t.session_id)) {
+      sessionMap.set(t.session_id, { date: session.date, wins: t.wins, losses: t.losses });
+    }
   }
 
   const recentSessions = Array.from(sessionMap.values())

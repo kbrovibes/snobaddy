@@ -120,8 +120,13 @@ export default async function SessionDetailPage({
         <div className="flex items-center justify-between text-sm">
           <div>
             {adjacentSessions.newer ? (
+<<<<<<< Updated upstream
               <Link href={`/session/${adjacentSessions.newer.id}`} className="text-sky-600 hover:underline">
                 ‹ {new Date(adjacentSessions.newer.date + "T12:00:00").toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" })} Session
+=======
+              <Link href={`/session/${adjacentSessions.newer.id}`} className="text-blue-600 hover:underline">
+                ‹ {new Date(adjacentSessions.newer.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "2-digit" })} Session
+>>>>>>> Stashed changes
               </Link>
             ) : (
               <span className="text-gray-300">‹ Session</span>
@@ -129,8 +134,13 @@ export default async function SessionDetailPage({
           </div>
           <div>
             {adjacentSessions.older ? (
+<<<<<<< Updated upstream
               <Link href={`/session/${adjacentSessions.older.id}`} className="text-sky-600 hover:underline">
                 {new Date(adjacentSessions.older.date + "T12:00:00").toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" })} Session ›
+=======
+              <Link href={`/session/${adjacentSessions.older.id}`} className="text-blue-600 hover:underline">
+                {new Date(adjacentSessions.older.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "2-digit" })} Session ›
+>>>>>>> Stashed changes
               </Link>
             ) : (
               <span className="text-gray-300">Session ›</span>
