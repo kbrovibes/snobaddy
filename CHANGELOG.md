@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.9] - 2026-04-06
+
+### Changed
+- **Who's Here** — newest check-ins now appear at the top by default. List collapses to 4 players with a "See More (N more)" button; expands to full list on tap.
+
+---
+
 ## [0.24.8] - 2026-04-06
 
 ### Changed

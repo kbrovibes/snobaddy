@@ -71,8 +71,11 @@ export default function WhoIsHere({
 }) {
   const router = useRouter();
   const [sortKey, setSortKey] = useState<SortKey>("checked_in_at");
-  const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [checkingOut, setCheckingOut] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
+
+  const PREVIEW = 4;
 
   function handleSort(key: SortKey) {
     if (key === sortKey) {
@@ -130,7 +133,7 @@ export default function WhoIsHere({
       </div>
 
       <div className="flex flex-col gap-2">
-        {sorted.map((p) => (
+        {(expanded ? sorted : sorted.slice(0, PREVIEW)).map((p) => (
           <div key={p.player_id} className="flex items-center gap-2 px-1">
             <span className="flex items-center gap-1.5 flex-1 min-w-0">
               {onlinePlayerIds?.has(p.player_id) && (
@@ -162,6 +165,15 @@ export default function WhoIsHere({
           </div>
         ))}
       </div>
+
+      {sorted.length > PREVIEW && (
+        <button
+          onClick={() => setExpanded(e => !e)}
+          className="mt-2 text-xs text-blue-500 hover:text-blue-700 font-medium"
+        >
+          {expanded ? "See Less" : `See More (${sorted.length - PREVIEW} more)`}
+        </button>
+      )}
     </div>
   );
 }
