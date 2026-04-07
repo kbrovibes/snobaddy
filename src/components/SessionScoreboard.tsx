@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { PlayerSessionStats } from "@/lib/db/matches";
 import { VerifiedBadge, AdminBadge } from "./PlayerBadges";
 
-type SortKey = "name" | "matches_played" | "wins" | "losses" | "win_pct";
+type SortKey = "name" | "matches_played" | "wins" | "losses" | "win_pct" | "points";
 type SortDir = "asc" | "desc";
 
 const COLUMNS: { key: SortKey; label: string; className: string }[] = [
@@ -13,6 +13,7 @@ const COLUMNS: { key: SortKey; label: string; className: string }[] = [
   { key: "matches_played",label: "M",      className: "w-8 text-center"        },
   { key: "wins",          label: "W",      className: "w-8 text-center"        },
   { key: "losses",        label: "L",      className: "w-8 text-center"        },
+  { key: "points",        label: "Pts",    className: "w-10 text-center"       },
   { key: "win_pct",       label: "Win%",   className: "w-12 text-right"        },
 ];
 
@@ -27,7 +28,7 @@ interface Props {
 }
 
 export default function SessionScoreboard({ scoreboard, playerId, matchCount }: Props) {
-  const [sortKey, setSortKey] = useState<SortKey>("win_pct");
+  const [sortKey, setSortKey] = useState<SortKey>("matches_played");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
   function handleSort(key: SortKey) {
@@ -108,6 +109,7 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
                   <span className="w-8 text-center text-sm tabular-nums text-gray-500">{p.matches_played}</span>
                   <span className="w-8 text-center text-sm font-bold text-green-600">{p.wins}</span>
                   <span className="w-8 text-center text-sm font-bold text-red-400">{p.losses}</span>
+                  <span className="w-10 text-center text-sm tabular-nums text-blue-700 font-semibold">{p.points}</span>
                   <span className="w-12 text-right text-sm text-gray-500">{p.matches_played ? `${pct}%` : <span className="text-gray-300">—</span>}</span>
                 </div>
               );

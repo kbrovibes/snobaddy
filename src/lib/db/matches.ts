@@ -17,6 +17,7 @@ export interface PlayerSessionStats {
   wins: number;
   losses: number;
   matches_played: number;
+  points: number;
   user_id: string | null;
   is_admin: boolean;
 }
@@ -404,7 +405,7 @@ export async function getSessionScoreboard(sessionId: string): Promise<PlayerSes
     supabase
       .from("matches")
       .select(`
-        team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team,
+        team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team, team1_score, team2_score,
         t1p1:team1_player1_id(name, skill_level, user_id, is_admin),
         t1p2:team1_player2_id(name, skill_level, user_id, is_admin),
         t2p1:team2_player1_id(name, skill_level, user_id, is_admin),
@@ -418,7 +419,7 @@ export async function getSessionScoreboard(sessionId: string): Promise<PlayerSes
 
   function ensurePlayer(id: string, player: { name: string; skill_level: number; user_id: string | null; is_admin: boolean }) {
     if (!stats.has(id)) {
-      stats.set(id, { player_id: id, name: player.name, skill_level: player.skill_level, user_id: player.user_id, is_admin: player.is_admin, wins: 0, losses: 0, matches_played: 0 });
+      stats.set(id, { player_id: id, name: player.name, skill_level: player.skill_level, user_id: player.user_id, is_admin: player.is_admin, wins: 0, losses: 0, matches_played: 0, points: 0 });
     }
   }
 
@@ -445,6 +446,13 @@ export async function getSessionScoreboard(sessionId: string): Promise<PlayerSes
     for (const pid of losers) {
       const s = stats.get(pid)!;
       s.losses++; s.matches_played++;
+    }
+
+    for (const pid of team1) {
+      stats.get(pid)!.points += m.team1_score ?? 0;
+    }
+    for (const pid of team2) {
+      stats.get(pid)!.points += m.team2_score ?? 0;
     }
   }
 
