@@ -31,6 +31,7 @@ import TallyScoreboard from "@/components/TallyScoreboard";
 import TallyEntryForm from "@/components/TallyEntryForm";
 import TallyHighlights from "@/components/TallyHighlights";
 import ResetSessionButton from "@/components/ResetSessionButton";
+import AutoRefreshToggle from "@/components/AutoRefreshToggle";
 
 export const dynamic = "force-dynamic";
 
@@ -122,6 +123,7 @@ export default async function SessionDetailPage({
           </div>
         </div>
         <div className="ml-auto shrink-0 flex items-center gap-2">
+          {isActive && <AutoRefreshToggle />}
           {isAdmin && (
             <TestSessionToggle sessionId={session.id} isTestSession={session.is_test_session} />
           )}
