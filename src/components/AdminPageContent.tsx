@@ -37,7 +37,7 @@ export default function AdminPageContent({
     <div className="px-4 py-4 pb-20">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
+        <h1 className="text-xl font-bold text-gray-900">Players</h1>
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-400">{players.length} active</span>
           {isGodMode && (
