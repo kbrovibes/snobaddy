@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.31] - 2026-04-07
+
+### Fixed
+- **Players list — Check In / Check Out** — removed underline and corrected color to match the Logout button style (`text-sky-600` / `text-red-600`, no underline).
+
+---
+
 ## [0.24.30] - 2026-04-07
 
 ### Changed

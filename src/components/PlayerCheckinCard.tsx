@@ -164,7 +164,7 @@ export default function PlayerCheckinCard({
           ) : present ? (
             <button
               onClick={checkOut}
-              className="text-blue-600 underline underline-offset-2 hover:text-blue-800 transition-colors"
+              className="text-red-600 hover:text-red-800 transition-colors font-medium"
               style={{ fontSize: 11, background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
             >
               Check out
@@ -172,7 +172,7 @@ export default function PlayerCheckinCard({
           ) : (
             <button
               onClick={checkIn}
-              className="text-blue-600 underline underline-offset-2 hover:text-blue-800 transition-colors"
+              className="text-sky-600 hover:text-sky-800 transition-colors font-medium"
               style={{ fontSize: 11, background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
             >
               Check in
