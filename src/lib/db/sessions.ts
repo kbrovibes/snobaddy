@@ -142,6 +142,32 @@ export async function getSessionById(id: string): Promise<Session | null> {
   };
 }
 
+export async function getAdjacentNonTestSessions(
+  currentDate: string,
+): Promise<{ newer: { id: string; date: string } | null; older: { id: string; date: string } | null }> {
+  const supabase = await createClient();
+  const [{ data: newerData }, { data: olderData }] = await Promise.all([
+    supabase
+      .from("sessions")
+      .select("id, date")
+      .eq("is_test_session", false)
+      .gt("date", currentDate)
+      .order("date", { ascending: true })
+      .limit(1),
+    supabase
+      .from("sessions")
+      .select("id, date")
+      .eq("is_test_session", false)
+      .lt("date", currentDate)
+      .order("date", { ascending: false })
+      .limit(1),
+  ]);
+  return {
+    newer: newerData?.[0] ?? null,
+    older: olderData?.[0] ?? null,
+  };
+}
+
 export async function getPastSessionsThisSeason(seasonId: string, beforeDate: string) {
   const supabase = await createClient();
   const { data } = await supabase

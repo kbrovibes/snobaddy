@@ -5,6 +5,7 @@ import {
   getSessionById,
   getCheckedInPlayers,
   getPastSessionsThisSeason,
+  getAdjacentNonTestSessions,
 } from "@/lib/db/sessions";
 import { getSessionMatches, getSessionScoreboard, getSessionHighlights } from "@/lib/db/matches";
 import { getProposedMatches } from "@/lib/db/proposed";
@@ -75,7 +76,10 @@ export default async function SessionDetailPage({
 
   const isCheckedIn = checkedInPlayers.some((p) => p.player_id === playerId);
 
-  const pastSessions = await getPastSessionsThisSeason(session.season.id, session.date);
+  const [pastSessions, adjacentSessions] = await Promise.all([
+    getPastSessionsThisSeason(session.season.id, session.date),
+    getAdjacentNonTestSessions(session.date),
+  ]);
 
   const isPending = session.status === "pending";
   const isActive = session.status === "active";
@@ -109,7 +113,29 @@ export default async function SessionDetailPage({
     <div className="flex flex-col gap-4 px-4 py-4">
 
       <OnlinePing />
-      <BackToSessionsLink />
+
+      {/* Session nav */}
+      <div className="flex items-center justify-between text-sm">
+        <div className="w-24">
+          {adjacentSessions.newer ? (
+            <Link href={`/session/${adjacentSessions.newer.id}`} className="text-blue-600 hover:underline">
+              ← Newer
+            </Link>
+          ) : (
+            <span className="text-gray-300">← Newer</span>
+          )}
+        </div>
+        <BackToSessionsLink />
+        <div className="w-24 text-right">
+          {adjacentSessions.older ? (
+            <Link href={`/session/${adjacentSessions.older.id}`} className="text-blue-600 hover:underline">
+              Older →
+            </Link>
+          ) : (
+            <span className="text-gray-300">Older →</span>
+          )}
+        </div>
+      </div>
 
       {/* Season header */}
       <div className="flex flex-col gap-1.5">
