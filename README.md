@@ -22,36 +22,36 @@
 **Session flow**
 
 <p align="center">
-  <img src="screenshots/snobaddy-screen-v2-1.png" width="260" title="Session list — home" />
-  <img src="screenshots/snobaddy-screen-v2-2.png" width="260" title="Upcoming session detail" />
-  <img src="screenshots/snobaddy-screen-v2-3.png" width="260" title="Active session — checked in, score entry" />
+  <img src="screenshots/snobaddy-screen-v2-1.png" width="320" title="Session list — home" />
+  <img src="screenshots/snobaddy-screen-v2-2.png" width="320" title="Upcoming session detail" />
+  <img src="screenshots/snobaddy-screen-v2-3.png" width="320" title="Active session — checked in, score entry" />
 </p>
 <p align="center"><em>Session list &nbsp;·&nbsp; Upcoming session &nbsp;·&nbsp; Active session check-in</em></p>
 
 **Players & leaderboard**
 
 <p align="center">
-  <img src="screenshots/snobaddy-screen-v2-4.png" width="260" title="Players list" />
-  <img src="screenshots/snobaddy-screen-v2-6.png" width="260" title="Players list — multiple checked in" />
-  <img src="screenshots/snobaddy-screen-v2-5.png" width="260" title="Season leaderboard" />
+  <img src="screenshots/snobaddy-screen-v2-4.png" width="320" title="Players list" />
+  <img src="screenshots/snobaddy-screen-v2-6.png" width="320" title="Players list — multiple checked in" />
+  <img src="screenshots/snobaddy-screen-v2-5.png" width="320" title="Season leaderboard" />
 </p>
 <p align="center"><em>Players list &nbsp;·&nbsp; Players with check-ins &nbsp;·&nbsp; Season leaderboard</em></p>
 
 **Recording matches**
 
 <p align="center">
-  <img src="screenshots/snobaddy-screen-v2-7.png" width="260" title="Who's Here — active session" />
-  <img src="screenshots/snobaddy-screen-v2-8.png" width="260" title="Full score entry with Generate Matches" />
-  <img src="screenshots/snobaddy-screen-v2-9.png" width="260" title="Live scoreboard after first match" />
+  <img src="screenshots/snobaddy-screen-v2-7.png" width="320" title="Who's Here — active session" />
+  <img src="screenshots/snobaddy-screen-v2-8.png" width="320" title="Full score entry with Generate Matches" />
+  <img src="screenshots/snobaddy-screen-v2-9.png" width="320" title="Live scoreboard after first match" />
 </p>
 <p align="center"><em>Who's Here &nbsp;·&nbsp; Score entry + match generator &nbsp;·&nbsp; Live scoreboard</em></p>
 
 **End of night**
 
 <p align="center">
-  <img src="screenshots/snobaddy-screen-v2-10.png" width="260" title="Session awards" />
-  <img src="screenshots/snobaddy-screen-v2-11.png" width="260" title="Full session scoreboard — 25 matches" />
-  <img src="screenshots/snobaddy-screen-v2-12.png" width="260" title="Player profile" />
+  <img src="screenshots/snobaddy-screen-v2-10.png" width="320" title="Session awards" />
+  <img src="screenshots/snobaddy-screen-v2-11.png" width="320" title="Full session scoreboard — 25 matches" />
+  <img src="screenshots/snobaddy-screen-v2-12.png" width="320" title="Player profile" />
 </p>
 <p align="center"><em>Session awards &nbsp;·&nbsp; Final scoreboard (25 matches) &nbsp;·&nbsp; Player profile</em></p>
 
