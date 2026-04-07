@@ -24,12 +24,12 @@ function AwardCard({ emoji, title, description, name, stat }: {
   emoji: string; title: string; description: string; name: string; stat: string;
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 px-4 py-3 flex flex-col items-center gap-1 text-center">
-      <span className="text-2xl">{emoji}</span>
-      <span className="text-xs font-semibold text-gray-700 leading-tight min-h-[2rem] flex items-center justify-center">{title}</span>
-      <span className="text-xs text-gray-400 leading-tight min-h-[2rem] flex items-center justify-center">{description}</span>
-      <span className="text-base font-bold text-gray-900 leading-tight mt-1">{name}</span>
-      <span className="text-xs text-gray-400">{stat}</span>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 px-3 py-2 flex flex-col items-center gap-0.5 text-center">
+      <span className="text-xl">{emoji}</span>
+      <span className="text-xs font-semibold text-gray-700 leading-tight">{title}</span>
+      <span className="text-[11px] text-gray-400 leading-tight">{description}</span>
+      <span className="text-sm font-bold text-gray-900 leading-tight mt-0.5">{name}</span>
+      <span className="text-[11px] text-gray-400">{stat}</span>
     </div>
   );
 }
@@ -55,7 +55,7 @@ export default function LeaderboardTable({
   totalMatchesWithTest: number;
   isAdmin: boolean;
 }) {
-  const [sortKey, setSortKey] = useState<SortKey>("win_pct");
+  const [sortKey, setSortKey] = useState<SortKey>("wins");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [showTest, setShowTest] = useState(false);
 
@@ -207,10 +207,10 @@ export default function LeaderboardTable({
                   key={player.id}
                   className={`border-b hover:bg-gray-100/50 transition-colors ${getRankColor(player.id)}`}
                 >
-                  <td className={`px-4 py-3 text-xs font-bold text-right ${player.id === nutCracker?.id || player.id === badmintonNut?.id ? "text-gray-900" : "text-gray-300"}`}>
+                  <td className={`px-4 py-1.5 text-xs font-bold text-right ${player.id === nutCracker?.id || player.id === badmintonNut?.id ? "text-gray-900" : "text-gray-300"}`}>
                     {getRankBadge(i, player.id)}
                   </td>
-                  <td className="px-2 py-3 font-medium text-gray-900 max-w-[120px]">
+                  <td className="px-2 py-1.5 font-medium text-gray-900 max-w-[120px]">
                     <span className="flex items-center gap-1 min-w-0">
                       <Link href={`/players/${player.id}`} className="truncate text-blue-700 hover:underline">
                         {player.name}
@@ -219,10 +219,10 @@ export default function LeaderboardTable({
                       {player.is_admin && <AdminBadge />}
                     </span>
                   </td>
-                  <td className="px-3 py-3 text-right tabular-nums text-gray-700">{player.matches_played}</td>
-                  <td className="px-3 py-3 text-right tabular-nums text-gray-700">{player.wins}</td>
-                  <td className="px-3 py-3 text-right tabular-nums text-gray-700">{player.losses}</td>
-                  <td className="px-3 py-3 text-right tabular-nums font-bold text-gray-900">
+                  <td className="px-3 py-1.5 text-right tabular-nums text-gray-700">{player.matches_played}</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums text-gray-700">{player.wins}</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums text-gray-700">{player.losses}</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums font-bold text-gray-900">
                     {formatPct(player)}
                   </td>
                 </tr>
