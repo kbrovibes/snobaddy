@@ -85,7 +85,7 @@ export default function PlayerCheckinCard({
         <button
           onClick={checkOut}
           disabled={loading}
-          className="text-xs px-2.5 py-1 rounded-lg border border-red-200 bg-white text-red-500 font-medium hover:bg-red-50 transition-colors disabled:opacity-40"
+          className="text-[11px] px-1.5 py-0.5 rounded border border-red-200 bg-white text-red-500 font-medium hover:bg-red-50 transition-colors disabled:opacity-40"
         >
           {loading ? "…" : "Check Out"}
         </button>
@@ -93,7 +93,7 @@ export default function PlayerCheckinCard({
         <button
           onClick={checkIn}
           disabled={loading || !sessionId}
-          className="text-xs px-2.5 py-1 rounded-lg bg-sky-500 text-white font-semibold hover:bg-sky-600 transition-colors disabled:opacity-50"
+          className="text-[11px] px-1.5 py-0.5 rounded bg-sky-500 text-white font-semibold hover:bg-sky-600 transition-colors disabled:opacity-50"
         >
           {loading ? "…" : "Check In"}
         </button>
