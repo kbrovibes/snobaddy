@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import PullToRefresh from "@/components/PullToRefresh";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -46,6 +47,7 @@ export default function RootLayout({
         <NextTopLoader color="#0ea5e9" height={4} showSpinner={false} />
         <PullToRefresh />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );

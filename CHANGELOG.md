@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.29] - 2026-04-07
+
+### Added
+- **Speed Insights** — Vercel Speed Insights enabled. Real-user Core Web Vitals (LCP, FCP, CLS, INP, TTFB) will appear in the Vercel dashboard after deploy.
+
+---
+
 ## [0.24.28] - 2026-04-07
 
 ### Changed
