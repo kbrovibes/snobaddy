@@ -20,6 +20,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.29] - 2026-04-07
+
+### Added
+- **Vercel Analytics** — page view tracking enabled. Visible in the Vercel dashboard under Analytics.
+
+---
+
 ## [0.24.28] - 2026-04-07
 
 ### Changed
