@@ -194,8 +194,6 @@ export default async function SessionDetailPage({
             />
           )}
 
-          {/* Admin: close session */}
-          {isAdmin && <CloseSessionButton sessionId={session.id} />}
         </>
       )}
 
@@ -295,7 +293,8 @@ export default async function SessionDetailPage({
         </div>
       )}
 
-      {/* God Mode: reset — shown below scores for active/completed-with-matches */}
+      {/* Admin: finalize + God Mode: reset — grouped at bottom */}
+      {isAdmin && isActive && <CloseSessionButton sessionId={session.id} />}
       {isGodMode && (isActive || (isCompleted && (tallyRows as TallyEntry[]).length === 0)) && (
         <ResetSessionButton sessionId={session.id} />
       )}

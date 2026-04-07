@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.10] - 2026-04-06
+
+### Changed
+- **Finalize Scores & Close** — renamed from "Close Session"; now a solid blue button matching the Check In style; moved to sit directly above the Reset button (was separated by scoreboard + match history).
+- **Wipe & Reset Session** — renamed from "Reset Session"; now a solid red button.
+
+---
+
 ## [0.24.9] - 2026-04-06
 
 ### Changed

@@ -31,9 +31,9 @@ export default function ResetSessionButton({ sessionId }: { sessionId: string })
       <button
         onClick={openDialog}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-2 bg-red-50 border border-red-200 text-red-600 text-sm font-semibold rounded-xl px-4 py-3 hover:bg-red-100 transition-colors disabled:opacity-50"
+        className="w-full flex items-center justify-center gap-2 bg-red-600 text-white text-sm font-semibold rounded-xl px-4 py-2.5 hover:bg-red-700 transition-colors disabled:opacity-50"
       >
-        ⚡ Reset Session
+        Wipe &amp; Reset Session
       </button>
 
       {confirming && counts && (
