@@ -146,25 +146,21 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
         {matches.map((m) => {
           const isScoring = scoringId === m.id;
           return (
-            <div key={m.id} className="bg-white border border-blue-50 rounded-xl p-3 shadow-sm">
-              {/* Team names */}
-              <div className="grid grid-cols-[1fr_2rem_1fr] items-center gap-1 text-base text-gray-800 mb-3">
-                <div className="text-right">
-                  {m.team1_names?.map((n, i) => (
-                    <div key={i}>{shortName(n, nameMap)}</div>
-                  ))}
-                </div>
-                <div className="text-center text-gray-300 text-xs">vs</div>
-                <div className="text-left">
-                  {m.team2_names?.map((n, i) => (
-                    <div key={i}>{shortName(n, nameMap)}</div>
-                  ))}
-                </div>
+            <div key={m.id} className="bg-white border border-blue-50 rounded-xl px-3 py-2 shadow-sm">
+              {/* Team names — inline, centred "vs" */}
+              <div className="grid grid-cols-[1fr_2rem_1fr] items-center gap-1 mb-1.5">
+                <p className="text-xs font-semibold text-gray-800 text-right truncate">
+                  {m.team1_names?.map((n) => shortName(n, nameMap)).join(" & ")}
+                </p>
+                <p className="text-center text-gray-300 text-xs">vs</p>
+                <p className="text-xs font-semibold text-gray-800 text-left truncate">
+                  {m.team2_names?.map((n) => shortName(n, nameMap)).join(" & ")}
+                </p>
               </div>
 
               {/* Inline score entry */}
               {isScoring && (
-                <div className="mb-3">
+                <div className="mb-2">
                   <div className="grid grid-cols-[1fr_2rem_1fr] items-center gap-1">
                     <input
                       type="number"
@@ -199,14 +195,14 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
                     <button
                       onClick={() => handleSave(m)}
                       disabled={saving}
-                      className="flex-1 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                      className="flex-1 py-1 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                     >
                       {saving ? "Saving..." : "✅ Save"}
                     </button>
                     <button
                       onClick={cancelScoring}
                       disabled={saving}
-                      className="flex-1 py-2 bg-gray-50 text-gray-500 text-xs font-bold rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
+                      className="flex-1 py-1 bg-gray-50 text-gray-500 text-xs font-bold rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
                     >
                       ✕ Cancel
                     </button>
@@ -215,14 +211,14 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
                   <>
                     <button
                       onClick={() => startScoring(m.id)}
-                      className="flex-1 py-2 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-100 transition-colors"
+                      className="flex-1 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-100 transition-colors"
                     >
                       🏸 Record Score
                     </button>
                     <button
                       onClick={() => handleDelete(m.id)}
                       disabled={deletingId === m.id}
-                      className="flex-1 py-2 bg-red-50 text-red-400 text-xs font-bold rounded-lg hover:bg-red-100 hover:text-red-500 transition-colors disabled:opacity-50"
+                      className="flex-1 py-1 bg-red-50 text-red-400 text-xs font-bold rounded-lg hover:bg-red-100 hover:text-red-500 transition-colors disabled:opacity-50"
                     >
                       {deletingId === m.id ? "Deleting..." : "🗑️ Delete"}
                     </button>

@@ -9,7 +9,11 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [0.24.11] - 2026-04-06
 
 ### Changed
+<<<<<<< Updated upstream
 - **Who's Here** — preview reduced from 4 to 2 rows; remaining players shown under "See More".
+=======
+- **Proposed Matches** — compact layout: team names now shown inline (`A & B vs C & D`) with centered "vs", reduced padding and button height.
+>>>>>>> Stashed changes
 
 ---
 
