@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { PlayerSessionStats } from "@/lib/db/matches";
+import { VerifiedBadge, AdminBadge } from "./PlayerBadges";
 
 type SortKey = "name" | "matches_played" | "wins" | "losses" | "win_pct";
 type SortDir = "asc" | "desc";
@@ -94,12 +95,16 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
               return (
                 <div key={p.player_id} className="flex items-center px-1">
                   <span className="text-xs text-gray-300 w-5 shrink-0" />
-                  <Link
-                    href={`/players/${p.player_id}`}
-                    className={`flex-1 text-sm font-medium truncate hover:underline underline-offset-2 ${p.player_id === playerId ? "text-blue-600" : "text-gray-800"}`}
-                  >
-                    {p.name}
-                  </Link>
+                  <span className="flex-1 flex items-center gap-1 min-w-0">
+                    <Link
+                      href={`/players/${p.player_id}`}
+                      className={`text-sm font-medium truncate hover:underline underline-offset-2 ${p.player_id === playerId ? "text-blue-600" : "text-gray-800"}`}
+                    >
+                      {p.name}
+                    </Link>
+                    {p.user_id && <VerifiedBadge />}
+                    {p.is_admin && <AdminBadge />}
+                  </span>
                   <span className="w-8 text-center text-sm tabular-nums text-gray-500">{p.matches_played}</span>
                   <span className="w-8 text-center text-sm font-bold text-green-600">{p.wins}</span>
                   <span className="w-8 text-center text-sm font-bold text-red-400">{p.losses}</span>

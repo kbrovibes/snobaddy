@@ -17,6 +17,8 @@ export interface PlayerSessionStats {
   wins: number;
   losses: number;
   matches_played: number;
+  user_id: string | null;
+  is_admin: boolean;
 }
 
 async function getDeletedPlayerIds(supabase: Awaited<ReturnType<typeof createClient>>): Promise<Set<string>> {
@@ -403,10 +405,10 @@ export async function getSessionScoreboard(sessionId: string): Promise<PlayerSes
       .from("matches")
       .select(`
         team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team,
-        t1p1:team1_player1_id(name, skill_level),
-        t1p2:team1_player2_id(name, skill_level),
-        t2p1:team2_player1_id(name, skill_level),
-        t2p2:team2_player2_id(name, skill_level)
+        t1p1:team1_player1_id(name, skill_level, user_id, is_admin),
+        t1p2:team1_player2_id(name, skill_level, user_id, is_admin),
+        t2p1:team2_player1_id(name, skill_level, user_id, is_admin),
+        t2p2:team2_player2_id(name, skill_level, user_id, is_admin)
       `)
       .eq("session_id", sessionId),
     getDeletedPlayerIds(supabase),
@@ -414,17 +416,17 @@ export async function getSessionScoreboard(sessionId: string): Promise<PlayerSes
 
   const stats = new Map<string, PlayerSessionStats>();
 
-  function ensurePlayer(id: string, player: { name: string; skill_level: number }) {
+  function ensurePlayer(id: string, player: { name: string; skill_level: number; user_id: string | null; is_admin: boolean }) {
     if (!stats.has(id)) {
-      stats.set(id, { player_id: id, name: player.name, skill_level: player.skill_level, wins: 0, losses: 0, matches_played: 0 });
+      stats.set(id, { player_id: id, name: player.name, skill_level: player.skill_level, user_id: player.user_id, is_admin: player.is_admin, wins: 0, losses: 0, matches_played: 0 });
     }
   }
 
   for (const m of (matches ?? []).filter((m) => !hasDeletedPlayer(m, deletedIds))) {
-    const t1p1 = m.t1p1 as unknown as { name: string; skill_level: number };
-    const t1p2 = m.t1p2 as unknown as { name: string; skill_level: number };
-    const t2p1 = m.t2p1 as unknown as { name: string; skill_level: number };
-    const t2p2 = m.t2p2 as unknown as { name: string; skill_level: number };
+    const t1p1 = m.t1p1 as unknown as { name: string; skill_level: number; user_id: string | null; is_admin: boolean };
+    const t1p2 = m.t1p2 as unknown as { name: string; skill_level: number; user_id: string | null; is_admin: boolean };
+    const t2p1 = m.t2p1 as unknown as { name: string; skill_level: number; user_id: string | null; is_admin: boolean };
+    const t2p2 = m.t2p2 as unknown as { name: string; skill_level: number; user_id: string | null; is_admin: boolean };
 
     ensurePlayer(m.team1_player1_id, t1p1);
     ensurePlayer(m.team1_player2_id, t1p2);

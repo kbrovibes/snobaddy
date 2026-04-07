@@ -13,6 +13,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.9] - 2026-04-06
+
+### Changed
+- **Who's Here & Tonight's Scores** — verified (✓) and admin badges now appear next to player names.
+
+---
+
 ## [0.24.8] - 2026-04-06
 
 ### Changed

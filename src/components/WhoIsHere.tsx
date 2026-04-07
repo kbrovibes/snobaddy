@@ -3,12 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { VerifiedBadge, AdminBadge } from "./PlayerBadges";
 
 interface Player {
   player_id: string;
   name: string;
   skill_level: number;
   checked_in_at: string;
+  user_id?: string | null;
+  is_admin?: boolean;
 }
 
 type SortKey = "checked_in_at" | "name" | "skill_level";
@@ -142,6 +145,8 @@ export default function WhoIsHere({
               <Link href={`/players/${p.player_id}`} className="font-medium text-blue-700 text-sm truncate hover:underline">
                 {p.name}
               </Link>
+              {p.user_id && <VerifiedBadge />}
+              {p.is_admin && <AdminBadge />}
             </span>
             <div className="w-24 flex justify-center">
               <SkillDots level={p.skill_level} />

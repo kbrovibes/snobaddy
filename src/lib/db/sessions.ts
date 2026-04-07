@@ -26,6 +26,8 @@ export interface CheckedInPlayer {
   name: string;
   skill_level: number;
   checked_in_at: string;
+  user_id: string | null;
+  is_admin: boolean;
 }
 
 export interface SessionPresence {
@@ -159,7 +161,7 @@ export async function getCheckedInPlayers(sessionId: string): Promise<CheckedInP
   const [{ data }, { data: deletedData }] = await Promise.all([
     supabase
       .from("session_players")
-      .select("player_id, checked_in_at, players(name, skill_level)")
+      .select("player_id, checked_in_at, players(name, skill_level, user_id, is_admin)")
       .eq("session_id", sessionId)
       .is("checked_out_at", null)
       .order("checked_in_at"),
@@ -176,7 +178,7 @@ export async function getCheckedInPlayers(sessionId: string): Promise<CheckedInP
     .map((row) => ({
       player_id: row.player_id,
       checked_in_at: row.checked_in_at,
-      ...(row.players as unknown as { name: string; skill_level: number }),
+      ...(row.players as unknown as { name: string; skill_level: number; user_id: string | null; is_admin: boolean }),
     }));
 }
 
