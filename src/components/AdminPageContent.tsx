@@ -80,31 +80,34 @@ export default function AdminPageContent({
       {players.length === 0 ? (
         <p className="text-center text-gray-400 text-sm py-12">No players yet.</p>
       ) : (
-        <div className="grid grid-cols-3 gap-2">
-          {players.map((player) => {
-            const p = presenceMap.get(player.id);
-            const initialStatus = !p
-              ? "absent"
-              : p.checked_out_at
-              ? "checked-out"
-              : "present";
-
-            return (
-              <div key={player.id} className="flex flex-col gap-1">
-                <PlayerCheckinCard
-                  playerId={player.id}
-                  name={player.name}
-                  isAdminPlayer={player.is_admin ?? false}
-                  hasUserAccount={!!player.user_id}
-                  sessionId={sessionId}
-                  initialStatus={initialStatus}
-                />
-                {godModeActive && (
-                  <DeletePlayerButton playerId={player.id} playerName={player.name} />
-                )}
-              </div>
-            );
-          })}
+        <div className="flex gap-2 items-start">
+          {[0, 1, 2].map((col) => (
+            <div key={col} className={`flex flex-col gap-2 flex-1${col === 1 ? " mt-8" : ""}`}>
+              {players.filter((_, i) => i % 3 === col).map((player) => {
+                const p = presenceMap.get(player.id);
+                const initialStatus = !p
+                  ? "absent"
+                  : p.checked_out_at
+                  ? "checked-out"
+                  : "present";
+                return (
+                  <div key={player.id} className="flex flex-col gap-1">
+                    <PlayerCheckinCard
+                      playerId={player.id}
+                      name={player.name}
+                      isAdminPlayer={player.is_admin ?? false}
+                      hasUserAccount={!!player.user_id}
+                      sessionId={sessionId}
+                      initialStatus={initialStatus}
+                    />
+                    {godModeActive && (
+                      <DeletePlayerButton playerId={player.id} playerName={player.name} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
         </div>
       )}
 
