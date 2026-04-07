@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const INTERVAL_MS = 5000;
+const INTERVAL_MS = 15000;
 const STORAGE_KEY = "snobaddy_autorefresh";
 
 export default function AutoRefreshToggle() {
