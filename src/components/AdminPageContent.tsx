@@ -14,6 +14,7 @@ interface Props {
   presence: SessionPresence[];
   sessionId?: string;
   sessionActive: boolean;
+  isAdmin: boolean;
   isGodMode: boolean;
 }
 
@@ -23,6 +24,7 @@ export default function AdminPageContent({
   presence,
   sessionId,
   sessionActive,
+  isAdmin,
   isGodMode,
 }: Props) {
   const [godModeActive, setGodModeActive] = useState(false);
@@ -89,19 +91,21 @@ export default function AdminPageContent({
               ⚡
             </button>
           )}
-          <button
-            onClick={() => setAddPlayerOpen(true)}
-            style={{
-              background: '#1C1917',
-              color: 'white',
-              borderRadius: 10,
-              fontSize: 13,
-              fontWeight: 600,
-              padding: '6px 12px',
-            }}
-          >
-            + Add
-          </button>
+          {isAdmin && (
+            <button
+              onClick={() => setAddPlayerOpen(true)}
+              style={{
+                background: '#1C1917',
+                color: 'white',
+                borderRadius: 10,
+                fontSize: 13,
+                fontWeight: 600,
+                padding: '6px 12px',
+              }}
+            >
+              + Add
+            </button>
+          )}
         </div>
       </div>
 
@@ -132,6 +136,7 @@ export default function AdminPageContent({
                   hasUserAccount={!!player.user_id}
                   sessionId={sessionId}
                   initialStatus={initialStatus}
+                  isAdmin={isAdmin}
                 />
                 {godModeActive && (
                   <DeletePlayerButton playerId={player.id} playerName={player.name} />

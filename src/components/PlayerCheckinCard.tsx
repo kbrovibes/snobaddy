@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const AVATAR_COLORS = [
   '#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B',
@@ -31,6 +32,7 @@ interface Props {
   hasUserAccount: boolean;
   sessionId?: string;
   initialStatus?: Status;
+  isAdmin?: boolean;
 }
 
 export default function PlayerCheckinCard({
@@ -40,6 +42,7 @@ export default function PlayerCheckinCard({
   hasUserAccount,
   sessionId,
   initialStatus = "absent",
+  isAdmin = false,
 }: Props) {
   const [status, setStatus] = useState<Status>(initialStatus);
   const [loading, setLoading] = useState(false);
@@ -47,24 +50,28 @@ export default function PlayerCheckinCard({
 
   const present = status === "present";
 
-  async function handleTap() {
+  async function checkIn() {
     if (!sessionId || loading) return;
     setLoading(true);
-    if (present) {
-      await fetch(`/api/sessions/${sessionId}/checkout`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ player_id: playerId }),
-      });
-      setStatus("checked-out");
-    } else {
-      await fetch(`/api/sessions/${sessionId}/checkin`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ player_id: playerId }),
-      });
-      setStatus("present");
-    }
+    await fetch(`/api/sessions/${sessionId}/checkin`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ player_id: playerId }),
+    });
+    setStatus("present");
+    setLoading(false);
+    router.refresh();
+  }
+
+  async function checkOut() {
+    if (!sessionId || loading) return;
+    setLoading(true);
+    await fetch(`/api/sessions/${sessionId}/checkout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ player_id: playerId }),
+    });
+    setStatus("checked-out");
     setLoading(false);
     router.refresh();
   }
@@ -73,10 +80,8 @@ export default function PlayerCheckinCard({
   const inits = initials(name);
 
   return (
-    <button
-      onClick={handleTap}
-      disabled={loading || !sessionId}
-      className="relative w-full text-left overflow-hidden transition-all duration-150 active:scale-95 disabled:opacity-60"
+    <div
+      className="relative w-full overflow-hidden"
       style={{
         borderRadius: 12,
         border: present ? '2px solid #34D399' : '1.5px solid #E7E5E4',
@@ -117,41 +122,68 @@ export default function PlayerCheckinCard({
         </>
       )}
 
-      {/* Row 1: Avatar + admin shield */}
-      <div className="flex items-center gap-1.5 mb-1.5">
-        <div
-          style={{
-            width: 30,
-            height: 30,
-            borderRadius: 8,
-            background: bg,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}
-        >
-          <span style={{ color: 'white', fontSize: 11, fontWeight: 700, lineHeight: 1 }}>
-            {inits}
-          </span>
+      {/* Avatar + name — tapping opens player profile */}
+      <Link href={`/players/${playerId}`} className="block active:opacity-70 transition-opacity">
+        {/* Row 1: Avatar + admin shield */}
+        <div className="flex items-center gap-1.5 mb-1.5">
+          <div
+            style={{
+              width: 30,
+              height: 30,
+              borderRadius: 8,
+              background: bg,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <span style={{ color: 'white', fontSize: 11, fontWeight: 700, lineHeight: 1 }}>
+              {inits}
+            </span>
+          </div>
+          {isAdminPlayer && (
+            <span style={{ fontSize: 12, lineHeight: 1 }} title="Admin">🛡️</span>
+          )}
         </div>
-        {isAdminPlayer && (
-          <span style={{ fontSize: 12, lineHeight: 1 }} title="Admin">🛡️</span>
-        )}
-      </div>
 
-      {/* Row 2: Player name */}
-      <p
-        className="truncate"
-        style={{ fontSize: 13, fontWeight: 600, color: '#1C1917', marginBottom: 2, lineHeight: 1.3 }}
-      >
-        {name}
-      </p>
+        {/* Row 2: Player name */}
+        <p
+          className="truncate"
+          style={{ fontSize: 13, fontWeight: 600, color: '#1C1917', marginBottom: 2, lineHeight: 1.3 }}
+        >
+          {name}
+        </p>
+      </Link>
 
-      {/* Row 3: Status */}
-      <p style={{ fontSize: 11, color: present ? '#059669' : '#78716C', lineHeight: 1 }}>
-        {loading ? '…' : present ? '✓ Present' : 'Tap to check in'}
-      </p>
-    </button>
+      {/* Row 3: Check-in action (admin) or status (everyone) */}
+      {isAdmin && sessionId ? (
+        <div style={{ fontSize: 11, lineHeight: 1, marginTop: 2 }}>
+          {loading ? (
+            <span style={{ color: '#78716C' }}>…</span>
+          ) : present ? (
+            <button
+              onClick={checkOut}
+              className="text-blue-600 underline underline-offset-2 hover:text-blue-800 transition-colors"
+              style={{ fontSize: 11, background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+            >
+              Check out
+            </button>
+          ) : (
+            <button
+              onClick={checkIn}
+              className="text-blue-600 underline underline-offset-2 hover:text-blue-800 transition-colors"
+              style={{ fontSize: 11, background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+            >
+              Check in
+            </button>
+          )}
+        </div>
+      ) : (
+        <p style={{ fontSize: 11, color: present ? '#059669' : '#78716C', lineHeight: 1, marginTop: 2 }}>
+          {present ? '✓ Present' : status === 'checked-out' ? 'Checked out' : ''}
+        </p>
+      )}
+    </div>
   );
 }

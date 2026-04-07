@@ -6,6 +6,17 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.28] - 2026-04-07
+
+### Changed
+- **Players list** — now visible to all logged-in users, not just admins. The "Players" tab in the bottom nav is shown to everyone.
+- **Players list — check-in/out** — only admins see the "Check in" / "Check out" links on each player card. Non-admins see a read-only presence status.
+- **Players list — card interaction** — tapping a player's avatar or name opens their profile page. Check-in/out are now plain text links (no button styling) below the name.
+- **Players list — admin actions** — the "+ Add" button is now hidden for non-admins.
+- **Routing** — Players list moved from `/admin` to `/players`. `/admin` now redirects to `/players`.
+
+---
+
 ## [0.24.27] - 2026-04-07
 
 ### Changed
