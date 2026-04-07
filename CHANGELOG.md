@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.4] - 2026-04-06
+
+### Fixed
+- **Auto-refresh toggle label** — "Live" text was hidden on mobile (`hidden sm:inline`). Now always visible.
+
+---
+
 ## [0.24.3] - 2026-04-06
 
 ### Changed
