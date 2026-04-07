@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.20] - 2026-04-06
+
+### Changed
+- **Players page** — player cards are now more compact: skill dots and match counts removed. The Check In / Check Out button is always visible; it's disabled (grayed out) when no session is active.
+
+---
+
 ## [0.24.19] - 2026-04-06
 
 ### Changed

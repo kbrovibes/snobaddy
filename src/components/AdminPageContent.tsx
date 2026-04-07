@@ -94,11 +94,8 @@ export default function AdminPageContent({
                 <PlayerCheckinCard
                   playerId={player.id}
                   name={player.name}
-                  skillLevel={player.skill_level}
                   isAdminPlayer={player.is_admin ?? false}
                   hasUserAccount={!!player.user_id}
-                  wins={player.wins}
-                  losses={player.losses}
                   sessionId={sessionId}
                   initialStatus={initialStatus}
                 />
