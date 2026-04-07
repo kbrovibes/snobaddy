@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.27] - 2026-04-07
+
+### Changed
+- **Players screen** — grid back to 3 columns (was 2).
+
+---
+
 ## [0.24.26] - 2026-04-07
 
 ### Changed

@@ -114,7 +114,7 @@ export default function AdminPageContent({
       {players.length === 0 ? (
         <p className="text-center text-stone-400 text-sm py-12">No players yet.</p>
       ) : (
-        <div className="grid grid-cols-2 gap-2 px-2.5">
+        <div className="grid grid-cols-3 gap-2 px-2.5">
           {players.map((player) => {
             const p = presenceMap.get(player.id);
             const initialStatus = !p
