@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.16] - 2026-04-06
+
+### Changed
+- **Control Panel** — moved from bottom nav tab to a gear icon (⚙) in the top header, next to the profile badge. Only visible to God Mode users.
+
+---
+
 ## [0.24.15] - 2026-04-06
 
 ### Changed
