@@ -72,9 +72,9 @@ async function getVercelMetrics() {
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-100">
-        <h2 className="text-xs font-bold uppercase tracking-wide text-gray-500">{title}</h2>
+    <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+      <div className="px-4 py-3 border-b border-stone-100">
+        <h2 className="text-xs font-bold uppercase tracking-wide text-stone-500">{title}</h2>
       </div>
       <div className="px-4 py-3">{children}</div>
     </div>
@@ -83,11 +83,11 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
 
 function MetricRow({ label, value, sub, warn }: Metric) {
   return (
-    <div className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-      <span className="text-sm text-gray-600">{label}</span>
+    <div className="flex items-center justify-between py-2 border-b border-stone-50 last:border-0">
+      <span className="text-sm text-stone-600">{label}</span>
       <div className="text-right">
-        <span className={`text-sm font-semibold tabular-nums ${warn ? "text-red-500" : "text-gray-900"}`}>{value}</span>
-        {sub && <span className="block text-xs text-gray-400">{sub}</span>}
+        <span className={`text-sm font-semibold tabular-nums ${warn ? "text-red-500" : "text-stone-900"}`}>{value}</span>
+        {sub && <span className="block text-xs text-stone-400">{sub}</span>}
       </div>
     </div>
   );
@@ -96,7 +96,7 @@ function MetricRow({ label, value, sub, warn }: Metric) {
 function ProgressBar({ pct }: { pct: number }) {
   const color = pct >= 80 ? "bg-red-400" : pct >= 50 ? "bg-yellow-400" : "bg-green-400";
   return (
-    <div className="w-full bg-gray-100 rounded-full h-1.5 mt-1">
+    <div className="w-full bg-stone-100 rounded-full h-1.5 mt-1">
       <div className={`${color} h-1.5 rounded-full transition-all`} style={{ width: `${Math.min(pct, 100)}%` }} />
     </div>
   );
@@ -106,7 +106,7 @@ function DeployBadge({ state }: { state: string }) {
   if (state === "READY")   return <span className="text-xs font-semibold text-green-700 bg-green-100 px-1.5 py-0.5 rounded">Ready</span>;
   if (state === "ERROR")   return <span className="text-xs font-semibold text-red-600   bg-red-50   px-1.5 py-0.5 rounded">Error</span>;
   if (state === "BUILDING")return <span className="text-xs font-semibold text-sky-600  bg-sky-50  px-1.5 py-0.5 rounded">Building</span>;
-  return <span className="text-xs text-gray-400">{state}</span>;
+  return <span className="text-xs text-stone-400">{state}</span>;
 }
 
 // ─── page ─────────────────────────────────────────────────────────────────────
@@ -133,7 +133,7 @@ export default async function ControlPanelPage() {
   return (
     <div className="px-4 py-4 pb-20 flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">Control Panel</h1>
+        <h1 className="text-xl font-bold text-stone-900">Control Panel</h1>
         <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">GOD MODE</span>
       </div>
 
@@ -159,7 +159,7 @@ export default async function ControlPanelPage() {
             </div>
             <MetricRow label="Auth users" value={String(sbData.authUsers)} sub="signed-in accounts" />
           </>
-        ) : <p className="text-sm text-gray-400">Loading…</p>}
+        ) : <p className="text-sm text-stone-400">Loading…</p>}
       </Card>
 
       {/* ── App tables ── */}
@@ -179,7 +179,7 @@ export default async function ControlPanelPage() {
       {/* ── Vercel ── */}
       <Card title="Vercel — Account">
         {!process.env.VERCEL_API_TOKEN ? (
-          <p className="text-xs text-gray-400">Set VERCEL_API_TOKEN to enable.</p>
+          <p className="text-xs text-stone-400">Set VERCEL_API_TOKEN to enable.</p>
         ) : vData ? (
           <>
             <MetricRow label="Plan" value={vData.plan.charAt(0).toUpperCase() + vData.plan.slice(1)} />
@@ -195,10 +195,10 @@ export default async function ControlPanelPage() {
       {vData?.deployments && vData.deployments.length > 0 && (
         <Card title="Vercel — Recent Deployments">
           {vData.deployments.map(d => (
-            <div key={d.uid} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 gap-2">
+            <div key={d.uid} className="flex items-center justify-between py-2 border-b border-stone-50 last:border-0 gap-2">
               <div className="flex flex-col min-w-0">
-                <span className="text-xs font-mono text-gray-500 truncate">{d.url}</span>
-                <span className="text-xs text-gray-400">{new Date(d.created).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</span>
+                <span className="text-xs font-mono text-stone-500 truncate">{d.url}</span>
+                <span className="text-xs text-stone-400">{new Date(d.created).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</span>
               </div>
               <DeployBadge state={d.state} />
             </div>

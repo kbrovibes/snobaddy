@@ -65,7 +65,7 @@ export default function FinalizeSessionButton({
           <button
             onClick={() => setConfirming(false)}
             disabled={loading}
-            className="flex-1 py-1.5 bg-white border border-gray-200 text-gray-500 text-xs font-bold rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors"
+            className="flex-1 py-1.5 bg-white border border-stone-200 text-stone-500 text-xs font-bold rounded-lg hover:bg-stone-50 disabled:opacity-50 transition-colors"
           >
             Cancel
           </button>

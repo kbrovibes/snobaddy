@@ -58,7 +58,7 @@ export default function MatchAdminControls({ matchId, team1Names, team2Names, te
         >
           {loading ? "Deleting…" : "Yes, delete"}
         </button>
-        <button onClick={() => setMode("idle")} className="text-xs text-gray-400">
+        <button onClick={() => setMode("idle")} className="text-xs text-stone-400">
           Cancel
         </button>
       </div>
@@ -72,23 +72,23 @@ export default function MatchAdminControls({ matchId, team1Names, team2Names, te
 
     return (
       <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-        <span className="text-gray-500">{team1Names.join(" & ")}</span>
+        <span className="text-stone-500">{team1Names.join(" & ")}</span>
         <input
           type="number"
           value={s1}
           onChange={(e) => setS1(e.target.value)}
-          className="w-10 border border-gray-300 rounded px-1.5 py-0.5 text-center text-gray-900 text-xs"
+          className="w-10 border border-stone-300 rounded px-1.5 py-0.5 text-center text-stone-900 text-xs"
           min={0}
         />
-        <span className="text-gray-300">–</span>
+        <span className="text-stone-300">–</span>
         <input
           type="number"
           value={s2}
           onChange={(e) => setS2(e.target.value)}
-          className="w-10 border border-gray-300 rounded px-1.5 py-0.5 text-center text-gray-900 text-xs"
+          className="w-10 border border-stone-300 rounded px-1.5 py-0.5 text-center text-stone-900 text-xs"
           min={0}
         />
-        <span className="text-gray-500">{team2Names.join(" & ")}</span>
+        <span className="text-stone-500">{team2Names.join(" & ")}</span>
         <button
           onClick={handleSave}
           disabled={loading || !valid}
@@ -96,7 +96,7 @@ export default function MatchAdminControls({ matchId, team1Names, team2Names, te
         >
           {loading ? "Saving…" : "Save"}
         </button>
-        <button onClick={() => setMode("idle")} className="text-gray-400">
+        <button onClick={() => setMode("idle")} className="text-stone-400">
           Cancel
         </button>
       </div>

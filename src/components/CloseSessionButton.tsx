@@ -26,14 +26,14 @@ export default function CloseSessionButton({ sessionId }: { sessionId: string })
         <div className="flex gap-2">
           <button
             onClick={() => setConfirming(false)}
-            className="flex-1 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg"
+            className="flex-1 py-2 text-sm font-medium text-stone-600 bg-white border border-stone-200 rounded-lg"
           >
             Cancel
           </button>
           <button
             onClick={handleClose}
             disabled={loading}
-            className="flex-1 py-2 text-sm font-semibold text-white bg-sky-600 rounded-lg disabled:opacity-50"
+            className="flex-1 py-2 text-sm font-semibold text-white bg-stone-900 rounded-lg disabled:opacity-50"
           >
             {loading ? "Closing…" : "Yes, finalize it"}
           </button>
@@ -45,7 +45,7 @@ export default function CloseSessionButton({ sessionId }: { sessionId: string })
   return (
     <button
       onClick={() => setConfirming(true)}
-      className="w-full py-2.5 text-sm font-semibold text-white bg-sky-500 rounded-xl hover:bg-sky-600 transition-colors"
+      className="w-full py-2.5 text-sm font-semibold text-white bg-stone-900 rounded-xl hover:bg-stone-800 transition-colors"
     >
       Finalize Scores &amp; Close
     </button>

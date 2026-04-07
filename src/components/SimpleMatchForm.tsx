@@ -110,7 +110,7 @@ export default function SimpleMatchForm({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={`w-full border rounded-lg px-2 py-2 text-sm bg-white font-medium ${
-          value ? "border-sky-400 text-gray-900" : "border-gray-200 text-gray-400"
+          value ? "border-sky-400 text-stone-900" : "border-stone-200 text-stone-400"
         }`}
       >
         <option value="" disabled>Pick…</option>
@@ -126,14 +126,14 @@ export default function SimpleMatchForm({
 
       {/* Header row: title + toggle */}
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Record a Score</h2>
+        <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">Record a Score</h2>
         <button
           onClick={toggleMode}
           disabled={toggling || !isAdmin}
           className={`flex items-center gap-2 ${isAdmin ? "disabled:opacity-50" : "opacity-60 cursor-default"}`}
         >
-          <span className="text-xs text-gray-500">Win/Loss Only</span>
-          <span className={`relative inline-flex w-10 h-6 rounded-full transition-colors duration-200 ${simpleMode ? "bg-sky-500" : "bg-gray-200"}`}>
+          <span className="text-xs text-stone-500">Win/Loss Only</span>
+          <span className={`relative inline-flex w-10 h-6 rounded-full transition-colors duration-200 ${simpleMode ? "bg-sky-500" : "bg-stone-200"}`}>
             <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${simpleMode ? "translate-x-4" : "translate-x-0"}`} />
           </span>
         </button>
@@ -142,7 +142,7 @@ export default function SimpleMatchForm({
       {/* 3-col layout: winners | vs | losers */}
       <div className="grid grid-cols-[1fr_2rem_1fr] items-start gap-2">
         <div className={`flex flex-col gap-1.5 border rounded-xl px-2.5 py-2 ${
-          simpleMode ? "border-green-200 bg-green-50/40" : "border-gray-200 bg-gray-50/40"
+          simpleMode ? "border-green-200 bg-green-50/40" : "border-stone-200 bg-stone-50/40"
         }`}>
           <span className={`text-xs font-bold uppercase tracking-wide ${
             simpleMode ? "text-green-600" : "text-sky-600"
@@ -154,11 +154,11 @@ export default function SimpleMatchForm({
         </div>
 
         <div className="flex items-center justify-center h-full pt-5">
-          <span className="text-xs font-bold text-gray-300">vs</span>
+          <span className="text-xs font-bold text-stone-300">vs</span>
         </div>
 
-        <div className="flex flex-col gap-1.5 border border-gray-200 bg-gray-50/40 rounded-xl px-2.5 py-2">
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-wide select-none">
+        <div className="flex flex-col gap-1.5 border border-stone-200 bg-stone-50/40 rounded-xl px-2.5 py-2">
+          <span className="text-xs font-bold text-stone-400 uppercase tracking-wide select-none">
             {simpleMode ? <>&nbsp;</> : "Team 2"}
           </span>
           <PlayerSelect value={l1} onChange={setL1} exclude={[w1, w2, l2]} />
@@ -174,15 +174,15 @@ export default function SimpleMatchForm({
             value={score1}
             onChange={(e) => setScore1(e.target.value)}
             placeholder="21"
-            className="flex-1 text-center text-xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-2.5 focus:border-sky-400 outline-none"
+            className="flex-1 text-center text-xl font-bold text-stone-900 border-2 border-stone-200 rounded-xl py-2.5 focus:border-sky-400 outline-none"
           />
-          <span className="text-lg font-bold text-gray-300">–</span>
+          <span className="text-lg font-bold text-stone-300">–</span>
           <input
             type="number" min="0" max="99"
             value={score2}
             onChange={(e) => setScore2(e.target.value)}
             placeholder="15"
-            className="flex-1 text-center text-xl font-bold text-gray-900 border-2 border-gray-200 rounded-xl py-2.5 focus:border-sky-400 outline-none"
+            className="flex-1 text-center text-xl font-bold text-stone-900 border-2 border-stone-200 rounded-xl py-2.5 focus:border-sky-400 outline-none"
           />
         </div>
       )}
@@ -194,13 +194,13 @@ export default function SimpleMatchForm({
         <button
           onClick={save}
           disabled={!canSave || saving || saved}
-          className="flex-1 py-2 bg-sky-600 text-white font-semibold rounded-xl text-sm hover:bg-sky-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex-1 py-2 bg-stone-900 text-white font-semibold rounded-xl text-sm hover:bg-stone-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {saving ? "Saving…" : "Save"}
         </button>
         <button
           onClick={clear}
-          className="px-4 py-2 bg-gray-100 text-gray-600 font-semibold rounded-xl text-sm hover:bg-gray-200 transition-colors"
+          className="px-4 py-2 bg-stone-100 text-stone-600 font-semibold rounded-xl text-sm hover:bg-stone-200 transition-colors"
         >
           Clear
         </button>

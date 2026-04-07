@@ -2,18 +2,27 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { VerifiedBadge, AdminBadge } from "./PlayerBadges";
+
+const AVATAR_COLORS = [
+  '#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B',
+  '#10B981', '#EF4444', '#6366F1', '#14B8A6',
+];
+
+function avatarColor(name: string): string {
+  return AVATAR_COLORS[(name.charCodeAt(0) || 0) % AVATAR_COLORS.length];
+}
+
+function initials(name: string): string {
+  return name
+    .split(' ')
+    .filter((n) => /^[a-zA-Z]/.test(n))
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
 
 type Status = "absent" | "present" | "checked-out";
-
-// Shorten long names to "First L" to fit in compact 3-col grid
-function compactName(name: string): string {
-  if (name.length <= 11) return name;
-  const parts = name.trim().split(/\s+/);
-  if (parts.length < 2) return name;
-  return `${parts[0]} ${parts[parts.length - 1][0].toUpperCase()}`;
-}
 
 interface Props {
   playerId: string;
@@ -38,74 +47,111 @@ export default function PlayerCheckinCard({
 
   const present = status === "present";
 
-  async function checkIn() {
-    if (!sessionId) return;
+  async function handleTap() {
+    if (!sessionId || loading) return;
     setLoading(true);
-    await fetch(`/api/sessions/${sessionId}/checkin`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ player_id: playerId }),
-    });
-    setStatus("present");
+    if (present) {
+      await fetch(`/api/sessions/${sessionId}/checkout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ player_id: playerId }),
+      });
+      setStatus("checked-out");
+    } else {
+      await fetch(`/api/sessions/${sessionId}/checkin`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ player_id: playerId }),
+      });
+      setStatus("present");
+    }
     setLoading(false);
     router.refresh();
   }
 
-  async function checkOut() {
-    if (!sessionId) return;
-    setLoading(true);
-    await fetch(`/api/sessions/${sessionId}/checkout`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ player_id: playerId }),
-    });
-    setStatus("checked-out");
-    setLoading(false);
-    router.refresh();
-  }
+  const bg = avatarColor(name);
+  const inits = initials(name);
 
   return (
-    <div
-      className={`relative rounded-xl border px-2 py-2 flex flex-col gap-1.5 transition-colors ${
-        present
-          ? "bg-green-50 border-green-200"
-          : "bg-white border-gray-100"
-      }`}
+    <button
+      onClick={handleTap}
+      disabled={loading || !sessionId}
+      className="relative w-full text-left overflow-hidden transition-all duration-150 active:scale-95 disabled:opacity-60"
+      style={{
+        borderRadius: 12,
+        border: present ? '2px solid #34D399' : '1.5px solid #E7E5E4',
+        boxShadow: present ? '0 2px 8px rgba(52,211,153,0.18)' : 'none',
+        padding: 10,
+        background: '#FFFFFF',
+      }}
     >
-      {/* Check-in indicator */}
+      {/* Corner ribbon when present */}
       {present && (
-        <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center text-white text-[10px] font-bold leading-none">
-          ✓
-        </span>
+        <>
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: 0,
+              height: 0,
+              borderStyle: 'solid',
+              borderWidth: '0 26px 26px 0',
+              borderColor: 'transparent #34D399 transparent transparent',
+            }}
+          />
+          <span
+            style={{
+              position: 'absolute',
+              top: 2,
+              right: 2,
+              fontSize: 9,
+              color: 'white',
+              fontWeight: 700,
+              lineHeight: 1,
+              pointerEvents: 'none',
+            }}
+          >
+            ✓
+          </span>
+        </>
       )}
 
-      {/* Name */}
-      <div className="text-xs font-semibold text-gray-900 leading-tight pr-5">
-        <Link href={`/players/${playerId}`} className="hover:underline" title={name}>
-          {compactName(name)}
-        </Link>
-        {hasUserAccount && <VerifiedBadge />}
-        {isAdminPlayer && <AdminBadge />}
+      {/* Row 1: Avatar + admin shield */}
+      <div className="flex items-center gap-1.5 mb-1.5">
+        <div
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: 8,
+            background: bg,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <span style={{ color: 'white', fontSize: 11, fontWeight: 700, lineHeight: 1 }}>
+            {inits}
+          </span>
+        </div>
+        {isAdminPlayer && (
+          <span style={{ fontSize: 12, lineHeight: 1 }} title="Admin">🛡️</span>
+        )}
       </div>
 
-      {/* Action button — always shown, disabled when no active session */}
-      {present ? (
-        <button
-          onClick={checkOut}
-          disabled={loading}
-          className="text-[11px] px-1.5 py-0.5 rounded border border-red-200 bg-white text-red-500 font-medium hover:bg-red-50 transition-colors disabled:opacity-40"
-        >
-          {loading ? "…" : "Check Out"}
-        </button>
-      ) : (
-        <button
-          onClick={checkIn}
-          disabled={loading || !sessionId}
-          className="text-[11px] px-1.5 py-0.5 rounded bg-sky-500 text-white font-semibold hover:bg-sky-600 transition-colors disabled:opacity-50"
-        >
-          {loading ? "…" : "Check In"}
-        </button>
-      )}
-    </div>
+      {/* Row 2: Player name */}
+      <p
+        className="truncate"
+        style={{ fontSize: 13, fontWeight: 600, color: '#1C1917', marginBottom: 2, lineHeight: 1.3 }}
+      >
+        {name}
+      </p>
+
+      {/* Row 3: Status */}
+      <p style={{ fontSize: 11, color: present ? '#059669' : '#78716C', lineHeight: 1 }}>
+        {loading ? '…' : present ? '✓ Present' : 'Tap to check in'}
+      </p>
+    </button>
   );
 }

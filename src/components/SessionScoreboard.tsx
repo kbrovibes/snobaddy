@@ -61,17 +61,17 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
   });
 
   function indicator(key: SortKey) {
-    if (key !== sortKey) return <span className="text-gray-300 ml-0.5">↕</span>;
+    if (key !== sortKey) return <span className="text-stone-300 ml-0.5">↕</span>;
     return <span className="text-sky-500 ml-0.5">{sortDir === "asc" ? "↑" : "↓"}</span>;
   }
 
   return (
     <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-      <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+      <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
         Tonight's Scores · {matchCount} {matchCount === 1 ? "match" : "matches"}
       </h2>
       {scoreboard.length === 0 ? (
-        <p className="text-sm text-gray-400">No matches recorded yet.</p>
+        <p className="text-sm text-stone-400">No matches recorded yet.</p>
       ) : (
         <>
           {/* Header */}
@@ -81,7 +81,7 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
                 key={key}
                 onClick={() => handleSort(key)}
                 className={`${className} text-xs font-semibold uppercase tracking-wide cursor-pointer select-none whitespace-nowrap
-                  ${sortKey === key ? "text-sky-600" : "text-gray-400 hover:text-gray-700"}`}
+                  ${sortKey === key ? "text-sky-600" : "text-stone-400 hover:text-stone-700"}`}
               >
                 {label}{indicator(key)}
               </button>
@@ -104,11 +104,11 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
                     {p.user_id && <VerifiedBadge />}
                     {p.is_admin && <AdminBadge />}
                   </span>
-                  <span className="w-8 text-center text-sm tabular-nums text-gray-500">{p.matches_played}</span>
+                  <span className="w-8 text-center text-sm tabular-nums text-stone-500">{p.matches_played}</span>
                   <span className="w-8 text-center text-sm font-bold text-green-600">{p.wins}</span>
                   <span className="w-8 text-center text-sm font-bold text-red-400">{p.losses}</span>
-                  <span className="w-10 text-center text-sm tabular-nums text-gray-500">{p.points}</span>
-                  <span className="w-12 text-right text-sm text-gray-500">{p.matches_played ? `${pct}%` : <span className="text-gray-300">—</span>}</span>
+                  <span className="w-10 text-center text-sm tabular-nums text-stone-500">{p.points}</span>
+                  <span className="w-12 text-right text-sm text-stone-500">{p.matches_played ? `${pct}%` : <span className="text-stone-300">—</span>}</span>
                 </div>
               );
             })}

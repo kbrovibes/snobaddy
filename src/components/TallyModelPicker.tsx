@@ -36,14 +36,14 @@ export default function TallyModelPicker({ current }: { current: string }) {
           className={`flex items-center justify-between px-3 py-2.5 rounded-lg border text-left transition-colors ${
             selected === m.id
               ? "border-purple-400 bg-purple-50"
-              : "border-gray-200 hover:border-gray-300"
+              : "border-stone-200 hover:border-stone-300"
           }`}
         >
           <div>
-            <span className={`text-sm font-semibold ${selected === m.id ? "text-purple-700" : "text-gray-800"}`}>
+            <span className={`text-sm font-semibold ${selected === m.id ? "text-purple-700" : "text-stone-800"}`}>
               {m.label}
             </span>
-            <span className="block text-xs text-gray-400">{m.sub}</span>
+            <span className="block text-xs text-stone-400">{m.sub}</span>
           </div>
           {selected === m.id && (
             <span className="text-xs font-semibold text-purple-600">

@@ -22,7 +22,7 @@ function shortDate(dateStr: string) {
 
 export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
   if (data.length === 0) {
-    return <p className="text-sm text-gray-400">No match data yet.</p>;
+    return <p className="text-sm text-stone-400">No match data yet.</p>;
   }
 
   const hasOpenSession = data.some((s) => s.isOpen);
@@ -32,11 +32,11 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
   return (
     <div className="overflow-x-auto">
       <div className="flex gap-3 mb-2">
-        <span className="flex items-center gap-1 text-xs text-gray-500">
+        <span className="flex items-center gap-1 text-xs text-stone-500">
           <span className="inline-block w-2.5 h-2.5 rounded-sm bg-green-400" />
           Wins
         </span>
-        <span className="flex items-center gap-1 text-xs text-gray-500">
+        <span className="flex items-center gap-1 text-xs text-stone-500">
           <span className="inline-block w-2.5 h-2.5 rounded-sm bg-red-300" />
           Losses
         </span>

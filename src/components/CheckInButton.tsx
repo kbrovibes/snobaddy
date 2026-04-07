@@ -39,7 +39,7 @@ export default function CheckInButton({
         <button
           onClick={checkOut}
           disabled={loading}
-          className="px-4 py-3 bg-gray-100 text-gray-500 font-medium rounded-xl disabled:opacity-50 hover:bg-gray-200 transition-colors text-sm"
+          className="px-4 py-3 bg-stone-100 text-stone-500 font-medium rounded-xl disabled:opacity-50 hover:bg-stone-200 transition-colors text-sm"
         >
           {loading ? "…" : "Leave"}
         </button>
@@ -51,7 +51,7 @@ export default function CheckInButton({
     <button
       onClick={checkIn}
       disabled={loading}
-      className="w-full py-3 bg-sky-600 text-white font-semibold rounded-xl disabled:opacity-50 hover:bg-sky-700 transition-colors"
+      className="w-full py-3 bg-stone-900 text-white font-semibold rounded-xl disabled:opacity-50 hover:bg-stone-800 transition-colors"
     >
       {loading ? "Checking in…" : "✓ I'm here — Check In"}
     </button>

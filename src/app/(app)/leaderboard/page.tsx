@@ -21,7 +21,7 @@ export default async function LeaderboardPage() {
 
   return (
     <div className="px-4 py-4 pb-20">
-      <h1 className="text-xl font-bold text-gray-900 mb-4">Leaderboard</h1>
+      <h1 className="text-xl font-bold text-stone-900 mb-4">Leaderboard</h1>
 
       <LeaderboardTable
         players={allPlayers.filter(p => p.matches_played > 0)}

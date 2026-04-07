@@ -124,7 +124,7 @@ export default async function SessionDetailPage({
                 ‹ {new Date(adjacentSessions.newer.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "2-digit" })} Session
               </Link>
             ) : (
-              <span className="text-gray-300">‹ Session</span>
+              <span className="text-stone-300">‹ Session</span>
             )}
           </div>
           <div>
@@ -133,7 +133,7 @@ export default async function SessionDetailPage({
                 {new Date(adjacentSessions.older.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "2-digit" })} Session ›
               </Link>
             ) : (
-              <span className="text-gray-300">Session ›</span>
+              <span className="text-stone-300">Session ›</span>
             )}
           </div>
         </div>
@@ -144,9 +144,9 @@ export default async function SessionDetailPage({
         <div className="flex items-center gap-3">
           <Image src="/serve-logo.jpg" alt="Serve Sports" width={52} height={52} className="rounded-xl shrink-0" />
           <div>
-            <h1 className="text-lg font-bold text-gray-900 leading-tight">{session.season?.name ?? "Tonight"}</h1>
+            <h1 className="text-lg font-bold text-stone-900 leading-tight">{session.season?.name ?? "Tonight"}</h1>
             <div className="flex items-center gap-2">
-              <p className="text-sm text-gray-500">{formatDate(session.date)}</p>
+              <p className="text-sm text-stone-500">{formatDate(session.date)}</p>
               {isAdmin && session.is_test_session && (
                 <span className="text-xs font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">TEST</span>
               )}
@@ -208,7 +208,7 @@ export default async function SessionDetailPage({
 
           {/* Who's here */}
           <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+            <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
               Who's Here · {checkedInPlayers.length}
             </h2>
             <WhoIsHere players={checkedInPlayers} onlinePlayerIds={onlinePlayerIds as Set<string>} isAdmin={isAdmin} sessionId={session.id} />
@@ -240,8 +240,8 @@ export default async function SessionDetailPage({
           {highlights && highlights.totalMatches >= 3 && (
             <SessionHighlights highlights={highlights} nameMap={nameMap} />
           )}
-          <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 flex items-center justify-between">
-            <p className="text-sm text-gray-500">Session closed. No new matches can be recorded.</p>
+          <div className="bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 flex items-center justify-between">
+            <p className="text-sm text-stone-500">Session closed. No new matches can be recorded.</p>
             {isAdmin && <ReopenSessionButton sessionId={session.id} />}
           </div>
           {/* Tally entry: shown when no matches recorded yet */}
@@ -292,7 +292,7 @@ export default async function SessionDetailPage({
       {/* Match history — shown for active and completed */}
       {(isActive || isCompleted) && recentMatches.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
             Matches · {recentMatches.length}
           </h2>
           <div className="flex flex-col gap-3">
@@ -303,15 +303,15 @@ export default async function SessionDetailPage({
               return (
                 <div key={m.id} className="text-sm">
                   <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                    <span className={`font-semibold truncate text-left ${m.winning_team === 1 ? "text-green-600" : "text-gray-400"}`}>
+                    <span className={`font-semibold truncate text-left ${m.winning_team === 1 ? "text-green-600" : "text-stone-400"}`}>
                       {team1Names.join(" & ")}
                     </span>
-                    <span className="text-gray-300 text-center w-6">vs</span>
-                    <span className={`font-semibold truncate text-left ${m.winning_team === 2 ? "text-green-600" : "text-gray-400"}`}>
+                    <span className="text-stone-300 text-center w-6">vs</span>
+                    <span className={`font-semibold truncate text-left ${m.winning_team === 2 ? "text-green-600" : "text-stone-400"}`}>
                       {team2Names.join(" & ")}
                     </span>
                   </div>
-                  <div className="text-xs text-gray-400 mt-0.5">
+                  <div className="text-xs text-stone-400 mt-0.5">
                     {m.team1_score} – {m.team2_score} · {winnerNames.join(" & ")} won
                   </div>
                   {isAdmin && isActive && (
@@ -339,14 +339,14 @@ export default async function SessionDetailPage({
       {/* Past sessions this season */}
       {pastSessions.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
             Past Sessions
           </h2>
           <div className="flex flex-col gap-2">
             {pastSessions.map((s) => (
-              <Link key={s.id} href={`/session/${s.id}`} className="flex items-center justify-between text-sm hover:bg-gray-50 active:bg-sky-50 -mx-1 px-1 rounded-lg transition-colors">
+              <Link key={s.id} href={`/session/${s.id}`} className="flex items-center justify-between text-sm hover:bg-stone-50 active:bg-sky-50 -mx-1 px-1 rounded-lg transition-colors">
                 <span className="text-sky-600">{formatDate(s.date)}</span>
-                <span className="text-gray-400 capitalize">{s.status}</span>
+                <span className="text-stone-400 capitalize">{s.status}</span>
               </Link>
             ))}
           </div>

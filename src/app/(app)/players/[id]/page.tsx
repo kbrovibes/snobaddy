@@ -95,12 +95,12 @@ export default async function PlayerProfilePage({
             />
           </div>
           <div className="text-right shrink-0">
-            <p className="text-2xl font-bold text-gray-900">{overallPct}%</p>
-            <p className="text-xs text-gray-400">{totalWins}W {totalLosses}L</p>
+            <p className="text-2xl font-bold text-stone-900">{overallPct}%</p>
+            <p className="text-xs text-stone-400">{totalWins}W {totalLosses}L</p>
           </div>
         </div>
         {poem && (
-          <p className="mt-3 text-sm italic text-gray-500 border-t border-gray-100 pt-3 leading-relaxed">
+          <p className="mt-3 text-sm italic text-stone-500 border-t border-stone-100 pt-3 leading-relaxed">
             {poem}
           </p>
         )}
@@ -109,7 +109,7 @@ export default async function PlayerProfilePage({
       {/* Stats chart */}
       <div className="bg-white rounded-xl shadow-sm px-4 py-3">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+          <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
             Stats by Session
           </h2>
           {isAdmin && <IncludeTestToggle enabled={includeTestSessions} />}
@@ -119,29 +119,29 @@ export default async function PlayerProfilePage({
 
       {/* Match history */}
       <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+        <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
           Match History
         </h2>
 
         {matchesBySession.length === 0 ? (
-          <p className="text-sm text-gray-400">No matches yet.</p>
+          <p className="text-sm text-stone-400">No matches yet.</p>
         ) : (
           <div className="flex flex-col gap-4">
             {matchesBySession.map((group) => (
               <div key={group.session_id}>
-                <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${group.absent ? "text-gray-300" : group.isOpen ? "text-sky-400" : "text-gray-400"}`}>
+                <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${group.absent ? "text-stone-300" : group.isOpen ? "text-sky-400" : "text-stone-400"}`}>
                   {formatDate(group.date)}{group.isOpen ? "*" : ""}
                 </p>
                 {group.absent ? (
-                  <p className="text-sm text-gray-300">Did not play</p>
+                  <p className="text-sm text-stone-300">Did not play</p>
                 ) : group.isTally ? (
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-stone-500">
                     <span className="font-semibold text-green-700">{group.tallyWins}W</span>
                     {" "}<span className="font-semibold text-red-500">{group.tallyLosses}L</span>
-                    <span className="text-gray-400 ml-1 text-xs">(tally)</span>
+                    <span className="text-stone-400 ml-1 text-xs">(tally)</span>
                   </p>
                 ) : (
-                  <div className="flex flex-col divide-y divide-gray-100">
+                  <div className="flex flex-col divide-y divide-stone-100">
                     {group.matches.map((m) => (
                       <div key={m.id} className="py-2.5">
                         <div className="flex items-center gap-2">
@@ -150,9 +150,9 @@ export default async function PlayerProfilePage({
                           }`}>
                             {m.won ? "W" : "L"}
                           </span>
-                          <span className="text-sm text-gray-700 truncate flex-1">
+                          <span className="text-sm text-stone-700 truncate flex-1">
                             w/ {shortName(m.partner, nameMap)}
-                            <span className="text-gray-400"> vs </span>
+                            <span className="text-stone-400"> vs </span>
                             {m.opponents.map((n) => shortName(n, nameMap)).join(" & ")}
                           </span>
                           <span className={`text-sm font-semibold tabular-nums shrink-0 ${m.won ? "text-green-600" : "text-red-400"}`}>

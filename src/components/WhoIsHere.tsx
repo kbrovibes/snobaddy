@@ -30,7 +30,7 @@ function SkillDots({ level }: { level: number }) {
   return (
     <span className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((i) => (
-        <span key={i} className={`text-xs ${i <= level ? "text-sky-500" : "text-gray-200"}`}>●</span>
+        <span key={i} className={`text-xs ${i <= level ? "text-sky-500" : "text-stone-200"}`}>●</span>
       ))}
     </span>
   );
@@ -50,7 +50,7 @@ function SortHeader({
     <button
       onClick={() => onSort(sortKey)}
       className={`flex items-center gap-0.5 text-xs font-semibold uppercase tracking-wide select-none ${
-        active ? "text-sky-500" : "text-gray-400 hover:text-gray-600"
+        active ? "text-sky-500" : "text-stone-400 hover:text-stone-600"
       }`}
     >
       {label}
@@ -117,7 +117,7 @@ export default function WhoIsHere({
   });
 
   if (players.length === 0) {
-    return <p className="text-sm text-gray-400">No one checked in yet</p>;
+    return <p className="text-sm text-stone-400">No one checked in yet</p>;
   }
 
   return (
@@ -153,7 +153,7 @@ export default function WhoIsHere({
             </div>
             {isAdmin ? (
               <div className="w-28 flex items-center justify-end gap-2">
-                <span className="text-xs text-gray-400 tabular-nums">{formatTime(p.checked_in_at)}</span>
+                <span className="text-xs text-stone-400 tabular-nums">{formatTime(p.checked_in_at)}</span>
                 <button
                   onClick={() => handleCheckout(p.player_id)}
                   disabled={checkingOut === p.player_id}
@@ -163,7 +163,7 @@ export default function WhoIsHere({
                 </button>
               </div>
             ) : (
-              <span className="w-16 text-right text-xs text-gray-400 tabular-nums">
+              <span className="w-16 text-right text-xs text-stone-400 tabular-nums">
                 {formatTime(p.checked_in_at)}
               </span>
             )}

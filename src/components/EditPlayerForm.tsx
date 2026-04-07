@@ -14,7 +14,7 @@ function SkillDots({ level }: { level: number }) {
   return (
     <span className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((i) => (
-        <span key={i} className={`text-xs ${i <= level ? "text-sky-500" : "text-gray-200"}`}>●</span>
+        <span key={i} className={`text-xs ${i <= level ? "text-sky-500" : "text-stone-200"}`}>●</span>
       ))}
     </span>
   );
@@ -71,11 +71,11 @@ export default function EditPlayerForm({ playerId, currentName, currentSkillLeve
     return (
       <div className="flex flex-col gap-0.5">
         <div className="flex items-center gap-2">
-          <h1 className="text-lg font-bold text-gray-900 truncate">{currentName}</h1>
+          <h1 className="text-lg font-bold text-stone-900 truncate">{currentName}</h1>
           {isGodMode && (
             <button
               onClick={() => setOpen(true)}
-              className="text-gray-300 hover:text-gray-500 transition-colors shrink-0"
+              className="text-stone-300 hover:text-stone-500 transition-colors shrink-0"
               title="Edit player"
               aria-label="Edit player"
             >
@@ -97,7 +97,7 @@ export default function EditPlayerForm({ playerId, currentName, currentSkillLeve
           value={name}
           onChange={(e) => setName(e.target.value)}
           maxLength={50}
-          className="flex-1 min-w-0 border border-gray-300 rounded-lg px-2 py-1 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-400"
+          className="flex-1 min-w-0 border border-stone-300 rounded-lg px-2 py-1 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-sky-400"
         />
         <button
           onClick={handleSave}
@@ -116,20 +116,20 @@ export default function EditPlayerForm({ playerId, currentName, currentSkillLeve
           <button
             key={i}
             onClick={() => setSkillLevel(i)}
-            className={`text-sm transition-colors ${i <= skillLevel ? "text-sky-500" : "text-gray-200"}`}
+            className={`text-sm transition-colors ${i <= skillLevel ? "text-sky-500" : "text-stone-200"}`}
             aria-label={`Skill level ${i}`}
           >
             ●
           </button>
         ))}
-        <span className="text-xs text-gray-400 ml-1">tap to change</span>
+        <span className="text-xs text-stone-400 ml-1">tap to change</span>
       </div>
 
       {error && <p className="text-xs text-red-500">{error}</p>}
 
       <button
         onClick={handleCancel}
-        className="text-xs text-gray-400 hover:text-gray-600 text-left"
+        className="text-xs text-stone-400 hover:text-stone-600 text-left"
       >
         Cancel
       </button>

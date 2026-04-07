@@ -30,7 +30,7 @@ export default function SkillEditor({ playerId, current }: Props) {
           onClick={() => update(level)}
           disabled={saving}
           className={`text-base leading-none transition-colors ${
-            level <= skill ? "text-sky-500" : "text-gray-200"
+            level <= skill ? "text-sky-500" : "text-stone-200"
           }`}
           title={`Set skill to ${level}`}
         >

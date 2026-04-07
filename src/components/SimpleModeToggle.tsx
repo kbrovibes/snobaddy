@@ -32,7 +32,7 @@ export default function SimpleModeToggle({
       className={`text-xs font-semibold px-2.5 py-1 rounded-full transition-colors disabled:opacity-50 ${
         simpleMode
           ? "bg-sky-100 text-sky-700 hover:bg-sky-200"
-          : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+          : "bg-stone-100 text-stone-500 hover:bg-stone-200"
       }`}
     >
       {simpleMode ? "✓ Simplify Scores" : "Simplify Scores"}

@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.26] - 2026-04-07
+
+### Changed
+- **Global design system** — font switched to Plus Jakarta Sans; color palette migrated from cool gray to warm stone throughout (backgrounds, borders, text); primary action buttons now use dark `#1C1917` fill.
+- **Players / check-in screen** — redesigned as a 2-column card grid. Header shows total/in/out pill badges and a "+ Add" button. Each player card is fully tappable (no separate button), shows a colored avatar, name, status line, and a green corner ribbon when present.
+
+---
+
 ## [0.24.25] - 2026-04-07
 
 ### Changed
@@ -15,13 +23,8 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [0.24.24] - 2026-04-07
 
-<<<<<<< Updated upstream
 ### Fixed
 - Vercel builds failing: `nextjs-toploader` missing from lockfile; `getPlayerPoemContext` missing `onlyTestSessions` in return value.
-=======
-### Changed
-- **Login page** — replaced "snobaddy" text logo with the same logo block used in the header (Serve Sports image + "Serve Snoqualmie" / "Badminton" lockup).
->>>>>>> Stashed changes
 
 ---
 
