@@ -115,7 +115,7 @@ export default async function SessionDetailPage({
       <OnlinePing />
 
       {/* Session nav */}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-0.5 -mb-2">
         <BackToSessionsLink />
         <div className="flex items-center justify-between text-sm">
           <div>
