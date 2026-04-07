@@ -7,6 +7,14 @@ import { VerifiedBadge, AdminBadge } from "./PlayerBadges";
 
 type Status = "absent" | "present" | "checked-out";
 
+// Shorten long names to "First L" to fit in compact 3-col grid
+function compactName(name: string): string {
+  if (name.length <= 11) return name;
+  const parts = name.trim().split(/\s+/);
+  if (parts.length < 2) return name;
+  return `${parts[0]} ${parts[parts.length - 1][0].toUpperCase()}`;
+}
+
 interface Props {
   playerId: string;
   name: string;
@@ -72,9 +80,9 @@ export default function PlayerCheckinCard({
       )}
 
       {/* Name */}
-      <div className="text-xs font-semibold text-gray-900 leading-tight pr-5 min-h-[2rem]">
-        <Link href={`/players/${playerId}`} className="hover:underline break-words">
-          {name}
+      <div className="text-xs font-semibold text-gray-900 leading-tight pr-5">
+        <Link href={`/players/${playerId}`} className="hover:underline" title={name}>
+          {compactName(name)}
         </Link>
         {hasUserAccount && <VerifiedBadge />}
         {isAdminPlayer && <AdminBadge />}
