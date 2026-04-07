@@ -109,7 +109,7 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
                   <span className="w-8 text-center text-sm tabular-nums text-gray-500">{p.matches_played}</span>
                   <span className="w-8 text-center text-sm font-bold text-green-600">{p.wins}</span>
                   <span className="w-8 text-center text-sm font-bold text-red-400">{p.losses}</span>
-                  <span className="w-10 text-center text-sm tabular-nums text-blue-700 font-semibold">{p.points}</span>
+                  <span className="w-10 text-center text-sm tabular-nums text-gray-500">{p.points}</span>
                   <span className="w-12 text-right text-sm text-gray-500">{p.matches_played ? `${pct}%` : <span className="text-gray-300">—</span>}</span>
                 </div>
               );
