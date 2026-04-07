@@ -108,17 +108,12 @@ export default async function PlayerProfilePage({
 
       {/* Stats chart */}
       <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
             Stats by Session
           </h2>
           {isAdmin && <IncludeTestToggle enabled={includeTestSessions} />}
         </div>
-        {sessionHistory.some((s) => s.isOpen) ? (
-          <p className="text-xs text-blue-400 mt-1 mb-3">* Session in progress</p>
-        ) : (
-          <div className="mb-3" />
-        )}
         <SessionStatsChart data={sessionHistory} />
       </div>
 

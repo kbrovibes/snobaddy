@@ -9,7 +9,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [0.24.19] - 2026-04-06
 
 ### Changed
-- **Player profile — Stats by Session** — the current in-progress session now appears in the chart and match history alongside completed ones. Dates for live sessions are highlighted in blue with an asterisk (`*`), and a legend reading "* Session in progress" appears under the section heading.
+- **Player profile — Stats by Session** — the current in-progress session now appears in the chart and match history alongside completed ones. Dates for live sessions are highlighted in blue with an asterisk (`*`). The legend "* In progress" sits inline with the Wins / Losses key in the chart.
 
 ---
 

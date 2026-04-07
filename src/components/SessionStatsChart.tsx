@@ -25,6 +25,7 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
     return <p className="text-sm text-gray-400">No match data yet.</p>;
   }
 
+  const hasOpenSession = data.some((s) => s.isOpen);
   const maxMatches = Math.max(...data.map((s) => s.wins + s.losses), 1);
   const totalW = data.length * (BAR_W + GAP) - GAP;
 
@@ -39,6 +40,11 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
           <span className="inline-block w-2.5 h-2.5 rounded-sm bg-red-300" />
           Losses
         </span>
+        {hasOpenSession && (
+          <span className="flex items-center gap-1 text-xs text-blue-400">
+            * In progress
+          </span>
+        )}
       </div>
       <svg width={totalW} height={TOTAL_H} className="block">
         {/* 50% reference line */}
