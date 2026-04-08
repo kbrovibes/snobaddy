@@ -10,9 +10,11 @@
 </p>
 
 <p align="center">
-  <a href="https://churchontheridge.churchcenter.com/registrations/events/category/35751">
-    Serve Snoqualmie Sports →
-  </a>
+  <a href="https://snobaddy.vercel.app"><strong>→ Open the App ←</strong></a>
+</p>
+
+<p align="center">
+  <em>Want to play? We're at <a href="https://churchontheridge.churchcenter.com/registrations/events/category/35751">Serve Snoqualmie Sports</a> — Mondays and Thursdays.</em>
 </p>
 
 ---
@@ -240,6 +242,18 @@ npm run dev                         # http://localhost:3000
 - API routes live in `src/app/api/` — one file per resource
 - Keep components thin — business logic goes in `src/lib/db/`
 - Tailwind only for styling — mobile-first, since this is used on phones at the court
+
+---
+
+---
+
+## Reporting Bugs
+
+You found a bug? Congratulations. Unfortunately, there is no official bug tracking system, no support email, no ticketing queue, no SLA, no on-call rotation, and absolutely no obligation on anyone's part to fix anything. This is a free app built for a badminton club. The whiteboard it replaced cost $4.99.
+
+**You are not eligible to report bugs.**
+
+That said — if you *really* know me, and I mean *really* know me (like, you have my number, you know my coffee order, you've seen me flail on the court), feel free to ping me through my personal messaging apps. You know which one. If you don't know which one, you don't know me well enough. Best of luck with your bug.
 
 ---
 
