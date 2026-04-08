@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.33] - 2026-04-08
+
+### Fixed
+- **Session & Tally scoreboards** — player name links now use the same blue (`sky-700`) as the leaderboard and Who's Here list.
+
+---
+
 ## [0.24.32] - 2026-04-07
 
 ### Changed

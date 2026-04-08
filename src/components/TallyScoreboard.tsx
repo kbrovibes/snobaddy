@@ -114,7 +114,7 @@ export default function TallyScoreboard({ entries, sessionId, isGodMode, hasPhot
                   <span className="text-xs text-stone-300 w-5 shrink-0" />
                   <Link
                     href={`/players/${e.player_id}`}
-                    className="flex-1 text-sm font-medium truncate text-sky-600 hover:underline"
+                    className="flex-1 text-sm font-medium truncate text-sky-700 hover:underline active:opacity-60"
                   >
                     {e.player_name}
                   </Link>
