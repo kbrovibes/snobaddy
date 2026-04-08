@@ -97,7 +97,7 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
                   <span className="flex-1 flex items-center gap-1 min-w-0">
                     <Link
                       href={`/players/${p.player_id}`}
-                      className="text-sm font-medium truncate text-sky-700 hover:underline active:opacity-60"
+                      className="text-sm font-medium truncate text-sky-600 hover:underline active:opacity-60"
                     >
                       {p.name}
                     </Link>

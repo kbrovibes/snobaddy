@@ -142,7 +142,7 @@ export default function WhoIsHere({
               {onlinePlayerIds?.has(p.player_id) && (
                 <span className="w-2 h-2 rounded-full bg-green-500 shrink-0" title="Online now" />
               )}
-              <Link href={`/players/${p.player_id}`} className="font-medium text-sky-700 text-sm truncate hover:underline active:opacity-60">
+              <Link href={`/players/${p.player_id}`} className="font-medium text-sky-600 text-sm truncate hover:underline active:opacity-60">
                 {p.name}
               </Link>
               {p.user_id && <VerifiedBadge />}

@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.34] - 2026-04-08
+
+### Fixed
+- **Player name links** — all player name links (leaderboard, Who's Here, session scoreboard, tally scoreboard) now use the same blue as the rest of the app's links (`sky-600`).
+
+---
+
 ## [0.24.33] - 2026-04-08
 
 ### Fixed
