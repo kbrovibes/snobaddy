@@ -38,6 +38,7 @@ import FormatPicker from "@/components/finals/FormatPicker";
 import PairConfigurator from "@/components/finals/PairConfigurator";
 import GenerateMatchesButton from "@/components/finals/GenerateMatchesButton";
 import FinalsMatchList from "@/components/finals/FinalsMatchList";
+import FinalsStandings from "@/components/finals/FinalsStandings";
 import type { PairPlayer, SavedPair } from "@/components/finals/PairConfigurator";
 import type { PairInfo } from "@/components/finals/FinalsMatchList";
 import { getFinalsFormat, getFinalsParticipants, getFinalsMatches } from "@/lib/db/finals";
@@ -325,6 +326,29 @@ export default async function SessionDetailPage({
             pairsInfo={pairsInfoMap}
             sessionId={session.id}
             isActive={isActive}
+          />
+        </div>
+      )}
+
+      {/* Finals standings — shown after matches generated */}
+      {isFinalsSession && matchesGenerated && finalsMatches.length > 0 && Object.keys(pairsInfoMap).length > 0 && (
+        <div className="bg-white rounded-xl shadow-sm px-4 py-3">
+          <FinalsStandings
+            matches={finalsMatches.map((m) => ({
+              id: m.id,
+              team1_player1: m.team1_player1_id,
+              team1_player2: m.team1_player2_id,
+              team2_player1: m.team2_player1_id,
+              team2_player2: m.team2_player2_id,
+              team1_score: m.team1_score,
+              team2_score: m.team2_score,
+              winning_team: m.winning_team,
+              finals_group: m.finals_group,
+            }))}
+            pairsInfo={pairsInfoMap}
+            sessionId={session.id}
+            formatStatus={finalsFormat?.status ?? "configured"}
+            isGodMode={isGodMode}
           />
         </div>
       )}

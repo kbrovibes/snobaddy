@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.26.3] - 2026-04-11
+
+### Added
+- **Season Finals — Standings & Winners** (God Mode only) — Live pair standings per group with W/L/PF/PA/+- columns. Automatic winner detection when all matches played. Tiebreak handling: 2-way tie prompts for tiebreak match, 3+ way tie shows manual winner selection.
+
+---
+
 ## [0.26.2] - 2026-04-11
 
 ### Added
