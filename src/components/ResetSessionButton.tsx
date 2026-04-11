@@ -48,9 +48,10 @@ export default function ResetSessionButton({ sessionId }: { sessionId: string })
                 {counts.tally > 0 && (
                   <li>{counts.tally} tally entr{counts.tally !== 1 ? "ies" : "y"}</li>
                 )}
+                <li>All check-ins</li>
               </ul>
             </div>
-            <p className="text-xs text-stone-400">Check-ins will not be affected. This cannot be undone.</p>
+            <p className="text-xs text-stone-400">Session will be restored to Upcoming. This cannot be undone.</p>
             <div className="flex gap-3 mt-1">
               <button
                 onClick={() => setConfirming(false)}

@@ -182,7 +182,7 @@ export default async function SessionDetailPage({
 
       {/* Admin: start session */}
       {isPending && isAdmin && (
-        <StartSessionButton sessionId={session.id} />
+        <StartSessionButton sessionId={session.id} sessionDate={session.date} />
       )}
 
       {/* Non-admin pending */}

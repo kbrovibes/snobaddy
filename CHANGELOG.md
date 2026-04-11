@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.41] - 2026-04-10
+
+### Fixed
+- **Reset session** — now restores session status to Upcoming (pending) and clears all check-ins, rather than leaving it in a broken active/completed state with no data.
+
+### Added
+- **Future session confirmation** — starting a session whose date hasn't arrived yet now shows a confirmation dialog before proceeding.
+
+---
+
 ## [0.24.40] - 2026-04-10
 
 ### Changed

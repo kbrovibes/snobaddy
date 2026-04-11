@@ -149,16 +149,24 @@ export async function POST(
     );
   }
 
-  // ── 5. Now safe to delete ──────────────────────────────────────────────────
-  const [{ count: deletedMatches }, { count: deletedProposed }, { count: deletedTally }] = await Promise.all([
+  // ── 5. Now safe to delete + restore status ────────────────────────────────
+  const [{ count: deletedMatches }, { count: deletedProposed }, { count: deletedTally }, { count: deletedCheckins }] = await Promise.all([
     serviceClient.from("matches").delete({ count: "exact" }).eq("session_id", id),
     serviceClient.from("proposed_matches").delete({ count: "exact" }).eq("session_id", id),
     serviceClient.from("session_tally").delete({ count: "exact" }).eq("session_id", id),
+    serviceClient.from("session_players").delete({ count: "exact" }).eq("session_id", id),
   ]);
+
+  // Restore session to pending (upcoming) state
+  await serviceClient
+    .from("sessions")
+    .update({ status: "pending", started_at: null, started_by: null })
+    .eq("id", id);
 
   return NextResponse.json({
     deleted_matches: deletedMatches ?? 0,
     deleted_proposed: deletedProposed ?? 0,
     deleted_tally: deletedTally ?? 0,
+    deleted_checkins: deletedCheckins ?? 0,
   });
 }
