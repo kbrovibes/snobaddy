@@ -9,10 +9,10 @@ export async function POST() {
 
   const { data: player } = await supabase
     .from("players")
-    .select("id, is_god_mode")
+    .select("id, is_admin")
     .eq("user_id", user.id)
     .single();
-  if (!(player as unknown as { is_god_mode?: boolean } | null)?.is_god_mode) {
+  if (!(player as unknown as { is_admin?: boolean } | null)?.is_admin) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

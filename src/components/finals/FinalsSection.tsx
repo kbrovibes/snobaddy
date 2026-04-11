@@ -51,9 +51,14 @@ export default function FinalsSection({
 
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-wide text-stone-400 px-1 mb-1">
-        Season Finals
-      </p>
+      <div className="flex items-center gap-2 px-1 mb-1">
+        <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">
+          Season Finals
+        </p>
+        <span className="text-[10px] font-bold text-orange-600 bg-orange-50 border border-orange-200 px-1.5 py-0.5 rounded">
+          Coming Soon
+        </span>
+      </div>
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         {event ? (
           <>

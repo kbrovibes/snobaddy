@@ -266,7 +266,7 @@ export default async function SessionDetailPage({
             groups={finalsGroups}
             matches={finalsMatchesClient}
             isActive={isActive}
-            isGodMode={isGodMode}
+            isGodMode={isAdmin}
           />
         </div>
       )}

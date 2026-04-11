@@ -26,16 +26,14 @@ export default async function SessionListPage({
   const { data: { user } } = await supabase.auth.getUser();
   const { data: currentPlayer } = await supabase
     .from("players")
-    .select("is_admin, is_god_mode")
+    .select("is_admin")
     .eq("user_id", user!.id)
     .maybeSingle();
   const isAdmin = currentPlayer?.is_admin ?? false;
-  const isGodMode =
-    (currentPlayer as unknown as { is_god_mode?: boolean } | null)?.is_god_mode ?? false;
 
   const [sessions, finalsEvent] = await Promise.all([
     getAllSessions(),
-    isGodMode ? getActiveFinals() : Promise.resolve(null),
+    isAdmin ? getActiveFinals() : Promise.resolve(null),
   ]);
   const finalsSessionPair = finalsEvent
     ? await getFinalsSessionPair(finalsEvent.finals1_session_id, finalsEvent.finals2_session_id)
@@ -53,7 +51,7 @@ export default async function SessionListPage({
         </div>
       </div>
 
-      {isGodMode && <FinalsSection event={finalsEvent} sessionPair={finalsSessionPair} />}
+      {isAdmin && <FinalsSection event={finalsEvent} sessionPair={finalsSessionPair} />}
 
       <SessionListClient sessions={sessions} isAdmin={isAdmin} />
 

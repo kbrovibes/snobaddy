@@ -20,14 +20,13 @@ export default async function FinalsEventPage({
 
   const { data: currentPlayer } = await supabase
     .from("players")
-    .select("id, is_god_mode")
+    .select("id, is_admin")
     .eq("user_id", user!.id)
     .maybeSingle();
 
-  const isGodMode =
-    (currentPlayer as unknown as { is_god_mode?: boolean } | null)?.is_god_mode ?? false;
+  const isAdmin = currentPlayer?.is_admin ?? false;
 
-  if (!isGodMode) redirect("/");
+  if (!isAdmin) redirect("/");
 
   const event = await getFinalsById(id);
   if (!event) redirect("/");
