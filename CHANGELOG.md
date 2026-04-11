@@ -9,7 +9,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [0.26.8] - 2026-04-11
 
 ### Improved
-- **Season Finals — Compact player listings** — Reduced spacing in Players and Groups tabs to match the density of normal session pages.
+- **Season Finals — Cleaner player listings** — Player names are now links to profiles. Removed stats column from Players tab. Kept skill dots. "Remove" label instead of ×.
 
 ---
 

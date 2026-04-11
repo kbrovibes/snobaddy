@@ -239,23 +239,19 @@ function PlayersTab({
               className="flex items-center justify-between px-3 py-1.5 border-b border-stone-100 last:border-0"
             >
               <div className="flex items-center gap-1.5 min-w-0">
-                <span className="text-sm text-stone-800 truncate">{p.name}</span>
+                <Link href={`/players/${p.player_id}`} className="text-sm text-sky-600 hover:underline truncate">
+                  {p.name}
+                </Link>
                 <SkillDots level={p.skill_level} />
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-xs text-stone-400">
-                  {p.wins}W–{p.losses}L
-                  {p.wr !== null && (
-                    <span className="ml-1 text-stone-500">{p.wr}%</span>
-                  )}
-                </span>
                 {canEditPlayers && (
                   <button
                     onClick={() => removePlayer(p.player_id)}
                     disabled={removing === p.player_id || isPending}
                     className="text-xs text-red-400 hover:text-red-600 disabled:opacity-40"
                   >
-                    {removing === p.player_id ? "…" : "×"}
+                    {removing === p.player_id ? "…" : "Remove"}
                   </button>
                 )}
               </div>
@@ -373,14 +369,15 @@ function GroupsTab({
 
       const isExpanded = expandedId === p.id;
       const score = p.finals_score !== null ? p.finals_score.toFixed(1) : "—";
-      const wr = p.season_win_rate !== null ? `${Math.round(p.season_win_rate)}%` : "—";
 
       rows.push(
         <div key={p.id} className="border-b border-stone-100 last:border-0">
           <div className="flex items-center gap-1.5 px-3 py-1.5">
             <span className="w-5 text-right text-xs text-stone-400 shrink-0">{idx + 1}</span>
             <div className="flex-1 min-w-0 flex items-center gap-1.5">
-              <span className="text-sm text-stone-800 truncate">{p.name}</span>
+              <Link href={`/players/${p.player_id}`} className="text-sm text-sky-600 hover:underline truncate">
+                {p.name}
+              </Link>
               <SkillDots level={p.skill_level} />
               {p.group_override && (
                 <span className="text-[9px] font-medium px-1 rounded bg-violet-100 text-violet-600">
