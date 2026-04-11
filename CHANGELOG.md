@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.36] - 2026-04-10
+
+### Changed
+- **Players tab session label** — replaced green banner with plain muted text.
+
+---
+
 ## [0.24.35] - 2026-04-10
 
 ### Fixed

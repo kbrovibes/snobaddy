@@ -119,18 +119,9 @@ export default function AdminPageContent({
       </div>
 
       {sessionActive && sessionDate && (
-        <div className="mx-4 mb-3 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-2">
-          <span style={{ fontSize: 13, color: '#065F46', fontWeight: 600 }}>
-            Session: {formatSessionDate(sessionDate)}
-          </span>
-          <span style={{
-            background: '#D1FAE5', color: '#065F46',
-            fontSize: 11, fontWeight: 600,
-            borderRadius: 20, padding: '1px 7px',
-          }}>
-            active
-          </span>
-        </div>
+        <p className="px-4 mb-3" style={{ fontSize: 13, color: '#78716C' }}>
+          Session: {formatSessionDate(sessionDate)}
+        </p>
       )}
 
       {addPlayerOpen && (
