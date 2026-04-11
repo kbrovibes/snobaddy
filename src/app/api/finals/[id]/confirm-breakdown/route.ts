@@ -55,7 +55,12 @@ export async function POST(
     }
   }
 
-  // Status stays breakdown_generated — confirm just validates
-  // (sessions_created is set when sessions are generated in Task 5)
+  // Transition status so Sessions tab unlocks
+  const { error } = await adminDb
+    .from("finals_events")
+    .update({ status: "sessions_created" })
+    .eq("id", id);
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
 }

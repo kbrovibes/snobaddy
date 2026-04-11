@@ -38,7 +38,7 @@ export async function POST(
     .maybeSingle();
 
   if (!event) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (event.status !== "breakdown_generated") {
+  if (event.status !== "breakdown_generated" && event.status !== "sessions_created") {
     return NextResponse.json(
       { error: "Confirm the group breakdown before generating sessions" },
       { status: 409 }

@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.26.6] - 2026-04-11
+
+### Fixed
+- **Season Finals — Confirm Groups now works** — The confirm-breakdown endpoint was validating groups but not updating the event status, so the Sessions tab never unlocked. Now transitions status to `sessions_created` and unlocks Sessions tab.
+
+---
+
 ## [0.26.5] - 2026-04-11
 
 ### Improved
