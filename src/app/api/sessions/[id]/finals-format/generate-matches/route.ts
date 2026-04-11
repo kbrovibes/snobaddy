@@ -48,9 +48,6 @@ function generateRoundRobin(pairs: SavedPair[], groupLabel: string, sessionId: s
     team1_player2_id: pairs[m.pair1].player2_id,
     team2_player1_id: pairs[m.pair2].player1_id,
     team2_player2_id: pairs[m.pair2].player2_id,
-    team1_score: 0,
-    team2_score: 0,
-    winning_team: null,
     match_type: "finals_group",
     finals_group: groupLabel,
   }));
