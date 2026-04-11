@@ -82,6 +82,8 @@ function PlayersTab({
   const isBreakdown = eventStatus === "breakdown_generated";
   const canEditPlayers = isDraft || isBreakdown;
   const participantIds = new Set(participants.map((p) => p.player_id));
+  const [sortKey, setSortKey] = useState<"name" | "skill">("name");
+  const [sortAsc, setSortAsc] = useState(true);
 
   // Build a stats lookup from allPlayers
   const statsById = new Map(allPlayers.map((p) => [p.id, p]));
@@ -101,6 +103,18 @@ function PlayersTab({
     const wr = total > 0 ? Math.round((wins / total) * 100) : null;
     return { ...p, wins, losses, wr };
   });
+
+  // Sort
+  const sorted = [...enriched].sort((a, b) => {
+    const dir = sortAsc ? 1 : -1;
+    if (sortKey === "name") return a.name.localeCompare(b.name) * dir;
+    return (a.skill_level - b.skill_level) * dir;
+  });
+
+  function toggleSort(key: "name" | "skill") {
+    if (sortKey === key) setSortAsc(!sortAsc);
+    else { setSortKey(key); setSortAsc(key === "name"); }
+  }
 
   async function addPlayer(playerId: string) {
     setAdding(playerId);
@@ -223,8 +237,8 @@ function PlayersTab({
         </div>
       )}
 
-      {/* Participant list */}
-      {enriched.length === 0 ? (
+      {/* Participant table */}
+      {sorted.length === 0 ? (
         <div className="rounded-lg border border-dashed border-stone-200 px-4 py-8 text-center">
           <p className="text-sm text-stone-400">No players added yet.</p>
           <p className="text-xs text-stone-300 mt-1">
@@ -233,30 +247,52 @@ function PlayersTab({
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          {enriched.map((p) => (
-            <div
-              key={p.player_id}
-              className="flex items-center justify-between px-3 py-1.5 border-b border-stone-100 last:border-0"
-            >
-              <div className="flex items-center gap-1.5 min-w-0">
-                <Link href={`/players/${p.player_id}`} className="text-sm text-sky-600 hover:underline truncate">
-                  {p.name}
-                </Link>
-                <SkillDots level={p.skill_level} />
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-stone-100 bg-stone-50 text-[11px] text-stone-400 uppercase">
+                <th
+                  className="text-left px-3 py-1.5 font-medium cursor-pointer hover:text-stone-600 select-none"
+                  onClick={() => toggleSort("name")}
+                >
+                  Player {sortKey === "name" ? (sortAsc ? "↑" : "↓") : ""}
+                </th>
+                <th
+                  className="text-center px-2 py-1.5 font-medium cursor-pointer hover:text-stone-600 select-none w-16"
+                  onClick={() => toggleSort("skill")}
+                >
+                  Skill {sortKey === "skill" ? (sortAsc ? "↑" : "↓") : ""}
+                </th>
                 {canEditPlayers && (
-                  <button
-                    onClick={() => removePlayer(p.player_id)}
-                    disabled={removing === p.player_id || isPending}
-                    className="text-xs text-red-400 hover:text-red-600 disabled:opacity-40"
-                  >
-                    {removing === p.player_id ? "…" : "Remove"}
-                  </button>
+                  <th className="text-right px-3 py-1.5 font-medium w-16"></th>
                 )}
-              </div>
-            </div>
-          ))}
+              </tr>
+            </thead>
+            <tbody>
+              {sorted.map((p) => (
+                <tr key={p.player_id} className="border-b border-stone-100 last:border-0">
+                  <td className="px-3 py-1.5">
+                    <Link href={`/players/${p.player_id}`} className="text-sky-600 hover:underline truncate">
+                      {p.name}
+                    </Link>
+                  </td>
+                  <td className="text-center px-2 py-1.5">
+                    <SkillDots level={p.skill_level} />
+                  </td>
+                  {canEditPlayers && (
+                    <td className="text-right px-3 py-1.5">
+                      <button
+                        onClick={() => removePlayer(p.player_id)}
+                        disabled={removing === p.player_id || isPending}
+                        className="text-xs text-red-400 hover:text-red-600 disabled:opacity-40"
+                      >
+                        {removing === p.player_id ? "…" : "Remove"}
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
@@ -346,96 +382,7 @@ function GroupsTab({
     setOverriding(null);
   }
 
-  // Render the ranked list, inserting group dividers
-  function renderParticipantRows() {
-    const rows: React.ReactNode[] = [];
-    let lastGroup: string | null = null;
-
-    sorted.forEach((p, idx) => {
-      const group = p.group_label;
-
-      // Group divider
-      if (group && group !== lastGroup) {
-        const count = groupCounts[group] ?? 0;
-        const tooSmall = count < 4;
-        rows.push(
-          <div
-            key={`divider-${group}`}
-            className="flex items-center justify-between px-3 py-1 bg-stone-50 border-b border-stone-100"
-          >
-            <span className={`text-xs font-bold px-2 py-0.5 rounded border ${GROUP_COLORS[group] ?? "bg-stone-100 text-stone-600"}`}>
-              Group {group}
-            </span>
-            <span className={`text-xs font-medium ${tooSmall ? "text-red-500" : "text-stone-400"}`}>
-              {count} player{count !== 1 ? "s" : ""}
-              {tooSmall && " ⚠ min 4"}
-            </span>
-          </div>
-        );
-        lastGroup = group;
-      }
-
-      const isExpanded = expandedId === p.id;
-      const score = p.finals_score !== null ? p.finals_score.toFixed(1) : "—";
-
-      rows.push(
-        <div key={p.id} className="border-b border-stone-100 last:border-0">
-          <div className="flex items-center gap-1.5 px-3 py-1.5">
-            <span className="w-5 text-right text-xs text-stone-400 shrink-0">{idx + 1}</span>
-            <div className="flex-1 min-w-0 flex items-center gap-1.5">
-              <Link href={`/players/${p.player_id}`} className="text-sm text-sky-600 hover:underline truncate">
-                {p.name}
-              </Link>
-              <SkillDots level={p.skill_level} />
-              {p.group_override && (
-                <span className="text-[9px] font-medium px-1 rounded bg-violet-100 text-violet-600">
-                  ✎
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs text-stone-400">{score}</span>
-              {canEdit && group ? (
-                <select
-                  value={group}
-                  disabled={overriding === p.player_id || isPending}
-                  onChange={(e) => overrideGroup(p.player_id, e.target.value)}
-                  className={`text-[11px] font-semibold px-1 py-0 rounded border cursor-pointer disabled:opacity-40 ${GROUP_COLORS[group] ?? ""}`}
-                >
-                  <option value="A">A</option>
-                  <option value="B">B</option>
-                  <option value="C">C</option>
-                </select>
-              ) : group ? (
-                <span className={`text-[11px] font-semibold px-1.5 rounded border ${GROUP_COLORS[group] ?? ""}`}>
-                  {group}
-                </span>
-              ) : (
-                <span className="text-xs text-stone-300">—</span>
-              )}
-              {p.score_explanation && (
-                <button
-                  onClick={() => setExpandedId(isExpanded ? null : p.id)}
-                  className="text-xs text-stone-400 hover:text-stone-600"
-                >
-                  {isExpanded ? "▲" : "ℹ"}
-                </button>
-              )}
-            </div>
-          </div>
-          {isExpanded && p.score_explanation && (
-            <div className="px-3 pb-1.5">
-              <p className="text-[11px] text-stone-500 bg-stone-50 rounded px-2 py-1.5 leading-relaxed">
-                {p.score_explanation}
-              </p>
-            </div>
-          )}
-        </div>
-      );
-    });
-
-    return rows;
-  }
+  // nothing — table rendered inline below
 
   return (
     <div className="flex flex-col gap-3">
@@ -479,17 +426,104 @@ function GroupsTab({
       )}
 
       {/* Ranked table */}
-      {hasBreakdown && participants.length > 0 && (
+      {hasBreakdown && sorted.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          {/* Column header */}
-          <div className="flex items-center gap-1.5 px-3 py-1 border-b border-stone-100 bg-stone-50">
-            <span className="w-5 shrink-0" />
-            <span className="flex-1 text-[11px] font-medium text-stone-400">Player</span>
-            <span className="text-[11px] font-medium text-stone-400">Score</span>
-            <span className="text-[11px] font-medium text-stone-400 w-8 text-center">Grp</span>
-            <span className="w-4 shrink-0" />
-          </div>
-          {renderParticipantRows()}
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-stone-100 bg-stone-50 text-[11px] text-stone-400 uppercase">
+                <th className="text-left px-3 py-1.5 font-medium w-8">#</th>
+                <th className="text-left px-2 py-1.5 font-medium">Player</th>
+                <th className="text-center px-2 py-1.5 font-medium w-14">Skill</th>
+                <th className="text-center px-2 py-1.5 font-medium w-14">Score</th>
+                <th className="text-center px-2 py-1.5 font-medium w-12">Grp</th>
+                <th className="w-6 px-1 py-1.5"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {(() => {
+                let lastGroup: string | null = null;
+                let rank = 0;
+                return sorted.map((p) => {
+                  const group = p.group_label;
+                  const showDivider = group && group !== lastGroup;
+                  if (showDivider) lastGroup = group;
+                  rank++;
+                  const isExpanded = expandedId === p.id;
+                  const score = p.finals_score !== null ? p.finals_score.toFixed(1) : "—";
+                  const count = group ? groupCounts[group] ?? 0 : 0;
+                  const tooSmall = count < 4;
+
+                  return (
+                    <React.Fragment key={p.id}>
+                      {showDivider && (
+                        <tr className="bg-stone-50">
+                          <td colSpan={6} className="px-3 py-1">
+                            <div className="flex items-center justify-between">
+                              <span className={`text-xs font-bold px-2 py-0.5 rounded border ${GROUP_COLORS[group!] ?? ""}`}>
+                                Group {group}
+                              </span>
+                              <span className={`text-xs font-medium ${tooSmall ? "text-red-500" : "text-stone-400"}`}>
+                                {count}{tooSmall ? " ⚠ min 4" : ""}
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                      <tr className="border-b border-stone-100 last:border-0">
+                        <td className="px-3 py-1.5 text-xs text-stone-400">{rank}</td>
+                        <td className="px-2 py-1.5">
+                          <div className="flex items-center gap-1.5">
+                            <Link href={`/players/${p.player_id}`} className="text-sky-600 hover:underline truncate">
+                              {p.name}
+                            </Link>
+                            {p.group_override && (
+                              <span className="text-[9px] font-medium px-1 rounded bg-violet-100 text-violet-600">✎</span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="text-center px-2 py-1.5"><SkillDots level={p.skill_level} /></td>
+                        <td className="text-center px-2 py-1.5 text-xs text-stone-500">{score}</td>
+                        <td className="text-center px-2 py-1.5">
+                          {canEdit && group ? (
+                            <select
+                              value={group}
+                              disabled={overriding === p.player_id || isPending}
+                              onChange={(e) => overrideGroup(p.player_id, e.target.value)}
+                              className={`text-[11px] font-semibold px-1 py-0 rounded border cursor-pointer disabled:opacity-40 ${GROUP_COLORS[group] ?? ""}`}
+                            >
+                              <option value="A">A</option>
+                              <option value="B">B</option>
+                              <option value="C">C</option>
+                            </select>
+                          ) : group ? (
+                            <span className={`text-[11px] font-semibold px-1.5 rounded border ${GROUP_COLORS[group] ?? ""}`}>{group}</span>
+                          ) : (
+                            <span className="text-xs text-stone-300">—</span>
+                          )}
+                        </td>
+                        <td className="px-1 py-1.5">
+                          {p.score_explanation && (
+                            <button onClick={() => setExpandedId(isExpanded ? null : p.id)} className="text-xs text-stone-400 hover:text-stone-600">
+                              {isExpanded ? "▲" : "ℹ"}
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                      {isExpanded && p.score_explanation && (
+                        <tr>
+                          <td colSpan={6} className="px-3 pb-1.5">
+                            <p className="text-[11px] text-stone-500 bg-stone-50 rounded px-2 py-1.5 leading-relaxed">
+                              {p.score_explanation}
+                            </p>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                });
+              })()}
+            </tbody>
+          </table>
         </div>
       )}
 
