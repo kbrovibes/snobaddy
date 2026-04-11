@@ -109,8 +109,8 @@ export default async function PlayerProfilePage({
           <div className="mt-3 border-t border-stone-100 pt-3">
             <p className="text-sm italic text-stone-500 leading-relaxed">{poem}</p>
             <div className="flex items-center justify-between mt-2 gap-2">
-              <p className="text-xs text-stone-300">
-                ~ Written by an AI that has never touched a shuttlecock ·{poemCreatedAt ? new Date(poemCreatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "unknown date"}
+              <p className="text-[10px] italic text-stone-300">
+                — Written by an AI that has never touched a shuttlecock · {poemCreatedAt ? new Date(poemCreatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "unknown date"}
               </p>
               {isGodMode && <RegeneratePoemButton playerId={id} />}
             </div>

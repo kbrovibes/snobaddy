@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.39] - 2026-04-10
+
+### Changed
+- **Poem footnote** — smaller (10px), italic, prefixed with em-dash.
+
+---
+
 ## [0.24.38] - 2026-04-10
 
 ### Changed
