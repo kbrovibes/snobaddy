@@ -36,8 +36,11 @@ import AutoRefreshToggle from "@/components/AutoRefreshToggle";
 import FinalizeSessionButton from "@/components/FinalizeSessionButton";
 import FormatPicker from "@/components/finals/FormatPicker";
 import PairConfigurator from "@/components/finals/PairConfigurator";
+import GenerateMatchesButton from "@/components/finals/GenerateMatchesButton";
+import FinalsMatchList from "@/components/finals/FinalsMatchList";
 import type { PairPlayer, SavedPair } from "@/components/finals/PairConfigurator";
-import { getFinalsFormat, getFinalsParticipants } from "@/lib/db/finals";
+import type { PairInfo } from "@/components/finals/FinalsMatchList";
+import { getFinalsFormat, getFinalsParticipants, getFinalsMatches } from "@/lib/db/finals";
 
 export const dynamic = "force-dynamic";
 
@@ -132,6 +135,29 @@ export default async function SessionDetailPage({
       }
     }
   }
+
+  // Fetch finals matches when they've been generated
+  const matchesGenerated = finalsFormat?.status === "matches_generated" || finalsFormat?.status === "completed";
+  const finalsMatches = isFinalsSession && matchesGenerated
+    ? await getFinalsMatches(session.id)
+    : [];
+
+  // Build pairsInfo for match display (maps pair IDs to labels + names)
+  const pairsInfoMap: Record<string, PairInfo[]> = {};
+  if (isFixedPartner && Object.keys(savedPairs).length > 0) {
+    const playerNameMap = new Map(finalsParticipants.map((p) => [p.player_id, p.name]));
+    for (const [label, pairs] of Object.entries(savedPairs)) {
+      pairsInfoMap[label] = pairs.map((pair, idx) => ({
+        label: `Pair ${idx + 1}`,
+        player1_name: playerNameMap.get(pair.player1_id) ?? "Unknown",
+        player2_name: playerNameMap.get(pair.player2_id) ?? "Unknown",
+        player1_id: pair.player1_id,
+        player2_id: pair.player2_id,
+      }));
+    }
+  }
+
+  const hasSavedPairs = Object.values(savedPairs).some((p) => p.length > 0);
 
   const [scoreboard, recentMatches, proposedMatches, onlinePlayerIds, tallyRows, formPlayers] =
     needsScoreboard
@@ -266,6 +292,39 @@ export default async function SessionDetailPage({
             groups={pairGroups}
             savedPairs={savedPairs}
             isLocked={finalsFormat!.status !== "configured"}
+          />
+        </div>
+      )}
+
+      {/* Generate matches button — God Mode, after pairs saved, before matches generated */}
+      {isFinalsSession && isGodMode && isFixedPartner && (isPending || isActive) && !matchesGenerated && (
+        <div className="bg-white rounded-xl shadow-sm px-4 py-3">
+          <GenerateMatchesButton
+            sessionId={session.id}
+            hasPairs={hasSavedPairs}
+            isGenerated={matchesGenerated}
+          />
+        </div>
+      )}
+
+      {/* Finals match list — shown after matches generated */}
+      {isFinalsSession && matchesGenerated && finalsMatches.length > 0 && (
+        <div className="bg-white rounded-xl shadow-sm px-4 py-3">
+          <FinalsMatchList
+            matches={finalsMatches.map((m) => ({
+              id: m.id,
+              team1_player1: m.team1_player1_id,
+              team1_player2: m.team1_player2_id,
+              team2_player1: m.team2_player1_id,
+              team2_player2: m.team2_player2_id,
+              team1_score: m.team1_score,
+              team2_score: m.team2_score,
+              winning_team: m.winning_team,
+              finals_group: m.finals_group,
+            }))}
+            pairsInfo={pairsInfoMap}
+            sessionId={session.id}
+            isActive={isActive}
           />
         </div>
       )}

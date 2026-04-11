@@ -124,6 +124,37 @@ export async function getFinalsFormat(
   return data as unknown as FinalsFormat;
 }
 
+export interface FinalsMatchRow {
+  id: string;
+  team1_player1_id: string;
+  team1_player2_id: string;
+  team2_player1_id: string;
+  team2_player2_id: string;
+  team1_score: number;
+  team2_score: number;
+  winning_team: number | null;
+  match_type: string;
+  finals_group: string;
+}
+
+export async function getFinalsMatches(
+  sessionId: string
+): Promise<FinalsMatchRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("matches")
+    .select(
+      "id, team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, " +
+      "team1_score, team2_score, winning_team, match_type, finals_group"
+    )
+    .eq("session_id", sessionId)
+    .in("match_type", ["finals_group", "finals_final"])
+    .order("played_at", { ascending: true });
+
+  if (!data) return [];
+  return data as unknown as FinalsMatchRow[];
+}
+
 export async function getFinalsParticipants(
   finalsEventId: string
 ): Promise<FinalsParticipant[]> {

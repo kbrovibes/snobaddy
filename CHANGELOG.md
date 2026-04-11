@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.26.2] - 2026-04-11
+
+### Added
+- **Season Finals — Match Generation** (God Mode only) — Generate round-robin matches for Fixed-Partner format. Every pair plays every other pair once per group. Match cards with group tabs, progress bar, and inline score entry.
+
+---
+
 ## [0.26.1] - 2026-04-11
 
 ### Added
