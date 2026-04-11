@@ -42,10 +42,10 @@ export default function FinalsSessionTabs({
               <button
                 key={g}
                 onClick={() => setActiveGroup(g)}
-                className={`flex-1 text-sm font-semibold py-2 rounded-md transition-colors ${
+                className={`flex-1 text-sm font-semibold py-2 rounded-lg transition-colors ${
                   activeGroup === g
-                    ? "bg-white text-stone-900 shadow-sm"
-                    : "text-stone-500 hover:text-stone-700"
+                    ? "bg-stone-900 text-white"
+                    : "text-stone-500 hover:text-stone-800"
                 }`}
               >
                 Group {g}

@@ -44,12 +44,15 @@ export default function FormatPicker({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [selecting, setSelecting] = useState(false);
+  const [optimisticType, setOptimisticType] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const isLocked = currentFormat && currentFormat.status !== "configured";
+  const displayType = optimisticType ?? currentFormat?.format_type;
 
   async function selectFormat(formatType: "playoffs" | "fixed_partner") {
     if (isLocked) return;
+    setOptimisticType(formatType);
     setSelecting(true);
     setError(null);
     const res = await fetch(`/api/sessions/${sessionId}/finals-format`, {
@@ -60,6 +63,7 @@ export default function FormatPicker({
     const json = await res.json();
     if (!res.ok) {
       setError(json.error ?? "Failed to set format");
+      setOptimisticType(null);
     } else {
       startTransition(() => router.refresh());
     }
@@ -81,8 +85,8 @@ export default function FormatPicker({
 
       <div className="flex gap-2">
         {FORMATS.map((fmt) => {
-          const isSelected = currentFormat?.format_type === fmt.type;
-          const isDisabled = !fmt.enabled || selecting || isPending;
+          const isSelected = displayType === fmt.type;
+          const isDisabled = !fmt.enabled || (selecting && optimisticType !== fmt.type) || isPending;
 
           return (
             <button
@@ -92,7 +96,7 @@ export default function FormatPicker({
               className={[
                 "relative flex-1 text-left px-3 py-2 rounded-lg border transition-all text-sm",
                 isSelected
-                  ? "border-stone-900 bg-stone-50 shadow-sm"
+                  ? "border-stone-900 bg-stone-900 text-white shadow-sm"
                   : fmt.enabled
                   ? "border-stone-200 bg-white hover:border-stone-400"
                   : "border-stone-100 bg-stone-50 opacity-60 cursor-not-allowed",
@@ -103,7 +107,7 @@ export default function FormatPicker({
                   {fmt.tag}
                 </span>
               )}
-              <span className="font-semibold text-stone-700">{fmt.icon} {fmt.title}</span>
+              <span className={`font-semibold ${isSelected ? "text-white" : "text-stone-700"}`}>{fmt.icon} {fmt.title}</span>
             </button>
           );
         })}
