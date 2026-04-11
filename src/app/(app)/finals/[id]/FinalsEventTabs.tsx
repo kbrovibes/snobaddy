@@ -706,6 +706,8 @@ export default function FinalsEventTabs({
 }) {
   const [tab, setTab] = useState<Tab>("players");
   const [deleting, setDeleting] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   const canViewGroups = true; // Groups tab always accessible; generate-breakdown button handles state
@@ -713,7 +715,7 @@ export default function FinalsEventTabs({
     event.status !== "draft" && event.status !== "breakdown_generated";
 
   async function handleDelete() {
-    if (!confirm("Delete this Finals Event? This cannot be undone.")) return;
+    if (!confirm("Delete this Finals Event and all its data? This cannot be undone.")) return;
     setDeleting(true);
     const res = await fetch(`/api/finals/${event.id}`, { method: "DELETE" });
     if (res.ok) {
@@ -723,6 +725,19 @@ export default function FinalsEventTabs({
       alert(json.error ?? "Could not delete");
       setDeleting(false);
     }
+  }
+
+  async function handleReset() {
+    if (!confirm("Reset to draft? This will clear all groups, sessions, and matches. Players will stay in the pool.")) return;
+    setResetting(true);
+    const res = await fetch(`/api/finals/${event.id}/reset`, { method: "POST" });
+    if (res.ok) {
+      startTransition(() => { setTab("players"); router.refresh(); });
+    } else {
+      const json = await res.json();
+      alert(json.error ?? "Could not reset");
+    }
+    setResetting(false);
   }
 
   return (
@@ -776,18 +791,25 @@ export default function FinalsEventTabs({
         />
       )}
 
-      {/* Delete draft */}
-      {event.status === "draft" && (
-        <div className="mt-2">
+      {/* Reset / Delete */}
+      <div className="mt-2 flex flex-col gap-2">
+        {event.status !== "draft" && (
           <button
-            onClick={handleDelete}
-            disabled={deleting}
-            className="w-full py-2.5 text-sm font-medium text-red-400 hover:text-red-600 border border-red-100 hover:border-red-300 rounded-xl transition-colors disabled:opacity-50"
+            onClick={handleReset}
+            disabled={resetting || deleting || isPending}
+            className="w-full py-2.5 text-sm font-medium text-amber-500 hover:text-amber-700 border border-amber-200 hover:border-amber-300 rounded-xl transition-colors disabled:opacity-50"
           >
-            {deleting ? "Deleting…" : "Delete Finals Event"}
+            {resetting ? "Resetting…" : "Reset to Draft (keep players)"}
           </button>
-        </div>
-      )}
+        )}
+        <button
+          onClick={handleDelete}
+          disabled={deleting || resetting || isPending}
+          className="w-full py-2.5 text-sm font-medium text-red-400 hover:text-red-600 border border-red-100 hover:border-red-300 rounded-xl transition-colors disabled:opacity-50"
+        >
+          {deleting ? "Deleting…" : "Delete Finals Event"}
+        </button>
+      </div>
     </div>
   );
 }

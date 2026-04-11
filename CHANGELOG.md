@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.26.7] - 2026-04-11
+
+### Added
+- **Season Finals — Reset & Delete always available** — "Reset to Draft" button clears groups, sessions, and matches but keeps players. "Delete Finals Event" fully removes everything. Both available at any stage with confirmation dialogs.
+
+---
+
 ## [0.26.6] - 2026-04-11
 
 ### Fixed

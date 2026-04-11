@@ -57,20 +57,22 @@ export async function DELETE(
 
   const { id } = await params;
 
-  // Only allow deleting draft events
   const { data: event } = await supabase
     .from("finals_events")
-    .select("status")
+    .select("id, finals1_session_id, finals2_session_id")
     .eq("id", id)
     .maybeSingle();
 
   if (!event) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (event.status !== "draft") {
-    return NextResponse.json(
-      { error: "Only draft Finals Events can be deleted" },
-      { status: 409 }
-    );
+
+  // Clean up linked sessions, matches, formats, and participants
+  const sessionIds = [event.finals1_session_id, event.finals2_session_id].filter(Boolean) as string[];
+  if (sessionIds.length > 0) {
+    await adminDb.from("matches").delete().in("session_id", sessionIds).in("match_type", ["finals_group", "finals_final"]);
+    await adminDb.from("finals_formats").delete().in("session_id", sessionIds);
+    await adminDb.from("sessions").delete().in("id", sessionIds);
   }
+  await adminDb.from("finals_participants").delete().eq("finals_event_id", id);
 
   const { error } = await adminDb
     .from("finals_events")
