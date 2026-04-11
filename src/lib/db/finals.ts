@@ -165,7 +165,7 @@ export async function getFinalsParticipants(
     .select(
       "id, player_id, group_label, finals_day, group_override, added_at, " +
       "finals_score, season_win_rate, season_wins, season_losses, score_explanation, " +
-      "players(name, skill_level)"
+      "players!finals_participants_player_id_fkey(name, skill_level)"
     )
     .eq("finals_event_id", finalsEventId)
     .order("finals_score", { ascending: false, nullsFirst: false });

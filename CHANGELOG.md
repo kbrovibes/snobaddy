@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.26.4] - 2026-04-11
+
+### Fixed
+- **Season Finals — Player list not showing** — Fixed ambiguous FK join in `getFinalsParticipants`. The `finals_participants` table has two foreign keys to `players` (`player_id` and `added_by`), causing Supabase/PostgREST to silently return empty results. Now uses explicit FK hint.
+
+---
+
 ## [0.26.3] - 2026-04-11
 
 ### Added
