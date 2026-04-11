@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.25.2] - 2026-04-11
+
+### Added
+- **Season Finals — Breakdown Generation** (God Mode only) — Tab 2 (Groups) is now fully functional. Admins can generate a breakdown that scores all participants using Skill (50%) + Win Rate (50%), auto-assigns groups (top 35% → A, next 35% → B, rest → C), and shows a ranked table with score, WR%, group badges, and expandable score explanations. Individual group overrides can be set via dropdown. A "Confirm Groups" button validates that each group has ≥ 4 players before proceeding to session generation.
+- `POST /api/finals/[id]/generate-breakdown` — computes Finals Score for all participants and auto-assigns groups
+- `POST /api/finals/[id]/confirm-breakdown` — validates group sizes (≥ 4 per group) before proceeding
+- `PATCH /api/finals/[id]/participants/[playerId]/group` — manual group label override
+
+---
+
 ## [0.25.1] - 2026-04-11
 
 ### Added
