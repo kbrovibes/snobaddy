@@ -28,6 +28,19 @@ function SkillDots({ level }: { level: number }) {
   );
 }
 
+// ─── Next step button ────────────────────────────────────────────────────────
+function NextStepButton({ label, disabled, onClick }: { label: string; disabled?: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="w-full py-2 text-sm font-semibold text-sky-700 bg-sky-50 border border-sky-200 rounded-xl hover:bg-sky-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+    >
+      {label} →
+    </button>
+  );
+}
+
 // ─── Tab button ──────────────────────────────────────────────────────────────
 function TabButton({
   step,
@@ -71,11 +84,13 @@ function PlayersTab({
   eventStatus,
   allPlayers,
   participants,
+  onNext,
 }: {
   eventId: string;
   eventStatus: FinalsEvent["status"];
   allPlayers: PlayerStats[];
   participants: FinalsParticipant[];
+  onNext: () => void;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -244,6 +259,11 @@ function PlayersTab({
         </div>
       )}
 
+      {/* Next step — top */}
+      {sorted.length >= 4 && (
+        <NextStepButton label="Next: Set Up Groups" onClick={onNext} />
+      )}
+
       {/* Participant table */}
       {sorted.length === 0 ? (
         <div className="rounded-lg border border-dashed border-stone-200 px-4 py-8 text-center">
@@ -301,6 +321,11 @@ function PlayersTab({
             </tbody>
           </table>
         </div>
+      )}
+
+      {/* Next step — bottom */}
+      {sorted.length >= 4 && (
+        <NextStepButton label="Next: Set Up Groups" onClick={onNext} />
       )}
     </div>
   );
@@ -813,6 +838,7 @@ export default function FinalsEventTabs({
           eventStatus={event.status}
           allPlayers={allPlayers}
           participants={participants}
+          onNext={() => setTab("groups")}
         />
       )}
 
