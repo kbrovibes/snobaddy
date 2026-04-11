@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.26.1] - 2026-04-11
+
+### Added
+- **Season Finals — Pair Configuration** (God Mode only) — After selecting Fixed-Partner format, admin can assign partner pairs per group. Auto-suggest pairs players by closest Finals Score. Validates even group sizes and full assignment before saving.
+
+---
+
 ## [0.26.0] - 2026-04-11
 
 ### Added

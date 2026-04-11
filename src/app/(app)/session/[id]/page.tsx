@@ -35,6 +35,8 @@ import ResetSessionButton from "@/components/ResetSessionButton";
 import AutoRefreshToggle from "@/components/AutoRefreshToggle";
 import FinalizeSessionButton from "@/components/FinalizeSessionButton";
 import FormatPicker from "@/components/finals/FormatPicker";
+import PairConfigurator from "@/components/finals/PairConfigurator";
+import type { PairPlayer, SavedPair } from "@/components/finals/PairConfigurator";
 import { getFinalsFormat, getFinalsParticipants } from "@/lib/db/finals";
 
 export const dynamic = "force-dynamic";
@@ -89,22 +91,47 @@ export default async function SessionDetailPage({
   const isCompleted = session.status === "completed";
   const needsScoreboard = isActive || isCompleted;
 
-  // Finals format + group sizes (only for finals sessions with god mode)
-  const [finalsFormat, finalsGroupSizes] = isFinalsSession && isGodMode
+  // Finals format + participants (only for finals sessions with god mode)
+  const [finalsFormat, finalsParticipants] = isFinalsSession && isGodMode
     ? await Promise.all([
         getFinalsFormat(session.id),
         session.finals_event_id
-          ? getFinalsParticipants(session.finals_event_id).then((participants) => {
-              const sizes = { A: 0, B: 0 };
-              for (const p of participants) {
-                if (p.group_label === "A") sizes.A++;
-                else if (p.group_label === "B") sizes.B++;
-              }
-              return sizes;
-            })
-          : Promise.resolve({ A: 0, B: 0 }),
+          ? getFinalsParticipants(session.finals_event_id)
+          : Promise.resolve([]),
       ])
-    : [null, { A: 0, B: 0 }];
+    : [null, []];
+
+  // Derive group sizes from participants
+  const finalsGroupSizes = { A: 0, B: 0 };
+  for (const p of finalsParticipants) {
+    if (p.group_label === "A") finalsGroupSizes.A++;
+    else if (p.group_label === "B") finalsGroupSizes.B++;
+  }
+
+  // Build pair configurator data when format is fixed_partner
+  const isFixedPartner = finalsFormat?.format_type === "fixed_partner";
+  const pairGroups: Record<string, PairPlayer[]> = {};
+  const savedPairs: Record<string, SavedPair[]> = {};
+  if (isFixedPartner) {
+    for (const p of finalsParticipants) {
+      if (p.group_label === "A" || p.group_label === "B") {
+        if (!pairGroups[p.group_label]) pairGroups[p.group_label] = [];
+        pairGroups[p.group_label].push({
+          player_id: p.player_id,
+          name: p.name,
+          finals_score: p.finals_score,
+          group_label: p.group_label,
+        });
+      }
+    }
+    // Load saved pairs from format config
+    const configPairs = (finalsFormat.config as { pairs?: Record<string, SavedPair[]> })?.pairs;
+    if (configPairs) {
+      for (const [label, pairs] of Object.entries(configPairs)) {
+        savedPairs[label] = pairs;
+      }
+    }
+  }
 
   const [scoreboard, recentMatches, proposedMatches, onlinePlayerIds, tallyRows, formPlayers] =
     needsScoreboard
@@ -227,6 +254,18 @@ export default async function SessionDetailPage({
             sessionId={session.id}
             currentFormat={finalsFormat as import("@/components/finals/FormatPicker").FinalsFormatData | null}
             groupSizes={finalsGroupSizes}
+          />
+        </div>
+      )}
+
+      {/* Fixed-Partner pair configuration — God Mode only */}
+      {isFinalsSession && isGodMode && isFixedPartner && (isPending || isActive) && Object.keys(pairGroups).length > 0 && (
+        <div className="bg-white rounded-xl shadow-sm px-4 py-3">
+          <PairConfigurator
+            sessionId={session.id}
+            groups={pairGroups}
+            savedPairs={savedPairs}
+            isLocked={finalsFormat!.status !== "configured"}
           />
         </div>
       )}
