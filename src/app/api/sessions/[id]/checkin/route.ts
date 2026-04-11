@@ -15,7 +15,10 @@ export async function POST(
 
   const { id } = await params;
   const { data: session } = await supabase
-    .from("sessions").select("status").eq("id", id).single();
+    .from("sessions").select("status, session_type").eq("id", id).single();
+  if ((session as { session_type?: string } | null)?.session_type === "finals") {
+    return NextResponse.json({ error: "Check-in is not used for Finals sessions" }, { status: 400 });
+  }
   if (session?.status !== "active") {
     return NextResponse.json({ error: "Session is not active" }, { status: 400 });
   }

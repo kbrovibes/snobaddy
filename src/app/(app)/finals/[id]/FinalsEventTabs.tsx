@@ -2,7 +2,8 @@
 
 import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import type { FinalsEvent, FinalsParticipant } from "@/lib/db/finals";
+import Link from "next/link";
+import type { FinalsEvent, FinalsParticipant, FinalsSessionPair, FinalsSessionInfo } from "@/lib/db/finals";
 import type { PlayerStats } from "@/lib/db/players";
 
 const GROUP_COLORS: Record<string, string> = {
@@ -520,15 +521,162 @@ function GroupsTab({
   );
 }
 
+// ─── Sessions tab ─────────────────────────────────────────────────────────────
+function SessionCard({
+  label,
+  subtitle,
+  session,
+}: {
+  label: string;
+  subtitle: string;
+  session: FinalsSessionInfo | null;
+}) {
+  if (!session) return null;
+
+  const statusInfo = {
+    pending: { text: "Starting soon", cls: "text-orange-600 bg-orange-50" },
+    active:  { text: "In Progress",   cls: "text-white bg-sky-700" },
+    completed: { text: "Completed",   cls: "text-teal-600 bg-teal-50" },
+  }[session.status];
+
+  const formattedDate = new Date(session.date + "T12:00:00").toLocaleDateString("en-US", {
+    weekday: "short", month: "short", day: "numeric",
+  });
+
+  return (
+    <Link
+      href={`/session/${session.id}`}
+      className="flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-sm hover:bg-stone-50 active:bg-amber-50 transition-colors"
+    >
+      <div>
+        <p className="text-sm font-semibold text-stone-800">{label}</p>
+        <p className="text-xs text-stone-400">{subtitle} · {formattedDate}</p>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${statusInfo.cls}`}>
+          {statusInfo.text}
+        </span>
+        <span className="text-stone-300 text-sm">→</span>
+      </div>
+    </Link>
+  );
+}
+
+function SessionsTab({
+  eventId,
+  eventStatus,
+  sessionPair,
+}: {
+  eventId: string;
+  eventStatus: FinalsEvent["status"];
+  sessionPair: FinalsSessionPair;
+}) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [generating, setGenerating] = useState(false);
+  const [day1Date, setDay1Date] = useState("");
+  const [day2Date, setDay2Date] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const sessionsExist = !!sessionPair.day1;
+
+  async function generateSessions() {
+    if (!day1Date || !day2Date) {
+      setError("Please select both dates.");
+      return;
+    }
+    setGenerating(true);
+    setError(null);
+    const res = await fetch(`/api/finals/${eventId}/generate-sessions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ day1_date: day1Date, day2_date: day2Date }),
+    });
+    const json = await res.json();
+    if (!res.ok) {
+      setError(json.error ?? "Failed to generate sessions");
+    } else {
+      startTransition(() => router.refresh());
+    }
+    setGenerating(false);
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      {sessionsExist ? (
+        <>
+          <SessionCard
+            label="Finals Day 1 — Groups A & B"
+            subtitle="Day 1"
+            session={sessionPair.day1}
+          />
+          <SessionCard
+            label="Finals Day 2 — Group C"
+            subtitle="Day 2"
+            session={sessionPair.day2}
+          />
+          <p className="text-xs text-stone-400 text-center mt-1">
+            Sessions are set. Open each session page to start play.
+          </p>
+        </>
+      ) : (
+        <>
+          <div className="bg-white rounded-xl shadow-sm p-4 flex flex-col gap-3">
+            <p className="text-sm font-semibold text-stone-700">Schedule Finals Days</p>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-stone-500">
+                Day 1 — Groups A & B
+              </label>
+              <input
+                type="date"
+                value={day1Date}
+                onChange={(e) => setDay1Date(e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-stone-500">
+                Day 2 — Group C
+              </label>
+              <input
+                type="date"
+                value={day2Date}
+                onChange={(e) => setDay2Date(e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+              />
+            </div>
+          </div>
+
+          {error && (
+            <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+          )}
+
+          <button
+            onClick={generateSessions}
+            disabled={generating || isPending || !day1Date || !day2Date}
+            className="w-full py-2.5 text-sm font-semibold bg-stone-900 text-white rounded-xl hover:bg-stone-700 disabled:opacity-40 transition-colors"
+          >
+            {generating ? "Creating sessions…" : "Generate Finals Sessions"}
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
 // ─── Main tabs component ──────────────────────────────────────────────────────
 export default function FinalsEventTabs({
   event,
   allPlayers,
   participants,
+  sessionPair,
 }: {
   event: FinalsEvent;
   allPlayers: PlayerStats[];
   participants: FinalsParticipant[];
+  sessionPair: FinalsSessionPair;
 }) {
   const [tab, setTab] = useState<Tab>("players");
   const [deleting, setDeleting] = useState(false);
@@ -594,11 +742,11 @@ export default function FinalsEventTabs({
       )}
 
       {tab === "sessions" && canViewSessions && (
-        <div className="bg-white rounded-xl shadow-sm p-4">
-          <p className="text-sm text-stone-400">
-            Finals session generation — implemented in Task 5.
-          </p>
-        </div>
+        <SessionsTab
+          eventId={event.id}
+          eventStatus={event.status}
+          sessionPair={sessionPair}
+        />
       )}
 
       {/* Delete draft */}

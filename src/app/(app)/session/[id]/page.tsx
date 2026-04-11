@@ -81,6 +81,7 @@ export default async function SessionDetailPage({
     getAdjacentNonTestSessions(session.date),
   ]);
 
+  const isFinalsSession = session.session_type === "finals";
   const isPending = session.status === "pending";
   const isActive = session.status === "active";
   const isCompleted = session.status === "completed";
@@ -116,7 +117,13 @@ export default async function SessionDetailPage({
 
       {/* Session nav */}
       <div className="flex flex-col gap-0.5 -mb-2">
-        <BackToSessionsLink />
+        {isFinalsSession && session.finals_event_id ? (
+          <Link href={`/finals/${session.finals_event_id}`} className="text-stone-400 hover:text-stone-600 text-sm">
+            ← Finals Event
+          </Link>
+        ) : (
+          <BackToSessionsLink />
+        )}
         <div className="flex items-center justify-between text-sm">
           <div>
             {adjacentSessions.newer ? (
@@ -144,7 +151,9 @@ export default async function SessionDetailPage({
         <div className="flex items-center gap-3">
           <Image src="/serve-logo.jpg" alt="Serve Sports" width={52} height={52} className="rounded-xl shrink-0" />
           <div>
-            <h1 className="text-lg font-bold text-stone-900 leading-tight">{session.season?.name ?? "Tonight"}</h1>
+            <h1 className="text-lg font-bold text-stone-900 leading-tight">
+              {isFinalsSession ? "🏆 Season Finals" : (session.season?.name ?? "Tonight")}
+            </h1>
             <div className="flex items-center gap-2">
               <p className="text-sm text-stone-500">{formatDate(session.date)}</p>
               {isAdmin && session.is_test_session && (
@@ -180,13 +189,20 @@ export default async function SessionDetailPage({
         )}
       </div>
 
+      {/* Finals session info banner */}
+      {isFinalsSession && isPending && !isAdmin && (
+        <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 text-sm text-amber-700 text-center">
+          Season Finals — this session hasn't started yet.
+        </div>
+      )}
+
       {/* Admin: start session */}
       {isPending && isAdmin && (
         <StartSessionButton sessionId={session.id} sessionDate={session.date} />
       )}
 
-      {/* Non-admin pending */}
-      {isPending && !isAdmin && (
+      {/* Non-admin pending (regular sessions only) */}
+      {isPending && !isAdmin && !isFinalsSession && (
         <div className="bg-orange-50 border border-orange-100 rounded-xl px-4 py-3 text-sm text-orange-700 text-center">
           Tonight's session hasn't started yet. Check back soon!
         </div>
@@ -195,8 +211,10 @@ export default async function SessionDetailPage({
       {/* Active session */}
       {isActive && (
         <>
-          {/* Check-in */}
-          <CheckInButton sessionId={session.id} alreadyCheckedIn={isCheckedIn} />
+          {/* Check-in — not shown for Finals sessions */}
+          {!isFinalsSession && (
+            <CheckInButton sessionId={session.id} alreadyCheckedIn={isCheckedIn} />
+          )}
 
           {/* Finalize prompt — admin only, after 10pm PST, no activity in 20min */}
           {isAdmin && !session.is_test_session && (
@@ -206,13 +224,15 @@ export default async function SessionDetailPage({
             />
           )}
 
-          {/* Who's here */}
-          <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-            <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
-              Who's Here · {checkedInPlayers.length}
-            </h2>
-            <WhoIsHere players={checkedInPlayers} onlinePlayerIds={onlinePlayerIds as Set<string>} isAdmin={isAdmin} sessionId={session.id} />
-          </div>
+          {/* Who's here — not shown for Finals sessions */}
+          {!isFinalsSession && (
+            <div className="bg-white rounded-xl shadow-sm px-4 py-3">
+              <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
+                Who's Here · {checkedInPlayers.length}
+              </h2>
+              <WhoIsHere players={checkedInPlayers} onlinePlayerIds={onlinePlayerIds as Set<string>} isAdmin={isAdmin} sessionId={session.id} />
+            </div>
+          )}
 
           {/* Match entry */}
           <SimpleMatchForm
@@ -245,7 +265,7 @@ export default async function SessionDetailPage({
             {isAdmin && <ReopenSessionButton sessionId={session.id} />}
           </div>
           {/* Tally entry: shown when no matches recorded yet */}
-          {isAdmin && (recentMatches as unknown[]).length === 0 && (tallyRows as TallyEntry[]).length === 0 && (
+          {isAdmin && !isFinalsSession && (recentMatches as unknown[]).length === 0 && (tallyRows as TallyEntry[]).length === 0 && (
             <TallyEntryForm
               sessionId={session.id}
               allPlayers={formPlayers as { id: string; name: string }[]}

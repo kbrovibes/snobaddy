@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.25.3] - 2026-04-11
+
+### Added
+- **Season Finals — Session Generation** (God Mode only) — Tab 3 (Sessions) is now functional. Admins pick dates for Finals Day 1 (Groups A & B) and Day 2 (Group C) and generate two linked session records. Sessions appear as cards with status badges and direct links. Finals Sessions show a "Season Finals" header on the session page with a "← Finals Event" back link; check-in, Who's Here, and tally entry are hidden.
+- `POST /api/finals/[id]/generate-sessions` — creates two `session_type='finals'` session rows, links them back to the finals event, advances status to `sessions_created`
+- Check-in route now returns 400 for Finals sessions (check-in not applicable)
+- `getFinalsSessionPair()` helper in `src/lib/db/finals.ts`
+
+---
+
 ## [0.25.2] - 2026-04-11
 
 ### Added

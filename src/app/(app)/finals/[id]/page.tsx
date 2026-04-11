@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-server";
-import { getFinalsById, getFinalsParticipants } from "@/lib/db/finals";
+import { getFinalsById, getFinalsParticipants, getFinalsSessionPair } from "@/lib/db/finals";
+import type { FinalsSessionPair } from "@/lib/db/finals";
 import { getActivePlayers } from "@/lib/db/players";
 import FinalsEventTabs from "./FinalsEventTabs";
 
@@ -31,9 +32,10 @@ export default async function FinalsEventPage({
   const event = await getFinalsById(id);
   if (!event) redirect("/");
 
-  const [allPlayers, participants] = await Promise.all([
+  const [allPlayers, participants, sessionPair] = await Promise.all([
     getActivePlayers(),
     getFinalsParticipants(id),
+    getFinalsSessionPair(event.finals1_session_id, event.finals2_session_id),
   ]);
 
   return (
@@ -59,6 +61,7 @@ export default async function FinalsEventPage({
         event={event}
         allPlayers={allPlayers}
         participants={participants}
+        sessionPair={sessionPair}
       />
     </div>
   );

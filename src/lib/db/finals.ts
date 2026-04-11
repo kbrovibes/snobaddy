@@ -49,6 +49,41 @@ export async function getFinalsById(id: string): Promise<FinalsEvent | null> {
   };
 }
 
+export interface FinalsSessionInfo {
+  id: string;
+  date: string;
+  status: "pending" | "active" | "completed";
+}
+
+export interface FinalsSessionPair {
+  day1: FinalsSessionInfo | null;
+  day2: FinalsSessionInfo | null;
+}
+
+export async function getFinalsSessionPair(
+  finals1_session_id: string | null,
+  finals2_session_id: string | null
+): Promise<FinalsSessionPair> {
+  if (!finals1_session_id && !finals2_session_id) {
+    return { day1: null, day2: null };
+  }
+  const supabase = await createClient();
+  const ids = [finals1_session_id, finals2_session_id].filter(Boolean) as string[];
+  const { data } = await supabase
+    .from("sessions")
+    .select("id, date, status")
+    .in("id", ids);
+
+  const byId = new Map((data ?? []).map((s) => [s.id, s]));
+  const toInfo = (id: string | null): FinalsSessionInfo | null => {
+    if (!id) return null;
+    const s = byId.get(id);
+    if (!s) return null;
+    return { id: s.id, date: s.date, status: s.status as FinalsSessionInfo["status"] };
+  };
+  return { day1: toInfo(finals1_session_id), day2: toInfo(finals2_session_id) };
+}
+
 export interface FinalsParticipant {
   id: string;
   player_id: string;

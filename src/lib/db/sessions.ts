@@ -9,6 +9,8 @@ export interface Session {
   is_test_session: boolean;
   tally_photo_path: string | null;
   season: { id: string; name: string };
+  session_type?: "regular" | "finals";
+  finals_event_id?: string | null;
 }
 
 export interface SessionRow {
@@ -107,7 +109,7 @@ export async function getSessionById(id: string): Promise<Session | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("sessions")
-    .select("id, date, status, auto_generate_matches, simple_score_tracking, is_test_session, tally_photo_path, seasons(id, name)")
+    .select("id, date, status, auto_generate_matches, simple_score_tracking, is_test_session, tally_photo_path, session_type, finals_event_id, seasons(id, name)")
     .eq("id", id)
     .maybeSingle();
 
@@ -131,13 +133,15 @@ export async function getSessionById(id: string): Promise<Session | null> {
     };
   }
 
-  const row = data as typeof data & { auto_generate_matches?: boolean; simple_score_tracking?: boolean; is_test_session?: boolean; tally_photo_path?: string | null };
+  const row = data as typeof data & { auto_generate_matches?: boolean; simple_score_tracking?: boolean; is_test_session?: boolean; tally_photo_path?: string | null; session_type?: string; finals_event_id?: string | null };
   return {
     ...data,
     auto_generate_matches: row.auto_generate_matches ?? true,
     simple_score_tracking: row.simple_score_tracking ?? true,
     is_test_session: row.is_test_session ?? false,
     tally_photo_path: row.tally_photo_path ?? null,
+    session_type: (row.session_type as "regular" | "finals" | undefined) ?? "regular",
+    finals_event_id: row.finals_event_id ?? null,
     season: (data.seasons as unknown as Session["season"]),
   };
 }
