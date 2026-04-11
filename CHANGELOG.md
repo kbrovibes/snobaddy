@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.38] - 2026-04-10
+
+### Changed
+- **Poem footnote** — updated to "Written by an AI that has never touched a shuttlecock · {date}".
+
+---
+
 ## [0.24.37] - 2026-04-10
 
 ### Fixed
