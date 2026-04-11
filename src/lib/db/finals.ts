@@ -48,3 +48,37 @@ export async function getFinalsById(id: string): Promise<FinalsEvent | null> {
       (data.finals_participants as unknown as { count: number }[])?.[0]?.count ?? 0,
   };
 }
+
+export interface FinalsParticipant {
+  id: string;
+  player_id: string;
+  name: string;
+  skill_level: number;
+  group_label: string | null;
+  added_at: string;
+}
+
+export async function getFinalsParticipants(
+  finalsEventId: string
+): Promise<FinalsParticipant[]> {
+  const supabase = await createClient();
+
+  const { data } = await supabase
+    .from("finals_participants")
+    .select("id, player_id, group_label, added_at, players(name, skill_level)")
+    .eq("finals_event_id", finalsEventId)
+    .order("added_at", { ascending: true });
+
+  if (!data) return [];
+  return data.map((row) => {
+    const p = row.players as unknown as { name: string; skill_level: number };
+    return {
+      id: row.id,
+      player_id: row.player_id,
+      name: p?.name ?? "Unknown",
+      skill_level: p?.skill_level ?? 3,
+      group_label: row.group_label,
+      added_at: row.added_at,
+    };
+  });
+}

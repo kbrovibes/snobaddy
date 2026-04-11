@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.25.1] - 2026-04-11
+
+### Added
+- **Season Finals — Player Management** (God Mode only) — Tab 1 of the Finals Event page is now fully functional. Admins can search and add players to the Finals pool, remove players, and use "Auto-add from season" to bulk-add all players who have any season record (matches or tally). Each player shows skill level dots and their season W/L/win-rate.
+
+---
+
 ## [0.25.0] - 2026-04-11
 
 ### Added

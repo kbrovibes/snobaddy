@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-server";
-import { getFinalsById } from "@/lib/db/finals";
+import { getFinalsById, getFinalsParticipants } from "@/lib/db/finals";
+import { getActivePlayers } from "@/lib/db/players";
 import FinalsEventTabs from "./FinalsEventTabs";
 
 export const dynamic = "force-dynamic";
@@ -30,6 +31,11 @@ export default async function FinalsEventPage({
   const event = await getFinalsById(id);
   if (!event) redirect("/");
 
+  const [allPlayers, participants] = await Promise.all([
+    getActivePlayers(),
+    getFinalsParticipants(id),
+  ]);
+
   return (
     <div className="flex flex-col px-4 py-4 gap-4">
       {/* Header */}
@@ -49,7 +55,11 @@ export default async function FinalsEventPage({
         )}
       </div>
 
-      <FinalsEventTabs event={event} />
+      <FinalsEventTabs
+        event={event}
+        allPlayers={allPlayers}
+        participants={participants}
+      />
     </div>
   );
 }
