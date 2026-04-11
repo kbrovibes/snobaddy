@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.26.5] - 2026-04-11
+
+### Improved
+- **Season Finals — Editable player list after breakdown** — Players can now be added/removed even after generating the breakdown. Status banners explain the current state and next steps. Groups tab has an "Edit Players" button to switch back.
+
+---
+
 ## [0.26.4] - 2026-04-11
 
 ### Fixed

@@ -29,7 +29,7 @@ export async function DELETE(
     .maybeSingle();
 
   if (!event) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (event.status !== "draft") {
+  if (event.status !== "draft" && event.status !== "breakdown_generated") {
     return NextResponse.json(
       { error: "Cannot remove players after groups have been confirmed" },
       { status: 409 }

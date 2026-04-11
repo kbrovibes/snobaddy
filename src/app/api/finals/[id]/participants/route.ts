@@ -35,7 +35,7 @@ export async function POST(
     .maybeSingle();
 
   if (!event) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (event.status !== "draft") {
+  if (event.status !== "draft" && event.status !== "breakdown_generated") {
     return NextResponse.json(
       { error: "Cannot add players after groups have been confirmed" },
       { status: 409 }

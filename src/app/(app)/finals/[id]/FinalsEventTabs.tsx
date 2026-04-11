@@ -79,6 +79,8 @@ function PlayersTab({
   const [error, setError] = useState<string | null>(null);
 
   const isDraft = eventStatus === "draft";
+  const isBreakdown = eventStatus === "breakdown_generated";
+  const canEditPlayers = isDraft || isBreakdown;
   const participantIds = new Set(participants.map((p) => p.player_id));
 
   // Build a stats lookup from allPlayers
@@ -153,7 +155,7 @@ function PlayersTab({
         <p className="text-sm font-semibold text-stone-700">
           {participants.length} player{participants.length !== 1 ? "s" : ""} in pool
         </p>
-        {isDraft && (
+        {canEditPlayers && (
           <button
             onClick={autoAdd}
             disabled={autoAdding || isPending}
@@ -168,8 +170,20 @@ function PlayersTab({
         <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
       )}
 
-      {/* Add player search (draft only) */}
-      {isDraft && (
+      {/* Status banner */}
+      {isBreakdown && (
+        <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg">
+          Groups have been generated. You can still add or remove players — re-run the breakdown on the Groups tab afterwards.
+        </p>
+      )}
+      {!canEditPlayers && (
+        <p className="text-xs text-stone-400 bg-stone-50 px-3 py-2 rounded-lg">
+          Player list is locked — groups have been confirmed and sessions created. To make changes, delete the finals sessions first.
+        </p>
+      )}
+
+      {/* Add player search */}
+      {canEditPlayers && (
         <div className="flex flex-col gap-1">
           <input
             type="text"
@@ -235,7 +249,7 @@ function PlayersTab({
                     <span className="ml-1 text-stone-500">{p.wr}%</span>
                   )}
                 </span>
-                {isDraft && (
+                {canEditPlayers && (
                   <button
                     onClick={() => removePlayer(p.player_id)}
                     disabled={removing === p.player_id || isPending}
@@ -258,10 +272,12 @@ function GroupsTab({
   eventId,
   eventStatus,
   participants,
+  onSwitchToPlayers,
 }: {
   eventId: string;
   eventStatus: FinalsEvent["status"];
   participants: FinalsParticipant[];
+  onSwitchToPlayers: () => void;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -436,19 +452,29 @@ function GroupsTab({
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Generate / Re-run button */}
+      {/* Actions row */}
       {(eventStatus === "draft" || isBreakdownGenerated) && (
-        <button
-          onClick={generateBreakdown}
-          disabled={generating || isPending}
-          className="w-full py-2.5 text-sm font-semibold bg-stone-900 text-white rounded-xl hover:bg-stone-700 disabled:opacity-50 transition-colors"
-        >
-          {generating
-            ? "Generating…"
-            : hasBreakdown
-            ? "Re-run Breakdown"
-            : "Generate Breakdown"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={generateBreakdown}
+            disabled={generating || isPending}
+            className="flex-1 py-2.5 text-sm font-semibold bg-stone-900 text-white rounded-xl hover:bg-stone-700 disabled:opacity-50 transition-colors"
+          >
+            {generating
+              ? "Generating…"
+              : hasBreakdown
+              ? "Re-run Breakdown"
+              : "Generate Breakdown"}
+          </button>
+          {isBreakdownGenerated && (
+            <button
+              onClick={onSwitchToPlayers}
+              className="px-4 py-2.5 text-sm font-medium text-stone-600 border border-stone-200 rounded-xl hover:bg-stone-50 transition-colors"
+            >
+              Edit Players
+            </button>
+          )}
+        </div>
       )}
 
       {error && (
@@ -738,6 +764,7 @@ export default function FinalsEventTabs({
           eventId={event.id}
           eventStatus={event.status}
           participants={participants}
+          onSwitchToPlayers={() => setTab("players")}
         />
       )}
 
