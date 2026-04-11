@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.26.8] - 2026-04-11
+
+### Improved
+- **Season Finals — Compact player listings** — Reduced spacing in Players and Groups tabs to match the density of normal session pages.
+
+---
+
 ## [0.26.7] - 2026-04-11
 
 ### Added

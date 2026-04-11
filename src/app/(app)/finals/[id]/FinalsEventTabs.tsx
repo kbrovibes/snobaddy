@@ -236,13 +236,13 @@ function PlayersTab({
           {enriched.map((p) => (
             <div
               key={p.player_id}
-              className="flex items-center justify-between px-4 py-3 border-b border-stone-100 last:border-0"
+              className="flex items-center justify-between px-3 py-1.5 border-b border-stone-100 last:border-0"
             >
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-stone-800">{p.name}</span>
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="text-sm text-stone-800 truncate">{p.name}</span>
                 <SkillDots level={p.skill_level} />
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 shrink-0">
                 <span className="text-xs text-stone-400">
                   {p.wins}W–{p.losses}L
                   {p.wr !== null && (
@@ -255,7 +255,7 @@ function PlayersTab({
                     disabled={removing === p.player_id || isPending}
                     className="text-xs text-red-400 hover:text-red-600 disabled:opacity-40"
                   >
-                    {removing === p.player_id ? "…" : "Remove"}
+                    {removing === p.player_id ? "…" : "×"}
                   </button>
                 )}
               </div>
@@ -357,7 +357,7 @@ function GroupsTab({
         rows.push(
           <div
             key={`divider-${group}`}
-            className="flex items-center justify-between px-4 py-1.5 bg-stone-50 border-b border-stone-100"
+            className="flex items-center justify-between px-3 py-1 bg-stone-50 border-b border-stone-100"
           >
             <span className={`text-xs font-bold px-2 py-0.5 rounded border ${GROUP_COLORS[group] ?? "bg-stone-100 text-stone-600"}`}>
               Group {group}
@@ -377,70 +377,52 @@ function GroupsTab({
 
       rows.push(
         <div key={p.id} className="border-b border-stone-100 last:border-0">
-          <div className="flex items-center gap-2 px-4 py-3">
-            {/* Rank */}
-            <span className="w-6 text-right text-xs text-stone-400 flex-shrink-0">{idx + 1}</span>
-
-            {/* Name + skill + override badge */}
-            <div className="flex-1 min-w-0 flex items-center gap-1.5 flex-wrap">
+          <div className="flex items-center gap-1.5 px-3 py-1.5">
+            <span className="w-5 text-right text-xs text-stone-400 shrink-0">{idx + 1}</span>
+            <div className="flex-1 min-w-0 flex items-center gap-1.5">
               <span className="text-sm text-stone-800 truncate">{p.name}</span>
               <SkillDots level={p.skill_level} />
               {p.group_override && (
-                <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-violet-100 text-violet-600 border border-violet-200">
-                  override
+                <span className="text-[9px] font-medium px-1 rounded bg-violet-100 text-violet-600">
+                  ✎
                 </span>
               )}
             </div>
-
-            {/* Stats */}
-            <div className="flex items-center gap-3 flex-shrink-0">
-              <span className="text-xs text-stone-400 hidden sm:block">WR {wr}</span>
-              <span className="text-xs font-semibold text-stone-600 w-10 text-right">{score}</span>
-
-              {/* Group selector or badge */}
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-xs text-stone-400">{score}</span>
               {canEdit && group ? (
                 <select
                   value={group}
                   disabled={overriding === p.player_id || isPending}
                   onChange={(e) => overrideGroup(p.player_id, e.target.value)}
-                  className={`text-xs font-semibold px-1.5 py-0.5 rounded border cursor-pointer disabled:opacity-40 ${GROUP_COLORS[group] ?? ""}`}
+                  className={`text-[11px] font-semibold px-1 py-0 rounded border cursor-pointer disabled:opacity-40 ${GROUP_COLORS[group] ?? ""}`}
                 >
                   <option value="A">A</option>
                   <option value="B">B</option>
                   <option value="C">C</option>
                 </select>
               ) : group ? (
-                <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${GROUP_COLORS[group] ?? ""}`}>
+                <span className={`text-[11px] font-semibold px-1.5 rounded border ${GROUP_COLORS[group] ?? ""}`}>
                   {group}
                 </span>
               ) : (
-                <span className="text-xs text-stone-300 w-10 text-right">—</span>
+                <span className="text-xs text-stone-300">—</span>
               )}
-
-              {/* Info toggle */}
               {p.score_explanation && (
                 <button
                   onClick={() => setExpandedId(isExpanded ? null : p.id)}
                   className="text-xs text-stone-400 hover:text-stone-600"
-                  title="Score explanation"
                 >
                   {isExpanded ? "▲" : "ℹ"}
                 </button>
               )}
             </div>
           </div>
-
-          {/* Expanded explanation */}
           {isExpanded && p.score_explanation && (
-            <div className="px-4 pb-3 pt-0">
-              <p className="text-xs text-stone-500 bg-stone-50 rounded-lg px-3 py-2 leading-relaxed">
+            <div className="px-3 pb-1.5">
+              <p className="text-[11px] text-stone-500 bg-stone-50 rounded px-2 py-1.5 leading-relaxed">
                 {p.score_explanation}
               </p>
-              {p.season_wins !== null && (
-                <p className="text-xs text-stone-400 mt-1 px-1">
-                  {p.season_wins}W – {p.season_losses}L · Skill {p.skill_level} · Finals score {score}
-                </p>
-              )}
             </div>
           )}
         </div>
@@ -495,13 +477,12 @@ function GroupsTab({
       {hasBreakdown && participants.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           {/* Column header */}
-          <div className="flex items-center gap-2 px-4 py-2 border-b border-stone-100 bg-stone-50">
-            <span className="w-6 flex-shrink-0" />
+          <div className="flex items-center gap-1.5 px-3 py-1 border-b border-stone-100 bg-stone-50">
+            <span className="w-5 shrink-0" />
             <span className="flex-1 text-[11px] font-medium text-stone-400">Player</span>
-            <span className="text-[11px] font-medium text-stone-400 hidden sm:block w-14 text-right">WR%</span>
-            <span className="text-[11px] font-medium text-stone-400 w-10 text-right">Score</span>
-            <span className="text-[11px] font-medium text-stone-400 w-10 text-center">Group</span>
-            <span className="w-4 flex-shrink-0" />
+            <span className="text-[11px] font-medium text-stone-400">Score</span>
+            <span className="text-[11px] font-medium text-stone-400 w-8 text-center">Grp</span>
+            <span className="w-4 shrink-0" />
           </div>
           {renderParticipantRows()}
         </div>
