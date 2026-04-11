@@ -288,9 +288,17 @@ function GroupsTab({
   const canEdit = isBreakdownGenerated;
   const hasBreakdown = participants.some((p) => p.finals_score !== null);
 
+  // Sort by group (A, B, C) then by score descending within each group
+  const sorted = [...participants].sort((a, b) => {
+    const ga = a.group_label ?? "Z";
+    const gb = b.group_label ?? "Z";
+    if (ga !== gb) return ga.localeCompare(gb);
+    return (b.finals_score ?? 0) - (a.finals_score ?? 0);
+  });
+
   // Group counts
   const groupCounts: Record<string, number> = {};
-  for (const p of participants) {
+  for (const p of sorted) {
     if (p.group_label) groupCounts[p.group_label] = (groupCounts[p.group_label] ?? 0) + 1;
   }
   const smallGroups = Object.entries(groupCounts).filter(([, c]) => c < 4).map(([g]) => g);
@@ -343,7 +351,7 @@ function GroupsTab({
     const rows: React.ReactNode[] = [];
     let lastGroup: string | null = null;
 
-    participants.forEach((p, idx) => {
+    sorted.forEach((p, idx) => {
       const group = p.group_label;
 
       // Group divider
