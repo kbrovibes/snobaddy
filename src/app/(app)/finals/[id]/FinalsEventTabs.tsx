@@ -453,7 +453,7 @@ function GroupsTab({
                 return sorted.map((p) => {
                   const group = p.group_label;
                   const showDivider = group && group !== lastGroup;
-                  if (showDivider) lastGroup = group;
+                  if (showDivider) { lastGroup = group; rank = 0; }
                   rank++;
                   const isExpanded = expandedId === p.id;
                   const score = p.finals_score !== null ? p.finals_score.toFixed(1) : "—";
