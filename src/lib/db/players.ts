@@ -297,10 +297,10 @@ export async function getPlayerPoemContext(playerId: string): Promise<PlayerPoem
 
 export async function getPlayerPoem(
   playerId: string
-): Promise<{ poem: string; matches_at_generation: number } | null> {
+): Promise<{ poem: string; matches_at_generation: number; created_at: string } | null> {
   const { data } = await serviceClient
     .from("player_poems")
-    .select("poem, matches_at_generation")
+    .select("poem, matches_at_generation, created_at")
     .eq("player_id", playerId)
     .maybeSingle();
   return data ?? null;

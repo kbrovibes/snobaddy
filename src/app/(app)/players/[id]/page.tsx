@@ -7,6 +7,7 @@ import SessionStatsChart from "@/components/SessionStatsChart";
 import BackButton from "@/components/BackButton";
 import IncludeTestToggle from "@/components/IncludeTestToggle";
 import EditPlayerForm from "@/components/EditPlayerForm";
+import RegeneratePoemButton from "@/components/RegeneratePoemButton";
 import { buildNameMap, shortName } from "@/lib/display-name";
 
 export const dynamic = "force-dynamic";
@@ -59,17 +60,22 @@ export default async function PlayerProfilePage({
     ? Math.round((totalWins / totalMatches) * 100)
     : 0;
 
-  // Fetch or generate poem — regenerate when match count has changed by 3+
+  // Fetch or generate poem — regenerate when a new session has completed since last generation
   let poem: string | null = null;
+  let poemCreatedAt: string | null = null;
   try {
     const saved = await getPlayerPoem(id);
-    const stale = !saved || Math.abs(totalMatches - saved.matches_at_generation) >= 3;
+    const lastCompletedDate = sessionHistory.filter(s => !s.isOpen).at(-1)?.date ?? null;
+    const poemDate = saved?.created_at.slice(0, 10) ?? null;
+    const stale = !saved || (lastCompletedDate != null && lastCompletedDate > poemDate!);
     if (stale) {
       const poemContext = await getPlayerPoemContext(id);
       poem = await generatePlayerPoem(player.name, poemContext);
       await upsertPlayerPoem(id, poem, totalMatches);
+      poemCreatedAt = new Date().toISOString();
     } else {
       poem = saved.poem;
+      poemCreatedAt = saved.created_at;
     }
   } catch {
     // poem is non-critical — silently skip if generation fails
@@ -100,9 +106,15 @@ export default async function PlayerProfilePage({
           </div>
         </div>
         {poem && (
-          <p className="mt-3 text-sm italic text-stone-500 border-t border-stone-100 pt-3 leading-relaxed">
-            {poem}
-          </p>
+          <div className="mt-3 border-t border-stone-100 pt-3">
+            <p className="text-sm italic text-stone-500 leading-relaxed">{poem}</p>
+            <div className="flex items-center justify-between mt-2 gap-2">
+              <p className="text-xs text-stone-300">
+                ~ Penned by the robot bard on {poemCreatedAt ? new Date(poemCreatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "unknown date"}
+              </p>
+              {isGodMode && <RegeneratePoemButton playerId={id} />}
+            </div>
+          </div>
         )}
       </div>
 

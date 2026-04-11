@@ -6,6 +6,17 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.37] - 2026-04-10
+
+### Fixed
+- **Poem staleness** — poems now regenerate whenever a new session has completed since the poem was last written, instead of the unreliable "3 match diff" heuristic.
+
+### Added
+- **Poem footnote** — a small "Penned by the robot bard on {date}" line appears below each player poem so you can see when it was last generated.
+- **Regenerate poem button** — god mode users see a small "↺ regenerate" link below the poem to force-refresh it instantly.
+
+---
+
 ## [0.24.36] - 2026-04-10
 
 ### Changed
