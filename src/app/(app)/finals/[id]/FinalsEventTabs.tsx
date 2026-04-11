@@ -305,11 +305,13 @@ function GroupsTab({
   eventStatus,
   participants,
   onSwitchToPlayers,
+  onConfirmed,
 }: {
   eventId: string;
   eventStatus: FinalsEvent["status"];
   participants: FinalsParticipant[];
   onSwitchToPlayers: () => void;
+  onConfirmed: () => void;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -360,7 +362,7 @@ function GroupsTab({
     if (!res.ok) {
       setConfirmError(json.error ?? "Could not confirm groups");
     } else {
-      startTransition(() => router.refresh());
+      startTransition(() => { router.refresh(); onConfirmed(); });
     }
     setConfirming(false);
   }
@@ -807,6 +809,7 @@ export default function FinalsEventTabs({
           eventStatus={event.status}
           participants={participants}
           onSwitchToPlayers={() => setTab("players")}
+          onConfirmed={() => setTab("sessions")}
         />
       )}
 

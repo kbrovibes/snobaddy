@@ -30,22 +30,25 @@ export async function POST(
 
   if (!event) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  // Delete finals matches from linked sessions
+  // Break circular FK: clear session refs first, then delete
   const sessionIds = [event.finals1_session_id, event.finals2_session_id].filter(Boolean) as string[];
   if (sessionIds.length > 0) {
+    await adminDb
+      .from("finals_events")
+      .update({ finals1_session_id: null, finals2_session_id: null })
+      .eq("id", id);
+
     await adminDb
       .from("matches")
       .delete()
       .in("session_id", sessionIds)
       .in("match_type", ["finals_group", "finals_final"]);
 
-    // Delete finals_formats for these sessions
     await adminDb
       .from("finals_formats")
       .delete()
       .in("session_id", sessionIds);
 
-    // Delete the sessions themselves
     await adminDb
       .from("sessions")
       .delete()
