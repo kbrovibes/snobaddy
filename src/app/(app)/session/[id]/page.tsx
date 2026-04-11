@@ -34,6 +34,8 @@ import TallyHighlights from "@/components/TallyHighlights";
 import ResetSessionButton from "@/components/ResetSessionButton";
 import AutoRefreshToggle from "@/components/AutoRefreshToggle";
 import FinalizeSessionButton from "@/components/FinalizeSessionButton";
+import FormatPicker from "@/components/finals/FormatPicker";
+import { getFinalsFormat, getFinalsParticipants } from "@/lib/db/finals";
 
 export const dynamic = "force-dynamic";
 
@@ -86,6 +88,23 @@ export default async function SessionDetailPage({
   const isActive = session.status === "active";
   const isCompleted = session.status === "completed";
   const needsScoreboard = isActive || isCompleted;
+
+  // Finals format + group sizes (only for finals sessions with god mode)
+  const [finalsFormat, finalsGroupSizes] = isFinalsSession && isGodMode
+    ? await Promise.all([
+        getFinalsFormat(session.id),
+        session.finals_event_id
+          ? getFinalsParticipants(session.finals_event_id).then((participants) => {
+              const sizes = { A: 0, B: 0 };
+              for (const p of participants) {
+                if (p.group_label === "A") sizes.A++;
+                else if (p.group_label === "B") sizes.B++;
+              }
+              return sizes;
+            })
+          : Promise.resolve({ A: 0, B: 0 }),
+      ])
+    : [null, { A: 0, B: 0 }];
 
   const [scoreboard, recentMatches, proposedMatches, onlinePlayerIds, tallyRows, formPlayers] =
     needsScoreboard
@@ -199,6 +218,24 @@ export default async function SessionDetailPage({
       {/* Admin: start session */}
       {isPending && isAdmin && (
         <StartSessionButton sessionId={session.id} sessionDate={session.date} />
+      )}
+
+      {/* Finals format picker — God Mode only */}
+      {isFinalsSession && isGodMode && (isPending || isActive) && (
+        <div className="bg-white rounded-xl shadow-sm px-4 py-3">
+          <FormatPicker
+            sessionId={session.id}
+            currentFormat={finalsFormat as import("@/components/finals/FormatPicker").FinalsFormatData | null}
+            groupSizes={finalsGroupSizes}
+          />
+        </div>
+      )}
+
+      {/* Placeholder when no format selected yet */}
+      {isFinalsSession && isGodMode && isActive && !finalsFormat && (
+        <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 text-sm text-amber-700 text-center">
+          Select a format above to configure matches.
+        </div>
       )}
 
       {/* Non-admin pending (regular sessions only) */}

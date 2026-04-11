@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.26.0] - 2026-04-11
+
+### Added
+- **Season Finals — Format Selection** (God Mode only) — Finals Session pages now show a format picker card UI. Admin can select "Fixed-Partner All-Pairs" (active) or "Playoffs + Finals" (coming soon, greyed). Selection persists to a new `finals_formats` DB table and can be changed until matches are generated.
+
+---
+
 ## [0.25.4] - 2026-04-11
 
 ### Fixed

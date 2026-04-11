@@ -101,6 +101,29 @@ export interface FinalsParticipant {
   score_explanation: string | null;
 }
 
+export interface FinalsFormat {
+  id: string;
+  session_id: string;
+  format_type: "playoffs" | "fixed_partner";
+  status: "configured" | "matches_generated" | "playoffs_complete" | "completed";
+  config: Record<string, unknown>;
+  created_at: string;
+}
+
+export async function getFinalsFormat(
+  sessionId: string
+): Promise<FinalsFormat | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("finals_formats")
+    .select("*")
+    .eq("session_id", sessionId)
+    .maybeSingle();
+
+  if (!data) return null;
+  return data as unknown as FinalsFormat;
+}
+
 export async function getFinalsParticipants(
   finalsEventId: string
 ): Promise<FinalsParticipant[]> {
