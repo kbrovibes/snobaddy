@@ -6,76 +6,10 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [0.24.41] - 2026-04-10
-
-### Fixed
-- **Reset session** — now restores session status to Upcoming (pending) and clears all check-ins, rather than leaving it in a broken active/completed state with no data.
+## [0.25.0] - 2026-04-11
 
 ### Added
-- **Future session confirmation** — starting a session whose date hasn't arrived yet now shows a confirmation dialog before proceeding.
-
----
-
-## [0.24.40] - 2026-04-10
-
-### Changed
-- **Poem footnote** — split into two lines with date indented below the attribution.
-
----
-
-## [0.24.39] - 2026-04-10
-
-### Changed
-- **Poem footnote** — smaller (10px), italic, prefixed with em-dash.
-
----
-
-## [0.24.38] - 2026-04-10
-
-### Changed
-- **Poem footnote** — updated to "Written by an AI that has never touched a shuttlecock · {date}".
-
----
-
-## [0.24.37] - 2026-04-10
-
-### Fixed
-- **Poem staleness** — poems now regenerate whenever a new session has completed since the poem was last written, instead of the unreliable "3 match diff" heuristic.
-
-### Added
-- **Poem footnote** — a small "Penned by the robot bard on {date}" line appears below each player poem so you can see when it was last generated.
-- **Regenerate poem button** — god mode users see a small "↺ regenerate" link below the poem to force-refresh it instantly.
-
----
-
-## [0.24.36] - 2026-04-10
-
-### Changed
-- **Players tab session label** — replaced green banner with plain muted text.
-
----
-
-## [0.24.35] - 2026-04-10
-
-### Fixed
-- **Players tab check-in** — reopening a session from a previous date (e.g. Monday's session viewed on Thursday) now correctly shows check-in controls. The page previously looked for today's session by date; it now looks for any active session.
-
-### Added
-- **Active session banner** — when a session is active, the Players tab shows a green banner with the session date (e.g. "Session: Monday, April 14 · active") so it's clear which session you're checking into.
-
----
-
-## [0.24.34] - 2026-04-08
-
-### Fixed
-- **Player name links** — all player name links (leaderboard, Who's Here, session scoreboard, tally scoreboard) now use the same blue as the rest of the app's links (`sky-600`).
-
----
-
-## [0.24.33] - 2026-04-08
-
-### Fixed
-- **Session & Tally scoreboards** — player name links now use the same blue (`sky-700`) as the leaderboard and Who's Here list.
+- **Season Finals** (God Mode only) — Season Finals planning is now available behind God Mode. A pinned "Season Finals" section appears on the sessions list for God Mode users, with a button to create a Finals Event for the current season. The Finals Event page provides a 3-tab planning workspace (Players / Groups / Sessions) that unlocks progressively as the event is built out.
 
 ---
 

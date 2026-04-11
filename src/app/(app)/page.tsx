@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { getActiveSession, getAllSessions } from "@/lib/db/sessions";
+import { getActiveFinals } from "@/lib/db/finals";
 import { createClient } from "@/lib/supabase-server";
 import CreateSessionButton from "@/components/CreateSessionButton";
+import FinalsSection from "@/components/finals/FinalsSection";
 import SessionListClient from "./SessionListClient";
 
 export const dynamic = "force-dynamic";
@@ -24,12 +26,17 @@ export default async function SessionListPage({
   const { data: { user } } = await supabase.auth.getUser();
   const { data: currentPlayer } = await supabase
     .from("players")
-    .select("is_admin")
+    .select("is_admin, is_god_mode")
     .eq("user_id", user!.id)
     .maybeSingle();
   const isAdmin = currentPlayer?.is_admin ?? false;
+  const isGodMode =
+    (currentPlayer as unknown as { is_god_mode?: boolean } | null)?.is_god_mode ?? false;
 
-  const sessions = await getAllSessions();
+  const [sessions, finalsEvent] = await Promise.all([
+    getAllSessions(),
+    isGodMode ? getActiveFinals() : Promise.resolve(null),
+  ]);
   const seasonName = sessions[0]?.season?.name ?? "Sessions";
 
   return (
@@ -42,6 +49,8 @@ export default async function SessionListPage({
           <p className="text-sm text-stone-500">No active session</p>
         </div>
       </div>
+
+      {isGodMode && <FinalsSection event={finalsEvent} />}
 
       <SessionListClient sessions={sessions} isAdmin={isAdmin} />
 
