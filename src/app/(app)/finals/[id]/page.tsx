@@ -41,7 +41,7 @@ export default async function FinalsEventPage({
     <div className="flex flex-col px-4 py-4 gap-4">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <Link href="/?list=1" className="text-stone-400 hover:text-stone-600 text-sm">
+        <Link href="/?list=1" className="text-sky-600 hover:text-sky-800 text-sm">
           ← Sessions
         </Link>
       </div>

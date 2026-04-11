@@ -6,11 +6,26 @@ import type { FinalsFormatData } from "./FormatPicker";
 import type { PairPlayer } from "./PairConfigurator";
 import type { FinalsMatch } from "./FinalsMatchList";
 
+interface SeriesData {
+  id: string;
+  team1_player1_id: string;
+  team1_player2_id: string;
+  team1_seed: string | null;
+  team2_player1_id: string;
+  team2_player2_id: string;
+  team2_seed: string | null;
+  team1_wins: number;
+  team2_wins: number;
+  winning_team: number | null;
+  status: string;
+}
+
 interface FinalsSessionTabsProps {
   sessionId: string;
-  formats: Record<string, FinalsFormatData>;  // { A: ..., B: ... }
-  groups: Record<string, PairPlayer[]>;        // { A: [...], B: [...] }
+  formats: Record<string, FinalsFormatData>;
+  groups: Record<string, PairPlayer[]>;
   matches: FinalsMatch[];
+  seriesMap: Record<string, SeriesData>;  // { A: series, B: series }
   isActive: boolean;
   isGodMode: boolean;
 }
@@ -20,6 +35,7 @@ export default function FinalsSessionTabs({
   formats,
   groups,
   matches,
+  seriesMap,
   isActive,
   isGodMode,
 }: FinalsSessionTabsProps) {
@@ -36,7 +52,10 @@ export default function FinalsSessionTabs({
           {groupLabels.map((g) => {
             const fmt = formats[g];
             const statusHint = fmt
-              ? fmt.status === "matches_generated" ? "Playing" : fmt.format_type === "fixed_partner" ? "Fixed" : "Playoffs"
+              ? fmt.status === "completed" ? "Done"
+              : fmt.status === "playoffs_complete" ? "Finals"
+              : fmt.status === "matches_generated" ? "Playing"
+              : fmt.format_type === "fixed_partner" ? "Fixed" : "Playoffs"
               : "";
             return (
               <button
@@ -50,7 +69,7 @@ export default function FinalsSessionTabs({
               >
                 Group {g}
                 {statusHint && (
-                  <span className="ml-1 text-[10px] font-normal text-stone-400">
+                  <span className={`ml-1 text-[10px] font-normal ${activeGroup === g ? "text-stone-400" : "text-stone-400"}`}>
                     · {statusHint}
                   </span>
                 )}
@@ -68,6 +87,7 @@ export default function FinalsSessionTabs({
         format={formats[activeGroup] ?? null}
         players={groups[activeGroup] ?? []}
         matches={groupMatches}
+        series={seriesMap[activeGroup] ?? null}
         isActive={isActive}
         isGodMode={isGodMode}
       />

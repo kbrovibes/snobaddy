@@ -25,8 +25,7 @@ const FORMATS = [
     title: "Playoffs + Finals",
     description: "Players rotate partners in group stage. Top 4 advance to a Best-of-3 Final.",
     icon: "🏆",
-    enabled: false,
-    tag: "Coming soon",
+    enabled: true,
   },
 ];
 
@@ -102,21 +101,36 @@ export default function FormatPicker({
                   : "border-stone-100 bg-stone-50 opacity-60 cursor-not-allowed",
               ].join(" ")}
             >
-              {fmt.tag && (
-                <span className="absolute top-1 right-1 text-[9px] font-bold text-orange-600 bg-orange-50 border border-orange-200 px-1 rounded">
-                  {fmt.tag}
-                </span>
-              )}
               <span className={`font-semibold ${isSelected ? "text-white" : "text-stone-700"}`}>{fmt.icon} {fmt.title}</span>
             </button>
           );
         })}
       </div>
 
-      {isLocked && (
-        <p className="text-xs text-stone-400 text-center">
-          Format locked — matches generated.
-        </p>
+      {currentFormat && (
+        <button
+          onClick={async () => {
+            if (!confirm("Reset format? This will delete all matches and series for this group.")) return;
+            setSelecting(true);
+            const res = await fetch(`/api/sessions/${sessionId}/finals-format/reset`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ finals_group: finalsGroup }),
+            });
+            if (res.ok) {
+              setOptimisticType(null);
+              startTransition(() => router.refresh());
+            } else {
+              const json = await res.json();
+              setError(json.error ?? "Failed to reset");
+            }
+            setSelecting(false);
+          }}
+          disabled={selecting || isPending}
+          className="text-xs text-red-400 hover:text-red-600 disabled:opacity-40 self-center"
+        >
+          Reset format
+        </button>
       )}
     </div>
   );

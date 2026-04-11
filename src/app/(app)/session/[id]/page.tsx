@@ -38,7 +38,7 @@ import FinalsSessionTabs from "@/components/finals/FinalsSessionTabs";
 import type { FinalsFormatData } from "@/components/finals/FormatPicker";
 import type { PairPlayer } from "@/components/finals/PairConfigurator";
 import type { FinalsMatch } from "@/components/finals/FinalsMatchList";
-import { getFinalsFormats, getFinalsParticipants, getFinalsMatches } from "@/lib/db/finals";
+import { getFinalsFormats, getFinalsParticipants, getFinalsMatches, getFinalsSeries } from "@/lib/db/finals";
 
 export const dynamic = "force-dynamic";
 
@@ -103,10 +103,28 @@ export default async function SessionDetailPage({
       ])
     : [{} as Record<string, import("@/lib/db/finals").FinalsFormat>, [], []];
 
-  // Build per-group player lists
+  // Determine which groups belong to this session
+  // Day 1 (finals1_session_id) = Groups A & B, Day 2 (finals2_session_id) = Group C
+  let sessionGroupLabels: Set<string>;
+  if (isFinalsSession && session.finals_event_id) {
+    const { data: eventRow } = await (await createClient())
+      .from("finals_events")
+      .select("finals1_session_id, finals2_session_id")
+      .eq("id", session.finals_event_id)
+      .maybeSingle();
+    if (eventRow?.finals2_session_id === session.id) {
+      sessionGroupLabels = new Set(["C"]);
+    } else {
+      sessionGroupLabels = new Set(["A", "B"]);
+    }
+  } else {
+    sessionGroupLabels = new Set(["A", "B"]);
+  }
+
+  // Build per-group player lists (only for this session's groups)
   const finalsGroups: Record<string, PairPlayer[]> = {};
   for (const p of finalsParticipants) {
-    if (p.group_label === "A" || p.group_label === "B") {
+    if (p.group_label && sessionGroupLabels.has(p.group_label)) {
       if (!finalsGroups[p.group_label]) finalsGroups[p.group_label] = [];
       finalsGroups[p.group_label].push({
         player_id: p.player_id,
@@ -143,6 +161,22 @@ export default async function SessionDetailPage({
     finals_group: m.finals_group,
   }));
 
+  // Fetch series for each group
+  const finalsSeriesMap: Record<string, {
+    id: string; team1_player1_id: string; team1_player2_id: string; team1_seed: string | null;
+    team2_player1_id: string; team2_player2_id: string; team2_seed: string | null;
+    team1_wins: number; team2_wins: number; winning_team: number | null; status: string;
+  }> = {};
+  if (isFinalsSession) {
+    const groupLabels = Object.keys(finalsGroups);
+    const seriesResults = await Promise.all(
+      groupLabels.map((g) => getFinalsSeries(session.id, g))
+    );
+    groupLabels.forEach((g, i) => {
+      if (seriesResults[i]) finalsSeriesMap[g] = seriesResults[i]!;
+    });
+  }
+
   const [scoreboard, recentMatches, proposedMatches, onlinePlayerIds, tallyRows, formPlayers] =
     needsScoreboard
       ? await Promise.all([
@@ -174,7 +208,7 @@ export default async function SessionDetailPage({
       {/* Session nav */}
       <div className="flex flex-col gap-0.5 -mb-2">
         {isFinalsSession && session.finals_event_id ? (
-          <Link href={`/finals/${session.finals_event_id}`} className="text-stone-400 hover:text-stone-600 text-sm">
+          <Link href={`/finals/${session.finals_event_id}`} className="text-sky-600 hover:text-sky-800 text-sm">
             ← Finals Event
           </Link>
         ) : (
@@ -265,6 +299,7 @@ export default async function SessionDetailPage({
             formats={finalsFormatsClient}
             groups={finalsGroups}
             matches={finalsMatchesClient}
+            seriesMap={finalsSeriesMap}
             isActive={isActive}
             isGodMode={isAdmin}
           />
@@ -426,8 +461,8 @@ export default async function SessionDetailPage({
         <ResetSessionButton sessionId={session.id} />
       )}
 
-      {/* Past sessions this season */}
-      {pastSessions.length > 0 && (
+      {/* Past sessions this season (hidden for finals) */}
+      {pastSessions.length > 0 && !isFinalsSession && (
         <div className="bg-white rounded-xl shadow-sm px-4 py-3">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
             Past Sessions

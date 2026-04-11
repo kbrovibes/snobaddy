@@ -111,6 +111,38 @@ export interface FinalsFormat {
   created_at: string;
 }
 
+export interface FinalsSeries {
+  id: string;
+  session_id: string;
+  finals_group: string;
+  format_id: string;
+  team1_player1_id: string;
+  team1_player2_id: string;
+  team1_seed: string | null;
+  team2_player1_id: string;
+  team2_player2_id: string;
+  team2_seed: string | null;
+  team1_wins: number;
+  team2_wins: number;
+  winning_team: number | null;
+  status: "pending" | "active" | "completed";
+}
+
+export async function getFinalsSeries(
+  sessionId: string,
+  finalsGroup: string
+): Promise<FinalsSeries | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("finals_series")
+    .select("*")
+    .eq("session_id", sessionId)
+    .eq("finals_group", finalsGroup)
+    .maybeSingle();
+  if (!data) return null;
+  return data as unknown as FinalsSeries;
+}
+
 export async function getFinalsFormat(
   sessionId: string
 ): Promise<FinalsFormat | null> {

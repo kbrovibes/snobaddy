@@ -56,7 +56,7 @@ export default function FinalsSection({
           Season Finals
         </p>
         <span className="text-[10px] font-bold text-orange-600 bg-orange-50 border border-orange-200 px-1.5 py-0.5 rounded">
-          Coming Soon
+          Under Construction
         </span>
       </div>
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">

@@ -39,7 +39,7 @@ export async function POST(
     pairs: { player1_id: string; player2_id: string }[];
   };
 
-  if (!finals_group || !["A", "B"].includes(finals_group)) {
+  if (!finals_group || !["A", "B", "C"].includes(finals_group)) {
     return NextResponse.json({ error: "finals_group must be A or B" }, { status: 400 });
   }
   if (!pairs || !Array.isArray(pairs)) {

@@ -68,7 +68,7 @@ export async function POST(
   if (!format_type || !["playoffs", "fixed_partner"].includes(format_type)) {
     return NextResponse.json({ error: "Invalid format_type" }, { status: 400 });
   }
-  if (!finals_group || !["A", "B"].includes(finals_group)) {
+  if (!finals_group || !["A", "B", "C"].includes(finals_group)) {
     return NextResponse.json({ error: "finals_group must be A or B" }, { status: 400 });
   }
 
