@@ -117,22 +117,34 @@ export async function getFinalsParticipants(
     .order("finals_score", { ascending: false, nullsFirst: false });
 
   if (!data) return [];
-  return data.map((row) => {
-    const p = row.players as unknown as { name: string; skill_level: number };
-    return {
-      id: row.id,
-      player_id: row.player_id,
-      name: p?.name ?? "Unknown",
-      skill_level: p?.skill_level ?? 3,
-      group_label: row.group_label,
-      finals_day: row.finals_day,
-      group_override: row.group_override ?? false,
-      added_at: row.added_at,
-      finals_score: row.finals_score,
-      season_win_rate: row.season_win_rate,
-      season_wins: row.season_wins,
-      season_losses: row.season_losses,
-      score_explanation: row.score_explanation,
-    };
-  });
+  // Cast needed because Supabase generated types don't include finals_participants yet
+  const rows = data as unknown as Array<{
+    id: string;
+    player_id: string;
+    group_label: string | null;
+    finals_day: number | null;
+    group_override: boolean;
+    added_at: string;
+    finals_score: number | null;
+    season_win_rate: number | null;
+    season_wins: number | null;
+    season_losses: number | null;
+    score_explanation: string | null;
+    players: { name: string; skill_level: number } | null;
+  }>;
+  return rows.map((row) => ({
+    id: row.id,
+    player_id: row.player_id,
+    name: row.players?.name ?? "Unknown",
+    skill_level: row.players?.skill_level ?? 3,
+    group_label: row.group_label,
+    finals_day: row.finals_day,
+    group_override: row.group_override ?? false,
+    added_at: row.added_at,
+    finals_score: row.finals_score,
+    season_win_rate: row.season_win_rate,
+    season_wins: row.season_wins,
+    season_losses: row.season_losses,
+    score_explanation: row.score_explanation,
+  }));
 }

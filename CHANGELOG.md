@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.25.4] - 2026-04-11
+
+### Fixed
+- **Build fix** — cast `finals_participants` query result explicitly so the production TypeScript build passes (Supabase generated types don't include the new finals tables yet).
+
+---
+
 ## [0.25.3] - 2026-04-11
 
 ### Added
