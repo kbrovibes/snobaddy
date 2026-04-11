@@ -30,14 +30,18 @@ function SkillDots({ level }: { level: number }) {
 
 // ─── Tab button ──────────────────────────────────────────────────────────────
 function TabButton({
+  step,
   label,
   active,
   locked,
+  done,
   onClick,
 }: {
+  step: number;
   label: string;
   active: boolean;
   locked: boolean;
+  done: boolean;
   onClick: () => void;
 }) {
   return (
@@ -53,6 +57,9 @@ function TabButton({
           : "text-stone-500 hover:text-stone-800",
       ].join(" ")}
     >
+      <span className={`text-[10px] font-bold mr-1 ${active ? "text-stone-400" : done ? "text-green-500" : "text-stone-300"}`}>
+        {done ? "✓" : step}
+      </span>
       {locked ? `🔒 ${label}` : label}
     </button>
   );
@@ -771,24 +778,30 @@ export default function FinalsEventTabs({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Tab bar */}
+      {/* Step tabs */}
       <div className="flex gap-1 bg-stone-100 p-1 rounded-xl">
         <TabButton
+          step={1}
           label="Players"
           active={tab === "players"}
           locked={false}
+          done={participants.length > 0}
           onClick={() => setTab("players")}
         />
         <TabButton
+          step={2}
           label="Groups"
           active={tab === "groups"}
           locked={!canViewGroups}
+          done={event.status !== "draft"}
           onClick={() => setTab("groups")}
         />
         <TabButton
+          step={3}
           label="Sessions"
           active={tab === "sessions"}
           locked={!canViewSessions}
+          done={!!sessionPair.day1}
           onClick={() => setTab("sessions")}
         />
       </div>
