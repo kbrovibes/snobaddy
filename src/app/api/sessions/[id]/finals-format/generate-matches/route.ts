@@ -9,14 +9,13 @@ interface SavedPair {
 
 /**
  * Generate round-robin matches for Fixed-Partner format.
- * Every pair plays every other pair exactly once per group.
+ * Every pair plays every other pair exactly once.
  * Distributes matches so no pair plays consecutive matches where avoidable.
  */
 function generateRoundRobin(pairs: SavedPair[], groupLabel: string, sessionId: string) {
   const n = pairs.length;
   if (n < 2) return [];
 
-  // Generate all pair combinations
   const matchups: { pair1: number; pair2: number }[] = [];
   for (let i = 0; i < n; i++) {
     for (let j = i + 1; j < n; j++) {
@@ -24,18 +23,14 @@ function generateRoundRobin(pairs: SavedPair[], groupLabel: string, sessionId: s
     }
   }
 
-  // Distribute so no pair plays consecutive matches where avoidable.
-  // Simple greedy: sort matchups so that consecutive entries share minimal pairs.
+  // Greedy: avoid consecutive play for the same pair
   const ordered: typeof matchups = [];
   const remaining = [...matchups];
-  // Start with first matchup
   ordered.push(remaining.shift()!);
 
   while (remaining.length > 0) {
     const last = ordered[ordered.length - 1];
     const lastPairs = new Set([last.pair1, last.pair2]);
-
-    // Find a matchup that doesn't share a pair with the last one
     let bestIdx = 0;
     for (let i = 0; i < remaining.length; i++) {
       const m = remaining[i];
@@ -47,7 +42,6 @@ function generateRoundRobin(pairs: SavedPair[], groupLabel: string, sessionId: s
     ordered.push(remaining.splice(bestIdx, 1)[0]);
   }
 
-  // Convert to match insert rows
   return ordered.map((m) => ({
     session_id: sessionId,
     team1_player1_id: pairs[m.pair1].player1_id,
@@ -63,7 +57,7 @@ function generateRoundRobin(pairs: SavedPair[], groupLabel: string, sessionId: s
 }
 
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = await createClient();
@@ -81,69 +75,54 @@ export async function POST(
 
   const { id: sessionId } = await params;
 
-  // Verify format exists and is ready
+  const body = await req.json();
+  const { finals_group } = body as { finals_group: string };
+
+  if (!finals_group || !["A", "B"].includes(finals_group)) {
+    return NextResponse.json({ error: "finals_group must be A or B" }, { status: 400 });
+  }
+
+  // Verify format exists for this group
   const { data: format } = await supabase
     .from("finals_formats")
     .select("id, format_type, status, config")
     .eq("session_id", sessionId)
+    .eq("finals_group", finals_group)
     .maybeSingle();
 
   if (!format) {
-    return NextResponse.json({ error: "No format selected" }, { status: 400 });
+    return NextResponse.json({ error: `No format selected for Group ${finals_group}` }, { status: 400 });
   }
   if (format.format_type !== "fixed_partner") {
     return NextResponse.json({ error: "This endpoint is for Fixed-Partner format only" }, { status: 400 });
   }
   if (format.status !== "configured") {
-    return NextResponse.json(
-      { error: "Matches have already been generated" },
-      { status: 409 }
-    );
+    return NextResponse.json({ error: "Matches have already been generated" }, { status: 409 });
   }
 
-  const config = format.config as { pairs?: Record<string, SavedPair[]> };
-  if (!config?.pairs || Object.keys(config.pairs).length === 0) {
+  const config = format.config as { pairs?: SavedPair[] };
+  if (!config?.pairs || config.pairs.length === 0) {
     return NextResponse.json({ error: "Save pairs before generating matches" }, { status: 400 });
   }
 
-  // Generate round-robin matches for each group
-  const allMatches: ReturnType<typeof generateRoundRobin> = [];
-  for (const [groupLabel, pairs] of Object.entries(config.pairs)) {
-    if (pairs.length < 2) {
-      return NextResponse.json(
-        { error: `Group ${groupLabel} needs at least 2 pairs` },
-        { status: 400 }
-      );
-    }
-    allMatches.push(...generateRoundRobin(pairs, groupLabel, sessionId));
+  if (config.pairs.length < 2) {
+    return NextResponse.json({ error: "Need at least 2 pairs" }, { status: 400 });
   }
 
-  if (allMatches.length === 0) {
-    return NextResponse.json({ error: "No matches to generate" }, { status: 400 });
-  }
+  const matches = generateRoundRobin(config.pairs, finals_group, sessionId);
 
-  // Insert all matches in one batch
   const { error: insertErr } = await adminDb
     .from("matches")
-    .insert(allMatches);
+    .insert(matches);
 
-  if (insertErr) {
-    return NextResponse.json({ error: insertErr.message }, { status: 500 });
-  }
+  if (insertErr) return NextResponse.json({ error: insertErr.message }, { status: 500 });
 
-  // Update format status
   const { error: updateErr } = await adminDb
     .from("finals_formats")
     .update({ status: "matches_generated" })
     .eq("id", format.id);
 
-  if (updateErr) {
-    return NextResponse.json({ error: updateErr.message }, { status: 500 });
-  }
+  if (updateErr) return NextResponse.json({ error: updateErr.message }, { status: 500 });
 
-  return NextResponse.json({
-    ok: true,
-    matchCount: allMatches.length,
-    groups: Object.keys(config.pairs),
-  });
+  return NextResponse.json({ ok: true, matchCount: matches.length, group: finals_group });
 }

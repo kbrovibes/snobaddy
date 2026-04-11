@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { supabase as adminDb } from "@/lib/supabase";
 
-// GET — fetch the current format for a finals session
+// GET — fetch formats for a finals session (all groups)
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -25,14 +25,13 @@ export async function GET(
   const { data, error } = await supabase
     .from("finals_formats")
     .select("*")
-    .eq("session_id", id)
-    .maybeSingle();
+    .eq("session_id", id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ format: data });
+  return NextResponse.json({ formats: data ?? [] });
 }
 
-// POST — set the format for a finals session
+// POST — set the format for a specific group in a finals session
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -52,7 +51,6 @@ export async function POST(
 
   const { id } = await params;
 
-  // Verify this is a finals session
   const { data: session } = await supabase
     .from("sessions")
     .select("id, session_type")
@@ -65,17 +63,21 @@ export async function POST(
   }
 
   const body = await req.json();
-  const { format_type } = body;
+  const { format_type, finals_group } = body;
 
   if (!format_type || !["playoffs", "fixed_partner"].includes(format_type)) {
     return NextResponse.json({ error: "Invalid format_type" }, { status: 400 });
   }
+  if (!finals_group || !["A", "B"].includes(finals_group)) {
+    return NextResponse.json({ error: "finals_group must be A or B" }, { status: 400 });
+  }
 
-  // Check if format already exists — if so, only allow change if still in 'configured' status
+  // Check if format already exists for this group
   const { data: existing } = await supabase
     .from("finals_formats")
     .select("id, status")
     .eq("session_id", id)
+    .eq("finals_group", finals_group)
     .maybeSingle();
 
   if (existing) {
@@ -85,7 +87,6 @@ export async function POST(
         { status: 409 }
       );
     }
-    // Update existing
     const { data: updated, error } = await adminDb
       .from("finals_formats")
       .update({ format_type, config: {} })
@@ -97,10 +98,9 @@ export async function POST(
     return NextResponse.json({ format: updated });
   }
 
-  // Create new
   const { data: created, error } = await adminDb
     .from("finals_formats")
-    .insert({ session_id: id, format_type })
+    .insert({ session_id: id, format_type, finals_group })
     .select()
     .single();
 

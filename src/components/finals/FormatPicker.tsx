@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 export interface FinalsFormatData {
   id: string;
   session_id: string;
+  finals_group: string | null;
   format_type: "playoffs" | "fixed_partner";
   status: string;
   config: Record<string, unknown>;
@@ -31,12 +32,14 @@ const FORMATS = [
 
 export default function FormatPicker({
   sessionId,
+  finalsGroup,
   currentFormat,
-  groupSizes,
+  playerCount,
 }: {
   sessionId: string;
+  finalsGroup: string;
   currentFormat: FinalsFormatData | null;
-  groupSizes: { A: number; B: number };
+  playerCount: number;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -52,7 +55,7 @@ export default function FormatPicker({
     const res = await fetch(`/api/sessions/${sessionId}/finals-format`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ format_type: formatType }),
+      body: JSON.stringify({ format_type: formatType, finals_group: finalsGroup }),
     });
     const json = await res.json();
     if (!res.ok) {
@@ -64,19 +67,22 @@ export default function FormatPicker({
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
-        Format
-      </h2>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <h3 className="text-xs font-semibold text-stone-500 uppercase tracking-wide">
+          Format
+        </h3>
+        <span className="text-xs text-stone-400">{playerCount} players</span>
+      </div>
 
       {error && (
         <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
       )}
 
-      <div className="flex flex-col gap-2">
+      <div className="flex gap-2">
         {FORMATS.map((fmt) => {
           const isSelected = currentFormat?.format_type === fmt.type;
-          const isDisabled = !fmt.enabled || (selecting || isPending);
+          const isDisabled = !fmt.enabled || selecting || isPending;
 
           return (
             <button
@@ -84,56 +90,28 @@ export default function FormatPicker({
               onClick={() => fmt.enabled && !isLocked && selectFormat(fmt.type)}
               disabled={isDisabled}
               className={[
-                "relative w-full text-left px-4 py-3 rounded-xl border-2 transition-all",
+                "relative flex-1 text-left px-3 py-2 rounded-lg border transition-all text-sm",
                 isSelected
                   ? "border-stone-900 bg-stone-50 shadow-sm"
                   : fmt.enabled
-                  ? "border-stone-200 bg-white hover:border-stone-400 hover:bg-stone-50"
+                  ? "border-stone-200 bg-white hover:border-stone-400"
                   : "border-stone-100 bg-stone-50 opacity-60 cursor-not-allowed",
               ].join(" ")}
             >
-              {/* Coming soon tag */}
               {fmt.tag && (
-                <span className="absolute top-2 right-2 text-[10px] font-bold text-orange-600 bg-orange-50 border border-orange-200 px-1.5 py-0.5 rounded">
+                <span className="absolute top-1 right-1 text-[9px] font-bold text-orange-600 bg-orange-50 border border-orange-200 px-1 rounded">
                   {fmt.tag}
                 </span>
               )}
-
-              <div className="flex items-start gap-3">
-                <span className="text-xl mt-0.5">{fmt.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-semibold ${isSelected ? "text-stone-900" : "text-stone-700"}`}>
-                    {fmt.title}
-                  </p>
-                  <p className="text-xs text-stone-500 mt-0.5 leading-relaxed">
-                    {fmt.description}
-                  </p>
-                  {/* Adapt description to group sizes */}
-                  {fmt.enabled && (groupSizes.A > 0 || groupSizes.B > 0) && (
-                    <p className="text-xs text-stone-400 mt-1">
-                      Group A: {groupSizes.A} players · Group B: {groupSizes.B} players
-                    </p>
-                  )}
-                </div>
-
-                {/* Selection indicator */}
-                {isSelected && (
-                  <span className="mt-1 w-5 h-5 rounded-full bg-stone-900 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none">
-                      <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </span>
-                )}
-              </div>
+              <span className="font-semibold text-stone-700">{fmt.icon} {fmt.title}</span>
             </button>
           );
         })}
       </div>
 
-      {/* Status info */}
       {isLocked && (
         <p className="text-xs text-stone-400 text-center">
-          Format is locked — matches have already been generated.
+          Format locked — matches generated.
         </p>
       )}
     </div>

@@ -34,14 +34,11 @@ import TallyHighlights from "@/components/TallyHighlights";
 import ResetSessionButton from "@/components/ResetSessionButton";
 import AutoRefreshToggle from "@/components/AutoRefreshToggle";
 import FinalizeSessionButton from "@/components/FinalizeSessionButton";
-import FormatPicker from "@/components/finals/FormatPicker";
-import PairConfigurator from "@/components/finals/PairConfigurator";
-import GenerateMatchesButton from "@/components/finals/GenerateMatchesButton";
-import FinalsMatchList from "@/components/finals/FinalsMatchList";
-import FinalsStandings from "@/components/finals/FinalsStandings";
-import type { PairPlayer, SavedPair } from "@/components/finals/PairConfigurator";
-import type { PairInfo } from "@/components/finals/FinalsMatchList";
-import { getFinalsFormat, getFinalsParticipants, getFinalsMatches } from "@/lib/db/finals";
+import FinalsSessionTabs from "@/components/finals/FinalsSessionTabs";
+import type { FinalsFormatData } from "@/components/finals/FormatPicker";
+import type { PairPlayer } from "@/components/finals/PairConfigurator";
+import type { FinalsMatch } from "@/components/finals/FinalsMatchList";
+import { getFinalsFormats, getFinalsParticipants, getFinalsMatches } from "@/lib/db/finals";
 
 export const dynamic = "force-dynamic";
 
@@ -95,70 +92,56 @@ export default async function SessionDetailPage({
   const isCompleted = session.status === "completed";
   const needsScoreboard = isActive || isCompleted;
 
-  // Finals format + participants (only for finals sessions with god mode)
-  const [finalsFormat, finalsParticipants] = isFinalsSession && isGodMode
+  // Finals: formats (per group), participants, and matches
+  const [finalsFormatsMap, finalsParticipants, finalsMatches] = isFinalsSession
     ? await Promise.all([
-        getFinalsFormat(session.id),
+        getFinalsFormats(session.id),
         session.finals_event_id
           ? getFinalsParticipants(session.finals_event_id)
           : Promise.resolve([]),
+        getFinalsMatches(session.id),
       ])
-    : [null, []];
+    : [{} as Record<string, import("@/lib/db/finals").FinalsFormat>, [], []];
 
-  // Derive group sizes from participants
-  const finalsGroupSizes = { A: 0, B: 0 };
+  // Build per-group player lists
+  const finalsGroups: Record<string, PairPlayer[]> = {};
   for (const p of finalsParticipants) {
-    if (p.group_label === "A") finalsGroupSizes.A++;
-    else if (p.group_label === "B") finalsGroupSizes.B++;
-  }
-
-  // Build pair configurator data when format is fixed_partner
-  const isFixedPartner = finalsFormat?.format_type === "fixed_partner";
-  const pairGroups: Record<string, PairPlayer[]> = {};
-  const savedPairs: Record<string, SavedPair[]> = {};
-  if (isFixedPartner) {
-    for (const p of finalsParticipants) {
-      if (p.group_label === "A" || p.group_label === "B") {
-        if (!pairGroups[p.group_label]) pairGroups[p.group_label] = [];
-        pairGroups[p.group_label].push({
-          player_id: p.player_id,
-          name: p.name,
-          finals_score: p.finals_score,
-          group_label: p.group_label,
-        });
-      }
-    }
-    // Load saved pairs from format config
-    const configPairs = (finalsFormat.config as { pairs?: Record<string, SavedPair[]> })?.pairs;
-    if (configPairs) {
-      for (const [label, pairs] of Object.entries(configPairs)) {
-        savedPairs[label] = pairs;
-      }
+    if (p.group_label === "A" || p.group_label === "B") {
+      if (!finalsGroups[p.group_label]) finalsGroups[p.group_label] = [];
+      finalsGroups[p.group_label].push({
+        player_id: p.player_id,
+        name: p.name,
+        finals_score: p.finals_score,
+        group_label: p.group_label,
+      });
     }
   }
 
-  // Fetch finals matches when they've been generated
-  const matchesGenerated = finalsFormat?.status === "matches_generated" || finalsFormat?.status === "completed";
-  const finalsMatches = isFinalsSession && matchesGenerated
-    ? await getFinalsMatches(session.id)
-    : [];
-
-  // Build pairsInfo for match display (maps pair IDs to labels + names)
-  const pairsInfoMap: Record<string, PairInfo[]> = {};
-  if (isFixedPartner && Object.keys(savedPairs).length > 0) {
-    const playerNameMap = new Map(finalsParticipants.map((p) => [p.player_id, p.name]));
-    for (const [label, pairs] of Object.entries(savedPairs)) {
-      pairsInfoMap[label] = pairs.map((pair, idx) => ({
-        label: `Pair ${idx + 1}`,
-        player1_name: playerNameMap.get(pair.player1_id) ?? "Unknown",
-        player2_name: playerNameMap.get(pair.player2_id) ?? "Unknown",
-        player1_id: pair.player1_id,
-        player2_id: pair.player2_id,
-      }));
-    }
+  // Cast formats for client component
+  const finalsFormatsClient: Record<string, FinalsFormatData> = {};
+  for (const [g, f] of Object.entries(finalsFormatsMap)) {
+    finalsFormatsClient[g] = {
+      id: f.id,
+      session_id: f.session_id,
+      finals_group: f.finals_group,
+      format_type: f.format_type,
+      status: f.status,
+      config: f.config,
+    };
   }
 
-  const hasSavedPairs = Object.values(savedPairs).some((p) => p.length > 0);
+  // Cast matches for client component
+  const finalsMatchesClient: FinalsMatch[] = finalsMatches.map((m) => ({
+    id: m.id,
+    team1_player1: m.team1_player1_id,
+    team1_player2: m.team1_player2_id,
+    team2_player1: m.team2_player1_id,
+    team2_player2: m.team2_player2_id,
+    team1_score: m.team1_score,
+    team2_score: m.team2_score,
+    winning_team: m.winning_team,
+    finals_group: m.finals_group,
+  }));
 
   const [scoreboard, recentMatches, proposedMatches, onlinePlayerIds, tallyRows, formPlayers] =
     needsScoreboard
@@ -274,89 +257,17 @@ export default async function SessionDetailPage({
         <StartSessionButton sessionId={session.id} sessionDate={session.date} />
       )}
 
-      {/* Finals format picker — God Mode only */}
-      {isFinalsSession && isGodMode && (isPending || isActive) && (
+      {/* Finals: Group A / Group B tabs with format, pairs, matches, standings */}
+      {isFinalsSession && (isPending || isActive) && Object.keys(finalsGroups).length > 0 && (
         <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-          <FormatPicker
+          <FinalsSessionTabs
             sessionId={session.id}
-            currentFormat={finalsFormat as import("@/components/finals/FormatPicker").FinalsFormatData | null}
-            groupSizes={finalsGroupSizes}
-          />
-        </div>
-      )}
-
-      {/* Fixed-Partner pair configuration — God Mode only */}
-      {isFinalsSession && isGodMode && isFixedPartner && (isPending || isActive) && Object.keys(pairGroups).length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-          <PairConfigurator
-            sessionId={session.id}
-            groups={pairGroups}
-            savedPairs={savedPairs}
-            isLocked={finalsFormat!.status !== "configured"}
-          />
-        </div>
-      )}
-
-      {/* Generate matches button — God Mode, after pairs saved, before matches generated */}
-      {isFinalsSession && isGodMode && isFixedPartner && (isPending || isActive) && !matchesGenerated && (
-        <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-          <GenerateMatchesButton
-            sessionId={session.id}
-            hasPairs={hasSavedPairs}
-            isGenerated={matchesGenerated}
-          />
-        </div>
-      )}
-
-      {/* Finals match list — shown after matches generated */}
-      {isFinalsSession && matchesGenerated && finalsMatches.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-          <FinalsMatchList
-            matches={finalsMatches.map((m) => ({
-              id: m.id,
-              team1_player1: m.team1_player1_id,
-              team1_player2: m.team1_player2_id,
-              team2_player1: m.team2_player1_id,
-              team2_player2: m.team2_player2_id,
-              team1_score: m.team1_score,
-              team2_score: m.team2_score,
-              winning_team: m.winning_team,
-              finals_group: m.finals_group,
-            }))}
-            pairsInfo={pairsInfoMap}
-            sessionId={session.id}
+            formats={finalsFormatsClient}
+            groups={finalsGroups}
+            matches={finalsMatchesClient}
             isActive={isActive}
-          />
-        </div>
-      )}
-
-      {/* Finals standings — shown after matches generated */}
-      {isFinalsSession && matchesGenerated && finalsMatches.length > 0 && Object.keys(pairsInfoMap).length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-          <FinalsStandings
-            matches={finalsMatches.map((m) => ({
-              id: m.id,
-              team1_player1: m.team1_player1_id,
-              team1_player2: m.team1_player2_id,
-              team2_player1: m.team2_player1_id,
-              team2_player2: m.team2_player2_id,
-              team1_score: m.team1_score,
-              team2_score: m.team2_score,
-              winning_team: m.winning_team,
-              finals_group: m.finals_group,
-            }))}
-            pairsInfo={pairsInfoMap}
-            sessionId={session.id}
-            formatStatus={finalsFormat?.status ?? "configured"}
             isGodMode={isGodMode}
           />
-        </div>
-      )}
-
-      {/* Placeholder when no format selected yet */}
-      {isFinalsSession && isGodMode && isActive && !finalsFormat && (
-        <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 text-sm text-amber-700 text-center">
-          Select a format above to configure matches.
         </div>
       )}
 

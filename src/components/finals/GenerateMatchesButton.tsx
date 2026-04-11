@@ -5,25 +5,25 @@ import { useRouter } from "next/navigation";
 
 export default function GenerateMatchesButton({
   sessionId,
+  finalsGroup,
   hasPairs,
-  isGenerated,
 }: {
   sessionId: string;
+  finalsGroup: string;
   hasPairs: boolean;
-  isGenerated: boolean;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (isGenerated) return null;
-
   async function handleGenerate() {
     setGenerating(true);
     setError(null);
     const res = await fetch(`/api/sessions/${sessionId}/finals-format/generate-matches`, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ finals_group: finalsGroup }),
     });
     const json = await res.json();
     if (!res.ok) {
@@ -42,14 +42,12 @@ export default function GenerateMatchesButton({
       <button
         onClick={handleGenerate}
         disabled={!hasPairs || generating || isPending}
-        className="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-sky-700 hover:bg-sky-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="w-full py-2 rounded-xl text-sm font-semibold text-white bg-sky-700 hover:bg-sky-600 disabled:opacity-40 transition-colors"
       >
-        {generating ? "Generating…" : "Generate All Matches"}
+        {generating ? "Generating…" : "Generate Matches"}
       </button>
       {!hasPairs && (
-        <p className="text-xs text-stone-400 text-center">
-          Save pairs first before generating matches.
-        </p>
+        <p className="text-xs text-stone-400 text-center">Save pairs first.</p>
       )}
     </div>
   );
