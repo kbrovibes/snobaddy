@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { getActiveSession, getAllSessions } from "@/lib/db/sessions";
-import { getActiveFinals } from "@/lib/db/finals";
+import { getActiveFinals, getFinalsSessionPair } from "@/lib/db/finals";
 import { createClient } from "@/lib/supabase-server";
 import CreateSessionButton from "@/components/CreateSessionButton";
 import FinalsSection from "@/components/finals/FinalsSection";
@@ -37,6 +37,9 @@ export default async function SessionListPage({
     getAllSessions(),
     isGodMode ? getActiveFinals() : Promise.resolve(null),
   ]);
+  const finalsSessionPair = finalsEvent
+    ? await getFinalsSessionPair(finalsEvent.finals1_session_id, finalsEvent.finals2_session_id)
+    : null;
   const seasonName = sessions[0]?.season?.name ?? "Sessions";
 
   return (
@@ -50,7 +53,7 @@ export default async function SessionListPage({
         </div>
       </div>
 
-      {isGodMode && <FinalsSection event={finalsEvent} />}
+      {isGodMode && <FinalsSection event={finalsEvent} sessionPair={finalsSessionPair} />}
 
       <SessionListClient sessions={sessions} isAdmin={isAdmin} />
 

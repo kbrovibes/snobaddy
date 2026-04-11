@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { FinalsEvent } from "@/lib/db/finals";
+import type { FinalsEvent, FinalsSessionPair, FinalsSessionInfo } from "@/lib/db/finals";
 import CreateFinalsButton from "./CreateFinalsButton";
 
 function statusLabel(status: FinalsEvent["status"]) {
@@ -12,7 +12,41 @@ function statusLabel(status: FinalsEvent["status"]) {
   }
 }
 
-export default function FinalsSection({ event }: { event: FinalsEvent | null }) {
+function SessionCard({ label, session }: { label: string; session: FinalsSessionInfo }) {
+  const statusInfo = {
+    pending:   { text: "Starting soon", cls: "text-orange-600 bg-orange-50" },
+    active:    { text: "In Progress",   cls: "text-white bg-sky-700" },
+    completed: { text: "Completed",     cls: "text-teal-600 bg-teal-50" },
+  }[session.status];
+
+  const date = new Date(session.date + "T12:00:00").toLocaleDateString("en-US", {
+    month: "short", day: "numeric",
+  });
+
+  return (
+    <Link
+      href={`/session/${session.id}`}
+      className="flex items-center justify-between px-4 py-2 hover:bg-stone-50 active:bg-amber-50 transition-colors border-t border-stone-100"
+    >
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-stone-300">└</span>
+        <span className="text-sm text-stone-700">{label}</span>
+        <span className="text-xs text-stone-400">{date}</span>
+      </div>
+      <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${statusInfo.cls}`}>
+        {statusInfo.text}
+      </span>
+    </Link>
+  );
+}
+
+export default function FinalsSection({
+  event,
+  sessionPair,
+}: {
+  event: FinalsEvent | null;
+  sessionPair?: FinalsSessionPair | null;
+}) {
   const label = event ? statusLabel(event.status) : null;
 
   return (
@@ -22,23 +56,31 @@ export default function FinalsSection({ event }: { event: FinalsEvent | null }) 
       </p>
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         {event ? (
-          <Link
-            href={`/finals/${event.id}`}
-            className="flex items-center justify-between px-4 py-3 hover:bg-stone-50 active:bg-amber-50 transition-colors"
-          >
-            <div className="flex flex-col gap-0.5">
-              <span className="text-sm font-semibold text-stone-800">{event.name}</span>
-              <span className="text-xs text-stone-400">
-                {event.participant_count} player{event.participant_count !== 1 ? "s" : ""} added
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${label!.cls}`}>
-                {label!.text}
-              </span>
-              <span className="text-stone-300 text-sm">→</span>
-            </div>
-          </Link>
+          <>
+            <Link
+              href={`/finals/${event.id}`}
+              className="flex items-center justify-between px-4 py-3 hover:bg-stone-50 active:bg-amber-50 transition-colors"
+            >
+              <div className="flex flex-col gap-0.5">
+                <span className="text-sm font-semibold text-stone-800">{event.name}</span>
+                <span className="text-xs text-stone-400">
+                  {event.participant_count} player{event.participant_count !== 1 ? "s" : ""} added
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${label!.cls}`}>
+                  {label!.text}
+                </span>
+                <span className="text-stone-300 text-sm">→</span>
+              </div>
+            </Link>
+            {sessionPair?.day1 && (
+              <SessionCard label="Day 1 — Groups A & B" session={sessionPair.day1} />
+            )}
+            {sessionPair?.day2 && (
+              <SessionCard label="Day 2 — Group C" session={sessionPair.day2} />
+            )}
+          </>
         ) : (
           <div className="px-4 py-3">
             <p className="text-xs text-stone-400 mb-3">

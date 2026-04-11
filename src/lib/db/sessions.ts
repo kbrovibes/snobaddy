@@ -91,18 +91,20 @@ export async function getAllSessions(): Promise<SessionRow[]> {
 
   const { data } = await supabase
     .from("sessions")
-    .select("id, date, status, is_test_session, seasons(name), matches(count), session_tally(count)")
+    .select("id, date, status, is_test_session, session_type, seasons(name), matches(count), session_tally(count)")
     .order("date", { ascending: false });
   if (!data) return [];
-  return data.map((row) => ({
-    id: row.id,
-    date: row.date,
-    status: row.status as SessionRow["status"],
-    is_test_session: row.is_test_session ?? false,
-    season: (row.seasons as unknown as { name: string }),
-    match_count: (row.matches as unknown as { count: number }[])?.[0]?.count ?? 0,
-    tally_count: (row.session_tally as unknown as { count: number }[])?.[0]?.count ?? 0,
-  }));
+  return data
+    .filter((row) => (row as unknown as { session_type?: string }).session_type !== "finals")
+    .map((row) => ({
+      id: row.id,
+      date: row.date,
+      status: row.status as SessionRow["status"],
+      is_test_session: row.is_test_session ?? false,
+      season: (row.seasons as unknown as { name: string }),
+      match_count: (row.matches as unknown as { count: number }[])?.[0]?.count ?? 0,
+      tally_count: (row.session_tally as unknown as { count: number }[])?.[0]?.count ?? 0,
+    }));
 }
 
 export async function getSessionById(id: string): Promise<Session | null> {
