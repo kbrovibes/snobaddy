@@ -1,6 +1,6 @@
 import { getActivePlayers, getDeletedPlayers } from "@/lib/db/players";
 import { createClient } from "@/lib/supabase-server";
-import { getTodaySession, getSessionPresence } from "@/lib/db/sessions";
+import { getActiveSession, getSessionPresence } from "@/lib/db/sessions";
 import AdminPageContent from "@/components/AdminPageContent";
 
 export const dynamic = "force-dynamic";
@@ -14,14 +14,14 @@ export default async function PlayersPage() {
   const isAdmin = currentPlayer?.is_admin ?? false;
   const isGodMode = currentPlayer?.is_god_mode ?? false;
 
-  const [players, deletedPlayers, todaySession] = await Promise.all([
+  const [players, deletedPlayers, activeSession] = await Promise.all([
     getActivePlayers(),
     isGodMode ? getDeletedPlayers() : Promise.resolve([]),
-    getTodaySession(),
+    getActiveSession(),
   ]);
 
-  const presence = todaySession?.status === "active"
-    ? await getSessionPresence(todaySession.id)
+  const presence = activeSession
+    ? await getSessionPresence(activeSession.id)
     : [];
 
   return (
@@ -29,8 +29,9 @@ export default async function PlayersPage() {
       players={players}
       deletedPlayers={deletedPlayers}
       presence={presence}
-      sessionId={todaySession?.status === "active" ? todaySession.id : undefined}
-      sessionActive={todaySession?.status === "active"}
+      sessionId={activeSession?.id}
+      sessionDate={activeSession?.date}
+      sessionActive={!!activeSession}
       isAdmin={isAdmin}
       isGodMode={isGodMode}
     />

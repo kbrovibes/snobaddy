@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.24.35] - 2026-04-10
+
+### Fixed
+- **Players tab check-in** — reopening a session from a previous date (e.g. Monday's session viewed on Thursday) now correctly shows check-in controls. The page previously looked for today's session by date; it now looks for any active session.
+
+### Added
+- **Active session banner** — when a session is active, the Players tab shows a green banner with the session date (e.g. "Session: Monday, April 14 · active") so it's clear which session you're checking into.
+
+---
+
 ## [0.24.34] - 2026-04-08
 
 ### Fixed

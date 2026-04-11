@@ -13,9 +13,17 @@ interface Props {
   deletedPlayers: DeletedPlayer[];
   presence: SessionPresence[];
   sessionId?: string;
+  sessionDate?: string;
   sessionActive: boolean;
   isAdmin: boolean;
   isGodMode: boolean;
+}
+
+function formatSessionDate(dateStr: string): string {
+  // dateStr is YYYY-MM-DD (Pacific). Parse as local date to avoid UTC offset shift.
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  return date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 }
 
 export default function AdminPageContent({
@@ -23,6 +31,7 @@ export default function AdminPageContent({
   deletedPlayers,
   presence,
   sessionId,
+  sessionDate,
   sessionActive,
   isAdmin,
   isGodMode,
@@ -108,6 +117,21 @@ export default function AdminPageContent({
           )}
         </div>
       </div>
+
+      {sessionActive && sessionDate && (
+        <div className="mx-4 mb-3 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-2">
+          <span style={{ fontSize: 13, color: '#065F46', fontWeight: 600 }}>
+            Session: {formatSessionDate(sessionDate)}
+          </span>
+          <span style={{
+            background: '#D1FAE5', color: '#065F46',
+            fontSize: 11, fontWeight: 600,
+            borderRadius: 20, padding: '1px 7px',
+          }}>
+            active
+          </span>
+        </div>
+      )}
 
       {addPlayerOpen && (
         <div className="px-4 mb-3">
