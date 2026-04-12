@@ -12,20 +12,38 @@ export interface FinalsFormatData {
   config: Record<string, unknown>;
 }
 
+// Compute valid matches_per_player values (must satisfy: mpp * playerCount % 4 === 0)
+function validMatchesPerPlayer(playerCount: number): number[] {
+  const vals: number[] = [];
+  for (let m = 2; m <= Math.min(playerCount, 12); m++) {
+    if ((m * playerCount) % 4 === 0) vals.push(m);
+  }
+  return vals;
+}
+
+function defaultMatchesPerPlayer(playerCount: number): number {
+  const valid = validMatchesPerPlayer(playerCount);
+  // Pick the valid value closest to 40% of player count, minimum 3
+  const target = Math.max(3, Math.round(playerCount * 0.4));
+  let best = valid[0];
+  for (const v of valid) {
+    if (Math.abs(v - target) < Math.abs(best - target)) best = v;
+  }
+  return best;
+}
+
 const FORMATS = [
   {
     type: "fixed_partner" as const,
     title: "Fixed-Partner All-Pairs",
-    description: "Admin assigns partner pairs. Every pair plays every other pair once. Most wins takes the group.",
+    subtitle: "Admin assigns partner pairs. Every pair plays every other pair once.",
     icon: "🤝",
-    enabled: true,
   },
   {
     type: "playoffs" as const,
     title: "Playoffs + Finals",
-    description: "Players rotate partners in group stage. Top 4 advance to a Best-of-3 Final.",
+    subtitle: "Players rotate partners in group stage. Top 4 advance to a Best-of-3 Final.",
     icon: "🏆",
-    enabled: true,
   },
 ];
 
@@ -43,34 +61,55 @@ export default function FormatPicker({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [selecting, setSelecting] = useState(false);
-  const [optimisticType, setOptimisticType] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string | null>(currentFormat?.format_type ?? null);
+  const [matchesPerPlayer, setMatchesPerPlayer] = useState<number>(
+    (currentFormat?.config as { matches_per_player?: number })?.matches_per_player
+    ?? defaultMatchesPerPlayer(playerCount)
+  );
   const [error, setError] = useState<string | null>(null);
 
   const isLocked = currentFormat && currentFormat.status !== "configured";
-  const displayType = optimisticType ?? currentFormat?.format_type;
+  const displayType = selectedType ?? currentFormat?.format_type;
+  const validValues = validMatchesPerPlayer(playerCount);
+  const totalMatches = (matchesPerPlayer * playerCount) / 4;
 
-  async function selectFormat(formatType: "playoffs" | "fixed_partner") {
-    if (isLocked) return;
-    setOptimisticType(formatType);
+  async function saveFormat(formatType: "playoffs" | "fixed_partner", mpp?: number) {
     setSelecting(true);
     setError(null);
+    const config = formatType === "playoffs" && mpp ? { matches_per_player: mpp } : {};
     const res = await fetch(`/api/sessions/${sessionId}/finals-format`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ format_type: formatType, finals_group: finalsGroup }),
+      body: JSON.stringify({ format_type: formatType, finals_group: finalsGroup, config }),
     });
     const json = await res.json();
     if (!res.ok) {
       setError(json.error ?? "Failed to set format");
-      setOptimisticType(null);
     } else {
       startTransition(() => router.refresh());
     }
     setSelecting(false);
   }
 
+  function handleSelectFormat(type: string) {
+    if (isLocked) return;
+    setSelectedType(type);
+    // Auto-save for fixed_partner (no config needed), or save playoffs with current mpp
+    if (type === "fixed_partner") {
+      saveFormat("fixed_partner");
+    } else {
+      saveFormat("playoffs", matchesPerPlayer);
+    }
+  }
+
+  function handleMppChange(val: number) {
+    setMatchesPerPlayer(val);
+    // Auto-save the updated config
+    saveFormat("playoffs", val);
+  }
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <h3 className="text-xs font-semibold text-stone-500 uppercase tracking-wide">
           Format
@@ -82,31 +121,69 @@ export default function FormatPicker({
         <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
       )}
 
-      <div className="flex gap-2">
+      {/* Radio options */}
+      <div className="flex flex-col gap-2">
         {FORMATS.map((fmt) => {
           const isSelected = displayType === fmt.type;
-          const isDisabled = !fmt.enabled || (selecting && optimisticType !== fmt.type) || isPending;
-
           return (
             <button
               key={fmt.type}
-              onClick={() => fmt.enabled && !isLocked && selectFormat(fmt.type)}
-              disabled={isDisabled}
+              onClick={() => !isLocked && handleSelectFormat(fmt.type)}
+              disabled={selecting || isPending}
               className={[
-                "relative flex-1 text-left px-3 py-2 rounded-lg border transition-all text-sm",
+                "flex items-start gap-3 text-left px-3 py-2.5 rounded-xl border transition-all",
                 isSelected
-                  ? "border-stone-900 bg-stone-900 text-white shadow-sm"
-                  : fmt.enabled
-                  ? "border-stone-200 bg-white hover:border-stone-400"
-                  : "border-stone-100 bg-stone-50 opacity-60 cursor-not-allowed",
+                  ? "border-sky-500 bg-sky-50"
+                  : "border-stone-200 bg-white hover:border-stone-300",
+                (selecting || isPending) ? "opacity-60" : "",
               ].join(" ")}
             >
-              <span className={`font-semibold ${isSelected ? "text-white" : "text-stone-700"}`}>{fmt.icon} {fmt.title}</span>
+              {/* Radio dot */}
+              <div className={[
+                "w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 shrink-0",
+                isSelected ? "border-sky-500" : "border-stone-300",
+              ].join(" ")}>
+                {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-sky-500" />}
+              </div>
+              <div>
+                <span className="text-sm font-semibold text-stone-800">{fmt.icon} {fmt.title}</span>
+                <p className="text-xs text-stone-500 mt-0.5">{fmt.subtitle}</p>
+              </div>
             </button>
           );
         })}
       </div>
 
+      {/* Playoffs config — matches per player */}
+      {displayType === "playoffs" && !isLocked && (
+        <div className="bg-white border border-stone-200 rounded-xl px-4 py-3 flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium text-stone-700">Matches per player</label>
+            <select
+              value={matchesPerPlayer}
+              onChange={(e) => handleMppChange(Number(e.target.value))}
+              disabled={selecting || isPending}
+              className="text-sm border border-stone-200 rounded-lg px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-sky-300 disabled:opacity-40"
+            >
+              {validValues.map((v) => (
+                <option key={v} value={v}>{v}</option>
+              ))}
+            </select>
+          </div>
+          <p className="text-xs text-stone-400">
+            {totalMatches} total matches · Every player plays exactly {matchesPerPlayer}
+          </p>
+        </div>
+      )}
+
+      {/* Show match info when locked */}
+      {displayType === "playoffs" && isLocked && (
+        <p className="text-xs text-stone-400 px-1">
+          {matchesPerPlayer} matches per player · {totalMatches} total matches
+        </p>
+      )}
+
+      {/* Reset */}
       {currentFormat && (
         <button
           onClick={async () => {
@@ -118,7 +195,7 @@ export default function FormatPicker({
               body: JSON.stringify({ finals_group: finalsGroup }),
             });
             if (res.ok) {
-              setOptimisticType(null);
+              setSelectedType(null);
               startTransition(() => router.refresh());
             } else {
               const json = await res.json();

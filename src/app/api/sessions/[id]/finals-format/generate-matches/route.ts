@@ -47,20 +47,25 @@ function generateFixedPartnerMatches(pairs: SavedPair[], groupLabel: string, ses
   }));
 }
 
-// ── Playoffs: rotating partners, ~4 matches per player ──────────────────────
-function generatePlayoffsMatches(playerIds: string[], groupLabel: string, sessionId: string) {
+// ── Playoffs: rotating partners, exact N matches per player ─────────────────
+function generatePlayoffsMatches(
+  playerIds: string[],
+  groupLabel: string,
+  sessionId: string,
+  matchesPerPlayer: number
+) {
   const n = playerIds.length;
   if (n < 4) return [];
 
-  // Target: ~4 matches per player → total matches = n * 4 / 4 = n
-  const targetMatches = n;
+  // Total matches = matchesPerPlayer * n / 4  (guaranteed integer by caller)
+  const totalMatches = (matchesPerPlayer * n) / 4;
 
-  // Track partner/opponent history
-  const partnerCount = new Map<string, Map<string, number>>(); // player → partner → count
-  const matchCount = new Map<string, number>(); // player → total matches
+  // Each player has exactly matchesPerPlayer slots to fill
+  const slotsRemaining = new Map<string, number>();
+  const partnerCount = new Map<string, Map<string, number>>();
   for (const id of playerIds) {
+    slotsRemaining.set(id, matchesPerPlayer);
     partnerCount.set(id, new Map());
-    matchCount.set(id, 0);
   }
 
   const matches: {
@@ -73,34 +78,34 @@ function generatePlayoffsMatches(playerIds: string[], groupLabel: string, sessio
     finals_group: string;
   }[] = [];
 
-  // Generate all valid 4-player combos, score them, pick the best greedily
-  for (let round = 0; round < targetMatches; round++) {
+  for (let round = 0; round < totalMatches; round++) {
+    // Only consider players who still have slots
+    const eligible = playerIds.filter((id) => (slotsRemaining.get(id) ?? 0) > 0);
+    if (eligible.length < 4) break;
+
     let bestMatch: [string, string, string, string] | null = null;
     let bestScore = -Infinity;
 
-    // Try random samples to find good matches (full enumeration too expensive for large N)
-    const attempts = Math.min(n * n * 2, 200);
+    const attempts = Math.min(eligible.length * eligible.length * 3, 400);
     for (let attempt = 0; attempt < attempts; attempt++) {
-      // Pick 4 players, prioritizing those with fewer matches
-      const sorted = [...playerIds].sort(
-        (a, b) => (matchCount.get(a) ?? 0) - (matchCount.get(b) ?? 0)
+      // Prioritize players with more remaining slots
+      const sorted = [...eligible].sort(
+        (a, b) => (slotsRemaining.get(b) ?? 0) - (slotsRemaining.get(a) ?? 0)
       );
 
       let candidates: string[];
-      if (attempt < n) {
-        // First N attempts: structured — take lowest-match players
-        candidates = sorted.slice(0, Math.min(6, n));
+      if (attempt < eligible.length) {
+        // First attempts: take players with most remaining slots
+        candidates = sorted.slice(0, Math.min(8, eligible.length));
       } else {
-        // Random sampling from full pool
-        candidates = [...playerIds];
+        candidates = [...eligible];
       }
 
-      // Pick 4 from candidates
       const shuffled = [...candidates].sort(() => Math.random() - 0.5);
       if (shuffled.length < 4) continue;
       const four = shuffled.slice(0, 4);
 
-      // Try both team arrangements: (0,1 vs 2,3) and (0,2 vs 1,3)
+      // Try team arrangements: (0,1 vs 2,3) and (0,2 vs 1,3)
       const arrangements: [string, string, string, string][] = [
         [four[0], four[1], four[2], four[3]],
         [four[0], four[2], four[1], four[3]],
@@ -109,20 +114,14 @@ function generatePlayoffsMatches(playerIds: string[], groupLabel: string, sessio
       for (const arr of arrangements) {
         let score = 0;
 
-        // Prefer players with fewer matches (fairness)
+        // Prefer players with more remaining slots (keeps distribution even)
         for (const id of arr) {
-          score += Math.max(0, 4 - (matchCount.get(id) ?? 0)) * 10;
+          score += (slotsRemaining.get(id) ?? 0) * 10;
         }
 
         // Penalize repeat partnerships
-        const pc = partnerCount;
-        score -= (pc.get(arr[0])?.get(arr[1]) ?? 0) * 20;
-        score -= (pc.get(arr[2])?.get(arr[3]) ?? 0) * 20;
-
-        // Penalize if any player has 5+ matches already
-        for (const id of arr) {
-          if ((matchCount.get(id) ?? 0) >= 5) score -= 50;
-        }
+        score -= (partnerCount.get(arr[0])?.get(arr[1]) ?? 0) * 25;
+        score -= (partnerCount.get(arr[2])?.get(arr[3]) ?? 0) * 25;
 
         // Small random tiebreaker
         score += Math.random() * 2;
@@ -147,8 +146,8 @@ function generatePlayoffsMatches(playerIds: string[], groupLabel: string, sessio
       finals_group: groupLabel,
     });
 
-    // Update tracking
-    for (const id of bestMatch) matchCount.set(id, (matchCount.get(id) ?? 0) + 1);
+    // Decrement slots and track partnerships
+    for (const id of bestMatch) slotsRemaining.set(id, (slotsRemaining.get(id) ?? 0) - 1);
     partnerCount.get(p1)!.set(p2, (partnerCount.get(p1)!.get(p2) ?? 0) + 1);
     partnerCount.get(p2)!.set(p1, (partnerCount.get(p2)!.get(p1) ?? 0) + 1);
     partnerCount.get(p3)!.set(p4, (partnerCount.get(p3)!.get(p4) ?? 0) + 1);
@@ -230,7 +229,15 @@ export async function POST(
       return NextResponse.json({ error: "Need at least 4 players in the group" }, { status: 400 });
     }
 
-    matches = generatePlayoffsMatches(groupPlayerIds, finals_group, sessionId);
+    const config = format.config as { matches_per_player?: number };
+    const mpp = config?.matches_per_player ?? groupPlayerIds.length; // fallback to old behavior
+    if ((mpp * groupPlayerIds.length) % 4 !== 0) {
+      return NextResponse.json(
+        { error: `matches_per_player (${mpp}) × players (${groupPlayerIds.length}) must be divisible by 4` },
+        { status: 400 }
+      );
+    }
+    matches = generatePlayoffsMatches(groupPlayerIds, finals_group, sessionId, mpp);
   } else {
     return NextResponse.json({ error: "Unknown format type" }, { status: 400 });
   }

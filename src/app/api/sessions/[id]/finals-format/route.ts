@@ -63,7 +63,7 @@ export async function POST(
   }
 
   const body = await req.json();
-  const { format_type, finals_group } = body;
+  const { format_type, finals_group, config: incomingConfig } = body;
 
   if (!format_type || !["playoffs", "fixed_partner"].includes(format_type)) {
     return NextResponse.json({ error: "Invalid format_type" }, { status: 400 });
@@ -89,7 +89,7 @@ export async function POST(
     }
     const { data: updated, error } = await adminDb
       .from("finals_formats")
-      .update({ format_type, config: {} })
+      .update({ format_type, config: incomingConfig ?? {} })
       .eq("id", existing.id)
       .select()
       .single();
@@ -100,7 +100,7 @@ export async function POST(
 
   const { data: created, error } = await adminDb
     .from("finals_formats")
-    .insert({ session_id: id, format_type, finals_group })
+    .insert({ session_id: id, format_type, finals_group, config: incomingConfig ?? {} })
     .select()
     .single();
 
