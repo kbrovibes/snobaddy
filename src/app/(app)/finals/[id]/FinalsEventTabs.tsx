@@ -67,81 +67,44 @@ function StepNavButtons({
 }
 
 // ─── Workflow step indicator ─────────────────────────────────────────────────
-// Each step is an SVG arrow shape: flat left for step 1, notched left for others,
-// pointed right for non-last, flat right for last.
-function StepIndicator({
-  step,
-  label,
-  active,
-  locked,
-  done,
-  isFirst,
-  isLast,
-  onClick,
+function StepBreadcrumbs({
+  steps,
+  activeTab,
+  onSelect,
 }: {
-  step: number;
-  label: string;
-  active: boolean;
-  locked: boolean;
-  done: boolean;
-  isFirst: boolean;
-  isLast: boolean;
-  onClick: () => void;
+  steps: { key: string; label: string; locked: boolean; done: boolean }[];
+  activeTab: string;
+  onSelect: (key: string) => void;
 }) {
-  const fill = active
-    ? "#1c1917"       // stone-900
-    : done
-    ? "#059669"       // emerald-600
-    : locked
-    ? "#e7e5e4"       // stone-200
-    : "#f5f5f4";      // stone-100
-  const textColor = active || done ? "text-white" : locked ? "text-stone-400" : "text-stone-600";
-  const badgeClass = active
-    ? "bg-white/20 text-white"
-    : done
-    ? "bg-white/25 text-white"
-    : locked
-    ? "bg-stone-300 text-stone-100"
-    : "bg-stone-300/50 text-stone-500";
-
-  // Arrow shape built as a closed polygon, clockwise from top-left.
-  // viewBox = 200x40. Notch depth = 12 units.
-  // First step: flat left. Others: notched left (V pointing right).
-  // Last step: pointed right (arrow tip). Others: also pointed right.
-  const N = 12; // notch/point depth
-  const W = 200;
-  const H = 40;
-  const pts: string[] = [];
-  // Top-left
-  if (isFirst) {
-    pts.push(`0,0`);
-  } else {
-    pts.push(`0,0`, `${N},${H / 2}`, `0,${H}`);
-  }
-  // Bottom-right
-  pts.push(`${W - N},${H}`);
-  // Right edge — always an arrow point
-  pts.push(`${W},${H / 2}`);
-  // Top-right
-  pts.push(`${W - N},0`);
-  const path = `M${pts.join(" L")} Z`;
-
   return (
-    <button
-      onClick={locked ? undefined : onClick}
-      disabled={locked}
-      className={`flex-1 relative h-10 ${locked ? "cursor-not-allowed" : "cursor-pointer"}`}
-    >
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 40" preserveAspectRatio="none">
-        <path d={path} fill={fill} />
-      </svg>
-      <div className={`relative z-10 flex items-center justify-center gap-1.5 h-full ${textColor}`}>
-        <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[11px] font-bold ${badgeClass}`}>
-          {done && !active ? "✓" : step}
-        </span>
-        <span className="text-xs font-semibold">{locked ? `🔒 ${label}` : label}</span>
-      </div>
-    </button>
+    <div className="flex items-center gap-1 text-sm">
+      {steps.map((s, i) => {
+        const isActive = s.key === activeTab;
+        return (
+          <React.Fragment key={s.key}>
+            {i > 0 && <span className="text-stone-300 text-xs">&gt;</span>}
+            <button
+              onClick={s.locked ? undefined : () => onSelect(s.key)}
+              disabled={s.locked}
+              className={[
+                "px-2.5 py-1 rounded-md transition-colors",
+                isActive
+                  ? "font-bold text-stone-900 bg-stone-100"
+                  : s.done
+                  ? "font-medium text-emerald-600 hover:bg-emerald-50"
+                  : s.locked
+                  ? "text-stone-300 cursor-not-allowed"
+                  : "text-stone-500 hover:text-stone-700 hover:bg-stone-50",
+              ].join(" ")}
+            >
+              {s.done && !isActive && <span className="text-emerald-500 mr-0.5">&#10003;</span>}
+              {s.locked && "&#128274; "}
+              {s.label}
+            </button>
+          </React.Fragment>
+        );
+      })}
+    </div>
   );
 }
 
@@ -866,39 +829,16 @@ export default function FinalsEventTabs({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Step workflow indicator */}
-      <div className="flex gap-1">
-        <StepIndicator
-          step={1}
-          label="Players"
-          active={tab === "players"}
-          locked={false}
-          done={participants.length > 0}
-          isFirst={true}
-          isLast={false}
-          onClick={() => setTab("players")}
-        />
-        <StepIndicator
-          step={2}
-          label="Groups"
-          active={tab === "groups"}
-          locked={!canViewGroups}
-          done={event.status !== "draft"}
-          isFirst={false}
-          isLast={false}
-          onClick={() => setTab("groups")}
-        />
-        <StepIndicator
-          step={3}
-          label="Sessions"
-          active={tab === "sessions"}
-          locked={!canViewSessions}
-          done={!!sessionPair.day1}
-          isFirst={false}
-          isLast={true}
-          onClick={() => setTab("sessions")}
-        />
-      </div>
+      {/* Step breadcrumbs */}
+      <StepBreadcrumbs
+        steps={[
+          { key: "players", label: "Players", locked: false, done: participants.length > 0 },
+          { key: "groups", label: "Groups", locked: !canViewGroups, done: event.status !== "draft" },
+          { key: "sessions", label: "Sessions", locked: !canViewSessions, done: !!sessionPair.day1 },
+        ]}
+        activeTab={tab}
+        onSelect={(key) => setTab(key as Tab)}
+      />
 
       {/* Tab content */}
       {tab === "players" && (
