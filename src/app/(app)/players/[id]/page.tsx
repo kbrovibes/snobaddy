@@ -84,7 +84,9 @@ export default async function PlayerProfilePage({
   return (
     <div className="flex flex-col gap-4 px-4 py-4">
 
-      <BackButton />
+      <div className="-mb-2">
+        <BackButton />
+      </div>
 
       {/* Player header */}
       <div className="bg-white rounded-xl shadow-sm px-4 py-4">

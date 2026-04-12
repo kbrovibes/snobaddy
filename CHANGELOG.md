@@ -18,6 +18,8 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Workflow step colors** — Completed steps ahead of your current step now show an even lighter green, making it clearer which step you're on.
 - **Info toggle glyph** — Replaced ℹ/▲ with ▸/▾ disclosure triangles on player score explanations in the groups table.
 - **Workflow arrow clipping** — Added padding to SVG viewBox so the rightmost arrow tip is no longer trimmed.
+- **Loading spinner for header & bottom nav** — Profile badge and bottom nav tabs now show the loading spinner during navigation (they were outside the NavigationLoader context).
+- **Back button on player profile** — Repositioned to top-left with ‹ prefix, matching other pages. Also triggers loading spinner.
 
 ### Fixed
 - **Nav links** — "‹ Sessions" and "‹ Finals Event" back-links now use the consistent ‹ prefix instead of <.
