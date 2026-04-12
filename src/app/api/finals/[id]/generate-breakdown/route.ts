@@ -108,10 +108,35 @@ export async function POST(
 
   const total = scored.length;
 
-  // Auto-assign groups for non-overridden players
-  // Top 35% → A, next 35% → B, rest → C
-  const aCount = Math.max(4, Math.round(total * 0.35));
-  const bCount = Math.max(4, Math.round(total * 0.35));
+  // Auto-assign groups: even sizes (divisible by 2), prioritize A & B larger.
+  // Strategy: split into 3 groups as evenly as possible, all even.
+  // When there's a remainder, add to A first, then B.
+  function computeGroupSizes(n: number): [number, number, number] {
+    // Base: each group gets floor(n/3), rounded down to even
+    const base = Math.floor(n / 3);
+    const baseEven = base - (base % 2); // round down to even
+    let a = Math.max(4, baseEven);
+    let b = Math.max(4, baseEven);
+    let c = Math.max(4, baseEven);
+
+    // Distribute leftover players 2 at a time, prioritizing A then B
+    let leftover = n - a - b - c;
+    while (leftover >= 2) {
+      if (a <= b) { a += 2; }
+      else { b += 2; }
+      leftover -= 2;
+    }
+
+    // If 1 leftover (odd total), one group must be odd — put it in C (lowest priority)
+    if (leftover === 1) { c += 1; }
+
+    // Ensure A >= B (A is the top group)
+    if (b > a) { const tmp = a; a = b; b = tmp; }
+
+    return [a, b, c];
+  }
+
+  const [aCount, bCount] = computeGroupSizes(total);
 
   const updates = scored.map((p, idx) => {
     // Preserve manual overrides
