@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useNavigationLoader } from "@/components/NavigationLoader";
 
 const THRESHOLD = 72;   // px of pull needed to trigger
 const MAX_PULL  = 96;   // px cap on visual stretch
 
 export default function PullToRefresh() {
   const router = useRouter();
+  const { startLoading, stopLoading } = useNavigationLoader();
+  const [isRefreshing, startTransition] = useTransition();
   const startYRef  = useRef<number | null>(null);
   const startXRef  = useRef<number | null>(null);
   const [pull, setPull]       = useState(0);   // 0–MAX_PULL
@@ -17,6 +20,14 @@ export default function PullToRefresh() {
   useEffect(() => {
     setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
   }, []);
+
+  // When transition finishes, stop the loading overlay
+  useEffect(() => {
+    if (!isRefreshing && refreshing) {
+      setRefreshing(false);
+      stopLoading();
+    }
+  }, [isRefreshing, refreshing, stopLoading]);
 
   useEffect(() => {
     if (!isStandalone) return;
@@ -42,8 +53,10 @@ export default function PullToRefresh() {
       if (pull >= THRESHOLD && !refreshing) {
         setRefreshing(true);
         setPull(0);
-        router.refresh();
-        setTimeout(() => setRefreshing(false), 1000);
+        startLoading();
+        startTransition(() => {
+          router.refresh();
+        });
       } else {
         setPull(0);
       }

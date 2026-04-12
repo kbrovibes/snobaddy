@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import NavigationLoader from "@/components/NavigationLoader";
+import PullToRefresh from "@/components/PullToRefresh";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -45,6 +46,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       {/* pt-14 clears the fixed header, pb-16 clears the fixed bottom nav */}
       <main className="flex-1 pt-14 pb-16">
         <NavigationLoader>
+          <PullToRefresh />
           {children}
         </NavigationLoader>
       </main>

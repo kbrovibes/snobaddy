@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
-import PullToRefresh from "@/components/PullToRefresh";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
@@ -46,7 +45,6 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <NextTopLoader color="#0ea5e9" height={4} showSpinner={false} />
-        <PullToRefresh />
         {children}
         <SpeedInsights />
         <Analytics />
