@@ -28,45 +28,7 @@ function SkillDots({ level }: { level: number }) {
   );
 }
 
-// ─── Step nav buttons ────────────────────────────────────────────────────────
-function StepNavButtons({
-  onPrev,
-  onNext,
-  prevLabel,
-  nextLabel,
-  nextDisabled,
-}: {
-  onPrev?: () => void;
-  onNext?: () => void;
-  prevLabel?: string;
-  nextLabel?: string;
-  nextDisabled?: boolean;
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      {onPrev && (
-        <button
-          onClick={onPrev}
-          className="px-4 py-2 text-sm font-medium text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
-        >
-          &lt; {prevLabel}
-        </button>
-      )}
-      <div className="flex-1" />
-      {onNext && (
-        <button
-          onClick={onNext}
-          disabled={nextDisabled}
-          className="px-5 py-2 text-sm font-semibold text-white bg-sky-600 rounded-lg hover:bg-sky-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-        >
-          {nextLabel} &gt;
-        </button>
-      )}
-    </div>
-  );
-}
-
-// ─── Workflow step indicator ─────────────────────────────────────────────────
+// ─── Workflow breadcrumb steps ─────────────────────────────────────────────────
 function StepBreadcrumbs({
   steps,
   activeTab,
@@ -114,13 +76,11 @@ function PlayersTab({
   eventStatus,
   allPlayers,
   participants,
-  onNext,
 }: {
   eventId: string;
   eventStatus: FinalsEvent["status"];
   allPlayers: PlayerStats[];
   participants: FinalsParticipant[];
-  onNext: () => void;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -289,10 +249,6 @@ function PlayersTab({
         </div>
       )}
 
-      {/* Next step — top */}
-      {sorted.length >= 4 && (
-        <StepNavButtons onNext={onNext} nextLabel="Set Up Groups" />
-      )}
 
       {/* Participant tiles */}
       {sorted.length === 0 ? (
@@ -336,16 +292,12 @@ function GroupsTab({
   participants,
   onSwitchToPlayers,
   onConfirmed,
-  canGoToSessions,
-  onNext,
 }: {
   eventId: string;
   eventStatus: FinalsEvent["status"];
   participants: FinalsParticipant[];
   onSwitchToPlayers: () => void;
   onConfirmed: () => void;
-  canGoToSessions: boolean;
-  onNext: () => void;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -422,14 +374,6 @@ function GroupsTab({
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Step nav — top */}
-      <StepNavButtons
-        onPrev={onSwitchToPlayers}
-        prevLabel="Players"
-        onNext={canGoToSessions ? onNext : undefined}
-        nextLabel="Sessions"
-      />
-
       {/* Actions row */}
       {(eventStatus === "draft" || isBreakdownGenerated) && (
         <div className="flex gap-2">
@@ -615,13 +559,6 @@ function GroupsTab({
         </div>
       )}
 
-      {/* Step nav — bottom */}
-      <StepNavButtons
-        onPrev={onSwitchToPlayers}
-        prevLabel="Players"
-        onNext={canGoToSessions ? onNext : undefined}
-        nextLabel="Sessions"
-      />
     </div>
   );
 }
@@ -671,12 +608,10 @@ function SessionsTab({
   eventId,
   eventStatus,
   sessionPair,
-  onPrev,
 }: {
   eventId: string;
   eventStatus: FinalsEvent["status"];
   sessionPair: FinalsSessionPair;
-  onPrev: () => void;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -710,9 +645,6 @@ function SessionsTab({
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Step nav — top */}
-      <StepNavButtons onPrev={onPrev} prevLabel="Groups" />
-
       {sessionsExist ? (
         <>
           <SessionCard
@@ -773,8 +705,6 @@ function SessionsTab({
         </>
       )}
 
-      {/* Step nav — bottom */}
-      <StepNavButtons onPrev={onPrev} prevLabel="Groups" />
     </div>
   );
 }
@@ -847,7 +777,6 @@ export default function FinalsEventTabs({
           eventStatus={event.status}
           allPlayers={allPlayers}
           participants={participants}
-          onNext={() => setTab("groups")}
         />
       )}
 
@@ -858,8 +787,6 @@ export default function FinalsEventTabs({
           participants={participants}
           onSwitchToPlayers={() => setTab("players")}
           onConfirmed={() => setTab("sessions")}
-          canGoToSessions={canViewSessions}
-          onNext={() => setTab("sessions")}
         />
       )}
 
@@ -868,7 +795,6 @@ export default function FinalsEventTabs({
           eventId={event.id}
           eventStatus={event.status}
           sessionPair={sessionPair}
-          onPrev={() => setTab("groups")}
         />
       )}
 
