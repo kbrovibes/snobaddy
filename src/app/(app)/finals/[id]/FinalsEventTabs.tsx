@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { FinalsEvent, FinalsParticipant, FinalsSessionPair, FinalsSessionInfo } from "@/lib/db/finals";
 import type { PlayerStats } from "@/lib/db/players";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const GROUP_COLORS: Record<string, string> = {
   A: "bg-sky-100 text-sky-700 border-sky-200",
@@ -761,6 +762,8 @@ export default function FinalsEventTabs({
   const [tab, setTab] = useState<Tab>("players");
   const [deleting, setDeleting] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<"delete" | "reset" | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -769,27 +772,29 @@ export default function FinalsEventTabs({
     event.status !== "draft" && event.status !== "breakdown_generated";
 
   async function handleDelete() {
-    if (!confirm("Delete this Finals Event and all its data? This cannot be undone.")) return;
+    setConfirmAction(null);
     setDeleting(true);
+    setActionError(null);
     const res = await fetch(`/api/finals/${event.id}`, { method: "DELETE" });
     if (res.ok) {
       router.push("/?list=1");
     } else {
       const json = await res.json();
-      alert(json.error ?? "Could not delete");
+      setActionError(json.error ?? "Could not delete");
       setDeleting(false);
     }
   }
 
   async function handleReset() {
-    if (!confirm("Reset to draft? This will clear all groups, sessions, and matches. Players will stay in the pool.")) return;
+    setConfirmAction(null);
     setResetting(true);
+    setActionError(null);
     const res = await fetch(`/api/finals/${event.id}/reset`, { method: "POST" });
     if (res.ok) {
       startTransition(() => { setTab("players"); router.refresh(); });
     } else {
       const json = await res.json();
-      alert(json.error ?? "Could not reset");
+      setActionError(json.error ?? "Could not reset");
     }
     setResetting(false);
   }
@@ -837,9 +842,12 @@ export default function FinalsEventTabs({
 
       {/* Reset / Delete */}
       <div className="mt-2 flex flex-col gap-2">
+        {actionError && (
+          <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{actionError}</p>
+        )}
         {event.status !== "draft" && (
           <button
-            onClick={handleReset}
+            onClick={() => setConfirmAction("reset")}
             disabled={resetting || deleting || isPending}
             className="w-full py-2.5 text-sm font-medium text-amber-500 hover:text-amber-700 border border-amber-200 hover:border-amber-300 rounded-xl transition-colors disabled:opacity-50"
           >
@@ -847,13 +855,33 @@ export default function FinalsEventTabs({
           </button>
         )}
         <button
-          onClick={handleDelete}
+          onClick={() => setConfirmAction("delete")}
           disabled={deleting || resetting || isPending}
           className="w-full py-2.5 text-sm font-medium text-red-400 hover:text-red-600 border border-red-100 hover:border-red-300 rounded-xl transition-colors disabled:opacity-50"
         >
           {deleting ? "Deleting…" : "Delete Finals Event"}
         </button>
       </div>
+
+      {/* Confirmation dialogs */}
+      <ConfirmDialog
+        open={confirmAction === "delete"}
+        title="Delete Finals Event"
+        message="This will permanently delete this event and all its data. This cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmAction(null)}
+      />
+      <ConfirmDialog
+        open={confirmAction === "reset"}
+        title="Reset to Draft"
+        message="This will clear all groups, sessions, and matches. Players will stay in the pool."
+        confirmLabel="Reset"
+        variant="warning"
+        onConfirm={handleReset}
+        onCancel={() => setConfirmAction(null)}
+      />
     </div>
   );
 }

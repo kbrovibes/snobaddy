@@ -2,6 +2,7 @@
 
 import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export interface FinalsFormatData {
   id: string;
@@ -45,6 +46,7 @@ export default function FormatPicker({
   const [selecting, setSelecting] = useState(false);
   const [optimisticType, setOptimisticType] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const isLocked = currentFormat && currentFormat.status !== "configured";
   const displayType = optimisticType ?? currentFormat?.format_type;
@@ -108,29 +110,40 @@ export default function FormatPicker({
       </div>
 
       {currentFormat && (
-        <button
-          onClick={async () => {
-            if (!confirm("Reset format? This will delete all matches and series for this group.")) return;
-            setSelecting(true);
-            const res = await fetch(`/api/sessions/${sessionId}/finals-format/reset`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ finals_group: finalsGroup }),
-            });
-            if (res.ok) {
-              setOptimisticType(null);
-              startTransition(() => router.refresh());
-            } else {
-              const json = await res.json();
-              setError(json.error ?? "Failed to reset");
-            }
-            setSelecting(false);
-          }}
-          disabled={selecting || isPending}
-          className="text-xs text-red-400 hover:text-red-600 disabled:opacity-40 self-center"
-        >
-          Reset format
-        </button>
+        <>
+          <button
+            onClick={() => setShowResetConfirm(true)}
+            disabled={selecting || isPending}
+            className="text-xs text-red-400 hover:text-red-600 disabled:opacity-40 self-center"
+          >
+            Reset format
+          </button>
+          <ConfirmDialog
+            open={showResetConfirm}
+            title="Reset Format"
+            message="This will delete all matches and series for this group."
+            confirmLabel="Reset"
+            variant="danger"
+            onConfirm={async () => {
+              setShowResetConfirm(false);
+              setSelecting(true);
+              const res = await fetch(`/api/sessions/${sessionId}/finals-format/reset`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ finals_group: finalsGroup }),
+              });
+              if (res.ok) {
+                setOptimisticType(null);
+                startTransition(() => router.refresh());
+              } else {
+                const json = await res.json();
+                setError(json.error ?? "Failed to reset");
+              }
+              setSelecting(false);
+            }}
+            onCancel={() => setShowResetConfirm(false)}
+          />
+        </>
       )}
     </div>
   );
