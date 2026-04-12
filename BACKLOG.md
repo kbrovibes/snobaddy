@@ -8,6 +8,8 @@ Single source of truth for all planned and completed work.
 
 ## Queue
 
+- [ ] **30 — On-Demand E2E Test Suite** · [spec](specs/30-on-demand-test-suite.md) · Playwright E2E tests (mobile viewport) covering all features; run on-demand via `npm run test`, not on every deploy; smoke + full + per-feature modes
+
 - [ ] **29 — Account Linking** · [spec](specs/29-account-linking.md) · On sign-up, detect matching unverified player, show "Is this you?" with stats, merge accounts safely — 13 tasks across 3 phases
 
 - [ ] **28 — Navigation Loading & Click Feedback** · [spec](specs/28-navigation-loading-feedback.md) · Global loading overlay + tap feedback for all navigations; NavLink wrapper, NavigationLoader context, CSS active states — HIGH PRIORITY UX
