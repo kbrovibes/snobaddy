@@ -214,6 +214,7 @@ export default async function SessionDetailPage({
         ) : (
           <BackToSessionsLink />
         )}
+        {!isFinalsSession && (
         <div className="flex items-center justify-between text-sm">
           <div>
             {adjacentSessions.newer ? (
@@ -234,6 +235,7 @@ export default async function SessionDetailPage({
             )}
           </div>
         </div>
+        )}
       </div>
 
       {/* Season header */}

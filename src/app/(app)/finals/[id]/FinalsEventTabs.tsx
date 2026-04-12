@@ -3,6 +3,20 @@
 import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {
+  DndContext,
+  DragOverlay,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragStartEvent,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { useDroppable } from "@dnd-kit/core";
 import type { FinalsEvent, FinalsParticipant, FinalsSessionPair, FinalsSessionInfo } from "@/lib/db/finals";
 import type { PlayerStats } from "@/lib/db/players";
 
@@ -330,6 +344,320 @@ function PlayersTab({
   );
 }
 
+// ─── Drag handle icon ────────────────────────────────────────────────────────
+function DragHandle({ listeners, attributes }: { listeners?: Record<string, Function>; attributes?: Record<string, any> }) {
+  return (
+    <button
+      className="touch-none flex flex-col items-center justify-center w-6 h-8 cursor-grab active:cursor-grabbing text-stone-300 hover:text-stone-500 -ml-1"
+      {...attributes}
+      {...listeners}
+    >
+      <svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor">
+        <circle cx="2.5" cy="2" r="1.2" /><circle cx="7.5" cy="2" r="1.2" />
+        <circle cx="2.5" cy="6" r="1.2" /><circle cx="7.5" cy="6" r="1.2" />
+        <circle cx="2.5" cy="10" r="1.2" /><circle cx="7.5" cy="10" r="1.2" />
+        <circle cx="2.5" cy="14" r="1.2" /><circle cx="7.5" cy="14" r="1.2" />
+      </svg>
+    </button>
+  );
+}
+
+// ─── Draggable player row ────────────────────────────────────────────────────
+function DraggablePlayerRow({
+  participant: p,
+  rank,
+  canEdit,
+  overriding,
+  isPending,
+  expandedId,
+  setExpandedId,
+  overrideGroup,
+  groupCounts,
+}: {
+  participant: FinalsParticipant;
+  rank: number;
+  canEdit: boolean;
+  overriding: string | null;
+  isPending: boolean;
+  expandedId: string | null;
+  setExpandedId: (id: string | null) => void;
+  overrideGroup: (playerId: string, group: string) => void;
+  groupCounts: Record<string, number>;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: p.id,
+    disabled: !canEdit,
+  });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.3 : 1,
+  };
+  const group = p.group_label;
+  const score = p.finals_score !== null ? p.finals_score.toFixed(1) : "—";
+  const isExpanded = expandedId === p.id;
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <div className="flex items-center gap-0 border-b border-stone-100 last:border-0">
+        {canEdit && (
+          <DragHandle listeners={listeners} attributes={attributes} />
+        )}
+        <div className={`flex-1 flex items-center gap-0 py-1.5 ${canEdit ? "pl-0" : "pl-3"}`}>
+          <span className="text-xs text-stone-400 w-6 text-center shrink-0">{rank}</span>
+          <div className="flex-1 min-w-0 px-1">
+            <div className="flex items-center gap-1.5">
+              <Link href={`/players/${p.player_id}`} className="text-sm text-sky-600 hover:underline truncate">
+                {p.name}
+              </Link>
+              {p.group_override && (
+                <span className="text-[9px] font-medium px-1 rounded bg-violet-100 text-violet-600">✎</span>
+              )}
+            </div>
+          </div>
+          <div className="w-12 text-center shrink-0"><SkillDots level={p.skill_level} /></div>
+          <span className="w-10 text-center text-xs text-stone-500 shrink-0">{score}</span>
+          <div className="w-10 text-center shrink-0">
+            {canEdit && group ? (
+              <select
+                value={group}
+                disabled={overriding === p.player_id || isPending}
+                onChange={(e) => overrideGroup(p.player_id, e.target.value)}
+                className={`text-[11px] font-semibold px-1 py-0 rounded border cursor-pointer disabled:opacity-40 ${GROUP_COLORS[group] ?? ""}`}
+              >
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+              </select>
+            ) : group ? (
+              <span className={`text-[11px] font-semibold px-1.5 rounded border ${GROUP_COLORS[group] ?? ""}`}>{group}</span>
+            ) : (
+              <span className="text-xs text-stone-300">—</span>
+            )}
+          </div>
+          <div className="w-6 text-center shrink-0">
+            {p.score_explanation && (
+              <button onClick={() => setExpandedId(isExpanded ? null : p.id)} className="text-xs text-stone-400 hover:text-stone-600">
+                {isExpanded ? "▲" : "ℹ"}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+      {isExpanded && p.score_explanation && (
+        <div className="px-3 pb-1.5">
+          <p className="text-[11px] text-stone-500 bg-stone-50 rounded px-2 py-1.5 leading-relaxed">
+            {p.score_explanation}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Droppable group container ───────────────────────────────────────────────
+function DroppableGroup({
+  groupLabel,
+  participants,
+  canEdit,
+  overriding,
+  isPending,
+  expandedId,
+  setExpandedId,
+  overrideGroup,
+  groupCounts,
+}: {
+  groupLabel: string;
+  participants: FinalsParticipant[];
+  canEdit: boolean;
+  overriding: string | null;
+  isPending: boolean;
+  expandedId: string | null;
+  setExpandedId: (id: string | null) => void;
+  overrideGroup: (playerId: string, group: string) => void;
+  groupCounts: Record<string, number>;
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: `group-${groupLabel}` });
+  const count = groupCounts[groupLabel] ?? 0;
+  const tooSmall = count < 4;
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`bg-white rounded-xl shadow-sm overflow-hidden transition-shadow ${isOver ? "ring-2 ring-sky-400 shadow-md" : ""}`}
+    >
+      {/* Group header */}
+      <div className="flex items-center justify-between px-3 py-1.5 bg-stone-50 border-b border-stone-100">
+        <span className={`text-xs font-bold px-2 py-0.5 rounded border ${GROUP_COLORS[groupLabel] ?? ""}`}>
+          Group {groupLabel}
+        </span>
+        <span className={`text-xs font-medium ${tooSmall ? "text-red-500" : "text-stone-400"}`}>
+          {count}{tooSmall ? " ⚠ min 4" : ""}
+        </span>
+      </div>
+      {/* Column headers */}
+      <div className={`flex items-center gap-0 text-[11px] text-stone-400 uppercase border-b border-stone-100 ${canEdit ? "pl-6" : "pl-3"}`}>
+        <span className="w-6 text-center shrink-0">#</span>
+        <span className="flex-1 px-1">Player</span>
+        <span className="w-12 text-center shrink-0">Skill</span>
+        <span className="w-10 text-center shrink-0">Score</span>
+        <span className="w-10 text-center shrink-0">Grp</span>
+        <span className="w-6 shrink-0"></span>
+      </div>
+      {/* Player rows */}
+      <SortableContext items={participants.map((p) => p.id)} strategy={verticalListSortingStrategy}>
+        {participants.length === 0 ? (
+          <div className="px-3 py-4 text-center text-xs text-stone-300">
+            Drop players here
+          </div>
+        ) : (
+          participants.map((p, i) => (
+            <DraggablePlayerRow
+              key={p.id}
+              participant={p}
+              rank={i + 1}
+              canEdit={canEdit}
+              overriding={overriding}
+              isPending={isPending}
+              expandedId={expandedId}
+              setExpandedId={setExpandedId}
+              overrideGroup={overrideGroup}
+              groupCounts={groupCounts}
+            />
+          ))
+        )}
+      </SortableContext>
+    </div>
+  );
+}
+
+// ─── Drag overlay (what you see while dragging) ──────────────────────────────
+function DragOverlayRow({ participant: p }: { participant: FinalsParticipant }) {
+  const group = p.group_label;
+  return (
+    <div className="bg-white rounded-lg shadow-lg border border-stone-200 px-3 py-2 flex items-center gap-2 opacity-95">
+      <span className="text-sm font-medium text-stone-800">{p.name}</span>
+      {group && (
+        <span className={`text-[11px] font-semibold px-1.5 rounded border ${GROUP_COLORS[group] ?? ""}`}>{group}</span>
+      )}
+    </div>
+  );
+}
+
+// ─── Groups drag-and-drop wrapper ────────────────────────────────────────────
+function GroupsDragDrop({
+  sorted,
+  groupCounts,
+  canEdit,
+  overriding,
+  isPending,
+  expandedId,
+  setExpandedId,
+  overrideGroup,
+}: {
+  sorted: FinalsParticipant[];
+  groupCounts: Record<string, number>;
+  canEdit: boolean;
+  overriding: string | null;
+  isPending: boolean;
+  expandedId: string | null;
+  setExpandedId: (id: string | null) => void;
+  overrideGroup: (playerId: string, group: string) => void;
+}) {
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const activeParticipant = activeId ? sorted.find((p) => p.id === activeId) : null;
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
+  );
+
+  // Split participants by group
+  const groups = ["A", "B", "C"];
+  const byGroup: Record<string, FinalsParticipant[]> = {};
+  for (const g of groups) {
+    byGroup[g] = sorted.filter((p) => p.group_label === g);
+  }
+
+  function handleDragStart(event: DragStartEvent) {
+    setActiveId(event.active.id as string);
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    setActiveId(null);
+    const { active, over } = event;
+    if (!over) return;
+
+    const player = sorted.find((p) => p.id === active.id);
+    if (!player) return;
+
+    // Determine target group from the over id
+    let targetGroup: string | null = null;
+    if (typeof over.id === "string" && over.id.startsWith("group-")) {
+      targetGroup = over.id.replace("group-", "");
+    } else {
+      // Dropped on another player — find which group they're in
+      const targetPlayer = sorted.find((p) => p.id === over.id);
+      if (targetPlayer) targetGroup = targetPlayer.group_label;
+    }
+
+    if (targetGroup && targetGroup !== player.group_label) {
+      overrideGroup(player.player_id, targetGroup);
+    }
+  }
+
+  if (!canEdit) {
+    // Read-only: render without DndContext
+    return (
+      <div className="flex flex-col gap-3">
+        {groups.filter((g) => byGroup[g].length > 0).map((g) => (
+          <DroppableGroup
+            key={g}
+            groupLabel={g}
+            participants={byGroup[g]}
+            canEdit={false}
+            overriding={overriding}
+            isPending={isPending}
+            expandedId={expandedId}
+            setExpandedId={setExpandedId}
+            overrideGroup={overrideGroup}
+            groupCounts={groupCounts}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="flex flex-col gap-3">
+        {groups.filter((g) => byGroup[g].length > 0).map((g) => (
+          <DroppableGroup
+            key={g}
+            groupLabel={g}
+            participants={byGroup[g]}
+            canEdit={canEdit}
+            overriding={overriding}
+            isPending={isPending}
+            expandedId={expandedId}
+            setExpandedId={setExpandedId}
+            overrideGroup={overrideGroup}
+            groupCounts={groupCounts}
+          />
+        ))}
+      </div>
+      <DragOverlay>
+        {activeParticipant ? <DragOverlayRow participant={activeParticipant} /> : null}
+      </DragOverlay>
+    </DndContext>
+  );
+}
+
 // ─── Groups tab ───────────────────────────────────────────────────────────────
 function GroupsTab({
   eventId,
@@ -465,106 +793,18 @@ function GroupsTab({
         </p>
       )}
 
-      {/* Ranked table */}
+      {/* Group cards with drag-and-drop */}
       {hasBreakdown && sorted.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-stone-100 bg-stone-50 text-[11px] text-stone-400 uppercase">
-                <th className="text-left px-3 py-1.5 font-medium w-8">#</th>
-                <th className="text-left px-2 py-1.5 font-medium">Player</th>
-                <th className="text-center px-2 py-1.5 font-medium w-14">Skill</th>
-                <th className="text-center px-2 py-1.5 font-medium w-14">Score</th>
-                <th className="text-center px-2 py-1.5 font-medium w-12">Grp</th>
-                <th className="w-6 px-1 py-1.5"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {(() => {
-                let lastGroup: string | null = null;
-                let rank = 0;
-                return sorted.map((p) => {
-                  const group = p.group_label;
-                  const showDivider = group && group !== lastGroup;
-                  if (showDivider) { lastGroup = group; rank = 0; }
-                  rank++;
-                  const isExpanded = expandedId === p.id;
-                  const score = p.finals_score !== null ? p.finals_score.toFixed(1) : "—";
-                  const count = group ? groupCounts[group] ?? 0 : 0;
-                  const tooSmall = count < 4;
-
-                  return (
-                    <React.Fragment key={p.id}>
-                      {showDivider && (
-                        <tr className="bg-stone-50">
-                          <td colSpan={6} className="px-3 py-1">
-                            <div className="flex items-center justify-between">
-                              <span className={`text-xs font-bold px-2 py-0.5 rounded border ${GROUP_COLORS[group!] ?? ""}`}>
-                                Group {group}
-                              </span>
-                              <span className={`text-xs font-medium ${tooSmall ? "text-red-500" : "text-stone-400"}`}>
-                                {count}{tooSmall ? " ⚠ min 4" : ""}
-                              </span>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                      <tr className="border-b border-stone-100 last:border-0">
-                        <td className="px-3 py-1.5 text-xs text-stone-400">{rank}</td>
-                        <td className="px-2 py-1.5">
-                          <div className="flex items-center gap-1.5">
-                            <Link href={`/players/${p.player_id}`} className="text-sky-600 hover:underline truncate">
-                              {p.name}
-                            </Link>
-                            {p.group_override && (
-                              <span className="text-[9px] font-medium px-1 rounded bg-violet-100 text-violet-600">✎</span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="text-center px-2 py-1.5"><SkillDots level={p.skill_level} /></td>
-                        <td className="text-center px-2 py-1.5 text-xs text-stone-500">{score}</td>
-                        <td className="text-center px-2 py-1.5">
-                          {canEdit && group ? (
-                            <select
-                              value={group}
-                              disabled={overriding === p.player_id || isPending}
-                              onChange={(e) => overrideGroup(p.player_id, e.target.value)}
-                              className={`text-[11px] font-semibold px-1 py-0 rounded border cursor-pointer disabled:opacity-40 ${GROUP_COLORS[group] ?? ""}`}
-                            >
-                              <option value="A">A</option>
-                              <option value="B">B</option>
-                              <option value="C">C</option>
-                            </select>
-                          ) : group ? (
-                            <span className={`text-[11px] font-semibold px-1.5 rounded border ${GROUP_COLORS[group] ?? ""}`}>{group}</span>
-                          ) : (
-                            <span className="text-xs text-stone-300">—</span>
-                          )}
-                        </td>
-                        <td className="px-1 py-1.5">
-                          {p.score_explanation && (
-                            <button onClick={() => setExpandedId(isExpanded ? null : p.id)} className="text-xs text-stone-400 hover:text-stone-600">
-                              {isExpanded ? "▲" : "ℹ"}
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                      {isExpanded && p.score_explanation && (
-                        <tr>
-                          <td colSpan={6} className="px-3 pb-1.5">
-                            <p className="text-[11px] text-stone-500 bg-stone-50 rounded px-2 py-1.5 leading-relaxed">
-                              {p.score_explanation}
-                            </p>
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
-                  );
-                });
-              })()}
-            </tbody>
-          </table>
-        </div>
+        <GroupsDragDrop
+          sorted={sorted}
+          groupCounts={groupCounts}
+          canEdit={canEdit}
+          overriding={overriding}
+          isPending={isPending}
+          expandedId={expandedId}
+          setExpandedId={setExpandedId}
+          overrideGroup={overrideGroup}
+        />
       )}
 
       {/* Group size summary */}

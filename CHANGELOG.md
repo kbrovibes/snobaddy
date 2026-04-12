@@ -6,10 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [0.26.9] - 2026-04-11
+## [0.27.0] - 2026-04-12
+
+### Added
+- **Drag-and-drop group assignment** — In the Finals Groups tab, drag players between groups using the grip handle on the left. Works on mobile (press-and-hold to start). The group dropdown still works as an alternative.
 
 ### Fixed
 - **Nav links** — "‹ Sessions" and "‹ Finals Event" back-links now use the consistent ‹ prefix instead of <.
+- **Finals session nav** — Hide prev/next session arrows on finals sessions (not needed, back-link to Finals Event is sufficient).
 
 ---
 
