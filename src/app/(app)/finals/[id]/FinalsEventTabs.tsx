@@ -318,62 +318,51 @@ function PlayersTab({
         <StepNavButtons onNext={onNext} nextLabel="Set Up Groups" />
       )}
 
-      {/* Participant table */}
+      {/* Sort controls */}
+      {sorted.length > 0 && (
+        <div className="flex items-center gap-2 text-[11px] text-stone-400">
+          <span>Sort:</span>
+          <button onClick={() => toggleSort("name")} className={`hover:text-stone-600 ${sortKey === "name" ? "font-bold text-stone-600" : ""}`}>
+            Name {sortKey === "name" ? (sortAsc ? "↑" : "↓") : ""}
+          </button>
+          <span>·</span>
+          <button onClick={() => toggleSort("skill")} className={`hover:text-stone-600 ${sortKey === "skill" ? "font-bold text-stone-600" : ""}`}>
+            Skill {sortKey === "skill" ? (sortAsc ? "↑" : "↓") : ""}
+          </button>
+        </div>
+      )}
+
+      {/* Participant tiles */}
       {sorted.length === 0 ? (
         <div className="rounded-lg border border-dashed border-stone-200 px-4 py-8 text-center">
           <p className="text-sm text-stone-400">No players added yet.</p>
           <p className="text-xs text-stone-300 mt-1">
-            Search above or tap "Auto-add from season"
+            Search above or tap &quot;Auto-add from season&quot;
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-stone-100 bg-stone-50 text-[11px] text-stone-400 uppercase">
-                <th
-                  className="text-left px-3 py-1.5 font-medium cursor-pointer hover:text-stone-600 select-none"
-                  onClick={() => toggleSort("name")}
+        <div className="grid grid-cols-3 gap-1.5">
+          {sorted.map((p) => (
+            <div
+              key={p.player_id}
+              className="bg-white rounded-lg border border-stone-100 px-2 py-1.5 flex flex-col items-center text-center relative"
+            >
+              {canEditPlayers && (
+                <button
+                  onClick={() => removePlayer(p.player_id)}
+                  disabled={removing === p.player_id || isPending}
+                  className="absolute top-0.5 right-1 text-[10px] text-stone-300 hover:text-red-500 disabled:opacity-40 leading-none"
+                  title="Remove"
                 >
-                  Player {sortKey === "name" ? (sortAsc ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  className="text-center px-2 py-1.5 font-medium cursor-pointer hover:text-stone-600 select-none w-16"
-                  onClick={() => toggleSort("skill")}
-                >
-                  Skill {sortKey === "skill" ? (sortAsc ? "↑" : "↓") : ""}
-                </th>
-                {canEditPlayers && (
-                  <th className="text-right px-3 py-1.5 font-medium w-16"></th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {sorted.map((p) => (
-                <tr key={p.player_id} className="border-b border-stone-100 last:border-0">
-                  <td className="px-3 py-1.5">
-                    <Link href={`/players/${p.player_id}`} className="text-sky-600 hover:underline truncate">
-                      {p.name}
-                    </Link>
-                  </td>
-                  <td className="text-center px-2 py-1.5">
-                    <SkillDots level={p.skill_level} />
-                  </td>
-                  {canEditPlayers && (
-                    <td className="text-right px-3 py-1.5">
-                      <button
-                        onClick={() => removePlayer(p.player_id)}
-                        disabled={removing === p.player_id || isPending}
-                        className="text-xs text-red-400 hover:text-red-600 disabled:opacity-40"
-                      >
-                        {removing === p.player_id ? "…" : "Remove"}
-                      </button>
-                    </td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  ✕
+                </button>
+              )}
+              <Link href={`/players/${p.player_id}`} className="text-xs font-medium text-stone-800 hover:text-sky-600 truncate w-full">
+                {p.name.split(" ")[0]}
+              </Link>
+              <SkillDots level={p.skill_level} />
+            </div>
+          ))}
         </div>
       )}
 
