@@ -8,6 +8,8 @@ Single source of truth for all planned and completed work.
 
 ## Queue
 
+- [ ] **28 — Navigation Loading & Click Feedback** · [spec](specs/28-navigation-loading-feedback.md) · Global loading overlay + tap feedback for all navigations; NavLink wrapper, NavigationLoader context, CSS active states — HIGH PRIORITY UX
+
 - [ ] **26 — Smash Theme + Theme Switching** · [spec](specs/26-smash-theme.md) · CSS-variable token system, Smash visual theme, god-mode-only toggle with localStorage persistence
 
 - [x] **25 — Reset Session Backup** · [spec](specs/25-reset-backup.md) · Snapshot all session data to `session_reset_backups` before every Wipe & Reset; append-only, multiple wipes per session each fully backed up
