@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 
 const AVATAR_COLORS = [
   '#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B',
@@ -123,7 +123,7 @@ export default function PlayerCheckinCard({
       )}
 
       {/* Avatar + name — tapping opens player profile */}
-      <Link href={`/players/${playerId}`} className="block active:opacity-70 transition-opacity">
+      <NavLink href={`/players/${playerId}`} className="block active:opacity-70 transition-opacity">
         {/* Row 1: Avatar + admin shield */}
         <div className="flex items-center gap-1.5 mb-1.5">
           <div
@@ -154,7 +154,7 @@ export default function PlayerCheckinCard({
         >
           {name}
         </p>
-      </Link>
+      </NavLink>
 
       {/* Row 3: Check-in action (admin) or status (everyone) */}
       {isAdmin && sessionId ? (

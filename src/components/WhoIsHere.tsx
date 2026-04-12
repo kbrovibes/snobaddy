@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import { useRouter } from "next/navigation";
 import { VerifiedBadge, AdminBadge } from "./PlayerBadges";
 
@@ -142,9 +142,9 @@ export default function WhoIsHere({
               {onlinePlayerIds?.has(p.player_id) && (
                 <span className="w-2 h-2 rounded-full bg-green-500 shrink-0" title="Online now" />
               )}
-              <Link href={`/players/${p.player_id}`} className="font-medium text-sky-600 text-sm truncate hover:underline active:opacity-60">
+              <NavLink href={`/players/${p.player_id}`} className="font-medium text-sky-600 text-sm truncate hover:underline active:opacity-60">
                 {p.name}
-              </Link>
+              </NavLink>
               {p.user_id && <VerifiedBadge />}
               {p.is_admin && <AdminBadge />}
             </span>
