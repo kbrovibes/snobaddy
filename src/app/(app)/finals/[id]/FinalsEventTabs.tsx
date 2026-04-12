@@ -707,6 +707,7 @@ function GroupsTab({
   const [isPending, startTransition] = useTransition();
   const [generating, setGenerating] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [unlocking, setUnlocking] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [confirmError, setConfirmError] = useState<string | null>(null);
@@ -716,6 +717,7 @@ function GroupsTab({
   const hasUnsavedChanges = Object.keys(localOverrides).length > 0;
 
   const isBreakdownGenerated = eventStatus === "breakdown_generated";
+  const isLocked = eventStatus === "sessions_created" || eventStatus === "active";
   const canEdit = isBreakdownGenerated;
   const hasBreakdown = participants.some((p) => p.finals_score !== null);
 
@@ -807,8 +809,33 @@ function GroupsTab({
     }
   }
 
+  async function unlockGroups() {
+    if (!confirm("This will delete the generated finals sessions so you can re-edit groups. Continue?")) return;
+    setUnlocking(true);
+    setError(null);
+    const res = await fetch(`/api/finals/${eventId}/unlock-groups`, { method: "POST" });
+    const json = await res.json();
+    if (!res.ok) {
+      setError(json.error ?? "Failed to unlock groups");
+    } else {
+      startTransition(() => router.refresh());
+    }
+    setUnlocking(false);
+  }
+
   return (
     <div className="flex flex-col gap-3">
+      {/* Edit Groups button (when locked but not completed) */}
+      {isLocked && (
+        <button
+          onClick={unlockGroups}
+          disabled={unlocking || isPending}
+          className="w-full py-2.5 text-sm font-semibold text-amber-700 border border-amber-300 bg-amber-50 rounded-xl hover:bg-amber-100 disabled:opacity-50 transition-colors"
+        >
+          {unlocking ? "Unlocking…" : "Edit Groups"}
+        </button>
+      )}
+
       {/* Actions row */}
       {(eventStatus === "draft" || isBreakdownGenerated) && (
         <div className="flex gap-2">
@@ -852,6 +879,13 @@ function GroupsTab({
       {hasBreakdown && sorted.some((p) => p.finals_score === null) && (
         <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg">
           {sorted.filter((p) => p.finals_score === null).length} new player{sorted.filter((p) => p.finals_score === null).length !== 1 ? "s have" : " has"} no score yet. Tap "Re-run Breakdown" above to score and assign groups.
+        </p>
+      )}
+
+      {/* Score legend */}
+      {hasBreakdown && (
+        <p className="text-[11px] text-stone-400 px-1">
+          Score = weighted blend of season win rate, match count, and skill level. Tap ▸ on a player to see their breakdown.
         </p>
       )}
 

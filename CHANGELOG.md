@@ -10,6 +10,8 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ### Added
 - **Drag-and-drop group assignment** — In the Finals Groups tab, drag players between groups using the grip handle on the left. Works on mobile (press-and-hold to start). The group dropdown still works as an alternative.
+- **Edit Groups after confirmation** — New "Edit Groups" button on the Groups tab when groups have been confirmed but finals isn't completed. Reverts to editable state (deletes generated sessions, keeps group assignments).
+- **Score legend** — Brief explanation of what the score means, shown above group cards in the Groups tab.
 
 ### Improved
 - **Instant group moves** — Dragging or changing a player's group now updates instantly in the UI. Changes are saved in batch when you confirm groups, not on every move.
