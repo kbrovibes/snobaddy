@@ -362,10 +362,6 @@ function PlayersTab({
         </div>
       )}
 
-      {/* Next step — bottom */}
-      {sorted.length >= 4 && (
-        <StepNavButtons onNext={onNext} nextLabel="Set Up Groups" />
-      )}
     </div>
   );
 }
