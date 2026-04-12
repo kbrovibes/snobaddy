@@ -324,26 +324,24 @@ function PlayersTab({
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="flex flex-wrap gap-2">
           {sorted.map((p) => (
-            <div
+            <span
               key={p.player_id}
-              className="bg-white rounded-lg border border-stone-150 px-3 py-2 flex items-center justify-between"
+              className="inline-flex items-center gap-1 bg-stone-100 text-stone-700 text-sm font-medium px-3 py-1 rounded-full"
             >
-              <span className="text-sm text-stone-800 truncate">
-                {p.name.split(" ")[0]}
-              </span>
+              {p.name.split(" ")[0]}
               {canEditPlayers && (
                 <button
                   onClick={() => removePlayer(p.player_id)}
                   disabled={removing === p.player_id || isPending}
-                  className="text-[10px] text-stone-300 hover:text-red-500 disabled:opacity-40 leading-none ml-1 shrink-0"
+                  className="text-[10px] text-stone-400 hover:text-red-500 disabled:opacity-40 leading-none ml-0.5"
                   title="Remove"
                 >
                   ✕
                 </button>
               )}
-            </div>
+            </span>
           ))}
         </div>
       )}
