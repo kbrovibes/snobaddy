@@ -676,17 +676,27 @@ function GroupsTab({
   const [isPending, startTransition] = useTransition();
   const [generating, setGenerating] = useState(false);
   const [confirming, setConfirming] = useState(false);
-  const [overriding, setOverriding] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [confirmError, setConfirmError] = useState<string | null>(null);
+
+  // Local group overrides — key: participant id, value: new group label
+  const [localOverrides, setLocalOverrides] = useState<Record<string, string>>({});
+  const hasUnsavedChanges = Object.keys(localOverrides).length > 0;
 
   const isBreakdownGenerated = eventStatus === "breakdown_generated";
   const canEdit = isBreakdownGenerated;
   const hasBreakdown = participants.some((p) => p.finals_score !== null);
 
+  // Apply local overrides to participants
+  const effective = participants.map((p) => {
+    const override = localOverrides[p.id];
+    if (override) return { ...p, group_label: override, group_override: true };
+    return p;
+  });
+
   // Sort by group (A, B, C) then by score descending within each group
-  const sorted = [...participants].sort((a, b) => {
+  const sorted = [...effective].sort((a, b) => {
     const ga = a.group_label ?? "Z";
     const gb = b.group_label ?? "Z";
     if (ga !== gb) return ga.localeCompare(gb);
@@ -703,6 +713,7 @@ function GroupsTab({
   async function generateBreakdown() {
     setGenerating(true);
     setError(null);
+    setLocalOverrides({});
     const res = await fetch(`/api/finals/${eventId}/generate-breakdown`, { method: "POST" });
     const json = await res.json();
     if (!res.ok) {
@@ -713,9 +724,31 @@ function GroupsTab({
     setGenerating(false);
   }
 
+  // Save all pending overrides then confirm
   async function confirmBreakdown() {
     setConfirming(true);
     setConfirmError(null);
+
+    // Persist any local overrides first
+    if (hasUnsavedChanges) {
+      for (const [participantId, groupLabel] of Object.entries(localOverrides)) {
+        const p = participants.find((pp) => pp.id === participantId);
+        if (!p) continue;
+        const res = await fetch(`/api/finals/${eventId}/participants/${p.player_id}/group`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ group_label: groupLabel }),
+        });
+        if (!res.ok) {
+          const json = await res.json();
+          setConfirmError(json.error ?? "Failed to save group changes");
+          setConfirming(false);
+          return;
+        }
+      }
+      setLocalOverrides({});
+    }
+
     const res = await fetch(`/api/finals/${eventId}/confirm-breakdown`, { method: "POST" });
     const json = await res.json();
     if (!res.ok) {
@@ -726,24 +759,22 @@ function GroupsTab({
     setConfirming(false);
   }
 
-  async function overrideGroup(playerId: string, group: string) {
-    setOverriding(playerId);
-    setError(null);
-    const res = await fetch(`/api/finals/${eventId}/participants/${playerId}/group`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ group_label: group }),
-    });
-    const json = await res.json();
-    if (!res.ok) {
-      setError(json.error ?? "Failed to update group");
+  function localOverrideGroup(playerId: string, group: string) {
+    // Find the participant by player_id to get the row id
+    const p = effective.find((pp) => pp.player_id === playerId);
+    if (!p) return;
+    // If moving back to original group, remove the override
+    const original = participants.find((pp) => pp.id === p.id);
+    if (original && original.group_label === group) {
+      setLocalOverrides((prev) => {
+        const next = { ...prev };
+        delete next[p.id];
+        return next;
+      });
     } else {
-      startTransition(() => router.refresh());
+      setLocalOverrides((prev) => ({ ...prev, [p.id]: group }));
     }
-    setOverriding(null);
   }
-
-  // nothing — table rendered inline below
 
   return (
     <div className="flex flex-col gap-3">
@@ -799,11 +830,11 @@ function GroupsTab({
           sorted={sorted}
           groupCounts={groupCounts}
           canEdit={canEdit}
-          overriding={overriding}
+          overriding={null}
           isPending={isPending}
           expandedId={expandedId}
           setExpandedId={setExpandedId}
-          overrideGroup={overrideGroup}
+          overrideGroup={localOverrideGroup}
         />
       )}
 
@@ -828,6 +859,13 @@ function GroupsTab({
         </p>
       )}
 
+      {/* Unsaved changes indicator */}
+      {hasUnsavedChanges && (
+        <p className="text-xs text-violet-600 bg-violet-50 px-3 py-2 rounded-lg">
+          You have unsaved group changes. They will be saved when you confirm.
+        </p>
+      )}
+
       {/* Confirm groups button */}
       {isBreakdownGenerated && (
         <div className="flex flex-col gap-1">
@@ -839,7 +877,11 @@ function GroupsTab({
             disabled={confirming || isPending || smallGroups.length > 0}
             className="w-full py-2.5 text-sm font-semibold bg-green-700 text-white rounded-xl hover:bg-green-600 disabled:opacity-40 transition-colors"
           >
-            {confirming ? "Confirming…" : "Confirm Groups → Proceed to Sessions"}
+            {confirming
+              ? hasUnsavedChanges ? "Saving changes…" : "Confirming…"
+              : hasUnsavedChanges
+              ? "Save Changes & Confirm Groups →"
+              : "Confirm Groups → Proceed to Sessions"}
           </button>
         </div>
       )}
