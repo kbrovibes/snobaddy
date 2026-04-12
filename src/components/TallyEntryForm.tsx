@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { TallyEntry } from "@/lib/db/tally";
-import ConfirmDialog from "@/components/ConfirmDialog";
 
 const MODEL_LABELS: Record<string, string> = {
   "claude-haiku-4-5-20251001": "Haiku 4.5",
@@ -62,8 +61,6 @@ export default function TallyEntryForm({
   const [extracting, setExtracting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validation, setValidation] = useState<Validation | null>(null);
-  const [pendingFile, setPendingFile] = useState<File | null>(null);
-  const [showReplaceConfirm, setShowReplaceConfirm] = useState(false);
 
   const usedIds = new Set(rows.filter((r) => !r.unmatched).map((r) => r.player_id));
   const availablePlayers = allPlayers.filter((p) => !usedIds.has(p.id));
@@ -119,18 +116,17 @@ export default function TallyEntryForm({
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    e.target.value = "";
 
     if (rows.length > 0) {
-      setPendingFile(file);
-      setShowReplaceConfirm(true);
-      return;
+      const ok = window.confirm(
+        "This will replace your current entries with the extracted values. Continue?"
+      );
+      if (!ok) {
+        e.target.value = "";
+        return;
+      }
     }
 
-    await processFile(file);
-  }
-
-  async function processFile(file: File) {
     setExtracting(true);
     setError(null);
     setValidation(null);
@@ -176,6 +172,7 @@ export default function TallyEntryForm({
       setError("Network error — please try again");
     } finally {
       setExtracting(false);
+      e.target.value = "";
     }
   }
 
@@ -432,25 +429,6 @@ export default function TallyEntryForm({
       >
         {saving ? "Saving…" : "Save Tallies"}
       </button>
-      {/* Replace entries confirmation */}
-      <ConfirmDialog
-        open={showReplaceConfirm}
-        title="Replace Entries"
-        message="This will replace your current entries with the extracted values. Continue?"
-        confirmLabel="Replace"
-        variant="warning"
-        onConfirm={() => {
-          setShowReplaceConfirm(false);
-          if (pendingFile) {
-            processFile(pendingFile);
-            setPendingFile(null);
-          }
-        }}
-        onCancel={() => {
-          setShowReplaceConfirm(false);
-          setPendingFile(null);
-        }}
-      />
     </div>
   );
 }
