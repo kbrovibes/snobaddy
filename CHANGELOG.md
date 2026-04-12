@@ -21,6 +21,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Loading spinner for header & bottom nav** — Profile badge and bottom nav tabs now show the loading spinner during navigation (they were outside the NavigationLoader context).
 - **Back button on player profile** — Repositioned to top-left with ‹ prefix, matching other pages. Also triggers loading spinner.
 - **Workflow arrow borders** — Thinner stroke (1px instead of 2px) on the finals workflow step arrows.
+- **Workflow done-ahead style** — Completed steps ahead of current now show green dashed border with no fill (instead of light green solid fill).
 
 ### Fixed
 - **Nav links** — "‹ Sessions" and "‹ Finals Event" back-links now use the consistent ‹ prefix instead of <.

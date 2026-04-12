@@ -70,21 +70,19 @@ function WorkflowSteps({
           ? "#0284c7"    // sky-600
           : isDoneBefore
           ? "#059669"    // emerald-600
-          : isDoneAfter
-          ? "#d1fae5"    // emerald-100
-          : "#fafaf9";   // page bg
+          : "#fafaf9";   // page bg (done-after, unlocked, locked)
         const stroke = isActive || isDoneBefore
           ? "none"
           : isDoneAfter
-          ? "#6ee7b7"    // emerald-300
+          ? "#10b981"    // emerald-500
           : s.locked
           ? "#d6d3d1"    // stone-300
           : "#a8a29e";   // stone-400
-        const strokeDash = s.locked ? "6,4" : "";
+        const strokeDash = s.locked ? "6,4" : isDoneAfter ? "6,4" : "";
         const textCls = isActive || isDoneBefore
           ? "text-white"
           : isDoneAfter
-          ? "text-emerald-700"
+          ? "text-emerald-600"
           : s.locked
           ? "text-stone-400"
           : "text-stone-600";
@@ -93,7 +91,7 @@ function WorkflowSteps({
           : isDoneBefore
           ? "bg-white/25 text-white"
           : isDoneAfter
-          ? "bg-emerald-400/30 text-emerald-700"
+          ? "bg-emerald-100 text-emerald-600"
           : s.locked
           ? "bg-stone-200 text-stone-400"
           : "bg-stone-200 text-stone-500";
