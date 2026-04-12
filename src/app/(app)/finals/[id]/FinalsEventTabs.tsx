@@ -115,94 +115,84 @@ function PlayersTab({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [search, setSearch] = useState("");
-  const [adding, setAdding] = useState<string | null>(null);
-  const [removing, setRemoving] = useState<string | null>(null);
-  const [autoAdding, setAutoAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isDraft = eventStatus === "draft";
   const isBreakdown = eventStatus === "breakdown_generated";
   const canEditPlayers = isDraft || isBreakdown;
-  const participantIds = new Set(participants.map((p) => p.player_id));
-  const [sortKey, setSortKey] = useState<"name" | "skill">("name");
-  const [sortAsc, setSortAsc] = useState(true);
 
-  // Build a stats lookup from allPlayers
-  const statsById = new Map(allPlayers.map((p) => [p.id, p]));
+  // Saved set = what's persisted in DB
+  const savedIds = new Set(participants.map((p) => p.player_id));
 
-  // Players available to add (not yet in pool)
+  // Auto-seed: players with at least 1 match this season
+  const seasonPlayerIds = allPlayers.filter((p) => p.wins + p.losses > 0).map((p) => p.id);
+  const initialIds = savedIds.size > 0 ? savedIds : new Set(seasonPlayerIds);
+
+  const [localIds, setLocalIds] = useState<Set<string>>(initialIds);
+  const [editing, setEditing] = useState(savedIds.size === 0 && canEditPlayers);
+  const [saving, setSaving] = useState(false);
+  const [search, setSearch] = useState("");
+
+  // Detect unsaved changes
+  const hasChanges = localIds.size !== savedIds.size ||
+    [...localIds].some((id) => !savedIds.has(id)) ||
+    [...savedIds].some((id) => !localIds.has(id));
+
+  // Player lookup
+  const playerById = new Map(allPlayers.map((p) => [p.id, p]));
+
+  // Local player list sorted by name
+  const localPlayers = [...localIds]
+    .map((id) => playerById.get(id))
+    .filter(Boolean)
+    .sort((a, b) => a!.name.localeCompare(b!.name)) as PlayerStats[];
+
+  // Available to add (not in local set, matching search)
   const available = allPlayers.filter(
-    (p) => !participantIds.has(p.id) &&
+    (p) => !localIds.has(p.id) &&
       (search === "" || p.name.toLowerCase().includes(search.toLowerCase()))
   );
 
-  // Enrich participants with current season stats
-  const enriched = participants.map((p) => {
-    const stats = statsById.get(p.player_id);
-    const wins = stats?.wins ?? 0;
-    const losses = stats?.losses ?? 0;
-    const total = wins + losses;
-    const wr = total > 0 ? Math.round((wins / total) * 100) : null;
-    return { ...p, wins, losses, wr };
-  });
-
-  // Sort
-  const sorted = [...enriched].sort((a, b) => {
-    const dir = sortAsc ? 1 : -1;
-    if (sortKey === "name") return a.name.localeCompare(b.name) * dir;
-    return (a.skill_level - b.skill_level) * dir;
-  });
-
-  function toggleSort(key: "name" | "skill") {
-    if (sortKey === key) setSortAsc(!sortAsc);
-    else { setSortKey(key); setSortAsc(key === "name"); }
+  function addPlayer(playerId: string) {
+    setLocalIds((prev) => new Set([...prev, playerId]));
+    setSearch("");
   }
 
-  async function addPlayer(playerId: string) {
-    setAdding(playerId);
+  function removePlayer(playerId: string) {
+    setLocalIds((prev) => {
+      const next = new Set(prev);
+      next.delete(playerId);
+      return next;
+    });
+  }
+
+  function addAllSeason() {
+    setLocalIds((prev) => new Set([...prev, ...seasonPlayerIds]));
+  }
+
+  async function save() {
+    setSaving(true);
     setError(null);
-    const res = await fetch(`/api/finals/${eventId}/participants`, {
-      method: "POST",
+    const res = await fetch(`/api/finals/${eventId}/participants/sync`, {
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ player_id: playerId }),
+      body: JSON.stringify({ player_ids: [...localIds] }),
     });
     if (!res.ok) {
       const json = await res.json();
-      setError(json.error ?? "Failed to add player");
+      setError(json.error ?? "Failed to save");
     } else {
-      setSearch("");
+      setEditing(false);
       startTransition(() => router.refresh());
     }
-    setAdding(null);
+    setSaving(false);
   }
 
-  async function removePlayer(playerId: string) {
-    setRemoving(playerId);
+  function cancelEdit() {
+    setLocalIds(savedIds);
+    setEditing(false);
+    setSearch("");
     setError(null);
-    const res = await fetch(`/api/finals/${eventId}/participants/${playerId}`, {
-      method: "DELETE",
-    });
-    if (!res.ok) {
-      const json = await res.json();
-      setError(json.error ?? "Failed to remove player");
-    } else {
-      startTransition(() => router.refresh());
-    }
-    setRemoving(null);
-  }
-
-  async function autoAdd() {
-    setAutoAdding(true);
-    setError(null);
-    const res = await fetch(`/api/finals/${eventId}/auto-add`, { method: "POST" });
-    const json = await res.json();
-    if (!res.ok) {
-      setError(json.error ?? "Failed to auto-add");
-    } else {
-      startTransition(() => router.refresh());
-    }
-    setAutoAdding(false);
   }
 
   return (
@@ -210,15 +200,15 @@ function PlayersTab({
       {/* Header row */}
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-stone-700">
-          {participants.length} player{participants.length !== 1 ? "s" : ""} in pool
+          {localIds.size} player{localIds.size !== 1 ? "s" : ""} in pool
+          {hasChanges && editing && <span className="text-amber-500 ml-1 text-xs font-normal">(unsaved)</span>}
         </p>
-        {canEditPlayers && (
+        {canEditPlayers && !editing && (
           <button
-            onClick={autoAdd}
-            disabled={autoAdding || isPending}
-            className="text-xs font-medium text-sky-600 hover:text-sky-800 disabled:opacity-40"
+            onClick={() => setEditing(true)}
+            className="text-xs font-semibold text-sky-600 hover:text-sky-800 px-3 py-1 border border-sky-200 rounded-lg hover:bg-sky-50 transition-colors"
           >
-            {autoAdding ? "Adding…" : "Auto-add from season"}
+            Edit
           </button>
         )}
       </div>
@@ -228,9 +218,9 @@ function PlayersTab({
       )}
 
       {/* Status banner */}
-      {isBreakdown && (
+      {isBreakdown && editing && (
         <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg">
-          Groups have been generated. You can still add or remove players — re-run the breakdown on the Groups tab afterwards.
+          Groups have been generated. After saving changes, re-run the breakdown on the Groups tab.
         </p>
       )}
       {!canEditPlayers && (
@@ -239,69 +229,64 @@ function PlayersTab({
         </p>
       )}
 
-      {/* Add player search */}
-      {canEditPlayers && (
-        <div className="flex flex-col gap-1">
-          <input
-            type="text"
-            placeholder="Search player to add…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
-          />
-          {search.length > 0 && (
-            <div className="bg-white border border-stone-200 rounded-lg shadow-sm overflow-hidden max-h-48 overflow-y-auto">
-              {available.length === 0 ? (
-                <p className="px-3 py-2 text-xs text-stone-400">No players found</p>
-              ) : (
-                available.slice(0, 10).map((p) => {
-                  const total = p.wins + p.losses;
-                  const wr = total > 0 ? Math.round((p.wins / total) * 100) : null;
-                  return (
+      {/* Add player search — only when editing */}
+      {editing && (
+        <>
+          <div className="flex flex-col gap-1">
+            <input
+              type="text"
+              placeholder="Search player to add…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+            />
+            {search.length > 0 && (
+              <div className="bg-white border border-stone-200 rounded-lg shadow-sm overflow-hidden max-h-48 overflow-y-auto">
+                {available.length === 0 ? (
+                  <p className="px-3 py-2 text-xs text-stone-400">No players found</p>
+                ) : (
+                  available.slice(0, 10).map((p) => (
                     <button
                       key={p.id}
                       onClick={() => addPlayer(p.id)}
-                      disabled={adding === p.id || isPending}
-                      className="w-full flex items-center justify-between px-3 py-2 hover:bg-stone-50 active:bg-sky-50 transition-colors border-b border-stone-100 last:border-0 disabled:opacity-40"
+                      className="w-full flex items-center px-3 py-2 hover:bg-stone-50 active:bg-sky-50 transition-colors border-b border-stone-100 last:border-0"
                     >
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-stone-800">{p.name}</span>
-                        <SkillDots level={p.skill_level} />
-                      </div>
-                      <span className="text-xs text-stone-400">
-                        {wr !== null ? `${wr}% WR` : "No data"}
-                      </span>
+                      <span className="text-sm text-stone-800">{p.name}</span>
                     </button>
-                  );
-                })
-              )}
-            </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+          {seasonPlayerIds.some((id) => !localIds.has(id)) && (
+            <button
+              onClick={addAllSeason}
+              className="text-xs font-medium text-sky-600 hover:text-sky-800 self-start"
+            >
+              + Add all season players
+            </button>
           )}
-        </div>
+        </>
       )}
 
-
-      {/* Participant tiles */}
-      {sorted.length === 0 ? (
+      {/* Player pills */}
+      {localPlayers.length === 0 ? (
         <div className="rounded-lg border border-dashed border-stone-200 px-4 py-8 text-center">
           <p className="text-sm text-stone-400">No players added yet.</p>
-          <p className="text-xs text-stone-300 mt-1">
-            Search above or tap &quot;Auto-add from season&quot;
-          </p>
+          <p className="text-xs text-stone-300 mt-1">Search above to add players</p>
         </div>
       ) : (
         <div className="flex flex-wrap gap-2">
-          {sorted.map((p) => (
+          {localPlayers.map((p) => (
             <span
-              key={p.player_id}
+              key={p.id}
               className="inline-flex items-center gap-1 bg-stone-100 text-stone-700 text-sm font-medium px-3 py-1 rounded-full"
             >
               {p.name.split(" ")[0]}
-              {canEditPlayers && (
+              {editing && (
                 <button
-                  onClick={() => removePlayer(p.player_id)}
-                  disabled={removing === p.player_id || isPending}
-                  className="text-[10px] text-stone-400 hover:text-red-500 disabled:opacity-40 leading-none ml-0.5"
+                  onClick={() => removePlayer(p.id)}
+                  className="text-[10px] text-stone-400 hover:text-red-500 leading-none ml-0.5"
                   title="Remove"
                 >
                   ✕
@@ -312,6 +297,27 @@ function PlayersTab({
         </div>
       )}
 
+      {/* Save / Cancel buttons */}
+      {editing && (
+        <div className="flex gap-2">
+          <button
+            onClick={save}
+            disabled={saving || isPending || (!hasChanges && savedIds.size > 0)}
+            className="flex-1 py-2.5 text-sm font-semibold text-white bg-sky-600 rounded-xl hover:bg-sky-700 disabled:opacity-40 transition-colors"
+          >
+            {saving ? "Saving…" : hasChanges ? `Save ${localIds.size} Players` : "Saved"}
+          </button>
+          {savedIds.size > 0 && (
+            <button
+              onClick={cancelEdit}
+              disabled={saving}
+              className="px-4 py-2.5 text-sm font-medium text-stone-500 border border-stone-200 rounded-xl hover:bg-stone-50 transition-colors"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
