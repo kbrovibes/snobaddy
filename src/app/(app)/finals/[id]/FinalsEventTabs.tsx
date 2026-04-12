@@ -2,7 +2,8 @@
 
 import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
+import { useNavigationLoader } from "@/components/NavigationLoader";
 import {
   DndContext,
   DragOverlay,
@@ -408,9 +409,9 @@ function DraggablePlayerRow({
           <span className="text-xs text-stone-400 w-6 text-center shrink-0">{rank}</span>
           <div className="flex-1 min-w-0 px-1">
             <div className="flex items-center gap-1.5">
-              <Link href={`/players/${p.player_id}`} className="text-sm text-sky-600 hover:underline truncate">
+              <NavLink href={`/players/${p.player_id}`} className="text-sm text-sky-600 hover:underline truncate">
                 {p.name}
-              </Link>
+              </NavLink>
               {p.group_override && (
                 <span className="text-[9px] font-medium px-1 rounded bg-violet-100 text-violet-600">✎</span>
               )}
@@ -933,7 +934,7 @@ function SessionCard({
   });
 
   return (
-    <Link
+    <NavLink
       href={`/session/${session.id}`}
       className="flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-sm hover:bg-stone-50 active:bg-amber-50 transition-colors"
     >
@@ -947,7 +948,7 @@ function SessionCard({
         </span>
         <span className="text-stone-300 text-sm">→</span>
       </div>
-    </Link>
+    </NavLink>
   );
 }
 
@@ -1074,6 +1075,7 @@ export default function FinalsEventTabs({
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const { startLoading } = useNavigationLoader();
 
   const canViewGroups = true; // Groups tab always accessible; generate-breakdown button handles state
   const canViewSessions =
@@ -1084,6 +1086,7 @@ export default function FinalsEventTabs({
     setDeleting(true);
     const res = await fetch(`/api/finals/${event.id}`, { method: "DELETE" });
     if (res.ok) {
+      startLoading();
       router.push("/?list=1");
     } else {
       const json = await res.json();

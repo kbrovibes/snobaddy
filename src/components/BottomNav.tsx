@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
@@ -18,7 +18,7 @@ export default function BottomNav({ isAdmin, isGodMode }: { isAdmin: boolean; is
       {visibleItems.map(({ href, label, icon }) => {
         const active = pathname === href;
         return (
-          <Link
+          <NavLink
             key={href}
             href={href}
             className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-3 text-xs font-medium transition-colors active:bg-stone-100 ${
@@ -27,7 +27,7 @@ export default function BottomNav({ isAdmin, isGodMode }: { isAdmin: boolean; is
           >
             <span className="text-xl leading-none">{icon}</span>
             <span>{label}</span>
-          </Link>
+          </NavLink>
         );
       })}
     </nav>

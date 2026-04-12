@@ -1,4 +1,4 @@
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import type { FinalsEvent, FinalsSessionPair, FinalsSessionInfo } from "@/lib/db/finals";
 import CreateFinalsButton from "./CreateFinalsButton";
 
@@ -24,7 +24,7 @@ function SessionCard({ label, session }: { label: string; session: FinalsSession
   });
 
   return (
-    <Link
+    <NavLink
       href={`/session/${session.id}`}
       className="flex items-center justify-between px-4 py-2 hover:bg-stone-50 active:bg-amber-50 transition-colors border-t border-stone-100"
     >
@@ -36,7 +36,7 @@ function SessionCard({ label, session }: { label: string; session: FinalsSession
       <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${statusInfo.cls}`}>
         {statusInfo.text}
       </span>
-    </Link>
+    </NavLink>
   );
 }
 
@@ -62,7 +62,7 @@ export default function FinalsSection({
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         {event ? (
           <>
-            <Link
+            <NavLink
               href={`/finals/${event.id}`}
               className="flex items-center justify-between px-4 py-3 hover:bg-stone-50 active:bg-amber-50 transition-colors"
             >
@@ -78,7 +78,7 @@ export default function FinalsSection({
                 </span>
                 <span className="text-stone-300 text-sm">→</span>
               </div>
-            </Link>
+            </NavLink>
             {sessionPair?.day1 && (
               <SessionCard label="Day 1 — Groups A & B" session={sessionPair.day1} />
             )}

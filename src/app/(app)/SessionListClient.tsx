@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import type { SessionRow } from "@/lib/db/sessions";
 
 const LS_KEY = "snobaddy:show-test-sessions";
@@ -53,7 +53,7 @@ export default function SessionListClient({
 
   function SessionRow({ s }: { s: SessionRow }) {
     return (
-      <Link
+      <NavLink
         href={`/session/${s.id}`}
         className="flex items-center justify-between px-4 py-3 border-b border-stone-100 last:border-0 hover:bg-stone-50 active:bg-sky-50 transition-colors"
       >
@@ -83,7 +83,7 @@ export default function SessionListClient({
           )}
           <span className="text-stone-300 text-sm">→</span>
         </div>
-      </Link>
+      </NavLink>
     );
   }
 

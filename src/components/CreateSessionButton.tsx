@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useNavigationLoader } from "@/components/NavigationLoader";
 
 export default function CreateSessionButton() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { startLoading } = useNavigationLoader();
 
   async function handleCreate() {
     setLoading(true);
@@ -14,6 +16,7 @@ export default function CreateSessionButton() {
     const res = await fetch("/api/sessions/create", { method: "POST" });
     if (res.ok) {
       const { id } = await res.json();
+      startLoading();
       router.push(`/session/${id}`);
     } else {
       const body = await res.json();

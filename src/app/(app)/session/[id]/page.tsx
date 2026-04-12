@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import { redirect } from "next/navigation";
 import {
   getSessionById,
@@ -208,9 +208,9 @@ export default async function SessionDetailPage({
       {/* Session nav */}
       <div className="flex flex-col gap-0.5 -mb-2">
         {isFinalsSession && session.finals_event_id ? (
-          <Link href={`/finals/${session.finals_event_id}`} className="text-sky-600 hover:text-sky-800 text-sm">
+          <NavLink href={`/finals/${session.finals_event_id}`} className="text-sky-600 hover:text-sky-800 text-sm">
             ‹ Finals Event
-          </Link>
+          </NavLink>
         ) : (
           <BackToSessionsLink />
         )}
@@ -218,18 +218,18 @@ export default async function SessionDetailPage({
         <div className="flex items-center justify-between text-sm">
           <div>
             {adjacentSessions.newer ? (
-              <Link href={`/session/${adjacentSessions.newer.id}`} className="text-sky-600 hover:underline">
+              <NavLink href={`/session/${adjacentSessions.newer.id}`} className="text-sky-600 hover:underline">
                 ‹ {new Date(adjacentSessions.newer.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "2-digit" })} Session
-              </Link>
+              </NavLink>
             ) : (
               <span className="text-stone-300">‹ Session</span>
             )}
           </div>
           <div>
             {adjacentSessions.older ? (
-              <Link href={`/session/${adjacentSessions.older.id}`} className="text-sky-600 hover:underline">
+              <NavLink href={`/session/${adjacentSessions.older.id}`} className="text-sky-600 hover:underline">
                 {new Date(adjacentSessions.older.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "2-digit" })} Session ›
-              </Link>
+              </NavLink>
             ) : (
               <span className="text-stone-300">Session ›</span>
             )}
@@ -471,10 +471,10 @@ export default async function SessionDetailPage({
           </h2>
           <div className="flex flex-col gap-2">
             {pastSessions.map((s) => (
-              <Link key={s.id} href={`/session/${s.id}`} className="flex items-center justify-between text-sm hover:bg-stone-50 active:bg-sky-50 -mx-1 px-1 rounded-lg transition-colors">
+              <NavLink key={s.id} href={`/session/${s.id}`} className="flex items-center justify-between text-sm hover:bg-stone-50 active:bg-sky-50 -mx-1 px-1 rounded-lg transition-colors">
                 <span className="text-sky-600">{formatDate(s.date)}</span>
                 <span className="text-stone-400 capitalize">{s.status}</span>
-              </Link>
+              </NavLink>
             ))}
           </div>
         </div>

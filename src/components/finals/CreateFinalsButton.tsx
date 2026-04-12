@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useNavigationLoader } from "@/components/NavigationLoader";
 
 export default function CreateFinalsButton() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { startLoading } = useNavigationLoader();
 
   async function handleCreate() {
     setLoading(true);
@@ -16,6 +18,7 @@ export default function CreateFinalsButton() {
     if (!res.ok) {
       // If already exists, navigate to it
       if (res.status === 409 && json.id) {
+        startLoading();
         router.push(`/finals/${json.id}`);
         return;
       }
@@ -23,6 +26,7 @@ export default function CreateFinalsButton() {
       setLoading(false);
       return;
     }
+    startLoading();
     router.push(`/finals/${json.id}`);
   }
 

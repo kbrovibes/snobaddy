@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import { createClient } from "@/lib/supabase-server";
 import { getFinalsById, getFinalsParticipants, getFinalsSessionPair } from "@/lib/db/finals";
 import type { FinalsSessionPair } from "@/lib/db/finals";
@@ -41,9 +41,9 @@ export default async function FinalsEventPage({
     <div className="flex flex-col px-4 py-4 gap-4">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <Link href="/?list=1" className="text-sky-600 hover:text-sky-800 text-sm">
+        <NavLink href="/?list=1" className="text-sky-600 hover:text-sky-800 text-sm">
           ‹ Sessions
-        </Link>
+        </NavLink>
       </div>
 
       <div>

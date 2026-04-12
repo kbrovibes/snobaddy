@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import type { PlayerSessionStats } from "@/lib/db/matches";
 import { VerifiedBadge, AdminBadge } from "./PlayerBadges";
 
@@ -95,12 +95,12 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
               return (
                 <div key={p.player_id} className="flex items-center px-1">
                   <span className="flex-1 flex items-center gap-1 min-w-0">
-                    <Link
+                    <NavLink
                       href={`/players/${p.player_id}`}
                       className="text-sm font-medium truncate text-sky-600 hover:underline active:opacity-60"
                     >
                       {p.name}
-                    </Link>
+                    </NavLink>
                     {p.user_id && <VerifiedBadge />}
                     {p.is_admin && <AdminBadge />}
                   </span>

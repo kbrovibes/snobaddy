@@ -1,12 +1,16 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
+import { useNavigationLoader } from "@/components/NavigationLoader";
 
 export default function IncludeTestToggle({ enabled }: { enabled: boolean }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  const { startLoading } = useNavigationLoader();
+
   function toggle() {
+    startLoading();
     router.replace(!enabled ? `${pathname}?test=1` : pathname);
   }
 

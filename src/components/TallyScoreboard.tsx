@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import type { TallyEntry } from "@/lib/db/tally";
 
 async function getSignedPhotoUrl(sessionId: string): Promise<string | null> {
@@ -112,12 +112,12 @@ export default function TallyScoreboard({ entries, sessionId, isGodMode, hasPhot
               return (
                 <div key={e.player_id} className="flex items-center px-1">
                   <span className="text-xs text-stone-300 w-5 shrink-0" />
-                  <Link
+                  <NavLink
                     href={`/players/${e.player_id}`}
                     className="flex-1 text-sm font-medium truncate text-sky-600 hover:underline active:opacity-60"
                   >
                     {e.player_name}
-                  </Link>
+                  </NavLink>
                   <span className="w-8 text-center text-sm tabular-nums text-stone-500">{total}</span>
                   <span className="w-8 text-center text-sm font-bold text-green-600">{e.wins}</span>
                   <span className="w-8 text-center text-sm font-bold text-red-400">{e.losses}</span>

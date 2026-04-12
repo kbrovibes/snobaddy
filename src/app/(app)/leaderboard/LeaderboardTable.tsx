@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import type { PlayerStats } from "@/lib/db/players";
 import { VerifiedBadge, AdminBadge } from "@/components/PlayerBadges";
 import { buildNameMap, shortName } from "@/lib/display-name";
@@ -212,9 +212,9 @@ export default function LeaderboardTable({
                   </td>
                   <td className="px-2 py-1.5 font-medium text-stone-900 max-w-[120px]">
                     <span className="flex items-center gap-1 min-w-0">
-                      <Link href={`/players/${player.id}`} className="truncate text-sky-600 hover:underline active:opacity-60">
+                      <NavLink href={`/players/${player.id}`} className="truncate text-sky-600 hover:underline active:opacity-60">
                         {player.name}
-                      </Link>
+                      </NavLink>
                       {player.user_id && <VerifiedBadge />}
                       {player.is_admin && <AdminBadge />}
                     </span>
