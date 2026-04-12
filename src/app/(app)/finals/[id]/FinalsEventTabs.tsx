@@ -46,13 +46,14 @@ function WorkflowSteps({
         const isLast = i === steps.length - 1;
 
         // Option B: filled active, outline for done/unlocked, dashed for locked
-        const fill = isActive ? "#1c1917" : "#ffffff";
+        // Non-active steps use a light fill so outline is visible on page background
+        const fill = isActive ? "#1c1917" : "#fafaf9";
         const stroke = isActive
           ? "none"
           : s.locked
           ? "#d6d3d1"   // stone-300
-          : "#a8a29e";  // stone-400
-        const strokeDash = s.locked ? "6,4" : "none";
+          : "#78716c";  // stone-500
+        const strokeDash = s.locked ? "6,4" : "";
         const textCls = isActive
           ? "text-white"
           : s.locked
@@ -88,7 +89,7 @@ function WorkflowSteps({
             className={`flex-1 relative h-10 ${s.locked ? "cursor-not-allowed" : "cursor-pointer"}`}
           >
             <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
-              <path d={d} fill={fill} stroke={stroke} strokeWidth={stroke === "none" ? 0 : 1.5} strokeDasharray={strokeDash} vectorEffect="non-scaling-stroke" />
+              <path d={d} fill={fill} stroke={stroke} strokeWidth={stroke === "none" ? 0 : 2} strokeDasharray={strokeDash || undefined} vectorEffect="non-scaling-stroke" />
             </svg>
             <div className={`relative z-10 flex items-center justify-center gap-1.5 h-full ${textCls}`}>
               <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[11px] font-bold ${badgeCls}`}>
