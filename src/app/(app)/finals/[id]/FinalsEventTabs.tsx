@@ -104,11 +104,27 @@ function StepIndicator({
     ? "bg-stone-300 text-stone-100"
     : "bg-stone-300/50 text-stone-500";
 
-  // Arrow shape: 10px notch on left (except first), 10px point on right (except last)
-  // viewBox width = 200, notch/point = 10 units
-  const leftEdge = isFirst ? "M0,0" : "M0,0 L10,20 L0,40";
-  const rightEdge = isLast ? "L200,40 L200,0" : "L190,0 L200,20 L190,40";
-  const path = `${leftEdge} L190,40 ${isLast ? "L200,40 L200,0" : "L200,20 L190,0"} ${isFirst ? "L0,0" : "L10,0"} Z`;
+  // Arrow shape built as a closed polygon, clockwise from top-left.
+  // viewBox = 200x40. Notch depth = 12 units.
+  // First step: flat left. Others: notched left (V pointing right).
+  // Last step: pointed right (arrow tip). Others: also pointed right.
+  const N = 12; // notch/point depth
+  const W = 200;
+  const H = 40;
+  const pts: string[] = [];
+  // Top-left
+  if (isFirst) {
+    pts.push(`0,0`);
+  } else {
+    pts.push(`0,0`, `${N},${H / 2}`, `0,${H}`);
+  }
+  // Bottom-right
+  pts.push(`${W - N},${H}`);
+  // Right edge — always an arrow point
+  pts.push(`${W},${H / 2}`);
+  // Top-right
+  pts.push(`${W - N},0`);
+  const path = `M${pts.join(" L")} Z`;
 
   return (
     <button
