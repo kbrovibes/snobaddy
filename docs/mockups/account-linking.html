@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=440, maximum-scale=1">
+  <title>Account Linking — Snobaddy Prototype</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwindcss.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['system-ui', '-apple-system', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #fafaf9; }
+    .phone-frame {
+      width: 390px;
+      min-height: 700px;
+      margin: 20px auto;
+      border: 2px solid #d6d3d1;
+      border-radius: 24px;
+      overflow: hidden;
+      background: #fafaf9;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      position: relative;
+    }
+    .step { display: none; }
+    .step.active { display: flex; flex-direction: column; }
+  </style>
+</head>
+<body class="bg-stone-200 py-4">
+
+  <div class="text-center mb-2">
+    <h1 class="text-lg font-bold text-stone-700">Account Linking Prototype</h1>
+    <p class="text-sm text-stone-500">Click through Sahit's sign-up flow</p>
+    <div class="flex justify-center gap-2 mt-2">
+      <button onclick="goTo(0)" class="step-btn px-3 py-1 text-xs rounded-full bg-stone-300 text-stone-700">1. Login</button>
+      <button onclick="goTo(1)" class="step-btn px-3 py-1 text-xs rounded-full bg-stone-300 text-stone-700">2. Checking</button>
+      <button onclick="goTo(2)" class="step-btn px-3 py-1 text-xs rounded-full bg-stone-300 text-stone-700">3. Is this you?</button>
+      <button onclick="goTo(3)" class="step-btn px-3 py-1 text-xs rounded-full bg-stone-300 text-stone-700">4. Merged!</button>
+      <button onclick="goTo(4)" class="step-btn px-3 py-1 text-xs rounded-full bg-stone-300 text-stone-700">5. Skill</button>
+    </div>
+  </div>
+
+  <div class="phone-frame">
+
+    <!-- ==================== STEP 0: Login Page ==================== -->
+    <div id="step-0" class="step active min-h-[700px]">
+      <div class="flex-1 flex flex-col items-center justify-center px-8 gap-6">
+        <div class="text-center">
+          <div class="text-5xl mb-2">🏸</div>
+          <h1 class="text-2xl font-bold text-stone-900">Serve Snoqualmie</h1>
+          <h2 class="text-lg font-bold text-stone-900">Badminton</h2>
+          <p class="text-sm text-stone-400 mt-1">Track sessions, matches & stats</p>
+        </div>
+
+        <button onclick="goTo(1)" class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-stone-200 rounded-xl shadow-sm hover:bg-stone-50 transition-colors">
+          <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <span class="text-sm font-semibold text-stone-700">Continue with Google</span>
+        </button>
+
+        <div class="flex items-center gap-3 w-full">
+          <div class="flex-1 h-px bg-stone-200"></div>
+          <span class="text-xs text-stone-400">or</span>
+          <div class="flex-1 h-px bg-stone-200"></div>
+        </div>
+
+        <div class="w-full flex flex-col gap-2">
+          <input type="email" placeholder="Email address" value="sahit@gmail.com" class="w-full px-3 py-2.5 text-sm border border-stone-200 rounded-lg bg-white" readonly>
+          <input type="password" placeholder="Password" value="••••••••" class="w-full px-3 py-2.5 text-sm border border-stone-200 rounded-lg bg-white" readonly>
+          <button onclick="goTo(1)" class="w-full py-2.5 text-sm font-semibold text-white bg-stone-900 rounded-xl">Sign in</button>
+        </div>
+
+        <p class="text-xs text-stone-400 mt-2">
+          Sahit signs in with Google for the first time...
+        </p>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 1: Checking (brief loading) ==================== -->
+    <div id="step-1" class="step min-h-[700px]">
+      <div class="flex-1 flex flex-col items-center justify-center px-8 gap-4">
+        <div class="w-10 h-10 border-3 border-stone-200 border-t-stone-700 rounded-full animate-spin" style="border-width: 3px;"></div>
+        <p class="text-sm text-stone-500">Setting up your account...</p>
+        <p class="text-xs text-stone-400 mt-4">Checking for existing player records...</p>
+
+        <button onclick="goTo(2)" class="mt-8 px-4 py-2 text-xs text-sky-600 border border-sky-200 rounded-lg">
+          → Match found! (click to continue)
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 2: "Is this you?" ==================== -->
+    <div id="step-2" class="step min-h-[700px]">
+      <!-- Header bar -->
+      <div class="bg-white border-b border-stone-100 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🏸</span>
+          <span class="text-sm font-bold text-stone-900">Snobaddy</span>
+        </div>
+        <span class="text-xs text-stone-400">Welcome, Sahit</span>
+      </div>
+
+      <div class="flex-1 flex flex-col px-5 py-6 gap-5">
+        <!-- Title -->
+        <div class="text-center">
+          <h2 class="text-lg font-bold text-stone-900">Is this you?</h2>
+          <p class="text-sm text-stone-500 mt-1">
+            We found an existing player that matches your name
+          </p>
+        </div>
+
+        <!-- Candidate card -->
+        <div class="bg-white rounded-xl border border-sky-200 shadow-sm overflow-hidden">
+          <!-- Player info -->
+          <div class="px-4 py-3 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-700 font-bold text-sm">
+              SA
+            </div>
+            <div class="flex-1">
+              <p class="text-sm font-semibold text-stone-900">Sahit</p>
+              <div class="flex items-center gap-1 mt-0.5">
+                <span class="text-xs text-stone-500">Skill</span>
+                <span class="flex gap-0.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-stone-700"></span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-stone-700"></span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-stone-700"></span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-stone-200"></span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-stone-200"></span>
+                </span>
+              </div>
+            </div>
+            <span class="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full font-medium">Unverified</span>
+          </div>
+
+          <!-- Stats -->
+          <div class="border-t border-stone-100 px-4 py-3 bg-stone-50">
+            <div class="grid grid-cols-3 gap-3 text-center">
+              <div>
+                <p class="text-lg font-bold text-stone-900">8</p>
+                <p class="text-[10px] text-stone-400 uppercase">Wins</p>
+              </div>
+              <div>
+                <p class="text-lg font-bold text-stone-900">5</p>
+                <p class="text-[10px] text-stone-400 uppercase">Losses</p>
+              </div>
+              <div>
+                <p class="text-lg font-bold text-emerald-600">62%</p>
+                <p class="text-[10px] text-stone-400 uppercase">Win Rate</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extra context -->
+          <div class="border-t border-stone-100 px-4 py-2.5 flex items-center justify-between">
+            <span class="text-xs text-stone-500">13 matches this season</span>
+            <span class="text-xs text-stone-400">Last played: Apr 7</span>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="flex flex-col gap-2">
+          <button onclick="goTo(3)" class="w-full py-3 text-sm font-semibold text-white bg-sky-600 rounded-xl hover:bg-sky-700 transition-colors">
+            Yes, that's me — claim this account
+          </button>
+          <button onclick="goTo(4)" class="w-full py-3 text-sm font-medium text-stone-500 border border-stone-200 rounded-xl hover:bg-stone-50 transition-colors">
+            No, start fresh
+          </button>
+        </div>
+
+        <p class="text-xs text-stone-400 text-center leading-relaxed">
+          Claiming will link all match history and stats to your new account.
+          The unverified record will be removed.
+        </p>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 3: Merge success ==================== -->
+    <div id="step-3" class="step min-h-[700px]">
+      <div class="bg-white border-b border-stone-100 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🏸</span>
+          <span class="text-sm font-bold text-stone-900">Snobaddy</span>
+        </div>
+        <span class="text-xs text-stone-400">Welcome, Sahit</span>
+      </div>
+
+      <div class="flex-1 flex flex-col items-center justify-center px-8 gap-4">
+        <div class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center">
+          <svg class="w-8 h-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <h2 class="text-lg font-bold text-stone-900">Account Linked!</h2>
+        <p class="text-sm text-stone-500 text-center">
+          Your match history has been merged.<br>
+          8 wins, 5 losses, and 13 matches are now in your account.
+        </p>
+
+        <button onclick="goTo(4)" class="mt-4 w-full py-3 text-sm font-semibold text-white bg-stone-900 rounded-xl">
+          Continue to set up
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 4: Skill picker (normal onboarding) ==================== -->
+    <div id="step-4" class="step min-h-[700px]">
+      <div class="bg-white border-b border-stone-100 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🏸</span>
+          <span class="text-sm font-bold text-stone-900">Snobaddy</span>
+        </div>
+        <span class="text-xs text-stone-400">Welcome, Sahit</span>
+      </div>
+
+      <div class="flex-1 flex flex-col px-6 py-8 gap-6">
+        <div class="text-center">
+          <h2 class="text-lg font-bold text-stone-900">Set your skill level</h2>
+          <p class="text-sm text-stone-500 mt-1">This helps us suggest fair matches</p>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <button class="flex items-center gap-3 px-4 py-3 rounded-xl border border-stone-200 bg-white text-left">
+            <span class="flex gap-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-200"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-200"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-200"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-200"></span>
+            </span>
+            <div>
+              <p class="text-sm font-medium text-stone-800">Beginner</p>
+              <p class="text-xs text-stone-400">Just starting out</p>
+            </div>
+          </button>
+          <button class="flex items-center gap-3 px-4 py-3 rounded-xl border border-stone-200 bg-white text-left">
+            <span class="flex gap-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-200"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-200"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-200"></span>
+            </span>
+            <div>
+              <p class="text-sm font-medium text-stone-800">Casual</p>
+              <p class="text-xs text-stone-400">Play for fun, learning</p>
+            </div>
+          </button>
+          <button class="flex items-center gap-3 px-4 py-3 rounded-xl border-2 border-sky-500 bg-sky-50 text-left">
+            <span class="flex gap-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-200"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-200"></span>
+            </span>
+            <div>
+              <p class="text-sm font-semibold text-stone-900">Intermediate</p>
+              <p class="text-xs text-stone-500">Comfortable with rallies</p>
+            </div>
+            <span class="ml-auto text-sky-500">✓</span>
+          </button>
+          <button class="flex items-center gap-3 px-4 py-3 rounded-xl border border-stone-200 bg-white text-left">
+            <span class="flex gap-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-200"></span>
+            </span>
+            <div>
+              <p class="text-sm font-medium text-stone-800">Advanced</p>
+              <p class="text-xs text-stone-400">Strong competitive play</p>
+            </div>
+          </button>
+          <button class="flex items-center gap-3 px-4 py-3 rounded-xl border border-stone-200 bg-white text-left">
+            <span class="flex gap-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-stone-700"></span>
+            </span>
+            <div>
+              <p class="text-sm font-medium text-stone-800">Expert</p>
+              <p class="text-xs text-stone-400">Tournament-level player</p>
+            </div>
+          </button>
+        </div>
+
+        <p class="text-xs text-stone-400 text-center">
+          Pre-selected: Skill 3 (from your linked account)
+        </p>
+
+        <button class="w-full py-3 text-sm font-semibold text-white bg-stone-900 rounded-xl">
+          Save & Continue
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function goTo(step) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-' + step).classList.add('active');
+      document.querySelectorAll('.step-btn').forEach((btn, i) => {
+        btn.classList.toggle('bg-stone-900', i === step);
+        btn.classList.toggle('text-white', i === step);
+        btn.classList.toggle('bg-stone-300', i !== step);
+        btn.classList.toggle('text-stone-700', i !== step);
+      });
+    }
+    goTo(0);
+  </script>
+</body>
+</html>

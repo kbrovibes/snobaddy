@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snobaddy — App Mockups</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-stone-100 min-h-screen">
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="text-5xl mb-3">🏸</div>
+      <h1 class="text-3xl font-bold text-stone-900">Serve Snoqualmie Badminton</h1>
+      <p class="text-sm font-semibold text-stone-500 uppercase tracking-widest mt-1">Interactive Mockups</p>
+      <p class="text-sm text-stone-400 mt-2">Click any card below to view the interactive prototype</p>
+      <p class="text-xs text-stone-300 mt-1" id="version"></p>
+    </div>
+
+    <!-- Flow Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      <!-- Auth Flow -->
+      <a href="auth-flow.html" class="bg-white rounded-xl shadow-sm border border-stone-100 p-5 hover:shadow-md hover:border-sky-200 transition-all group">
+        <div class="text-2xl mb-2">🔐</div>
+        <h2 class="text-sm font-bold text-stone-900 group-hover:text-sky-700">Authentication Flow</h2>
+        <p class="text-xs text-stone-500 mt-1">Login, Google SSO, email sign-up, password reset</p>
+        <div class="flex gap-1 mt-3">
+          <span class="text-[10px] bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full">5 screens</span>
+        </div>
+      </a>
+
+      <!-- Account Linking -->
+      <a href="account-linking.html" class="bg-white rounded-xl shadow-sm border border-stone-100 p-5 hover:shadow-md hover:border-sky-200 transition-all group">
+        <div class="text-2xl mb-2">🔗</div>
+        <h2 class="text-sm font-bold text-stone-900 group-hover:text-sky-700">Account Linking</h2>
+        <p class="text-xs text-stone-500 mt-1">Merge unverified player on sign-up — "Is this you?" flow</p>
+        <div class="flex gap-1 mt-3">
+          <span class="text-[10px] bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full">5 screens</span>
+          <span class="text-[10px] bg-amber-100 text-amber-600 px-2 py-0.5 rounded-full">planned</span>
+        </div>
+      </a>
+
+      <!-- Sessions -->
+      <a href="sessions.html" class="bg-white rounded-xl shadow-sm border border-stone-100 p-5 hover:shadow-md hover:border-sky-200 transition-all group">
+        <div class="text-2xl mb-2">🏸</div>
+        <h2 class="text-sm font-bold text-stone-900 group-hover:text-sky-700">Sessions</h2>
+        <p class="text-xs text-stone-500 mt-1">Session list, active/past sessions, check-in, scoreboard, record match</p>
+        <div class="flex gap-1 mt-3">
+          <span class="text-[10px] bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full">5 screens</span>
+        </div>
+      </a>
+
+      <!-- Players & Leaderboard -->
+      <a href="players-leaderboard.html" class="bg-white rounded-xl shadow-sm border border-stone-100 p-5 hover:shadow-md hover:border-sky-200 transition-all group">
+        <div class="text-2xl mb-2">👥</div>
+        <h2 class="text-sm font-bold text-stone-900 group-hover:text-sky-700">Players & Leaderboard</h2>
+        <p class="text-xs text-stone-500 mt-1">Player list, player detail with stats/poem, season leaderboard with awards</p>
+        <div class="flex gap-1 mt-3">
+          <span class="text-[10px] bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full">3 screens</span>
+        </div>
+      </a>
+
+      <!-- Finals Setup -->
+      <a href="finals-setup.html" class="bg-white rounded-xl shadow-sm border border-stone-100 p-5 hover:shadow-md hover:border-sky-200 transition-all group">
+        <div class="text-2xl mb-2">🏆</div>
+        <h2 class="text-sm font-bold text-stone-900 group-hover:text-sky-700">Finals Setup</h2>
+        <p class="text-xs text-stone-500 mt-1">Create event, add players, generate groups, schedule sessions</p>
+        <div class="flex gap-1 mt-3">
+          <span class="text-[10px] bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full">6 screens</span>
+        </div>
+      </a>
+
+      <!-- Finals Match Day -->
+      <a href="finals-matchday.html" class="bg-white rounded-xl shadow-sm border border-stone-100 p-5 hover:shadow-md hover:border-sky-200 transition-all group">
+        <div class="text-2xl mb-2">⚔️</div>
+        <h2 class="text-sm font-bold text-stone-900 group-hover:text-sky-700">Finals Match Day</h2>
+        <p class="text-xs text-stone-500 mt-1">Format picker, match generation, playoffs, Best-of-3 finals series</p>
+        <div class="flex gap-1 mt-3">
+          <span class="text-[10px] bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full">5 screens</span>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-8 text-xs text-stone-400">
+      <p>These are interactive HTML prototypes, not the live app.</p>
+      <p class="mt-1">Generated for <a href="https://github.com/kbrovibes/snobaddy" class="text-sky-500 hover:underline">kbrovibes/snobaddy</a></p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('version').textContent = 'v1 — ' + new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  </script>
+</body>
+</html>

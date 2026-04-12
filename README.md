@@ -57,6 +57,14 @@
 </p>
 <p align="center"><em>Session awards &nbsp;·&nbsp; Final scoreboard (25 matches) &nbsp;·&nbsp; Player profile</em></p>
 
+### Interactive Mockups
+
+Clickable HTML prototypes for every flow in the app — authentication, sessions, match recording, players, leaderboard, finals setup, and match day.
+
+**[View Interactive Mockups](https://kbrovibes.github.io/snobaddy/mockups/)**
+
+> To regenerate mockups after UI changes, run `/regenerate-mockups` in Claude Code.
+
 ---
 
 ## The Story
