@@ -761,6 +761,7 @@ export default function FinalsEventTabs({
   const [tab, setTab] = useState<Tab>("players");
   const [deleting, setDeleting] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -782,7 +783,7 @@ export default function FinalsEventTabs({
   }
 
   async function handleReset() {
-    if (!confirm("Reset to draft? This will clear all groups, sessions, and matches. Players will stay in the pool.")) return;
+    setShowResetConfirm(false);
     setResetting(true);
     const res = await fetch(`/api/finals/${event.id}/reset`, { method: "POST" });
     if (res.ok) {
@@ -838,13 +839,39 @@ export default function FinalsEventTabs({
       {/* Reset / Delete */}
       <div className="mt-2 flex flex-col gap-2">
         {event.status !== "draft" && (
-          <button
-            onClick={handleReset}
-            disabled={resetting || deleting || isPending}
-            className="w-full py-2.5 text-sm font-medium text-amber-500 hover:text-amber-700 border border-amber-200 hover:border-amber-300 rounded-xl transition-colors disabled:opacity-50"
-          >
-            {resetting ? "Resetting…" : "Reset to Draft (keep players)"}
-          </button>
+          <>
+            <button
+              onClick={() => setShowResetConfirm(true)}
+              disabled={resetting || deleting || isPending}
+              className="w-full py-2.5 text-sm font-medium text-amber-500 hover:text-amber-700 border border-amber-200 hover:border-amber-300 rounded-xl transition-colors disabled:opacity-50"
+            >
+              {resetting ? "Resetting…" : "Reset to Draft (keep players)"}
+            </button>
+            {showResetConfirm && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+                <div className="bg-white rounded-xl shadow-lg max-w-sm w-full p-5 flex flex-col gap-3">
+                  <p className="text-sm font-semibold text-stone-900">Reset to Draft</p>
+                  <p className="text-sm text-stone-600 leading-relaxed">
+                    This will clear all groups, sessions, and matches. Players will stay in the pool.
+                  </p>
+                  <div className="flex gap-2 mt-1">
+                    <button
+                      onClick={() => setShowResetConfirm(false)}
+                      className="flex-1 py-2 text-sm font-medium text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleReset}
+                      className="flex-1 py-2 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition-colors"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
         <button
           onClick={handleDelete}
