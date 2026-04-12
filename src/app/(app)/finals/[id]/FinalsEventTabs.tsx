@@ -67,12 +67,15 @@ function StepNavButtons({
 }
 
 // ─── Workflow step indicator ─────────────────────────────────────────────────
+// Each step is an SVG arrow shape: flat left for step 1, notched left for others,
+// pointed right for non-last, flat right for last.
 function StepIndicator({
   step,
   label,
   active,
   locked,
   done,
+  isFirst,
   isLast,
   onClick,
 }: {
@@ -81,53 +84,47 @@ function StepIndicator({
   active: boolean;
   locked: boolean;
   done: boolean;
+  isFirst: boolean;
   isLast: boolean;
   onClick: () => void;
 }) {
-  // Color scheme: done = green, active = dark, locked = gray, clickable = stone
-  const bg = active
-    ? "bg-stone-900"
+  const fill = active
+    ? "#1c1917"       // stone-900
     : done
-    ? "bg-emerald-600"
+    ? "#059669"       // emerald-600
     : locked
-    ? "bg-stone-200"
-    : "bg-stone-100 hover:bg-stone-200";
-  const text = active
-    ? "text-white"
+    ? "#e7e5e4"       // stone-200
+    : "#f5f5f4";      // stone-100
+  const textColor = active || done ? "text-white" : locked ? "text-stone-400" : "text-stone-600";
+  const badgeClass = active
+    ? "bg-white/20 text-white"
     : done
-    ? "text-white"
+    ? "bg-white/25 text-white"
     : locked
-    ? "text-stone-400"
-    : "text-stone-600";
-  const chevronFill = active
-    ? "text-stone-900"
-    : done
-    ? "text-emerald-600"
-    : locked
-    ? "text-stone-200"
-    : "text-stone-100";
+    ? "bg-stone-300 text-stone-100"
+    : "bg-stone-300/50 text-stone-500";
+
+  // Arrow shape: 10px notch on left (except first), 10px point on right (except last)
+  // viewBox width = 200, notch/point = 10 units
+  const leftEdge = isFirst ? "M0,0" : "M0,0 L10,20 L0,40";
+  const rightEdge = isLast ? "L200,40 L200,0" : "L190,0 L200,20 L190,40";
+  const path = `${leftEdge} L190,40 ${isLast ? "L200,40 L200,0" : "L200,20 L190,0"} ${isFirst ? "L0,0" : "L10,0"} Z`;
 
   return (
     <button
       onClick={locked ? undefined : onClick}
       disabled={locked}
-      className={`flex-1 flex items-center relative ${locked ? "cursor-not-allowed" : "cursor-pointer"}`}
+      className={`flex-1 relative h-10 ${locked ? "cursor-not-allowed" : "cursor-pointer"}`}
     >
-      {/* Step body */}
-      <div className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 ${bg} ${text} ${step === 1 ? "rounded-l-lg" : ""} ${isLast ? "rounded-r-lg" : ""} transition-colors`}>
-        <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[11px] font-bold ${
-          active ? "bg-white/20 text-white" : done ? "bg-white/25 text-white" : locked ? "bg-stone-300 text-stone-100" : "bg-stone-300/50 text-stone-500"
-        }`}>
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 40" preserveAspectRatio="none">
+        <path d={path} fill={fill} />
+      </svg>
+      <div className={`relative z-10 flex items-center justify-center gap-1.5 h-full ${textColor}`}>
+        <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[11px] font-bold ${badgeClass}`}>
           {done && !active ? "✓" : step}
         </span>
         <span className="text-xs font-semibold">{locked ? `🔒 ${label}` : label}</span>
       </div>
-      {/* Chevron arrow between steps */}
-      {!isLast && (
-        <svg className={`absolute -right-2 z-10 h-full w-3 ${chevronFill}`} viewBox="0 0 12 40" preserveAspectRatio="none">
-          <path d="M0 0 L12 20 L0 40" fill="currentColor" />
-        </svg>
-      )}
     </button>
   );
 }
@@ -875,13 +872,14 @@ export default function FinalsEventTabs({
   return (
     <div className="flex flex-col gap-4">
       {/* Step workflow indicator */}
-      <div className="flex gap-0.5">
+      <div className="flex gap-1">
         <StepIndicator
           step={1}
           label="Players"
           active={tab === "players"}
           locked={false}
           done={participants.length > 0}
+          isFirst={true}
           isLast={false}
           onClick={() => setTab("players")}
         />
@@ -891,6 +889,7 @@ export default function FinalsEventTabs({
           active={tab === "groups"}
           locked={!canViewGroups}
           done={event.status !== "draft"}
+          isFirst={false}
           isLast={false}
           onClick={() => setTab("groups")}
         />
@@ -900,6 +899,7 @@ export default function FinalsEventTabs({
           active={tab === "sessions"}
           locked={!canViewSessions}
           done={!!sessionPair.day1}
+          isFirst={false}
           isLast={true}
           onClick={() => setTab("sessions")}
         />
