@@ -33,6 +33,19 @@
 </head>
 <body class="bg-stone-200 py-4">
 
+<!-- Sidebar TOC -->
+<div class="fixed left-0 top-0 bottom-0 w-48 bg-white border-r border-stone-200 py-6 px-3 flex flex-col gap-1 overflow-y-auto z-50">
+  <a href="index.html" class="text-xs font-bold text-stone-900 px-2 py-1.5 mb-2">🏸 Snobaddy Mockups</a>
+  <a href="auth-flow.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🔐 Auth Flow</a>
+  <a href="account-linking.html" class="bg-sky-50 text-sky-700 font-semibold text-xs px-2 py-1.5 rounded-lg">🔗 Account Linking</a>
+  <a href="sessions.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🏸 Sessions</a>
+  <a href="players-leaderboard.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">👥 Players & Leaderboard</a>
+  <a href="finals-setup.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🏆 Finals Setup</a>
+  <a href="finals-matchday.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day</a>
+</div>
+
+<div class="ml-48">
+
   <div class="text-center mb-2">
     <h1 class="text-lg font-bold text-stone-700">Account Linking Prototype</h1>
     <p class="text-sm text-stone-500">Click through Sahit's sign-up flow</p>
@@ -301,10 +314,16 @@
       </div>
     </div>
 
+    <div id="step-nav"></div>
   </div>
 
   <script>
+    const totalSteps = document.querySelectorAll('.step').length;
+    let currentStep = 0;
+
     function goTo(step) {
+      if (step < 0 || step >= totalSteps) return;
+      currentStep = step;
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
       document.getElementById('step-' + step).classList.add('active');
       document.querySelectorAll('.step-btn').forEach((btn, i) => {
@@ -313,8 +332,32 @@
         btn.classList.toggle('bg-stone-300', i !== step);
         btn.classList.toggle('text-stone-700', i !== step);
       });
+      updateNav();
     }
+
+    function updateNav() {
+      const nav = document.getElementById('step-nav');
+      if (!nav) return;
+      const isFirst = currentStep === 0;
+      const isLast = currentStep === totalSteps - 1;
+      nav.innerHTML = `
+        <div class="flex items-center justify-between px-4 py-3 border-t border-stone-100 bg-white">
+          ${isFirst ? '<div></div>' : '<button onclick="goTo(currentStep-1)" class="text-sm text-stone-500 hover:text-stone-700">&lt; Back</button>'}
+          ${isLast
+            ? '<a href="index.html" class="text-sm text-sky-500 hover:text-sky-700">\u2190 All Mockups</a>'
+            : '<button onclick="goTo(currentStep+1)" class="text-sm font-semibold text-sky-600 hover:text-sky-800">Next &gt;</button>'
+          }
+        </div>
+      `;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') goTo(currentStep + 1);
+      if (e.key === 'ArrowLeft') goTo(currentStep - 1);
+    });
+
     goTo(0);
   </script>
+</div><!-- end ml-48 wrapper -->
 </body>
 </html>

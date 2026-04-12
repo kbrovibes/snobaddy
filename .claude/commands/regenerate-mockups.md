@@ -31,6 +31,10 @@ Regenerate the interactive HTML mockups in `docs/mockups/` to reflect the curren
    - Must match current app styling: stone color palette, sky-600 accents, rounded-xl cards
    - Include header (🏸 Serve Snoqualmie + BADMINTON) and bottom nav (Session/Players/Leaderboard)
    - Use realistic data (real player names from the club: Ajay, Alok, Arjun, Deepa, Gautham, etc.)
+   - **Left sidebar TOC** (fixed, w-48, bg-white, border-r) with links to all mockup pages. Current page highlighted with bg-sky-50 text-sky-700. Body content offset with ml-48.
+   - **Back/Next buttons** inside phone frame at bottom (border-t, bg-white). Back = text-stone-500, Next = text-sky-600 font-semibold. Hidden on first/last step respectively.
+   - **Keyboard navigation**: Left/Right arrow keys move between steps
+   - **End-of-flow link**: Last step shows "All Mockups" link back to index.html instead of Next
 
 5. **Update index.html:**
    - Update the version display with today's date
