@@ -45,24 +45,27 @@ function WorkflowSteps({
         const isFirst = i === 0;
         const isLast = i === steps.length - 1;
 
-        // Option B: filled active, outline for done/unlocked, dashed for locked
-        // Non-active steps use a light fill so outline is visible on page background
-        const fill = isActive ? "#1c1917" : "#fafaf9";
-        const stroke = isActive
+        // Active = sky blue, done = green, unlocked = outline, locked = dashed outline
+        const fill = isActive
+          ? "#0284c7"    // sky-600
+          : s.done
+          ? "#059669"    // emerald-600
+          : "#fafaf9";   // page bg
+        const stroke = isActive || s.done
           ? "none"
           : s.locked
-          ? "#d6d3d1"   // stone-300
-          : "#78716c";  // stone-500
+          ? "#d6d3d1"    // stone-300
+          : "#a8a29e";   // stone-400
         const strokeDash = s.locked ? "6,4" : "";
-        const textCls = isActive
+        const textCls = isActive || s.done
           ? "text-white"
           : s.locked
           ? "text-stone-400"
-          : "text-stone-700";
+          : "text-stone-600";
         const badgeCls = isActive
           ? "bg-white/20 text-white"
           : s.done
-          ? "bg-stone-800 text-white"
+          ? "bg-white/25 text-white"
           : s.locked
           ? "bg-stone-200 text-stone-400"
           : "bg-stone-200 text-stone-500";
