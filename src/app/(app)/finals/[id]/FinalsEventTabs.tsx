@@ -119,7 +119,7 @@ function WorkflowSteps({
             disabled={s.locked}
             className={`flex-1 relative h-10 ${s.locked ? "cursor-not-allowed" : "cursor-pointer"}`}
           >
-            <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+            <svg className="absolute inset-0 w-full h-full" viewBox={`-1 -1 ${W + 2} ${H + 2}`} preserveAspectRatio="none">
               <path d={d} fill={fill} stroke={stroke} strokeWidth={stroke === "none" ? 0 : 2} strokeDasharray={strokeDash || undefined} vectorEffect="non-scaling-stroke" />
             </svg>
             <div className={`relative z-10 flex items-center justify-center gap-1.5 h-full ${textCls}`}>

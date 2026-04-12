@@ -17,6 +17,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Unsaved changes banner** — Purple banner appears above group cards when you have pending group changes.
 - **Workflow step colors** — Completed steps ahead of your current step now show an even lighter green, making it clearer which step you're on.
 - **Info toggle glyph** — Replaced ℹ/▲ with ▸/▾ disclosure triangles on player score explanations in the groups table.
+- **Workflow arrow clipping** — Added padding to SVG viewBox so the rightmost arrow tip is no longer trimmed.
 
 ### Fixed
 - **Nav links** — "‹ Sessions" and "‹ Finals Event" back-links now use the consistent ‹ prefix instead of <.
