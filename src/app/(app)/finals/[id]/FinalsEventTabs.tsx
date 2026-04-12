@@ -13,6 +13,7 @@ import {
   useSensors,
   type DragStartEvent,
   type DragEndEvent,
+  type DragOverEvent,
 } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -466,6 +467,7 @@ function DroppableGroup({
   setExpandedId,
   overrideGroup,
   groupCounts,
+  isHighlighted,
 }: {
   groupLabel: string;
   participants: FinalsParticipant[];
@@ -476,15 +478,16 @@ function DroppableGroup({
   setExpandedId: (id: string | null) => void;
   overrideGroup: (playerId: string, group: string) => void;
   groupCounts: Record<string, number>;
+  isHighlighted?: boolean;
 }) {
-  const { setNodeRef, isOver } = useDroppable({ id: `group-${groupLabel}` });
+  const { setNodeRef } = useDroppable({ id: `group-${groupLabel}` });
   const count = groupCounts[groupLabel] ?? 0;
   const tooSmall = count < 4;
 
   return (
     <div
       ref={setNodeRef}
-      className={`bg-white rounded-xl shadow-sm overflow-hidden transition-shadow ${isOver ? "ring-2 ring-sky-400 shadow-md" : ""}`}
+      className={`bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-150 ${isHighlighted ? "ring-2 ring-sky-400 shadow-md bg-sky-50/30" : ""}`}
     >
       {/* Group header */}
       <div className="flex items-center justify-between px-3 py-1.5 bg-stone-50 border-b border-stone-100">
@@ -565,6 +568,7 @@ function GroupsDragDrop({
   overrideGroup: (playerId: string, group: string) => void;
 }) {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [overGroupLabel, setOverGroupLabel] = useState<string | null>(null);
   const activeParticipant = activeId ? sorted.find((p) => p.id === activeId) : null;
 
   const sensors = useSensors(
@@ -579,28 +583,42 @@ function GroupsDragDrop({
     byGroup[g] = sorted.filter((p) => p.group_label === g);
   }
 
+  // Resolve which group an over target belongs to
+  function resolveGroup(overId: string | number): string | null {
+    if (typeof overId === "string" && overId.startsWith("group-")) {
+      return overId.replace("group-", "");
+    }
+    const targetPlayer = sorted.find((p) => p.id === overId);
+    return targetPlayer?.group_label ?? null;
+  }
+
   function handleDragStart(event: DragStartEvent) {
     setActiveId(event.active.id as string);
   }
 
+  function handleDragOver(event: DragOverEvent) {
+    const { over } = event;
+    if (!over) { setOverGroupLabel(null); return; }
+    const group = resolveGroup(over.id);
+    // Only highlight if dragging to a different group
+    const activePlayer = sorted.find((p) => p.id === event.active.id);
+    if (group && activePlayer && group !== activePlayer.group_label) {
+      setOverGroupLabel(group);
+    } else {
+      setOverGroupLabel(null);
+    }
+  }
+
   function handleDragEnd(event: DragEndEvent) {
     setActiveId(null);
+    setOverGroupLabel(null);
     const { active, over } = event;
     if (!over) return;
 
     const player = sorted.find((p) => p.id === active.id);
     if (!player) return;
 
-    // Determine target group from the over id
-    let targetGroup: string | null = null;
-    if (typeof over.id === "string" && over.id.startsWith("group-")) {
-      targetGroup = over.id.replace("group-", "");
-    } else {
-      // Dropped on another player — find which group they're in
-      const targetPlayer = sorted.find((p) => p.id === over.id);
-      if (targetPlayer) targetGroup = targetPlayer.group_label;
-    }
-
+    const targetGroup = resolveGroup(over.id);
     if (targetGroup && targetGroup !== player.group_label) {
       overrideGroup(player.player_id, targetGroup);
     }
@@ -633,6 +651,7 @@ function GroupsDragDrop({
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
       <div className="flex flex-col gap-3">
@@ -648,6 +667,7 @@ function GroupsDragDrop({
             setExpandedId={setExpandedId}
             overrideGroup={overrideGroup}
             groupCounts={groupCounts}
+            isHighlighted={overGroupLabel === g}
           />
         ))}
       </div>
@@ -824,6 +844,13 @@ function GroupsTab({
         </p>
       )}
 
+      {/* Unsaved changes banner (top) */}
+      {hasUnsavedChanges && hasBreakdown && (
+        <p className="text-xs text-violet-600 bg-violet-50 px-3 py-2 rounded-lg">
+          Unsaved group changes — confirm below to save.
+        </p>
+      )}
+
       {/* Group cards with drag-and-drop */}
       {hasBreakdown && sorted.length > 0 && (
         <GroupsDragDrop
@@ -856,13 +883,6 @@ function GroupsTab({
       {smallGroups.length > 0 && (
         <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">
           Group{smallGroups.length > 1 ? "s" : ""} {smallGroups.join(", ")} need at least 4 players before you can confirm.
-        </p>
-      )}
-
-      {/* Unsaved changes indicator */}
-      {hasUnsavedChanges && (
-        <p className="text-xs text-violet-600 bg-violet-50 px-3 py-2 rounded-lg">
-          You have unsaved group changes. They will be saved when you confirm.
         </p>
       )}
 
