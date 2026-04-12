@@ -28,42 +28,73 @@ function SkillDots({ level }: { level: number }) {
   );
 }
 
-// ─── Workflow breadcrumb steps ─────────────────────────────────────────────────
-function StepBreadcrumbs({
+// ─── Workflow step arrows ────────────────────────────────────────────────────
+function WorkflowSteps({
   steps,
   activeTab,
   onSelect,
 }: {
-  steps: { key: string; label: string; locked: boolean; done: boolean }[];
+  steps: { key: string; label: string; step: number; locked: boolean; done: boolean }[];
   activeTab: string;
   onSelect: (key: string) => void;
 }) {
   return (
-    <div className="flex items-center gap-1 text-sm">
+    <div className="flex gap-1">
       {steps.map((s, i) => {
         const isActive = s.key === activeTab;
+        const isFirst = i === 0;
+        const isLast = i === steps.length - 1;
+
+        // Colors
+        const fill = isActive
+          ? "#1c1917"
+          : s.done
+          ? "#059669"
+          : s.locked
+          ? "#e7e5e4"
+          : "#f5f5f4";
+        const textCls = isActive || s.done ? "text-white" : s.locked ? "text-stone-400" : "text-stone-600";
+        const badgeCls = isActive
+          ? "bg-white/20 text-white"
+          : s.done
+          ? "bg-white/25 text-white"
+          : s.locked
+          ? "bg-stone-300 text-stone-100"
+          : "bg-stone-300/50 text-stone-500";
+
+        // SVG arrow path
+        // Flat left for first, notched for others. Arrow point on right for all.
+        const W = 200;
+        const H = 40;
+        const N = 14;
+        let d: string;
+        if (isFirst) {
+          // flat left, arrow right
+          d = `M0,0 L${W - N},0 L${W},${H / 2} L${W - N},${H} L0,${H} Z`;
+        } else {
+          // notched left, arrow right
+          d = `M0,0 L${N},${H / 2} L0,${H} L${W - N},${H} L${W},${H / 2} L${W - N},0 Z`;
+        }
+
         return (
-          <React.Fragment key={s.key}>
-            {i > 0 && <span className="text-stone-300 text-xs">&gt;</span>}
-            <button
-              onClick={s.locked ? undefined : () => onSelect(s.key)}
-              disabled={s.locked}
-              className={[
-                "px-2.5 py-1 rounded-md transition-colors",
-                isActive
-                  ? "font-bold text-stone-900 bg-stone-100"
-                  : s.done
-                  ? "font-medium text-emerald-600 hover:bg-emerald-50"
-                  : s.locked
-                  ? "text-stone-300 cursor-not-allowed"
-                  : "text-stone-500 hover:text-stone-700 hover:bg-stone-50",
-              ].join(" ")}
-            >
-              {s.done && !isActive && <span className="text-emerald-500 mr-0.5">&#10003;</span>}
-              {s.locked && "&#128274; "}
-              {s.label}
-            </button>
-          </React.Fragment>
+          <button
+            key={s.key}
+            onClick={s.locked ? undefined : () => onSelect(s.key)}
+            disabled={s.locked}
+            className={`flex-1 relative h-10 ${s.locked ? "cursor-not-allowed" : "cursor-pointer"}`}
+          >
+            <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+              <path d={d} fill={fill} />
+            </svg>
+            <div className={`relative z-10 flex items-center justify-center gap-1.5 h-full ${textCls}`}>
+              <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[11px] font-bold ${badgeCls}`}>
+                {s.done && !isActive ? "\u2713" : s.step}
+              </span>
+              <span className="text-xs font-semibold">
+                {s.locked ? "\uD83D\uDD12 " : ""}{s.label}
+              </span>
+            </div>
+          </button>
         );
       })}
     </div>
@@ -759,12 +790,12 @@ export default function FinalsEventTabs({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Step breadcrumbs */}
-      <StepBreadcrumbs
+      {/* Step workflow arrows */}
+      <WorkflowSteps
         steps={[
-          { key: "players", label: "Players", locked: false, done: participants.length > 0 },
-          { key: "groups", label: "Groups", locked: !canViewGroups, done: event.status !== "draft" },
-          { key: "sessions", label: "Sessions", locked: !canViewSessions, done: !!sessionPair.day1 },
+          { key: "players", step: 1, label: "Players", locked: false, done: participants.length > 0 },
+          { key: "groups", step: 2, label: "Groups", locked: !canViewGroups, done: event.status !== "draft" },
+          { key: "sessions", step: 3, label: "Sessions", locked: !canViewSessions, done: !!sessionPair.day1 },
         ]}
         activeTab={tab}
         onSelect={(key) => setTab(key as Tab)}
