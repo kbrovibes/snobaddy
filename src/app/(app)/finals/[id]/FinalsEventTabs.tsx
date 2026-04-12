@@ -71,7 +71,7 @@ function WorkflowSteps({
           : isDoneBefore
           ? "#059669"    // emerald-600
           : isDoneAfter
-          ? "#a7f3d0"    // emerald-200
+          ? "#d1fae5"    // emerald-100
           : "#fafaf9";   // page bg
         const stroke = isActive || isDoneBefore
           ? "none"
@@ -452,7 +452,7 @@ function DraggablePlayerRow({
           <div className="w-6 text-center shrink-0">
             {p.score_explanation && (
               <button onClick={() => setExpandedId(isExpanded ? null : p.id)} className="text-xs text-stone-400 hover:text-stone-600">
-                {isExpanded ? "▲" : "ℹ"}
+                {isExpanded ? "▾" : "▸"}
               </button>
             )}
           </div>
