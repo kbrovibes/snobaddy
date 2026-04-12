@@ -8,6 +8,8 @@ Single source of truth for all planned and completed work.
 
 ## Queue
 
+- [ ] **29 — Account Linking** · [spec](specs/29-account-linking.md) · On sign-up, detect matching unverified player, show "Is this you?" with stats, merge accounts safely — 13 tasks across 3 phases
+
 - [ ] **28 — Navigation Loading & Click Feedback** · [spec](specs/28-navigation-loading-feedback.md) · Global loading overlay + tap feedback for all navigations; NavLink wrapper, NavigationLoader context, CSS active states — HIGH PRIORITY UX
 
 - [ ] **26 — Smash Theme + Theme Switching** · [spec](specs/26-smash-theme.md) · CSS-variable token system, Smash visual theme, god-mode-only toggle with localStorage persistence
