@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 export interface FinalsMatch {
   id: string;
@@ -58,15 +59,20 @@ function MatchCard({
   sessionId: string;
   isActive: boolean;
 }) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
-  const [score1, setScore1] = useState(match.team1_score || "");
-  const [score2, setScore2] = useState(match.team2_score || "");
+  const [score1, setScore1] = useState(String(match.team1_score || ""));
+  const [score2, setScore2] = useState(String(match.team2_score || ""));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const team1 = getTeamLabel(match.team1_player1, match.team1_player2, pairsMap, playerNames);
   const team2 = getTeamLabel(match.team2_player1, match.team2_player2, pairsMap, playerNames);
   const isPlayed = match.winning_team != null;
+  const winnerName = isPlayed
+    ? match.winning_team === 1 ? team1.label : team2.label
+    : null;
 
   async function handleSave() {
     const s1 = Number(score1);
@@ -85,31 +91,59 @@ function MatchCard({
       setError(json.error ?? "Failed to save");
     } else {
       setEditing(false);
-      window.location.reload();
+      startTransition(() => router.refresh());
     }
     setSaving(false);
   }
 
   return (
-    <div className={`rounded-lg border px-3 py-2 ${isPlayed ? "bg-stone-50 border-stone-200" : "bg-white border-stone-200"}`}>
-      <div className="flex items-center justify-between mb-1">
+    <div className={`rounded-xl border px-3 py-2.5 transition-colors ${
+      isPlayed ? "bg-emerald-50/50 border-emerald-200" : "bg-white border-stone-200"
+    }`}>
+      {/* Header: match number + status */}
+      <div className="flex items-center justify-between mb-1.5">
         <span className="text-[10px] font-bold text-stone-400 uppercase">Match {matchNumber}</span>
-        {isPlayed && !editing && isActive && (
-          <button onClick={() => setEditing(true)} className="text-[10px] text-sky-600 hover:text-sky-800">Edit</button>
-        )}
+        <div className="flex items-center gap-2">
+          {isPlayed && !editing && isActive && (
+            <button onClick={() => { setEditing(true); setScore1(String(match.team1_score)); setScore2(String(match.team2_score)); }}
+              className="text-[10px] text-sky-600 hover:text-sky-800">
+              Edit
+            </button>
+          )}
+          {isPlayed && !editing && (
+            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded-full">
+              ✓
+            </span>
+          )}
+        </div>
       </div>
 
+      {/* Teams */}
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-        <span className={`text-sm font-semibold truncate ${isPlayed && match.winning_team === 1 ? "text-green-600" : "text-stone-700"}`}>
-          {team1.label}
-        </span>
+        <div className="flex flex-col">
+          <span className={`text-sm font-semibold truncate ${isPlayed && match.winning_team === 1 ? "text-emerald-700" : "text-stone-700"}`}>
+            {team1.label}
+          </span>
+          {isPlayed && !editing && (
+            <span className={`text-xs font-bold ${match.winning_team === 1 ? "text-emerald-600" : "text-stone-400"}`}>
+              {match.team1_score}
+            </span>
+          )}
+        </div>
         <span className="text-stone-300 text-xs">vs</span>
-        <span className={`text-sm font-semibold truncate text-right ${isPlayed && match.winning_team === 2 ? "text-green-600" : "text-stone-700"}`}>
-          {team2.label}
-        </span>
+        <div className="flex flex-col items-end">
+          <span className={`text-sm font-semibold truncate text-right ${isPlayed && match.winning_team === 2 ? "text-emerald-700" : "text-stone-700"}`}>
+            {team2.label}
+          </span>
+          {isPlayed && !editing && (
+            <span className={`text-xs font-bold ${match.winning_team === 2 ? "text-emerald-600" : "text-stone-400"}`}>
+              {match.team2_score}
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* Show player names subtitle only when using pair labels */}
+      {/* Player names subtitle for pair labels */}
       {pairsMap.size > 0 && team1.label !== team1.names && (
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 mt-0.5">
           <p className="text-[11px] text-stone-400 truncate">{team1.names}</p>
@@ -118,20 +152,22 @@ function MatchCard({
         </div>
       )}
 
-      {isPlayed && !editing && (
-        <div className="text-center text-xs text-stone-500 mt-1">
-          {match.team1_score} – {match.team2_score}
-        </div>
+      {/* Winner callout */}
+      {isPlayed && !editing && winnerName && (
+        <p className="text-[11px] text-emerald-600 text-center mt-1">
+          {winnerName} win
+        </p>
       )}
 
+      {/* Score entry (unplayed or editing) */}
       {((!isPlayed && isActive) || editing) && (
         <div className="flex items-center gap-2 mt-2">
           <input type="number" min="0" max="99" value={score1} onChange={(e) => setScore1(e.target.value)}
-            className="w-14 text-center border border-stone-200 rounded-lg px-1 py-1 text-sm" placeholder="0" />
+            className="w-14 text-center border border-stone-200 rounded-lg px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="0" />
           <span className="text-stone-300 text-xs">–</span>
           <input type="number" min="0" max="99" value={score2} onChange={(e) => setScore2(e.target.value)}
-            className="w-14 text-center border border-stone-200 rounded-lg px-1 py-1 text-sm" placeholder="0" />
-          <button onClick={handleSave} disabled={saving}
+            className="w-14 text-center border border-stone-200 rounded-lg px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="0" />
+          <button onClick={handleSave} disabled={saving || isPending}
             className="flex-1 text-xs font-semibold text-white bg-stone-900 hover:bg-stone-800 rounded-lg py-1.5 disabled:opacity-40">
             {saving ? "…" : "Save"}
           </button>
