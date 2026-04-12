@@ -20,6 +20,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Workflow arrow clipping** — Added padding to SVG viewBox so the rightmost arrow tip is no longer trimmed.
 - **Loading spinner for header & bottom nav** — Profile badge and bottom nav tabs now show the loading spinner during navigation (they were outside the NavigationLoader context).
 - **Back button on player profile** — Repositioned to top-left with ‹ prefix, matching other pages. Also triggers loading spinner.
+- **Workflow arrow borders** — Thinner stroke (1px instead of 2px) on the finals workflow step arrows.
 
 ### Fixed
 - **Nav links** — "‹ Sessions" and "‹ Finals Event" back-links now use the consistent ‹ prefix instead of <.
