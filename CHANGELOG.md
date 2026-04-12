@@ -15,6 +15,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Instant group moves** — Dragging or changing a player's group now updates instantly in the UI. Changes are saved in batch when you confirm groups, not on every move.
 - **Drop target highlight** — Destination group shows a blue ring and subtle highlight when dragging a player over it.
 - **Unsaved changes banner** — Purple banner appears above group cards when you have pending group changes.
+- **Workflow step colors** — Completed steps ahead of your current step now show a lighter green, making it clearer which step you're on.
 
 ### Fixed
 - **Nav links** — "‹ Sessions" and "‹ Finals Event" back-links now use the consistent ‹ prefix instead of <.

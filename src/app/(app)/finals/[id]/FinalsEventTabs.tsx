@@ -54,34 +54,46 @@ function WorkflowSteps({
   activeTab: string;
   onSelect: (key: string) => void;
 }) {
+  const activeIndex = steps.findIndex((s) => s.key === activeTab);
+
   return (
     <div className="flex gap-1">
       {steps.map((s, i) => {
         const isActive = s.key === activeTab;
         const isFirst = i === 0;
         const isLast = i === steps.length - 1;
+        const isDoneBefore = s.done && i < activeIndex;  // completed step before current
+        const isDoneAfter = s.done && i > activeIndex;   // completed step after current
 
-        // Active = sky blue, done = green, unlocked = outline, locked = dashed outline
+        // Active = sky blue, done-before = solid green, done-after = light green, else outline
         const fill = isActive
           ? "#0284c7"    // sky-600
-          : s.done
+          : isDoneBefore
           ? "#059669"    // emerald-600
+          : isDoneAfter
+          ? "#a7f3d0"    // emerald-200
           : "#fafaf9";   // page bg
-        const stroke = isActive || s.done
+        const stroke = isActive || isDoneBefore
           ? "none"
+          : isDoneAfter
+          ? "#6ee7b7"    // emerald-300
           : s.locked
           ? "#d6d3d1"    // stone-300
           : "#a8a29e";   // stone-400
         const strokeDash = s.locked ? "6,4" : "";
-        const textCls = isActive || s.done
+        const textCls = isActive || isDoneBefore
           ? "text-white"
+          : isDoneAfter
+          ? "text-emerald-700"
           : s.locked
           ? "text-stone-400"
           : "text-stone-600";
         const badgeCls = isActive
           ? "bg-white/20 text-white"
-          : s.done
+          : isDoneBefore
           ? "bg-white/25 text-white"
+          : isDoneAfter
+          ? "bg-emerald-400/30 text-emerald-700"
           : s.locked
           ? "bg-stone-200 text-stone-400"
           : "bg-stone-200 text-stone-500";
