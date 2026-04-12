@@ -254,7 +254,7 @@ function LoginContent() {
               onClick={() => switchMode("signin")}
               className="text-sm text-stone-400 hover:text-stone-600 transition-colors text-center"
             >
-              &lt; Back to sign in
+              {"<"} Back to sign in
             </button>
           </form>
         )}

@@ -42,7 +42,7 @@ export default async function FinalsEventPage({
       {/* Header */}
       <div className="flex items-center gap-2">
         <Link href="/?list=1" className="text-sky-600 hover:text-sky-800 text-sm">
-          &lt; Sessions
+          {"<"} Sessions
         </Link>
       </div>
 
