@@ -315,20 +315,6 @@ function PlayersTab({
         <StepNavButtons onNext={onNext} nextLabel="Set Up Groups" />
       )}
 
-      {/* Sort controls */}
-      {sorted.length > 0 && (
-        <div className="flex items-center gap-2 text-[11px] text-stone-400">
-          <span>Sort:</span>
-          <button onClick={() => toggleSort("name")} className={`hover:text-stone-600 ${sortKey === "name" ? "font-bold text-stone-600" : ""}`}>
-            Name {sortKey === "name" ? (sortAsc ? "↑" : "↓") : ""}
-          </button>
-          <span>·</span>
-          <button onClick={() => toggleSort("skill")} className={`hover:text-stone-600 ${sortKey === "skill" ? "font-bold text-stone-600" : ""}`}>
-            Skill {sortKey === "skill" ? (sortAsc ? "↑" : "↓") : ""}
-          </button>
-        </div>
-      )}
-
       {/* Participant tiles */}
       {sorted.length === 0 ? (
         <div className="rounded-lg border border-dashed border-stone-200 px-4 py-8 text-center">
@@ -338,26 +324,25 @@ function PlayersTab({
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-1.5">
+        <div className="grid grid-cols-3 gap-2">
           {sorted.map((p) => (
             <div
               key={p.player_id}
-              className="bg-white rounded-lg border border-stone-100 px-2 py-1.5 flex flex-col items-center text-center relative"
+              className="bg-white rounded-lg border border-stone-150 px-3 py-2 flex items-center justify-between"
             >
+              <span className="text-sm text-stone-800 truncate">
+                {p.name.split(" ")[0]}
+              </span>
               {canEditPlayers && (
                 <button
                   onClick={() => removePlayer(p.player_id)}
                   disabled={removing === p.player_id || isPending}
-                  className="absolute top-0.5 right-1 text-[10px] text-stone-300 hover:text-red-500 disabled:opacity-40 leading-none"
+                  className="text-[10px] text-stone-300 hover:text-red-500 disabled:opacity-40 leading-none ml-1 shrink-0"
                   title="Remove"
                 >
                   ✕
                 </button>
               )}
-              <Link href={`/players/${p.player_id}`} className="text-xs font-medium text-stone-800 hover:text-sky-600 truncate w-full">
-                {p.name.split(" ")[0]}
-              </Link>
-              <SkillDots level={p.skill_level} />
             </div>
           ))}
         </div>
