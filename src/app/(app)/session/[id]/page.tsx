@@ -209,7 +209,7 @@ export default async function SessionDetailPage({
       <div className="flex flex-col gap-0.5 -mb-2">
         {isFinalsSession && session.finals_event_id ? (
           <Link href={`/finals/${session.finals_event_id}`} className="text-sky-600 hover:text-sky-800 text-sm">
-            {"<"} Finals Event
+            ‹ Finals Event
           </Link>
         ) : (
           <BackToSessionsLink />

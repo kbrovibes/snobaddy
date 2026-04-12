@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.26.9] - 2026-04-11
+
+### Fixed
+- **Nav links** — "‹ Sessions" and "‹ Finals Event" back-links now use the consistent ‹ prefix instead of <.
+
+---
+
 ## [0.26.8] - 2026-04-11
 
 ### Improved
