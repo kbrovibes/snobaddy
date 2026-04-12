@@ -23,7 +23,6 @@ function validMatchesPerPlayer(playerCount: number): number[] {
 
 function defaultMatchesPerPlayer(playerCount: number): number {
   const valid = validMatchesPerPlayer(playerCount);
-  // Pick the valid value closest to 40% of player count, minimum 3
   const target = Math.max(3, Math.round(playerCount * 0.4));
   let best = valid[0];
   for (const v of valid) {
@@ -42,7 +41,7 @@ const FORMATS = [
   {
     type: "playoffs" as const,
     title: "Playoffs + Finals",
-    subtitle: "Players rotate partners in group stage. Top 4 advance to a Best-of-3 Final.",
+    subtitle: "Players rotate partners in group stage. Top 4 advance to Best-of-3 Final.",
     icon: "🏆",
   },
 ];
@@ -61,51 +60,45 @@ export default function FormatPicker({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [selecting, setSelecting] = useState(false);
-  const [selectedType, setSelectedType] = useState<string | null>(currentFormat?.format_type ?? null);
+  const [error, setError] = useState<string | null>(null);
+
+  // Local state — no API calls until explicit save
+  const [selectedType, setSelectedType] = useState<string | null>(
+    currentFormat?.format_type ?? null
+  );
   const [matchesPerPlayer, setMatchesPerPlayer] = useState<number>(
     (currentFormat?.config as { matches_per_player?: number })?.matches_per_player
     ?? defaultMatchesPerPlayer(playerCount)
   );
-  const [error, setError] = useState<string | null>(null);
 
   const isLocked = currentFormat && currentFormat.status !== "configured";
   const displayType = selectedType ?? currentFormat?.format_type;
   const validValues = validMatchesPerPlayer(playerCount);
-  const totalMatches = (matchesPerPlayer * playerCount) / 4;
+  const totalMatches = displayType === "playoffs" ? (matchesPerPlayer * playerCount) / 4 : 0;
 
-  async function saveFormat(formatType: "playoffs" | "fixed_partner", mpp?: number) {
+  // Has the user changed anything from what's saved?
+  const savedType = currentFormat?.format_type ?? null;
+  const savedMpp = (currentFormat?.config as { matches_per_player?: number })?.matches_per_player ?? null;
+  const hasUnsavedChanges = displayType !== savedType ||
+    (displayType === "playoffs" && matchesPerPlayer !== savedMpp);
+
+  async function handleSave() {
+    if (!displayType) return;
     setSelecting(true);
     setError(null);
-    const config = formatType === "playoffs" && mpp ? { matches_per_player: mpp } : {};
+    const config = displayType === "playoffs" ? { matches_per_player: matchesPerPlayer } : {};
     const res = await fetch(`/api/sessions/${sessionId}/finals-format`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ format_type: formatType, finals_group: finalsGroup, config }),
+      body: JSON.stringify({ format_type: displayType, finals_group: finalsGroup, config }),
     });
     const json = await res.json();
     if (!res.ok) {
-      setError(json.error ?? "Failed to set format");
+      setError(json.error ?? "Failed to save format");
     } else {
       startTransition(() => router.refresh());
     }
     setSelecting(false);
-  }
-
-  function handleSelectFormat(type: string) {
-    if (isLocked) return;
-    setSelectedType(type);
-    // Auto-save for fixed_partner (no config needed), or save playoffs with current mpp
-    if (type === "fixed_partner") {
-      saveFormat("fixed_partner");
-    } else {
-      saveFormat("playoffs", matchesPerPlayer);
-    }
-  }
-
-  function handleMppChange(val: number) {
-    setMatchesPerPlayer(val);
-    // Auto-save the updated config
-    saveFormat("playoffs", val);
   }
 
   return (
@@ -125,62 +118,72 @@ export default function FormatPicker({
       <div className="flex flex-col gap-2">
         {FORMATS.map((fmt) => {
           const isSelected = displayType === fmt.type;
+          const showPlayoffsConfig = fmt.type === "playoffs" && isSelected && !isLocked;
           return (
-            <button
+            <div
               key={fmt.type}
-              onClick={() => !isLocked && handleSelectFormat(fmt.type)}
-              disabled={selecting || isPending}
+              onClick={() => !isLocked && setSelectedType(fmt.type)}
               className={[
-                "flex items-start gap-3 text-left px-3 py-2.5 rounded-xl border transition-all",
+                "rounded-xl border transition-all cursor-pointer",
                 isSelected
                   ? "border-sky-500 bg-sky-50"
                   : "border-stone-200 bg-white hover:border-stone-300",
-                (selecting || isPending) ? "opacity-60" : "",
+                isLocked ? "opacity-70 cursor-default" : "",
               ].join(" ")}
             >
-              {/* Radio dot */}
-              <div className={[
-                "w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 shrink-0",
-                isSelected ? "border-sky-500" : "border-stone-300",
-              ].join(" ")}>
-                {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-sky-500" />}
+              <div className="flex items-start gap-3 px-3 py-2.5">
+                {/* Radio dot */}
+                <div className={[
+                  "w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 shrink-0",
+                  isSelected ? "border-sky-500" : "border-stone-300",
+                ].join(" ")}>
+                  {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-sky-500" />}
+                </div>
+                <div className="flex-1">
+                  <span className="text-sm font-semibold text-stone-800">{fmt.icon} {fmt.title}</span>
+                  <p className="text-xs text-stone-500 mt-0.5">{fmt.subtitle}</p>
+                </div>
               </div>
-              <div>
-                <span className="text-sm font-semibold text-stone-800">{fmt.icon} {fmt.title}</span>
-                <p className="text-xs text-stone-500 mt-0.5">{fmt.subtitle}</p>
-              </div>
-            </button>
+
+              {/* Inline playoffs config */}
+              {showPlayoffsConfig && (
+                <div className="border-t border-sky-200 px-3 py-2 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
+                  <span className="text-xs text-stone-600">Matches per player</span>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={matchesPerPlayer}
+                      onChange={(e) => setMatchesPerPlayer(Number(e.target.value))}
+                      className="text-sm border border-stone-200 rounded-lg px-2 py-0.5 bg-white focus:outline-none focus:ring-2 focus:ring-sky-300"
+                    >
+                      {validValues.map((v) => (
+                        <option key={v} value={v}>{v}</option>
+                      ))}
+                    </select>
+                    <span className="text-[11px] text-stone-400">{totalMatches} total</span>
+                  </div>
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
-
-      {/* Playoffs config — matches per player */}
-      {displayType === "playoffs" && !isLocked && (
-        <div className="bg-white border border-stone-200 rounded-xl px-4 py-3 flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-stone-700">Matches per player</label>
-            <select
-              value={matchesPerPlayer}
-              onChange={(e) => handleMppChange(Number(e.target.value))}
-              disabled={selecting || isPending}
-              className="text-sm border border-stone-200 rounded-lg px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-sky-300 disabled:opacity-40"
-            >
-              {validValues.map((v) => (
-                <option key={v} value={v}>{v}</option>
-              ))}
-            </select>
-          </div>
-          <p className="text-xs text-stone-400">
-            {totalMatches} total matches · Every player plays exactly {matchesPerPlayer}
-          </p>
-        </div>
-      )}
 
       {/* Show match info when locked */}
       {displayType === "playoffs" && isLocked && (
         <p className="text-xs text-stone-400 px-1">
           {matchesPerPlayer} matches per player · {totalMatches} total matches
         </p>
+      )}
+
+      {/* Save button — only when there are unsaved changes */}
+      {hasUnsavedChanges && displayType && !isLocked && (
+        <button
+          onClick={handleSave}
+          disabled={selecting || isPending}
+          className="w-full py-2 rounded-xl text-sm font-semibold text-white bg-sky-600 hover:bg-sky-700 disabled:opacity-40 transition-colors"
+        >
+          {selecting ? "Saving…" : "Save Format"}
+        </button>
       )}
 
       {/* Reset */}
