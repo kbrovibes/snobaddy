@@ -28,26 +28,52 @@ function SkillDots({ level }: { level: number }) {
   );
 }
 
-// ─── Next step button ────────────────────────────────────────────────────────
-function NextStepButton({ label, disabled, onClick }: { label: string; disabled?: boolean; onClick: () => void }) {
+// ─── Step nav buttons ────────────────────────────────────────────────────────
+function StepNavButtons({
+  onPrev,
+  onNext,
+  prevLabel,
+  nextLabel,
+  nextDisabled,
+}: {
+  onPrev?: () => void;
+  onNext?: () => void;
+  prevLabel?: string;
+  nextLabel?: string;
+  nextDisabled?: boolean;
+}) {
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className="w-full py-2 text-sm font-semibold text-sky-700 bg-sky-50 border border-sky-200 rounded-xl hover:bg-sky-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-    >
-      {label} →
-    </button>
+    <div className="flex items-center gap-2">
+      {onPrev && (
+        <button
+          onClick={onPrev}
+          className="px-4 py-2 text-sm font-medium text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
+        >
+          &lt; {prevLabel}
+        </button>
+      )}
+      <div className="flex-1" />
+      {onNext && (
+        <button
+          onClick={onNext}
+          disabled={nextDisabled}
+          className="px-5 py-2 text-sm font-semibold text-white bg-sky-600 rounded-lg hover:bg-sky-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          {nextLabel} &gt;
+        </button>
+      )}
+    </div>
   );
 }
 
-// ─── Tab button ──────────────────────────────────────────────────────────────
-function TabButton({
+// ─── Workflow step indicator ─────────────────────────────────────────────────
+function StepIndicator({
   step,
   label,
   active,
   locked,
   done,
+  isLast,
   onClick,
 }: {
   step: number;
@@ -55,25 +81,53 @@ function TabButton({
   active: boolean;
   locked: boolean;
   done: boolean;
+  isLast: boolean;
   onClick: () => void;
 }) {
+  // Color scheme: done = green, active = dark, locked = gray, clickable = stone
+  const bg = active
+    ? "bg-stone-900"
+    : done
+    ? "bg-emerald-600"
+    : locked
+    ? "bg-stone-200"
+    : "bg-stone-100 hover:bg-stone-200";
+  const text = active
+    ? "text-white"
+    : done
+    ? "text-white"
+    : locked
+    ? "text-stone-400"
+    : "text-stone-600";
+  const chevronFill = active
+    ? "text-stone-900"
+    : done
+    ? "text-emerald-600"
+    : locked
+    ? "text-stone-200"
+    : "text-stone-100";
+
   return (
     <button
       onClick={locked ? undefined : onClick}
       disabled={locked}
-      className={[
-        "flex-1 py-2 text-sm font-semibold rounded-lg transition-colors",
-        active
-          ? "bg-stone-900 text-white"
-          : locked
-          ? "text-stone-300 cursor-not-allowed"
-          : "text-stone-500 hover:text-stone-800",
-      ].join(" ")}
+      className={`flex-1 flex items-center relative ${locked ? "cursor-not-allowed" : "cursor-pointer"}`}
     >
-      <span className={`text-[10px] font-bold mr-1 ${active ? "text-stone-400" : done ? "text-green-500" : "text-stone-300"}`}>
-        {done ? "✓" : step}
-      </span>
-      {locked ? `🔒 ${label}` : label}
+      {/* Step body */}
+      <div className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 ${bg} ${text} ${step === 1 ? "rounded-l-lg" : ""} ${isLast ? "rounded-r-lg" : ""} transition-colors`}>
+        <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[11px] font-bold ${
+          active ? "bg-white/20 text-white" : done ? "bg-white/25 text-white" : locked ? "bg-stone-300 text-stone-100" : "bg-stone-300/50 text-stone-500"
+        }`}>
+          {done && !active ? "✓" : step}
+        </span>
+        <span className="text-xs font-semibold">{locked ? `🔒 ${label}` : label}</span>
+      </div>
+      {/* Chevron arrow between steps */}
+      {!isLast && (
+        <svg className={`absolute -right-2 z-10 h-full w-3 ${chevronFill}`} viewBox="0 0 12 40" preserveAspectRatio="none">
+          <path d="M0 0 L12 20 L0 40" fill="currentColor" />
+        </svg>
+      )}
     </button>
   );
 }
@@ -261,7 +315,7 @@ function PlayersTab({
 
       {/* Next step — top */}
       {sorted.length >= 4 && (
-        <NextStepButton label="Next: Set Up Groups" onClick={onNext} />
+        <StepNavButtons onNext={onNext} nextLabel="Set Up Groups" />
       )}
 
       {/* Participant table */}
@@ -325,7 +379,7 @@ function PlayersTab({
 
       {/* Next step — bottom */}
       {sorted.length >= 4 && (
-        <NextStepButton label="Next: Set Up Groups" onClick={onNext} />
+        <StepNavButtons onNext={onNext} nextLabel="Set Up Groups" />
       )}
     </div>
   );
@@ -338,12 +392,16 @@ function GroupsTab({
   participants,
   onSwitchToPlayers,
   onConfirmed,
+  canGoToSessions,
+  onNext,
 }: {
   eventId: string;
   eventStatus: FinalsEvent["status"];
   participants: FinalsParticipant[];
   onSwitchToPlayers: () => void;
   onConfirmed: () => void;
+  canGoToSessions: boolean;
+  onNext: () => void;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -420,6 +478,14 @@ function GroupsTab({
 
   return (
     <div className="flex flex-col gap-3">
+      {/* Step nav — top */}
+      <StepNavButtons
+        onPrev={onSwitchToPlayers}
+        prevLabel="Players"
+        onNext={canGoToSessions ? onNext : undefined}
+        nextLabel="Sessions"
+      />
+
       {/* Actions row */}
       {(eventStatus === "draft" || isBreakdownGenerated) && (
         <div className="flex gap-2">
@@ -604,6 +670,14 @@ function GroupsTab({
           </button>
         </div>
       )}
+
+      {/* Step nav — bottom */}
+      <StepNavButtons
+        onPrev={onSwitchToPlayers}
+        prevLabel="Players"
+        onNext={canGoToSessions ? onNext : undefined}
+        nextLabel="Sessions"
+      />
     </div>
   );
 }
@@ -653,10 +727,12 @@ function SessionsTab({
   eventId,
   eventStatus,
   sessionPair,
+  onPrev,
 }: {
   eventId: string;
   eventStatus: FinalsEvent["status"];
   sessionPair: FinalsSessionPair;
+  onPrev: () => void;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -690,6 +766,9 @@ function SessionsTab({
 
   return (
     <div className="flex flex-col gap-3">
+      {/* Step nav — top */}
+      <StepNavButtons onPrev={onPrev} prevLabel="Groups" />
+
       {sessionsExist ? (
         <>
           <SessionCard
@@ -749,6 +828,9 @@ function SessionsTab({
           </button>
         </>
       )}
+
+      {/* Step nav — bottom */}
+      <StepNavButtons onPrev={onPrev} prevLabel="Groups" />
     </div>
   );
 }
@@ -803,30 +885,33 @@ export default function FinalsEventTabs({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Step tabs */}
-      <div className="flex gap-1 bg-stone-100 p-1 rounded-xl">
-        <TabButton
+      {/* Step workflow indicator */}
+      <div className="flex gap-0.5">
+        <StepIndicator
           step={1}
           label="Players"
           active={tab === "players"}
           locked={false}
           done={participants.length > 0}
+          isLast={false}
           onClick={() => setTab("players")}
         />
-        <TabButton
+        <StepIndicator
           step={2}
           label="Groups"
           active={tab === "groups"}
           locked={!canViewGroups}
           done={event.status !== "draft"}
+          isLast={false}
           onClick={() => setTab("groups")}
         />
-        <TabButton
+        <StepIndicator
           step={3}
           label="Sessions"
           active={tab === "sessions"}
           locked={!canViewSessions}
           done={!!sessionPair.day1}
+          isLast={true}
           onClick={() => setTab("sessions")}
         />
       </div>
@@ -849,6 +934,8 @@ export default function FinalsEventTabs({
           participants={participants}
           onSwitchToPlayers={() => setTab("players")}
           onConfirmed={() => setTab("sessions")}
+          canGoToSessions={canViewSessions}
+          onNext={() => setTab("sessions")}
         />
       )}
 
@@ -857,6 +944,7 @@ export default function FinalsEventTabs({
           eventId={event.id}
           eventStatus={event.status}
           sessionPair={sessionPair}
+          onPrev={() => setTab("groups")}
         />
       )}
 
