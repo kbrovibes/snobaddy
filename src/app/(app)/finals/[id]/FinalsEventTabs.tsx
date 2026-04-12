@@ -45,22 +45,26 @@ function WorkflowSteps({
         const isFirst = i === 0;
         const isLast = i === steps.length - 1;
 
-        // Colors
-        const fill = isActive
-          ? "#1c1917"
-          : s.done
-          ? "#059669"
+        // Option B: filled active, outline for done/unlocked, dashed for locked
+        const fill = isActive ? "#1c1917" : "#ffffff";
+        const stroke = isActive
+          ? "none"
           : s.locked
-          ? "#e7e5e4"
-          : "#f5f5f4";
-        const textCls = isActive || s.done ? "text-white" : s.locked ? "text-stone-400" : "text-stone-600";
+          ? "#d6d3d1"   // stone-300
+          : "#a8a29e";  // stone-400
+        const strokeDash = s.locked ? "6,4" : "none";
+        const textCls = isActive
+          ? "text-white"
+          : s.locked
+          ? "text-stone-400"
+          : "text-stone-700";
         const badgeCls = isActive
           ? "bg-white/20 text-white"
           : s.done
-          ? "bg-white/25 text-white"
+          ? "bg-stone-800 text-white"
           : s.locked
-          ? "bg-stone-300 text-stone-100"
-          : "bg-stone-300/50 text-stone-500";
+          ? "bg-stone-200 text-stone-400"
+          : "bg-stone-200 text-stone-500";
 
         // SVG arrow path
         // Flat left for first, notched for others. Arrow point on right for all.
@@ -84,7 +88,7 @@ function WorkflowSteps({
             className={`flex-1 relative h-10 ${s.locked ? "cursor-not-allowed" : "cursor-pointer"}`}
           >
             <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
-              <path d={d} fill={fill} />
+              <path d={d} fill={fill} stroke={stroke} strokeWidth={stroke === "none" ? 0 : 1.5} strokeDasharray={strokeDash} vectorEffect="non-scaling-stroke" />
             </svg>
             <div className={`relative z-10 flex items-center justify-center gap-1.5 h-full ${textCls}`}>
               <span className={`w-5 h-5 flex items-center justify-center rounded-full text-[11px] font-bold ${badgeCls}`}>
