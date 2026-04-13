@@ -13,6 +13,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Edit Groups after confirmation** — New "Edit Groups" button on the Groups tab when groups have been confirmed but finals isn't completed. Reverts to editable state (deletes generated sessions, keeps group assignments).
 - **Score legend** — Brief explanation of what the score means, shown above group cards in the Groups tab.
 
+### Fixed
+- **Finals session cleanup** — Hid regular session sections (Record a Score, Tonight's Scores, Matches) from finals sessions, since finals have their own dedicated UI.
+
 ### Improved
 - **Instant group moves** — Dragging or changing a player's group now updates instantly in the UI. Changes are saved in batch when you confirm groups, not on every move.
 - **Drop target highlight** — Destination group shows a blue ring and subtle highlight when dragging a player over it.

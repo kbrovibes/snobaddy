@@ -341,21 +341,25 @@ export default async function SessionDetailPage({
             </div>
           )}
 
-          {/* Match entry */}
-          <SimpleMatchForm
-            sessionId={session.id}
-            checkedInPlayers={checkedInPlayers}
-            isAdmin={isAdmin}
-            simpleMode={session.simple_score_tracking}
-          />
-          {!session.simple_score_tracking && (
-            <ProposedMatchList
-              sessionId={session.id}
-              matches={proposedMatches}
-              checkedInPlayers={checkedInPlayers}
-              isAdmin={isAdmin}
-              autoGenerate={session.auto_generate_matches ?? true}
-            />
+          {/* Match entry — not shown for Finals sessions */}
+          {!isFinalsSession && (
+            <>
+              <SimpleMatchForm
+                sessionId={session.id}
+                checkedInPlayers={checkedInPlayers}
+                isAdmin={isAdmin}
+                simpleMode={session.simple_score_tracking}
+              />
+              {!session.simple_score_tracking && (
+                <ProposedMatchList
+                  sessionId={session.id}
+                  matches={proposedMatches}
+                  checkedInPlayers={checkedInPlayers}
+                  isAdmin={isAdmin}
+                  autoGenerate={session.auto_generate_matches ?? true}
+                />
+              )}
+            </>
           )}
 
         </>
@@ -407,8 +411,8 @@ export default async function SessionDetailPage({
         </>
       )}
 
-      {/* Match scoreboard — shown for active sessions, or completed sessions with match records */}
-      {(isActive || isCompleted) && (tallyRows as TallyEntry[]).length === 0 && (
+      {/* Match scoreboard — not shown for Finals sessions */}
+      {!isFinalsSession && (isActive || isCompleted) && (tallyRows as TallyEntry[]).length === 0 && (
         <SessionScoreboard
           scoreboard={scoreboard}
           playerId={playerId}
@@ -416,8 +420,8 @@ export default async function SessionDetailPage({
         />
       )}
 
-      {/* Match history — shown for active and completed */}
-      {(isActive || isCompleted) && recentMatches.length > 0 && (
+      {/* Match history — not shown for Finals sessions */}
+      {!isFinalsSession && (isActive || isCompleted) && recentMatches.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm px-4 py-3">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
             Matches · {recentMatches.length}
