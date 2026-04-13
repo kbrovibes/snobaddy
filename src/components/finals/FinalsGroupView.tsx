@@ -249,6 +249,7 @@ export default function FinalsGroupView({
           sessionId={sessionId}
           isActive={isActive}
           funNames={funNames}
+          forceAllComplete={!!groupWinner}
         />
       )}
     </div>

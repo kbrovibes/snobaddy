@@ -228,6 +228,7 @@ export default function FinalsMatchList({
   sessionId,
   isActive,
   funNames = false,
+  forceAllComplete = false,
 }: {
   matches: FinalsMatch[];
   pairsInfo: Record<string, PairInfo[]>;
@@ -235,6 +236,7 @@ export default function FinalsMatchList({
   sessionId: string;
   isActive: boolean;
   funNames?: boolean;
+  forceAllComplete?: boolean;
 }) {
   // Build pairs map from all groups (usually just one since parent filters)
   const pairsMap = new Map<string, PairInfo>();
@@ -246,7 +248,7 @@ export default function FinalsMatchList({
 
   const playerNames = playerNamesProp ?? new Map<string, string>();
   const playedCount = matches.filter((m) => m.winning_team != null).length;
-  const allComplete = matches.length > 0 && playedCount === matches.length;
+  const allComplete = forceAllComplete || (matches.length > 0 && playedCount === matches.length);
 
   return (
     <div className="flex flex-col gap-3">
