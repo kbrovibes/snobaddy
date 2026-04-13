@@ -148,24 +148,39 @@ export default function PairConfigurator({
         </p>
       )}
 
-      {pairs.map((pair, pairIdx) => (
-        <div key={pairIdx} className="flex items-center gap-2 bg-stone-50 rounded-lg px-3 py-2">
-          <span className="text-xs font-semibold text-stone-400 w-12 shrink-0">
-            Pair {pairIdx + 1}
-          </span>
-          <PlayerDropdown
-            players={players} value={pair[0]} assignedIds={assignedIds}
-            currentSlotValue={pair[0]} onChange={(id) => updatePair(pairIdx, 0, id)}
-            disabled={isLocked || saving || isPending}
-          />
-          <span className="text-xs text-stone-300">&</span>
-          <PlayerDropdown
-            players={players} value={pair[1]} assignedIds={assignedIds}
-            currentSlotValue={pair[1]} onChange={(id) => updatePair(pairIdx, 1, id)}
-            disabled={isLocked || saving || isPending}
-          />
-        </div>
-      ))}
+      {pairs.map((pair, pairIdx) => {
+        const p1 = pair[0] ? players.find((p) => p.player_id === pair[0]) : null;
+        const p2 = pair[1] ? players.find((p) => p.player_id === pair[1]) : null;
+        const teamScore = (p1?.finals_score ?? 0) + (p2?.finals_score ?? 0);
+        const showScore = p1?.finals_score != null && p2?.finals_score != null;
+        return (
+          <div key={pairIdx} className="flex flex-col gap-1 bg-stone-50 rounded-lg px-3 py-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-stone-400">
+                Team {pairIdx + 1}
+              </span>
+              {showScore && (
+                <span className="text-[11px] text-stone-400">
+                  {teamScore.toFixed(1)} pts
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <PlayerDropdown
+                players={players} value={pair[0]} assignedIds={assignedIds}
+                currentSlotValue={pair[0]} onChange={(id) => updatePair(pairIdx, 0, id)}
+                disabled={isLocked || saving || isPending}
+              />
+              <span className="text-xs text-stone-300">&</span>
+              <PlayerDropdown
+                players={players} value={pair[1]} assignedIds={assignedIds}
+                currentSlotValue={pair[1]} onChange={(id) => updatePair(pairIdx, 1, id)}
+                disabled={isLocked || saving || isPending}
+              />
+            </div>
+          </div>
+        );
+      })}
 
       {unassigned.length > 0 && !isOdd && (
         <p className="text-xs text-amber-600">
