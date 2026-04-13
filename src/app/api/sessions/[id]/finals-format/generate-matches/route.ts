@@ -47,7 +47,10 @@ function generateFixedPartnerMatches(pairs: SavedPair[], groupLabel: string, ses
   }));
 }
 
-// ── Playoffs: rotating partners, exact N matches per player ─────────────────
+// ── Playoffs: rotating partners, EXACTLY N matches per player ────────────────
+// Uses a deck-based algorithm: each player appears matchesPerPlayer times in a
+// shuffled deck, dealt into groups of 4. Duplicates within a group are resolved
+// by swapping with later positions. Retries with fresh shuffles if stuck.
 function generatePlayoffsMatches(
   playerIds: string[],
   groupLabel: string,
@@ -57,16 +60,108 @@ function generatePlayoffsMatches(
   const n = playerIds.length;
   if (n < 4) return [];
 
-  // Total matches = matchesPerPlayer * n / 4  (guaranteed integer by caller)
   const totalMatches = (matchesPerPlayer * n) / 4;
 
-  // Each player has exactly matchesPerPlayer slots to fill
-  const slotsRemaining = new Map<string, number>();
-  const partnerCount = new Map<string, Map<string, number>>();
-  for (const id of playerIds) {
-    slotsRemaining.set(id, matchesPerPlayer);
-    partnerCount.set(id, new Map());
+  // Try up to 50 shuffles to find a valid deal
+  for (let attempt = 0; attempt < 50; attempt++) {
+    const result = tryDeal(playerIds, totalMatches, matchesPerPlayer, groupLabel, sessionId);
+    if (result) return result;
   }
+
+  // Should never reach here for valid inputs, but return empty as safety
+  return [];
+}
+
+function tryDeal(
+  playerIds: string[],
+  totalMatches: number,
+  matchesPerPlayer: number,
+  groupLabel: string,
+  sessionId: string
+) {
+  // Build deck: each player appears exactly matchesPerPlayer times
+  const deck: string[] = [];
+  for (const id of playerIds) {
+    for (let i = 0; i < matchesPerPlayer; i++) {
+      deck.push(id);
+    }
+  }
+
+  // Shuffle
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+
+  // Deal into groups of 4, fixing duplicates by swapping with later positions
+  const groups: [string, string, string, string][] = [];
+
+  for (let m = 0; m < totalMatches; m++) {
+    const start = m * 4;
+    // Fix duplicates within this group
+    for (let i = start; i < start + 4; i++) {
+      // Check if deck[i] already appears in positions start..i-1
+      let hasDup = false;
+      for (let j = start; j < i; j++) {
+        if (deck[i] === deck[j]) { hasDup = true; break; }
+      }
+      if (!hasDup) continue;
+
+      // Find a swap candidate in remaining deck (positions after this group)
+      let swapped = false;
+      for (let k = start + 4; k < deck.length; k++) {
+        // Candidate must not duplicate anything already in this group (start..i-1)
+        let candidateOk = true;
+        for (let j = start; j < i; j++) {
+          if (deck[k] === deck[j]) { candidateOk = false; break; }
+        }
+        if (!candidateOk) continue;
+
+        // Also check: swapping deck[i] into position k won't break k's future group
+        // (We check the group that position k belongs to)
+        const kGroup = Math.floor(k / 4);
+        const kGroupStart = kGroup * 4;
+        let swapOk = true;
+        // Check if deck[i] (the value we're putting at position k) would duplicate
+        // anything already fixed in k's group (positions kGroupStart..k-1 if they're in the same group)
+        if (kGroup > m) {
+          // k's group hasn't been processed yet, so only check already-dealt positions
+          // which is none — safe to swap
+        } else {
+          // k is in current group range (shouldn't happen since k >= start+4), skip
+          swapOk = false;
+        }
+
+        if (swapOk) {
+          [deck[i], deck[k]] = [deck[k], deck[i]];
+          swapped = true;
+          break;
+        }
+      }
+
+      if (!swapped) {
+        // This shuffle can't produce a valid deal — caller will retry
+        return null;
+      }
+    }
+
+    groups.push([deck[start], deck[start + 1], deck[start + 2], deck[start + 3]]);
+  }
+
+  // Validate: every player must appear exactly matchesPerPlayer times
+  const counts = new Map<string, number>();
+  for (const g of groups) {
+    for (const id of g) {
+      counts.set(id, (counts.get(id) ?? 0) + 1);
+    }
+  }
+  for (const id of playerIds) {
+    if ((counts.get(id) ?? 0) !== matchesPerPlayer) return null;
+  }
+
+  // Build match objects, choosing team splits that maximize partner diversity
+  const partnerCount = new Map<string, Map<string, number>>();
+  for (const id of playerIds) partnerCount.set(id, new Map());
 
   const matches: {
     session_id: string;
@@ -78,64 +173,28 @@ function generatePlayoffsMatches(
     finals_group: string;
   }[] = [];
 
-  for (let round = 0; round < totalMatches; round++) {
-    // Only consider players who still have slots
-    const eligible = playerIds.filter((id) => (slotsRemaining.get(id) ?? 0) > 0);
-    if (eligible.length < 4) break;
+  for (const [a, b, c, d] of groups) {
+    // Try all 3 possible team splits, pick the one with least partner repetition
+    const splits: [string, string, string, string][] = [
+      [a, b, c, d], // (a,b) vs (c,d)
+      [a, c, b, d], // (a,c) vs (b,d)
+      [a, d, b, c], // (a,d) vs (b,c)
+    ];
 
-    let bestMatch: [string, string, string, string] | null = null;
+    let bestSplit = splits[0];
     let bestScore = -Infinity;
-
-    const attempts = Math.min(eligible.length * eligible.length * 3, 400);
-    for (let attempt = 0; attempt < attempts; attempt++) {
-      // Prioritize players with more remaining slots
-      const sorted = [...eligible].sort(
-        (a, b) => (slotsRemaining.get(b) ?? 0) - (slotsRemaining.get(a) ?? 0)
-      );
-
-      let candidates: string[];
-      if (attempt < eligible.length) {
-        // First attempts: take players with most remaining slots
-        candidates = sorted.slice(0, Math.min(8, eligible.length));
-      } else {
-        candidates = [...eligible];
-      }
-
-      const shuffled = [...candidates].sort(() => Math.random() - 0.5);
-      if (shuffled.length < 4) continue;
-      const four = shuffled.slice(0, 4);
-
-      // Try team arrangements: (0,1 vs 2,3) and (0,2 vs 1,3)
-      const arrangements: [string, string, string, string][] = [
-        [four[0], four[1], four[2], four[3]],
-        [four[0], four[2], four[1], four[3]],
-      ];
-
-      for (const arr of arrangements) {
-        let score = 0;
-
-        // Prefer players with more remaining slots (keeps distribution even)
-        for (const id of arr) {
-          score += (slotsRemaining.get(id) ?? 0) * 10;
-        }
-
-        // Penalize repeat partnerships
-        score -= (partnerCount.get(arr[0])?.get(arr[1]) ?? 0) * 25;
-        score -= (partnerCount.get(arr[2])?.get(arr[3]) ?? 0) * 25;
-
-        // Small random tiebreaker
-        score += Math.random() * 2;
-
-        if (score > bestScore) {
-          bestScore = score;
-          bestMatch = arr;
-        }
+    for (const s of splits) {
+      const penalty =
+        (partnerCount.get(s[0])?.get(s[1]) ?? 0) +
+        (partnerCount.get(s[2])?.get(s[3]) ?? 0);
+      const score = -penalty + Math.random() * 0.1; // tiny tiebreaker
+      if (score > bestScore) {
+        bestScore = score;
+        bestSplit = s;
       }
     }
 
-    if (!bestMatch) break;
-
-    const [p1, p2, p3, p4] = bestMatch;
+    const [p1, p2, p3, p4] = bestSplit;
     matches.push({
       session_id: sessionId,
       team1_player1_id: p1,
@@ -146,8 +205,7 @@ function generatePlayoffsMatches(
       finals_group: groupLabel,
     });
 
-    // Decrement slots and track partnerships
-    for (const id of bestMatch) slotsRemaining.set(id, (slotsRemaining.get(id) ?? 0) - 1);
+    // Track partnerships
     partnerCount.get(p1)!.set(p2, (partnerCount.get(p1)!.get(p2) ?? 0) + 1);
     partnerCount.get(p2)!.set(p1, (partnerCount.get(p2)!.get(p1) ?? 0) + 1);
     partnerCount.get(p3)!.set(p4, (partnerCount.get(p3)!.get(p4) ?? 0) + 1);
