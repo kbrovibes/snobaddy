@@ -62,8 +62,11 @@ export default function FinalsSessionTabs({
         <div className="flex gap-1 bg-stone-100 rounded-lg p-0.5">
           {groupLabels.map((g) => {
             const fmt = formats[g];
+            const groupMatches = matches.filter((m) => m.finals_group === g);
+            const allPlayed = groupMatches.length > 0 && groupMatches.every((m) => m.winning_team != null);
             const statusHint = fmt
-              ? fmt.status === "completed" ? "Done"
+              ? allPlayed ? "Done"
+              : fmt.status === "completed" ? "Done"
               : fmt.status === "playoffs_complete" ? "Finals"
               : fmt.status === "matches_generated" ? "Playing"
               : fmt.format_type === "fixed_partner" ? "Fixed" : "Playoffs"

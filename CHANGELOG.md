@@ -29,6 +29,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Auto-generate matches for playoffs** — Saving playoffs format now auto-generates matches in one step, like fixed-partner.
 - **Re-generate matches** — "Re-generate matches" link available when no scores have been entered yet. Disappears once scoring starts.
 - **Player names in standings/matches** — Fixed-partner standings and match list now show player names (e.g. "Karthik & Swathi") instead of "Team 1", "Team 2". Removed duplicate name subtitle in standings table.
+- **Group tab "Done" status** — Tab now shows "Done" when all matches in a group have scores, regardless of the format's internal status.
 
 ### Improved
 - **Instant group moves** — Dragging or changing a player's group now updates instantly in the UI. Changes are saved in batch when you confirm groups, not on every move.
