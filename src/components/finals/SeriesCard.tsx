@@ -80,6 +80,7 @@ export default function SeriesCard({
             team2Label={team2Label}
             isPlayed={isPlayed}
             isLocked={isLocked}
+            seriesDecided={seriesDecided}
             sessionId={sessionId}
             isActive={isActive}
           />
@@ -98,6 +99,7 @@ function GameCard({
   team2Label,
   isPlayed,
   isLocked,
+  seriesDecided,
   sessionId,
   isActive,
 }: {
@@ -107,6 +109,7 @@ function GameCard({
   team2Label: string;
   isPlayed: boolean;
   isLocked: boolean;
+  seriesDecided: boolean;
   sessionId: string;
   isActive: boolean;
 }) {
@@ -155,7 +158,7 @@ function GameCard({
 
   return (
     <div className={`rounded-xl border px-3 py-2.5 transition-colors ${
-      isPlayed ? "bg-emerald-50/50 border-emerald-200" : "bg-white border-stone-200"
+      isPlayed && !seriesDecided ? "bg-emerald-50/50 border-emerald-200" : "bg-white border-stone-200"
     }`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-1.5">
@@ -167,7 +170,7 @@ function GameCard({
               Edit
             </button>
           )}
-          {isPlayed && !editing && (
+          {isPlayed && !editing && !seriesDecided && (
             <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded-full">
               ✓
             </span>
