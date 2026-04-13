@@ -69,7 +69,7 @@ function computeIndividualStandings(
       losses: s.losses,
       played: s.played,
       total: s.total,
-      pts: s.wins * 2,
+      pts: s.pf + s.wins * 2,
       pf: s.pf,
       rank: 0,
       advancesTop4: false,
