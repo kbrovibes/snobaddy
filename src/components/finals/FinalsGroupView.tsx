@@ -112,12 +112,12 @@ export default function FinalsGroupView({
         />
       )}
 
-      {/* Group stage matches */}
-      {matchesGenerated && groupStageMatches.length > 0 && (
-        <FinalsMatchList
-          matches={groupStageMatches}
-          pairsInfo={isFixedPartner ? pairsInfoMap : {}}
-          playerNames={isPlayoffs ? playerNames : undefined}
+      {/* Best-of-3 Series — shown first (latest stage on top) */}
+      {series && (
+        <SeriesCard
+          series={series}
+          seriesMatches={seriesMatches}
+          playerNames={playerNames}
           sessionId={sessionId}
           isActive={isActive}
         />
@@ -145,12 +145,12 @@ export default function FinalsGroupView({
         />
       )}
 
-      {/* Best-of-3 Series */}
-      {series && (
-        <SeriesCard
-          series={series}
-          seriesMatches={seriesMatches}
-          playerNames={playerNames}
+      {/* Group stage matches — scroll down for history */}
+      {matchesGenerated && groupStageMatches.length > 0 && (
+        <FinalsMatchList
+          matches={groupStageMatches}
+          pairsInfo={isFixedPartner ? pairsInfoMap : {}}
+          playerNames={isPlayoffs ? playerNames : undefined}
           sessionId={sessionId}
           isActive={isActive}
         />
