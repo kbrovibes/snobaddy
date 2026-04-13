@@ -151,20 +151,20 @@ function MatchCard({
       {((!isPlayed && isActive) || editing) && (
         <div className="mt-2 flex flex-col gap-2">
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-            <input type="number" min="0" max="99" value={score1} onChange={(e) => setScore1(e.target.value)}
+            <input type="text" inputMode="numeric" pattern="[0-9]*" value={score1} onChange={(e) => setScore1(e.target.value.replace(/\D/g, ""))}
               className="w-full text-center border border-stone-200 rounded-lg py-1.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sky-300 bg-stone-50" placeholder="—" />
             <span className="text-stone-300 text-center w-6">–</span>
-            <input type="number" min="0" max="99" value={score2} onChange={(e) => setScore2(e.target.value)}
+            <input type="text" inputMode="numeric" pattern="[0-9]*" value={score2} onChange={(e) => setScore2(e.target.value.replace(/\D/g, ""))}
               className="w-full text-center border border-stone-200 rounded-lg py-1.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sky-300 bg-stone-50" placeholder="—" />
           </div>
-          <div className="flex gap-2">
+          <div className="flex justify-center gap-2">
             <button onClick={handleSave} disabled={saving || isPending}
-              className="flex-1 text-xs font-semibold text-white bg-stone-900 hover:bg-stone-800 rounded-lg py-2 disabled:opacity-40 transition-colors">
-              {saving ? "Saving…" : "Save Score"}
+              className="px-5 text-xs font-semibold text-white bg-stone-900 hover:bg-stone-800 rounded-lg py-2 disabled:opacity-40 transition-colors">
+              {saving ? "Saving…" : "Save"}
             </button>
             {editing && (
               <button onClick={() => setEditing(false)}
-                className="px-3 text-xs text-stone-400 hover:text-stone-600 border border-stone-200 rounded-lg py-2 transition-colors">
+                className="px-4 text-xs text-stone-400 hover:text-stone-600 border border-stone-200 rounded-lg py-2 transition-colors">
                 Cancel
               </button>
             )}
