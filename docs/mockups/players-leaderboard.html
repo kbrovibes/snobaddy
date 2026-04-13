@@ -12,6 +12,8 @@
     .toggle-knob { transition: transform 0.2s; }
     .awards-scroll { scrollbar-width: none; -ms-overflow-style: none; }
     .awards-scroll::-webkit-scrollbar { display: none; }
+    .step { display: none; }
+    .step.active { display: block; }
   </style>
 </head>
 <body class="bg-stone-200 min-h-screen">
@@ -24,20 +26,24 @@
   <a href="sessions.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🏸 Sessions</a>
   <a href="players-leaderboard.html" class="bg-sky-50 text-sky-700 font-semibold text-xs px-2 py-1.5 rounded-lg">👥 Players & Leaderboard</a>
   <a href="finals-setup.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🏆 Finals Setup</a>
-  <a href="finals-matchday.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day</a>
+  <a href="finals-matchday.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Fixed Partner)</a>
+  <a href="finals-matchday-playoffs.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Playoffs)</a>
 </div>
 
 <div class="ml-48 flex flex-col items-center py-8">
 
   <!-- Step Buttons -->
-  <div class="flex gap-3 mb-6">
-    <button onclick="goTo(0)" id="btn-0" class="px-4 py-2 rounded-lg text-sm font-medium bg-sky-600 text-white">0: Players</button>
-    <button onclick="goTo(1)" id="btn-1" class="px-4 py-2 rounded-lg text-sm font-medium bg-white text-stone-600">1: Player Detail</button>
-    <button onclick="goTo(2)" id="btn-2" class="px-4 py-2 rounded-lg text-sm font-medium bg-white text-stone-600">2: Leaderboard</button>
+  <div class="mb-6 text-center">
+    <h1 class="text-2xl font-bold text-stone-800 mb-3">Players & Leaderboard</h1>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <button onclick="goTo(0)" id="btn-0" class="px-3 py-1.5 text-sm rounded-lg bg-stone-900 text-white font-medium">0 Players</button>
+      <button onclick="goTo(1)" id="btn-1" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">1 Player Detail</button>
+      <button onclick="goTo(2)" id="btn-2" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">2 Leaderboard</button>
+    </div>
   </div>
 
   <!-- Phone Frame -->
-  <div class="w-[390px] min-h-[700px] bg-stone-50 rounded-3xl shadow-2xl overflow-hidden flex flex-col relative">
+  <div class="w-[390px] min-h-[700px] bg-stone-50 rounded-3xl border-4 border-stone-400 shadow-2xl overflow-hidden flex flex-col relative">
 
     <!-- Fixed Header -->
     <header class="h-14 bg-white border-b border-stone-200 flex items-center justify-between px-4 shrink-0">
@@ -58,7 +64,7 @@
     <div class="flex-1 overflow-y-auto pb-16">
 
       <!-- STEP 0: Players Page -->
-      <div id="step-0" class="p-4">
+      <div id="step-0" class="step active p-4">
         <div class="flex items-baseline justify-between mb-3">
           <h1 class="text-lg font-bold text-stone-800">Players</h1>
           <span class="text-xs text-stone-400">32 players</span>
@@ -69,7 +75,6 @@
 
         <!-- Player List -->
         <div class="bg-white rounded-xl shadow-sm divide-y divide-stone-100">
-          <!-- Player rows -->
           <div class="flex items-center justify-between px-4 py-3">
             <div class="flex-1">
               <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Ajay</span>
@@ -111,9 +116,9 @@
 
           <div class="flex items-center justify-between px-4 py-3">
             <div class="flex-1">
-              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Arun</span>
+              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Casey</span>
               <div class="flex items-center gap-1.5 mt-0.5">
-                <span class="text-xs dot-filled">&#9679;&#9679;&#9679;</span><span class="text-xs dot-empty">&#9679;&#9679;</span>
+                <span class="text-xs dot-filled">&#9679;&#9679;&#9679;&#9679;&#9679;</span>
                 <span class="ml-1 text-[10px] text-blue-500">&#10003; verified</span>
               </div>
             </div>
@@ -124,7 +129,7 @@
 
           <div class="flex items-center justify-between px-4 py-3">
             <div class="flex-1">
-              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Deepa</span>
+              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Dana</span>
               <div class="flex items-center gap-1.5 mt-0.5">
                 <span class="text-xs dot-filled">&#9679;&#9679;&#9679;&#9679;</span><span class="text-xs dot-empty">&#9679;</span>
                 <span class="ml-1 text-[10px] text-blue-500">&#10003; verified</span>
@@ -137,20 +142,33 @@
 
           <div class="flex items-center justify-between px-4 py-3">
             <div class="flex-1">
-              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Gautham</span>
+              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Jordan</span>
               <div class="flex items-center gap-1.5 mt-0.5">
                 <span class="text-xs dot-filled">&#9679;&#9679;</span><span class="text-xs dot-empty">&#9679;&#9679;&#9679;</span>
                 <span class="text-[10px] text-stone-300 ml-1">unverified</span>
               </div>
             </div>
-            <div class="w-10 h-5 bg-stone-300 rounded-full relative cursor-pointer toggle-track">
-              <div class="w-4 h-4 bg-white rounded-full absolute top-0.5 left-0.5 shadow toggle-knob"></div>
+            <div class="w-10 h-5 bg-emerald-500 rounded-full relative cursor-pointer toggle-track">
+              <div class="w-4 h-4 bg-white rounded-full absolute top-0.5 right-0.5 shadow toggle-knob"></div>
             </div>
           </div>
 
           <div class="flex items-center justify-between px-4 py-3">
             <div class="flex-1">
-              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Gazal</span>
+              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Karthik</span>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span class="text-xs dot-filled">&#9679;&#9679;&#9679;&#9679;</span><span class="text-xs dot-empty">&#9679;</span>
+                <span class="ml-1 text-[10px] text-blue-500">&#10003; verified</span>
+              </div>
+            </div>
+            <div class="w-10 h-5 bg-emerald-500 rounded-full relative cursor-pointer toggle-track">
+              <div class="w-4 h-4 bg-white rounded-full absolute top-0.5 right-0.5 shadow toggle-knob"></div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between px-4 py-3">
+            <div class="flex-1">
+              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Priya</span>
               <div class="flex items-center gap-1.5 mt-0.5">
                 <span class="text-xs dot-filled">&#9679;&#9679;&#9679;</span><span class="text-xs dot-empty">&#9679;&#9679;</span>
                 <span class="ml-1 text-[10px] text-blue-500">&#10003; verified</span>
@@ -163,20 +181,7 @@
 
           <div class="flex items-center justify-between px-4 py-3">
             <div class="flex-1">
-              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Jeeta</span>
-              <div class="flex items-center gap-1.5 mt-0.5">
-                <span class="text-xs dot-filled">&#9679;&#9679;&#9679;&#9679;&#9679;</span>
-                <span class="ml-1 text-[10px] text-blue-500">&#10003; verified</span>
-              </div>
-            </div>
-            <div class="w-10 h-5 bg-emerald-500 rounded-full relative cursor-pointer toggle-track">
-              <div class="w-4 h-4 bg-white rounded-full absolute top-0.5 right-0.5 shadow toggle-knob"></div>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between px-4 py-3">
-            <div class="flex-1">
-              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Kian</span>
+              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Riley</span>
               <div class="flex items-center gap-1.5 mt-0.5">
                 <span class="text-xs dot-filled">&#9679;&#9679;&#9679;</span><span class="text-xs dot-empty">&#9679;&#9679;</span>
                 <span class="text-[10px] text-stone-300 ml-1">unverified</span>
@@ -189,7 +194,7 @@
 
           <div class="flex items-center justify-between px-4 py-3">
             <div class="flex-1">
-              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Kiran</span>
+              <span class="text-sm font-medium text-sky-600 cursor-pointer" onclick="goTo(1)">Sam</span>
               <div class="flex items-center gap-1.5 mt-0.5">
                 <span class="text-xs dot-filled">&#9679;&#9679;&#9679;</span><span class="text-xs dot-empty">&#9679;&#9679;</span>
                 <span class="ml-1 text-[10px] text-blue-500">&#10003; verified</span>
@@ -200,236 +205,246 @@
             </div>
           </div>
         </div>
-
-        <!-- Add Player Button -->
-        <button class="w-full mt-4 py-2.5 text-sm font-medium text-sky-600 border border-sky-200 rounded-lg bg-white">+ Add Player</button>
       </div>
 
       <!-- STEP 1: Player Detail -->
-      <div id="step-1" class="p-4 hidden">
+      <div id="step-1" class="step p-4">
+        <div class="mb-3">
+          <span class="text-sky-600 text-sm cursor-pointer" onclick="goTo(0)">&larr; All Players</span>
+        </div>
+
+        <!-- Player header -->
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-4">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-sky-100 rounded-full flex items-center justify-center text-sky-700 text-xl font-bold">AR</div>
+            <div>
+              <h2 class="text-lg font-bold text-stone-900">Arjun Reddy</h2>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span class="text-xs dot-filled">&#9679;&#9679;&#9679;&#9679;</span><span class="text-xs dot-empty">&#9679;</span>
+                <span class="text-xs text-stone-400 ml-1">Skill Level 4</span>
+              </div>
+              <span class="text-[10px] text-blue-500 mt-0.5 block">&#10003; verified</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <div class="bg-white rounded-xl shadow-sm p-3 text-center">
+            <div class="text-2xl font-bold text-stone-900">42</div>
+            <div class="text-xs text-stone-400 uppercase tracking-wide">Matches</div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-3 text-center">
+            <div class="text-2xl font-bold text-emerald-600">67%</div>
+            <div class="text-xs text-stone-400 uppercase tracking-wide">Win Rate</div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-3 text-center">
+            <div class="text-2xl font-bold text-stone-900">28</div>
+            <div class="text-xs text-stone-400 uppercase tracking-wide">Wins</div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-3 text-center">
+            <div class="text-2xl font-bold text-stone-400">14</div>
+            <div class="text-xs text-stone-400 uppercase tracking-wide">Losses</div>
+          </div>
+        </div>
+
+        <!-- Session History -->
         <div class="mb-4">
-          <span class="text-sm text-sky-600 cursor-pointer" onclick="goTo(0)">&lt; Players</span>
-        </div>
-
-        <h1 class="text-xl font-bold text-stone-800 mb-1">Arjun</h1>
-        <div class="flex items-center gap-0.5 mb-5">
-          <span class="text-sm dot-filled">&#9679;&#9679;&#9679;&#9679;</span><span class="text-sm dot-empty">&#9679;</span>
-          <span class="text-xs text-stone-400 ml-2">Skill 4/5</span>
-        </div>
-
-        <!-- Stats Card -->
-        <div class="bg-white rounded-xl shadow-sm p-4 mb-5">
-          <div class="grid grid-cols-4 text-center">
-            <div>
-              <div class="text-lg font-bold text-stone-800">24</div>
-              <div class="text-[10px] uppercase text-stone-400 tracking-wide">Matches</div>
+          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-2 block">Recent Sessions</span>
+          <div class="bg-white rounded-xl shadow-sm divide-y divide-stone-100">
+            <div class="flex items-center justify-between px-4 py-3">
+              <span class="text-sm text-stone-700">Mon, Apr 7</span>
+              <span class="text-sm text-emerald-600 font-medium">3W / 1L</span>
             </div>
-            <div>
-              <div class="text-lg font-bold text-stone-800">15</div>
-              <div class="text-[10px] uppercase text-stone-400 tracking-wide">Wins</div>
+            <div class="flex items-center justify-between px-4 py-3">
+              <span class="text-sm text-stone-700">Thu, Apr 3</span>
+              <span class="text-sm text-emerald-600 font-medium">4W / 2L</span>
             </div>
-            <div>
-              <div class="text-lg font-bold text-stone-800">9</div>
-              <div class="text-[10px] uppercase text-stone-400 tracking-wide">Losses</div>
+            <div class="flex items-center justify-between px-4 py-3">
+              <span class="text-sm text-stone-700">Mon, Mar 31</span>
+              <span class="text-sm text-stone-500 font-medium">2W / 3L</span>
             </div>
-            <div>
-              <div class="text-lg font-bold text-emerald-600">63%</div>
-              <div class="text-[10px] uppercase text-stone-400 tracking-wide">Win%</div>
+            <div class="flex items-center justify-between px-4 py-3">
+              <span class="text-sm text-stone-700">Thu, Mar 27</span>
+              <span class="text-sm text-emerald-600 font-medium">5W / 1L</span>
             </div>
-          </div>
-        </div>
-
-        <!-- Season History -->
-        <h2 class="text-sm font-semibold text-stone-700 mb-3">Season History</h2>
-        <div class="bg-white rounded-xl shadow-sm divide-y divide-stone-100 mb-5">
-          <div class="px-4 py-3 flex justify-between items-center">
-            <span class="text-sm text-stone-700">Mon, Apr 7</span>
-            <span class="text-sm font-medium text-stone-600">3W &ndash; 1L</span>
-          </div>
-          <div class="px-4 py-3 flex justify-between items-center">
-            <span class="text-sm text-stone-700">Thu, Apr 3</span>
-            <span class="text-sm font-medium text-stone-600">2W &ndash; 2L</span>
-          </div>
-          <div class="px-4 py-3 flex justify-between items-center">
-            <span class="text-sm text-stone-700">Mon, Mar 31</span>
-            <span class="text-sm font-medium text-stone-600">4W &ndash; 0L</span>
-          </div>
-          <div class="px-4 py-3 flex justify-between items-center">
-            <span class="text-sm text-stone-700">Thu, Mar 27</span>
-            <span class="text-sm font-medium text-stone-600">2W &ndash; 3L</span>
           </div>
         </div>
 
         <!-- AI Poem -->
-        <div class="bg-gradient-to-br from-stone-50 to-stone-100 rounded-xl p-4">
-          <h3 class="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-2">AI Poem</h3>
-          <p class="text-sm italic text-stone-600 leading-relaxed">
-            A smasher named Arjun so keen,<br/>
-            The fiercest the court's ever seen.<br/>
-            With a flick of his wrist,<br/>
-            No shuttle is missed,<br/>
-            He reigns like a badminton queen.
+        <div class="bg-amber-50 rounded-xl p-4 border border-amber-100">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-base">&#9997;&#65039;</span>
+            <span class="text-sm font-semibold text-amber-800">AI Poem</span>
+          </div>
+          <p class="text-sm text-amber-900 leading-relaxed italic">
+            With smash and drop, Arjun takes the court,<br>
+            A level-four who plays the thinking sort.<br>
+            His cross-court clears leave rivals in despair,<br>
+            While shuttlecocks dance softly through the air.
           </p>
         </div>
       </div>
 
       <!-- STEP 2: Leaderboard -->
-      <div id="step-2" class="p-4 hidden">
-        <div class="mb-1">
-          <h1 class="text-lg font-bold text-stone-800">Season Leaderboard</h1>
-          <span class="text-xs text-stone-400">Spring 2026</span>
-        </div>
+      <div id="step-2" class="step p-4">
+        <h1 class="text-lg font-bold text-stone-800 mb-3">Season Leaderboard</h1>
+        <span class="text-xs text-stone-400 block mb-4">Spring 2026 &middot; 12 sessions played</span>
 
         <!-- Award Cards -->
-        <div class="flex gap-2 overflow-x-auto awards-scroll py-3 -mx-1 px-1">
-          <div class="bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-2 shrink-0">
-            <div class="text-sm mb-0.5">&#128481;&#65039; Sultan</div>
-            <div class="text-[10px] text-stone-400 uppercase">Most Wins</div>
-            <div class="text-xs font-medium text-stone-700 mt-1">Arjun &middot; 15W</div>
+        <div class="flex gap-3 overflow-x-auto awards-scroll mb-4 pb-1">
+          <div class="bg-white rounded-xl shadow-sm p-3 min-w-[130px] text-center border-2 border-amber-200">
+            <div class="text-2xl mb-1">&#127942;</div>
+            <div class="text-sm font-bold text-stone-900">Alex T.</div>
+            <div class="text-xs text-amber-600 font-medium">Most Wins (38)</div>
           </div>
-          <div class="bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-2 shrink-0">
-            <div class="text-sm mb-0.5">&#127947;&#65039; Iron Shuttle</div>
-            <div class="text-[10px] text-stone-400 uppercase">Most Matches</div>
-            <div class="text-xs font-medium text-stone-700 mt-1">Kiran &middot; 28M</div>
+          <div class="bg-white rounded-xl shadow-sm p-3 min-w-[130px] text-center border-2 border-sky-200">
+            <div class="text-2xl mb-1">&#128293;</div>
+            <div class="text-sm font-bold text-stone-900">Casey B.</div>
+            <div class="text-xs text-sky-600 font-medium">Best W% (82%)</div>
           </div>
-          <div class="bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-2 shrink-0">
-            <div class="text-sm mb-0.5">&#128142; Untouchable</div>
-            <div class="text-[10px] text-stone-400 uppercase">Best Win%</div>
-            <div class="text-xs font-medium text-stone-700 mt-1">Deepa &middot; 71%</div>
-          </div>
-          <div class="bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-2 shrink-0">
-            <div class="text-sm mb-0.5">&#128165; Cannon</div>
-            <div class="text-[10px] text-stone-400 uppercase">Most Points</div>
-            <div class="text-xs font-medium text-stone-700 mt-1">Arjun &middot; 42pts</div>
+          <div class="bg-white rounded-xl shadow-sm p-3 min-w-[130px] text-center border-2 border-emerald-200">
+            <div class="text-2xl mb-1">&#127992;</div>
+            <div class="text-sm font-bold text-stone-900">Karthik R.</div>
+            <div class="text-xs text-emerald-600 font-medium">Most Played (52)</div>
           </div>
         </div>
 
         <!-- Leaderboard Table -->
-        <div class="bg-white rounded-xl shadow-sm mt-2 overflow-hidden">
-          <table class="w-full">
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+          <table class="w-full text-sm">
             <thead>
-              <tr class="border-b border-stone-100">
-                <th class="text-[11px] uppercase text-stone-400 font-medium text-left pl-4 pr-2 py-2.5"># Player &#9662;</th>
-                <th class="text-[11px] uppercase text-stone-400 font-medium text-center px-2 py-2.5">M</th>
-                <th class="text-[11px] uppercase text-stone-400 font-medium text-center px-2 py-2.5">W</th>
-                <th class="text-[11px] uppercase text-stone-400 font-medium text-center px-2 py-2.5">L</th>
-                <th class="text-[11px] uppercase text-stone-400 font-medium text-right pr-4 pl-2 py-2.5">W% &#9662;</th>
+              <tr class="border-b border-stone-100 text-stone-500 text-xs uppercase tracking-wide">
+                <th class="text-left p-3 font-semibold w-6">#</th>
+                <th class="text-left p-3 font-semibold">Player</th>
+                <th class="text-center p-3 font-semibold w-8">M</th>
+                <th class="text-center p-3 font-semibold w-8">W</th>
+                <th class="text-center p-3 font-semibold w-8">L</th>
+                <th class="text-right p-3 font-semibold w-12">W%</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-stone-50">
-              <tr>
-                <td class="pl-4 pr-2 py-2.5 text-sm"><span class="text-stone-400 mr-1.5">1</span><span class="text-sky-600 font-medium cursor-pointer" onclick="goTo(1)">Deepa</span></td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">20</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">14</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">6</td>
-                <td class="text-right pr-4 pl-2 py-2.5 text-sm font-medium text-emerald-600">70%</td>
+            <tbody>
+              <tr class="border-b border-stone-50 bg-amber-50">
+                <td class="p-3 text-stone-400 text-xs">1</td>
+                <td class="p-3 text-sky-600 font-medium">Casey B.</td>
+                <td class="text-center p-3 text-stone-600">40</td>
+                <td class="text-center p-3 text-stone-600">33</td>
+                <td class="text-center p-3 text-stone-600">7</td>
+                <td class="text-right p-3 text-emerald-600 font-semibold">82%</td>
+              </tr>
+              <tr class="border-b border-stone-50 bg-amber-50">
+                <td class="p-3 text-stone-400 text-xs">2</td>
+                <td class="p-3 text-sky-600 font-medium">Alex T.</td>
+                <td class="text-center p-3 text-stone-600">48</td>
+                <td class="text-center p-3 text-stone-600">38</td>
+                <td class="text-center p-3 text-stone-600">10</td>
+                <td class="text-right p-3 text-emerald-600 font-semibold">79%</td>
+              </tr>
+              <tr class="border-b border-stone-50 bg-amber-50">
+                <td class="p-3 text-stone-400 text-xs">3</td>
+                <td class="p-3 text-sky-600 font-medium">Karthik R.</td>
+                <td class="text-center p-3 text-stone-600">52</td>
+                <td class="text-center p-3 text-stone-600">36</td>
+                <td class="text-center p-3 text-stone-600">16</td>
+                <td class="text-right p-3 text-emerald-600 font-semibold">69%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-stone-400 text-xs">4</td>
+                <td class="p-3 text-sky-600 font-medium">Arjun R.</td>
+                <td class="text-center p-3 text-stone-600">42</td>
+                <td class="text-center p-3 text-stone-600">28</td>
+                <td class="text-center p-3 text-stone-600">14</td>
+                <td class="text-right p-3 text-emerald-600 font-medium">67%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-stone-400 text-xs">5</td>
+                <td class="p-3 text-sky-600 font-medium">Dana K.</td>
+                <td class="text-center p-3 text-stone-600">38</td>
+                <td class="text-center p-3 text-stone-600">24</td>
+                <td class="text-center p-3 text-stone-600">14</td>
+                <td class="text-right p-3 text-emerald-600 font-medium">63%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-stone-400 text-xs">6</td>
+                <td class="p-3 text-sky-600 font-medium">Sam W.</td>
+                <td class="text-center p-3 text-stone-600">35</td>
+                <td class="text-center p-3 text-stone-600">21</td>
+                <td class="text-center p-3 text-stone-600">14</td>
+                <td class="text-right p-3 text-emerald-600 font-medium">60%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-stone-400 text-xs">7</td>
+                <td class="p-3 text-sky-600 font-medium">Priya M.</td>
+                <td class="text-center p-3 text-stone-600">30</td>
+                <td class="text-center p-3 text-stone-600">16</td>
+                <td class="text-center p-3 text-stone-600">14</td>
+                <td class="text-right p-3 text-stone-600">53%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-stone-400 text-xs">8</td>
+                <td class="p-3 text-sky-600 font-medium">Riley N.</td>
+                <td class="text-center p-3 text-stone-600">28</td>
+                <td class="text-center p-3 text-stone-600">14</td>
+                <td class="text-center p-3 text-stone-600">14</td>
+                <td class="text-right p-3 text-stone-600">50%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-stone-400 text-xs">9</td>
+                <td class="p-3 text-sky-600 font-medium">Jordan L.</td>
+                <td class="text-center p-3 text-stone-600">25</td>
+                <td class="text-center p-3 text-stone-600">10</td>
+                <td class="text-center p-3 text-stone-600">15</td>
+                <td class="text-right p-3 text-stone-600">40%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-stone-400 text-xs">10</td>
+                <td class="p-3 text-sky-600 font-medium">Ajay P.</td>
+                <td class="text-center p-3 text-stone-600">22</td>
+                <td class="text-center p-3 text-stone-600">8</td>
+                <td class="text-center p-3 text-stone-600">14</td>
+                <td class="text-right p-3 text-stone-600">36%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-stone-400 text-xs">11</td>
+                <td class="p-3 text-sky-600 font-medium">Alok S.</td>
+                <td class="text-center p-3 text-stone-600">18</td>
+                <td class="text-center p-3 text-stone-600">6</td>
+                <td class="text-center p-3 text-stone-600">12</td>
+                <td class="text-right p-3 text-stone-600">33%</td>
               </tr>
               <tr>
-                <td class="pl-4 pr-2 py-2.5 text-sm"><span class="text-stone-400 mr-1.5">2</span><span class="text-sky-600 font-medium cursor-pointer" onclick="goTo(1)">Arjun</span></td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">24</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">15</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">9</td>
-                <td class="text-right pr-4 pl-2 py-2.5 text-sm font-medium text-emerald-600">63%</td>
-              </tr>
-              <tr>
-                <td class="pl-4 pr-2 py-2.5 text-sm"><span class="text-stone-400 mr-1.5">3</span><span class="text-sky-600 font-medium cursor-pointer" onclick="goTo(1)">Jeeta</span></td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">22</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">13</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">9</td>
-                <td class="text-right pr-4 pl-2 py-2.5 text-sm font-medium text-emerald-600">59%</td>
-              </tr>
-              <tr>
-                <td class="pl-4 pr-2 py-2.5 text-sm"><span class="text-stone-400 mr-1.5">4</span><span class="text-sky-600 font-medium cursor-pointer" onclick="goTo(1)">Gazal</span></td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">18</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">10</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">8</td>
-                <td class="text-right pr-4 pl-2 py-2.5 text-sm font-medium text-emerald-600">56%</td>
-              </tr>
-              <tr>
-                <td class="pl-4 pr-2 py-2.5 text-sm"><span class="text-stone-400 mr-1.5">5</span><span class="text-sky-600 font-medium cursor-pointer" onclick="goTo(1)">Alok</span></td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">16</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">8</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">8</td>
-                <td class="text-right pr-4 pl-2 py-2.5 text-sm font-medium text-stone-600">50%</td>
-              </tr>
-              <tr>
-                <td class="pl-4 pr-2 py-2.5 text-sm"><span class="text-stone-400 mr-1.5">6</span><span class="text-sky-600 font-medium cursor-pointer" onclick="goTo(1)">Kiran</span></td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">28</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">14</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">14</td>
-                <td class="text-right pr-4 pl-2 py-2.5 text-sm font-medium text-stone-600">50%</td>
-              </tr>
-              <tr>
-                <td class="pl-4 pr-2 py-2.5 text-sm"><span class="text-stone-400 mr-1.5">7</span><span class="text-sky-600 font-medium cursor-pointer" onclick="goTo(1)">Ajay</span></td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">14</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">7</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">7</td>
-                <td class="text-right pr-4 pl-2 py-2.5 text-sm font-medium text-stone-600">50%</td>
-              </tr>
-              <tr>
-                <td class="pl-4 pr-2 py-2.5 text-sm"><span class="text-stone-400 mr-1.5">8</span><span class="text-sky-600 font-medium cursor-pointer" onclick="goTo(1)">Kian</span></td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">12</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">6</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">6</td>
-                <td class="text-right pr-4 pl-2 py-2.5 text-sm font-medium text-stone-600">50%</td>
-              </tr>
-              <tr>
-                <td class="pl-4 pr-2 py-2.5 text-sm"><span class="text-stone-400 mr-1.5">9</span><span class="text-sky-600 font-medium cursor-pointer" onclick="goTo(1)">Arun</span></td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">20</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">9</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">11</td>
-                <td class="text-right pr-4 pl-2 py-2.5 text-sm font-medium text-stone-600">45%</td>
-              </tr>
-              <tr>
-                <td class="pl-4 pr-2 py-2.5 text-sm"><span class="text-stone-400 mr-1.5">10</span><span class="text-sky-600 font-medium cursor-pointer" onclick="goTo(1)">Gautham</span></td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">16</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">7</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">9</td>
-                <td class="text-right pr-4 pl-2 py-2.5 text-sm font-medium text-stone-600">44%</td>
-              </tr>
-              <tr>
-                <td class="pl-4 pr-2 py-2.5 text-sm"><span class="text-stone-400 mr-1.5">11</span><span class="text-sky-600 font-medium cursor-pointer" onclick="goTo(1)">Priya</span></td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">10</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">4</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">6</td>
-                <td class="text-right pr-4 pl-2 py-2.5 text-sm font-medium text-stone-600">40%</td>
-              </tr>
-              <tr>
-                <td class="pl-4 pr-2 py-2.5 text-sm"><span class="text-stone-400 mr-1.5">12</span><span class="text-sky-600 font-medium cursor-pointer" onclick="goTo(1)">Ravi</span></td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">14</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">5</td>
-                <td class="text-center px-2 py-2.5 text-sm text-stone-600">9</td>
-                <td class="text-right pr-4 pl-2 py-2.5 text-sm font-medium text-stone-600">36%</td>
+                <td class="p-3 text-stone-400 text-xs">12</td>
+                <td class="p-3 text-sky-600 font-medium">Taylor H.</td>
+                <td class="text-center p-3 text-stone-600">15</td>
+                <td class="text-center p-3 text-stone-600">4</td>
+                <td class="text-center p-3 text-stone-600">11</td>
+                <td class="text-right p-3 text-stone-600">27%</td>
               </tr>
             </tbody>
           </table>
         </div>
-
-        <!-- Include test sessions toggle -->
-        <label class="flex items-center gap-2 mt-4 px-1">
-          <input type="checkbox" class="w-4 h-4 rounded border-stone-300 text-sky-600 focus:ring-sky-500" />
-          <span class="text-xs text-stone-500">Include test sessions</span>
-        </label>
       </div>
 
     </div>
 
     <!-- Fixed Bottom Nav -->
-    <nav class="absolute bottom-0 left-0 right-0 h-14 bg-white border-t border-stone-200 flex items-center justify-around">
-      <button onclick="goTo(0)" id="nav-session" class="flex flex-col items-center gap-0.5 text-stone-400">
-        <span class="text-lg">&#127992;</span>
-        <span class="text-[10px] font-medium">Session</span>
-      </button>
-      <button onclick="goTo(0)" id="nav-players" class="flex flex-col items-center gap-0.5 text-sky-600">
-        <span class="text-lg">&#128101;</span>
-        <span class="text-[10px] font-medium">Players</span>
-      </button>
-      <button onclick="goTo(2)" id="nav-leaderboard" class="flex flex-col items-center gap-0.5 text-stone-400">
-        <span class="text-lg">&#127942;</span>
-        <span class="text-[10px] font-medium">Leaderboard</span>
-      </button>
+    <nav class="bg-white border-t border-stone-100 flex items-center justify-around py-2 shrink-0 absolute bottom-0 left-0 right-0">
+      <div class="flex flex-col items-center cursor-pointer">
+        <span class="text-base">&#127992;</span>
+        <span class="text-xs text-stone-400">Session</span>
+      </div>
+      <div class="flex flex-col items-center cursor-pointer">
+        <span class="text-base">&#128101;</span>
+        <span class="text-xs text-sky-600 font-medium">Players</span>
+      </div>
+      <div class="flex flex-col items-center cursor-pointer" onclick="goTo(2)">
+        <span class="text-base">&#127942;</span>
+        <span class="text-xs text-stone-400">Leaderboard</span>
+      </div>
     </nav>
+
     <div id="step-nav"></div>
+
   </div>
 
   <script>
@@ -439,38 +454,15 @@
     function goTo(step) {
       if (step < 0 || step >= totalSteps) return;
       currentStep = step;
-
-      // Hide all steps
-      document.getElementById('step-0').classList.add('hidden');
-      document.getElementById('step-1').classList.add('hidden');
-      document.getElementById('step-2').classList.add('hidden');
-
-      // Show target step
-      document.getElementById('step-' + step).classList.remove('hidden');
-
-      // Update step buttons
-      for (let i = 0; i <= 2; i++) {
+      document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+      document.getElementById('step-' + step).classList.add('active');
+      for (let i = 0; i < totalSteps; i++) {
         const btn = document.getElementById('btn-' + i);
         if (i === step) {
-          btn.className = 'px-4 py-2 rounded-lg text-sm font-medium bg-sky-600 text-white';
+          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-stone-900 text-white font-medium';
         } else {
-          btn.className = 'px-4 py-2 rounded-lg text-sm font-medium bg-white text-stone-600';
+          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300';
         }
-      }
-
-      // Update bottom nav
-      const navSession = document.getElementById('nav-session');
-      const navPlayers = document.getElementById('nav-players');
-      const navLeaderboard = document.getElementById('nav-leaderboard');
-
-      navSession.className = 'flex flex-col items-center gap-0.5 text-stone-400';
-      navPlayers.className = 'flex flex-col items-center gap-0.5 text-stone-400';
-      navLeaderboard.className = 'flex flex-col items-center gap-0.5 text-stone-400';
-
-      if (step === 0 || step === 1) {
-        navPlayers.className = 'flex flex-col items-center gap-0.5 text-sky-600';
-      } else if (step === 2) {
-        navLeaderboard.className = 'flex flex-col items-center gap-0.5 text-sky-600';
       }
       updateNav();
     }
@@ -498,6 +490,8 @@
 
     goTo(0);
   </script>
+
 </div><!-- end ml-48 wrapper -->
+
 </body>
 </html>

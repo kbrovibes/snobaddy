@@ -20,26 +20,22 @@
   <a href="sessions.html" class="bg-sky-50 text-sky-700 font-semibold text-xs px-2 py-1.5 rounded-lg">🏸 Sessions</a>
   <a href="players-leaderboard.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">👥 Players & Leaderboard</a>
   <a href="finals-setup.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🏆 Finals Setup</a>
-  <a href="finals-matchday.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Fixed Partner)</a>
-  <a href="finals-matchday-playoffs.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Playoffs)</a>
+  <a href="finals-matchday.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day</a>
 </div>
 
 <div class="ml-48 flex flex-col items-center py-8">
 
   <!-- Step navigation -->
-  <div class="mb-6 text-center">
-    <h1 class="text-2xl font-bold text-stone-800 mb-3">Sessions</h1>
-    <div class="flex gap-2 flex-wrap justify-center">
-      <button onclick="goTo(0)" id="btn-0" class="px-3 py-1.5 text-sm rounded-lg bg-stone-900 text-white font-medium">0 Active Session</button>
-      <button onclick="goTo(1)" id="btn-1" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">1 No Active</button>
-      <button onclick="goTo(2)" id="btn-2" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">2 Player View</button>
-      <button onclick="goTo(3)" id="btn-3" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">3 Scoreboard</button>
-      <button onclick="goTo(4)" id="btn-4" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">4 Record Match</button>
-    </div>
+  <div class="flex gap-2 mb-6 flex-wrap justify-center">
+    <button onclick="goTo(0)" id="btn-0" class="px-3 py-1.5 text-sm rounded-lg bg-stone-900 text-white">0: Active Session</button>
+    <button onclick="goTo(1)" id="btn-1" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700">1: No Active</button>
+    <button onclick="goTo(2)" id="btn-2" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700">2: Player View</button>
+    <button onclick="goTo(3)" id="btn-3" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700">3: Scoreboard</button>
+    <button onclick="goTo(4)" id="btn-4" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700">4: Record Match</button>
   </div>
 
   <!-- Phone frame -->
-  <div class="w-[390px] min-h-[700px] bg-stone-50 rounded-3xl border-4 border-stone-400 shadow-2xl overflow-hidden flex flex-col relative">
+  <div class="w-[390px] min-h-[700px] bg-stone-50 rounded-3xl shadow-2xl overflow-hidden flex flex-col relative">
 
     <!-- Fixed Header -->
     <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0 z-10">
@@ -249,6 +245,7 @@
         <div>
           <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-3 block">Who's Here</span>
           <div class="flex flex-col gap-2">
+            <!-- Player rows -->
             <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <span class="text-sky-600 text-sm font-medium w-28">Karthik R.</span>
@@ -470,7 +467,7 @@
   </div>
 
   <script>
-    const totalSteps = 5;
+    const totalSteps = document.querySelectorAll('.step').length;
     let currentStep = 0;
 
     function goTo(step) {
@@ -478,12 +475,13 @@
       currentStep = step;
       document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
       document.getElementById('step-' + step).classList.add('active');
-      for (let i = 0; i < totalSteps; i++) {
+      // Update buttons
+      for (let i = 0; i <= 4; i++) {
         const btn = document.getElementById('btn-' + i);
         if (i === step) {
-          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-stone-900 text-white font-medium';
+          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-stone-900 text-white';
         } else {
-          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300';
+          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700';
         }
       }
       updateNav();

@@ -19,8 +19,7 @@
   <a href="sessions.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🏸 Sessions</a>
   <a href="players-leaderboard.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">👥 Players & Leaderboard</a>
   <a href="finals-setup.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🏆 Finals Setup</a>
-  <a href="finals-matchday.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Fixed Partner)</a>
-  <a href="finals-matchday-playoffs.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Playoffs)</a>
+  <a href="finals-matchday.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day</a>
 </div>
 
 <div class="ml-48 flex flex-col items-center py-8">
@@ -138,7 +137,7 @@
   </div>
 
   <script>
-    const totalSteps = 5;
+    const totalSteps = document.querySelectorAll('[id^="step-"]').length;
     let currentStep = 0;
 
     function goTo(step) {

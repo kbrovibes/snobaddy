@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finals Setup — Snobaddy Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #e7e5e4; /* stone-200 */ }
+    .step-btn.active { background: #0284c7; color: #fff; }
+    .step-btn { cursor: pointer; }
+  </style>
+</head>
+<body class="min-h-screen bg-stone-200">
+
+<!-- Sidebar TOC -->
+<div class="fixed left-0 top-0 bottom-0 w-48 bg-white border-r border-stone-200 py-6 px-3 flex flex-col gap-1 overflow-y-auto z-50">
+  <a href="index.html" class="text-xs font-bold text-stone-900 px-2 py-1.5 mb-2">🏸 Snobaddy Mockups</a>
+  <a href="auth-flow.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🔐 Auth Flow</a>
+  <a href="account-linking.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🔗 Account Linking</a>
+  <a href="sessions.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🏸 Sessions</a>
+  <a href="players-leaderboard.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">👥 Players & Leaderboard</a>
+  <a href="finals-setup.html" class="bg-sky-50 text-sky-700 font-semibold text-xs px-2 py-1.5 rounded-lg">🏆 Finals Setup</a>
+  <a href="finals-matchday.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day</a>
+</div>
+
+<div class="ml-48 flex flex-col items-center py-6 gap-4">
+
+  <!-- Title bar with step buttons -->
+  <div class="flex items-center gap-2 flex-wrap justify-center">
+    <span class="text-sm font-bold text-stone-700 mr-2">Finals Setup Flow:</span>
+    <button onclick="goTo(0)" id="sb0" class="step-btn px-3 py-1 rounded-full text-xs font-medium bg-stone-100 text-stone-600 border border-stone-300">0 Home</button>
+    <button onclick="goTo(1)" id="sb1" class="step-btn px-3 py-1 rounded-full text-xs font-medium bg-stone-100 text-stone-600 border border-stone-300">1 Players (Edit)</button>
+    <button onclick="goTo(2)" id="sb2" class="step-btn px-3 py-1 rounded-full text-xs font-medium bg-stone-100 text-stone-600 border border-stone-300">2 Players (Saved)</button>
+    <button onclick="goTo(3)" id="sb3" class="step-btn px-3 py-1 rounded-full text-xs font-medium bg-stone-100 text-stone-600 border border-stone-300">3 Groups</button>
+    <button onclick="goTo(4)" id="sb4" class="step-btn px-3 py-1 rounded-full text-xs font-medium bg-stone-100 text-stone-600 border border-stone-300">4 Sessions</button>
+    <button onclick="goTo(5)" id="sb5" class="step-btn px-3 py-1 rounded-full text-xs font-medium bg-stone-100 text-stone-600 border border-stone-300">5 Sessions Created</button>
+  </div>
+
+  <!-- Phone frame -->
+  <div class="relative bg-stone-50 rounded-3xl shadow-2xl overflow-hidden" style="width:390px; min-height:700px;">
+
+    <!-- Fixed Header -->
+    <div class="sticky top-0 z-50 h-14 bg-white flex items-center justify-between px-4 border-b border-stone-100">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">&#127992;</span>
+        <div class="leading-tight">
+          <div class="text-sm font-bold text-stone-800">Serve Snoqualmie</div>
+          <div class="text-[10px] font-semibold tracking-widest text-stone-400 uppercase">Badminton</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-xs text-stone-400">Logout</span>
+        <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white text-xs font-bold">KR</div>
+      </div>
+    </div>
+
+    <!-- Scrollable content area -->
+    <div class="pb-20 px-4 pt-4" id="content">
+      <!-- JS will populate -->
+    </div>
+
+    <!-- Fixed Bottom Nav -->
+    <div class="absolute bottom-0 left-0 right-0 h-16 bg-white border-t border-stone-200 flex items-center justify-around">
+      <div class="flex flex-col items-center">
+        <svg class="w-5 h-5 text-sky-600" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v2.586l1.707-1.707a1 1 0 111.414 1.414L12.414 7H15a1 1 0 110 2h-4a1 1 0 01-1-1V4a1 1 0 011-1zM5 8a1 1 0 011-1h2.586L6.879 5.293a1 1 0 011.414-1.414L10 5.586V3a1 1 0 112 0v4a1 1 0 01-1 1H7a1 1 0 01-1-1zm0 4a1 1 0 011 1v2a3 3 0 003 3h2a3 3 0 003-3v-2a1 1 0 112 0v2a5 5 0 01-5 5h-2a5 5 0 01-5-5v-2a1 1 0 011-1z"/></svg>
+        <span class="text-[10px] font-semibold text-sky-600 mt-0.5">Session</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <svg class="w-5 h-5 text-stone-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+        <span class="text-[10px] font-medium text-stone-400 mt-0.5">Players</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <svg class="w-5 h-5 text-stone-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clip-rule="evenodd"/></svg>
+        <span class="text-[10px] font-medium text-stone-400 mt-0.5">Leaderboard</span>
+      </div>
+    </div>
+    <div id="step-nav"></div>
+  </div>
+
+  <script>
+    const players = ['Ajay','Alok','Arjun','Arun','Deepa','Gautham','Gazal','Jeeta','Kian','Kiran','Kishore','Michael','Miz','Monsur','Nanda','Nihita','Rakesh','Revo','Robyn','Sahit','Sai','Sekhar','Swathi','Tridib','Vinoj','Zillur'];
+
+    // SVG workflow arrows
+    function workflowArrows(step) {
+      // step: 0=home (Players active), 1=players edit, 2=players saved, 3=groups, 4=sessions, 5=sessions created
+      let p = {fill:'#0284c7', text:'white', label:'1 Players', done:false};
+      let g = {fill:'white', stroke:'#a8a29e', text:'#57534e', label:'2 Groups', done:false, dashed:false};
+      let s = {fill:'white', stroke:'#d6d3d1', text:'#a8a29e', label:'3 Sessions', done:false, dashed:true, locked:true};
+
+      if (step === 0 || step === 1 || step === 2) {
+        // Players active
+        p = {fill:'#0284c7', text:'white', label:'1 Players', done:false};
+        g = {fill:'white', stroke:'#a8a29e', text:'#57534e', label:'2 Groups', done:false, dashed:false};
+        s = {fill:'white', stroke:'#d6d3d1', text:'#a8a29e', label:'3 Sessions', done:false, dashed:true, locked:true};
+      } else if (step === 3) {
+        // Groups active, Players done
+        p = {fill:'#16a34a', text:'white', label:'\\u2713 Players', done:true};
+        g = {fill:'#0284c7', text:'white', label:'2 Groups', done:false};
+        s = {fill:'white', stroke:'#d6d3d1', text:'#a8a29e', label:'3 Sessions', done:false, dashed:true, locked:true};
+      } else if (step === 4 || step === 5) {
+        // Sessions active, Players+Groups done
+        p = {fill:'#16a34a', text:'white', label:'\\u2713 Players', done:true};
+        g = {fill:'#16a34a', text:'white', label:'\\u2713 Groups', done:true};
+        s = {fill:'#0284c7', text:'white', label:'3 Sessions', done:false};
+      }
+
+      function arrow(cfg, position) {
+        // position: 'first', 'middle', 'last'
+        const w = 112, h = 40, notch = 10;
+        let path;
+        if (position === 'first') {
+          // flat left, pointed right
+          path = `M0,0 L${w-notch},0 L${w},${h/2} L${w-notch},${h} L0,${h} Z`;
+        } else {
+          // notched left, pointed right
+          path = `M0,0 L${w-notch},0 L${w},${h/2} L${w-notch},${h} L0,${h} L${notch},${h/2} Z`;
+        }
+
+        const strokeAttr = cfg.stroke ? `stroke="${cfg.stroke}" stroke-width="1.5"` : '';
+        const dashAttr = cfg.dashed ? 'stroke-dasharray="4 3"' : '';
+        const fillAttr = `fill="${cfg.fill}"`;
+
+        let lockIcon = '';
+        if (cfg.locked) {
+          lockIcon = '<tspan style="font-size:10px"> &#128274;</tspan>';
+        }
+
+        return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" class="shrink-0">
+          <path d="${path}" ${fillAttr} ${strokeAttr} ${dashAttr} />
+          <text x="${position === 'first' ? w/2 - 2 : w/2 + 4}" y="${h/2 + 1}" text-anchor="middle" dominant-baseline="middle" fill="${cfg.text}" font-size="12" font-weight="600">${cfg.label}${lockIcon}</text>
+        </svg>`;
+      }
+
+      return `<div class="flex items-center gap-1 justify-center mb-4">
+        ${arrow(p, 'first')}
+        ${arrow(g, 'middle')}
+        ${arrow(s, 'last')}
+      </div>`;
+    }
+
+    function dangerButtons() {
+      return `<div class="mt-6 space-y-2">
+        <button class="w-full py-2 rounded-xl border border-amber-400 text-amber-600 text-sm font-medium">Reset to Draft (keep players)</button>
+        <button class="w-full py-2 rounded-xl border border-red-400 text-red-600 text-sm font-medium">Delete Finals Event</button>
+      </div>`;
+    }
+
+    function pillsReadonly() {
+      return `<div class="flex flex-wrap gap-2">${players.map(n => `<span class="rounded-full bg-stone-100 text-stone-700 text-sm px-3 py-1">${n}</span>`).join('')}</div>`;
+    }
+
+    function pillsEditable() {
+      return `<div class="flex flex-wrap gap-2">${players.map(n => `<span class="rounded-full bg-stone-100 text-stone-700 text-sm px-3 py-1 flex items-center gap-1">${n}<button class="text-stone-400 hover:text-red-500 text-xs ml-0.5">&times;</button></span>`).join('')}</div>`;
+    }
+
+    const screens = {
+      0: () => `
+        <div class="mb-3">
+          <a class="text-sky-600 text-sm font-medium cursor-pointer">&lt; Sessions</a>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-xl">&#127942;</span>
+          <h1 class="text-xl font-bold text-stone-800">Spring 2026 Finals</h1>
+        </div>
+        <p class="text-stone-400 text-sm mb-5">Spring 2026</p>
+        ${workflowArrows(0)}
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-4">
+          <p class="text-sm text-stone-600">Welcome to the Finals setup wizard. Use the steps above to configure your finals event.</p>
+          <ul class="mt-3 text-sm text-stone-500 space-y-1">
+            <li><span class="font-semibold text-stone-700">Step 1:</span> Select which players are in the finals pool</li>
+            <li><span class="font-semibold text-stone-700">Step 2:</span> Generate and assign groups (A, B, C)</li>
+            <li><span class="font-semibold text-stone-700">Step 3:</span> Schedule finals session days</li>
+          </ul>
+        </div>
+        <button onclick="goTo(1)" class="w-full py-3 bg-sky-600 text-white rounded-xl font-semibold text-sm">Start Setup &rarr; Select Players</button>
+        ${dangerButtons()}
+      `,
+
+      1: () => `
+        <div class="mb-3">
+          <a class="text-sky-600 text-sm font-medium cursor-pointer">&lt; Sessions</a>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-xl">&#127942;</span>
+          <h1 class="text-xl font-bold text-stone-800">Spring 2026 Finals</h1>
+        </div>
+        <p class="text-stone-400 text-sm mb-4">Spring 2026</p>
+        ${workflowArrows(1)}
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-sm font-semibold text-stone-700">26 players in pool <span class="text-amber-500">(unsaved)</span></p>
+          <button class="px-3 py-1 border border-sky-600 text-sky-600 rounded-lg text-xs font-medium">Edit</button>
+        </div>
+        <div class="mb-3">
+          <input type="text" placeholder="Search player to add..." class="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm text-stone-600 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-sky-300" />
+        </div>
+        <div class="mb-3">
+          <a class="text-sky-600 text-xs font-medium cursor-pointer">+ Add all season players</a>
+        </div>
+        ${pillsEditable()}
+        <div class="mt-4 space-y-2">
+          <button onclick="goTo(2)" class="w-full py-3 bg-sky-600 text-white rounded-xl font-semibold text-sm">Save 26 Players</button>
+          <button onclick="goTo(0)" class="w-full py-2 text-stone-500 text-sm font-medium">Cancel</button>
+        </div>
+        ${dangerButtons()}
+      `,
+
+      2: () => `
+        <div class="mb-3">
+          <a class="text-sky-600 text-sm font-medium cursor-pointer">&lt; Sessions</a>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-xl">&#127942;</span>
+          <h1 class="text-xl font-bold text-stone-800">Spring 2026 Finals</h1>
+        </div>
+        <p class="text-stone-400 text-sm mb-4">Spring 2026</p>
+        ${workflowArrows(2)}
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-sm font-semibold text-stone-700">26 players in pool</p>
+          <button onclick="goTo(1)" class="px-3 py-1 border border-sky-600 text-sky-600 rounded-lg text-xs font-medium">Edit</button>
+        </div>
+        ${pillsReadonly()}
+        <div class="mt-4">
+          <button onclick="goTo(3)" class="w-full py-3 bg-stone-900 text-white rounded-xl font-semibold text-sm">Next: Generate Groups &rarr;</button>
+        </div>
+        ${dangerButtons()}
+      `,
+
+      3: () => {
+        const groupA = [
+          {rank:1, name:'Kiran', skill:5, score:87},
+          {rank:2, name:'Sekhar', skill:5, score:85},
+          {rank:3, name:'Arjun', skill:4, score:82},
+          {rank:4, name:'Gazal', skill:4, score:80},
+          {rank:5, name:'Monsur', skill:4, score:78},
+          {rank:6, name:'Sai', skill:4, score:76},
+          {rank:7, name:'Rakesh', skill:4, score:74},
+          {rank:8, name:'Vinoj', skill:4, score:72},
+          {rank:9, name:'Tridib', skill:3, score:70},
+          {rank:10, name:'Sahit', skill:3, score:68},
+        ];
+        const groupB = [
+          {rank:11, name:'Arun', skill:3, score:66},
+          {rank:12, name:'Gautham', skill:3, score:64},
+          {rank:13, name:'Kishore', skill:3, score:62},
+          {rank:14, name:'Michael', skill:3, score:60},
+          {rank:15, name:'Alok', skill:3, score:58},
+          {rank:16, name:'Jeeta', skill:3, score:56},
+          {rank:17, name:'Nanda', skill:2, score:54},
+          {rank:18, name:'Revo', skill:2, score:52},
+        ];
+        const groupC = [
+          {rank:19, name:'Ajay', skill:2, score:50},
+          {rank:20, name:'Deepa', skill:2, score:48},
+          {rank:21, name:'Kian', skill:2, score:46},
+          {rank:22, name:'Miz', skill:2, score:44},
+          {rank:23, name:'Nihita', skill:1, score:42},
+          {rank:24, name:'Robyn', skill:1, score:40},
+          {rank:25, name:'Swathi', skill:1, score:38},
+          {rank:26, name:'Zillur', skill:1, score:36},
+        ];
+
+        function dots(n) {
+          let d = '';
+          for (let i = 0; i < 5; i++) {
+            d += `<span class="inline-block w-2 h-2 rounded-full ${i < n ? 'bg-sky-500' : 'bg-stone-200'}"></span>`;
+          }
+          return `<span class="flex gap-0.5">${d}</span>`;
+        }
+
+        function dropdown(current) {
+          return `<select class="text-xs border border-stone-200 rounded px-1 py-0.5 bg-white text-stone-600">
+            <option ${current==='A'?'selected':''}>A</option>
+            <option ${current==='B'?'selected':''}>B</option>
+            <option ${current==='C'?'selected':''}>C</option>
+          </select>`;
+        }
+
+        function playerRow(p, group) {
+          return `<tr class="border-b border-stone-100">
+            <td class="py-2 pr-2 text-xs text-stone-400 text-right">${p.rank}</td>
+            <td class="py-2 text-sm font-medium text-stone-800">${p.name}</td>
+            <td class="py-2 text-center">${dots(p.skill)}</td>
+            <td class="py-2 text-center text-sm text-stone-600">${p.score}</td>
+            <td class="py-2 text-center">${dropdown(group)}</td>
+          </tr>`;
+        }
+
+        function groupHeader(label, color, bgColor, count) {
+          return `<tr><td colspan="5" class="pt-4 pb-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-xs font-bold ${bgColor} ${color}">${label}</span>
+              <span class="text-xs text-stone-400">${count}</span>
+            </div>
+          </td></tr>`;
+        }
+
+        let tableRows = '';
+        tableRows += groupHeader('Group A', 'text-sky-700', 'bg-sky-100', groupA.length);
+        groupA.forEach(p => tableRows += playerRow(p, 'A'));
+        tableRows += groupHeader('Group B', 'text-amber-700', 'bg-amber-100', groupB.length);
+        groupB.forEach(p => tableRows += playerRow(p, 'B'));
+        tableRows += groupHeader('Group C', 'text-stone-600', 'bg-stone-100', groupC.length);
+        groupC.forEach(p => tableRows += playerRow(p, 'C'));
+
+        return `
+          <div class="mb-3">
+            <a class="text-sky-600 text-sm font-medium cursor-pointer">&lt; Sessions</a>
+          </div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xl">&#127942;</span>
+            <h1 class="text-xl font-bold text-stone-800">Spring 2026 Finals</h1>
+          </div>
+          <p class="text-stone-400 text-sm mb-4">Spring 2026</p>
+          ${workflowArrows(3)}
+          <div class="flex gap-2 mb-4">
+            <button class="flex-1 py-2.5 bg-stone-900 text-white rounded-xl font-semibold text-sm">Generate Breakdown</button>
+            <button onclick="goTo(2)" class="flex-1 py-2.5 border border-stone-200 text-stone-600 rounded-xl font-medium text-sm">Edit Players</button>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-3 overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="text-xs text-stone-400 border-b border-stone-200">
+                  <th class="pb-2 pr-2 text-right w-8">#</th>
+                  <th class="pb-2">Name</th>
+                  <th class="pb-2 text-center">Skill</th>
+                  <th class="pb-2 text-center">Score</th>
+                  <th class="pb-2 text-center">Group</th>
+                </tr>
+              </thead>
+              <tbody>${tableRows}</tbody>
+            </table>
+          </div>
+          <div class="mt-4">
+            <button onclick="goTo(4)" class="w-full py-3 bg-green-700 text-white rounded-xl font-semibold text-sm">Confirm Groups &rarr; Proceed to Sessions</button>
+          </div>
+          ${dangerButtons()}
+        `;
+      },
+
+      4: () => `
+        <div class="mb-3">
+          <a class="text-sky-600 text-sm font-medium cursor-pointer">&lt; Sessions</a>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-xl">&#127942;</span>
+          <h1 class="text-xl font-bold text-stone-800">Spring 2026 Finals</h1>
+        </div>
+        <p class="text-stone-400 text-sm mb-4">Spring 2026</p>
+        ${workflowArrows(4)}
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-4">
+          <h3 class="text-sm font-bold text-stone-800 mb-4">Schedule Finals Days</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-1">Day 1 &mdash; Groups A &amp; B</label>
+              <input type="date" value="2026-04-20" class="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-sky-300" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-1">Day 2 &mdash; Group C</label>
+              <input type="date" value="2026-04-23" class="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-sky-300" />
+            </div>
+          </div>
+        </div>
+        <button onclick="goTo(5)" class="w-full py-3 bg-stone-900 text-white rounded-xl font-semibold text-sm">Generate Finals Sessions</button>
+        ${dangerButtons()}
+      `,
+
+      5: () => `
+        <div class="mb-3">
+          <a class="text-sky-600 text-sm font-medium cursor-pointer">&lt; Sessions</a>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-xl">&#127942;</span>
+          <h1 class="text-xl font-bold text-stone-800">Spring 2026 Finals</h1>
+        </div>
+        <p class="text-stone-400 text-sm mb-4">Spring 2026</p>
+        ${workflowArrows(5)}
+        <div class="space-y-3 mb-4">
+          <div class="bg-white rounded-xl shadow-sm p-4 flex items-center justify-between cursor-pointer hover:bg-stone-50">
+            <div>
+              <p class="text-sm font-bold text-stone-800">Finals Day 1 &mdash; Groups A &amp; B</p>
+              <p class="text-xs text-stone-400 mt-0.5">Mon, Apr 20, 2026</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">Starting soon</span>
+              <span class="text-stone-300">&rarr;</span>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-4 flex items-center justify-between cursor-pointer hover:bg-stone-50">
+            <div>
+              <p class="text-sm font-bold text-stone-800">Finals Day 2 &mdash; Group C</p>
+              <p class="text-xs text-stone-400 mt-0.5">Thu, Apr 23, 2026</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">Starting soon</span>
+              <span class="text-stone-300">&rarr;</span>
+            </div>
+          </div>
+        </div>
+        <p class="text-xs text-stone-400 text-center mb-2">Sessions are set. Open each session page to start play.</p>
+        ${dangerButtons()}
+      `
+    };
+
+    const totalSteps = Object.keys(screens).length;
+    let currentStep = 0;
+
+    function goTo(step) {
+      if (step < 0 || step >= totalSteps) return;
+      currentStep = step;
+      document.getElementById('content').innerHTML = screens[step]();
+      // Update step buttons
+      for (let i = 0; i <= 5; i++) {
+        const btn = document.getElementById('sb' + i);
+        if (i === step) {
+          btn.classList.add('active');
+          btn.classList.remove('bg-stone-100', 'text-stone-600');
+        } else {
+          btn.classList.remove('active');
+          btn.classList.add('bg-stone-100', 'text-stone-600');
+        }
+      }
+      // Scroll content to top
+      document.getElementById('content').scrollTop = 0;
+      updateNav();
+    }
+
+    function updateNav() {
+      const nav = document.getElementById('step-nav');
+      if (!nav) return;
+      const isFirst = currentStep === 0;
+      const isLast = currentStep === totalSteps - 1;
+      nav.innerHTML = `
+        <div class="flex items-center justify-between px-4 py-3 border-t border-stone-100 bg-white">
+          ${isFirst ? '<div></div>' : '<button onclick="goTo(currentStep-1)" class="text-sm text-stone-500 hover:text-stone-700">&lt; Back</button>'}
+          ${isLast
+            ? '<a href="index.html" class="text-sm text-sky-500 hover:text-sky-700">\u2190 All Mockups</a>'
+            : '<button onclick="goTo(currentStep+1)" class="text-sm font-semibold text-sky-600 hover:text-sky-800">Next &gt;</button>'
+          }
+        </div>
+      `;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') goTo(currentStep + 1);
+      if (e.key === 'ArrowLeft') goTo(currentStep - 1);
+    });
+
+    // Initialize
+    goTo(0);
+  </script>
+
+</div><!-- end ml-48 wrapper -->
+
+</body>
+</html>
