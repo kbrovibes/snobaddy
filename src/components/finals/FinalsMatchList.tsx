@@ -23,11 +23,50 @@ export interface PairInfo {
   player2_id: string;
 }
 
+// Generate a fun blended team name from two first names
+// e.g. Karthik + Sahit → KarHit, Varun + Vasu → VaVa
+function generateFunName(name1: string, name2: string): string {
+  const a = name1.split(" ")[0];
+  const b = name2.split(" ")[0];
+
+  // Find a good split point for each name (prefer syllable-ish breaks)
+  // Try splitting at vowel→consonant boundaries for natural feel
+  function splitPoints(name: string): number[] {
+    const vowels = new Set("aeiouAEIOU");
+    const pts: number[] = [];
+    for (let i = 2; i <= Math.min(name.length - 1, 5); i++) {
+      // Prefer right after a vowel (syllable break)
+      if (vowels.has(name[i - 1]) && !vowels.has(name[i])) pts.unshift(i);
+      else pts.push(i);
+    }
+    if (pts.length === 0) pts.push(Math.ceil(name.length / 2));
+    return pts;
+  }
+
+  const aSplits = splitPoints(a);
+  const bSplits = splitPoints(b);
+
+  // Take prefix of first name + suffix of second name
+  const aPrefix = a.slice(0, aSplits[0]);
+  const bSuffix = b.slice(bSplits[0]);
+
+  // Capitalize nicely
+  const fun = aPrefix + bSuffix.charAt(0).toUpperCase() + bSuffix.slice(1);
+
+  // If too short (< 3), fallback to first 2 + first 2
+  if (fun.length < 3) {
+    return a.slice(0, 2) + b.slice(0, 2).charAt(0).toUpperCase() + b.slice(1, 2);
+  }
+
+  return fun;
+}
+
 function getTeamLabel(
   p1Id: string,
   p2Id: string,
   pairsMap: Map<string, PairInfo>,
-  playerNames: Map<string, string>
+  playerNames: Map<string, string>,
+  funNames?: boolean
 ): { label: string; names: string } {
   // Try pair info first
   for (const pair of pairsMap.values()) {
@@ -41,7 +80,8 @@ function getTeamLabel(
   // Fall back to player names (first name only)
   const n1 = (playerNames.get(p1Id) ?? "?").split(" ")[0];
   const n2 = (playerNames.get(p2Id) ?? "?").split(" ")[0];
-  return { label: `${n1} & ${n2}`, names: `${n1} & ${n2}` };
+  const label = funNames ? generateFunName(n1, n2) : `${n1} & ${n2}`;
+  return { label, names: `${n1} & ${n2}` };
 }
 
 function MatchCard({
@@ -51,11 +91,13 @@ function MatchCard({
   matchNumber,
   sessionId,
   isActive,
+  funNames,
 }: {
   match: FinalsMatch;
   pairsMap: Map<string, PairInfo>;
   playerNames: Map<string, string>;
   matchNumber: number;
+  funNames: boolean;
   sessionId: string;
   isActive: boolean;
 }) {
@@ -67,8 +109,8 @@ function MatchCard({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const team1 = getTeamLabel(match.team1_player1, match.team1_player2, pairsMap, playerNames);
-  const team2 = getTeamLabel(match.team2_player1, match.team2_player2, pairsMap, playerNames);
+  const team1 = getTeamLabel(match.team1_player1, match.team1_player2, pairsMap, playerNames, funNames);
+  const team2 = getTeamLabel(match.team2_player1, match.team2_player2, pairsMap, playerNames, funNames);
   const isPlayed = match.winning_team != null;
   const winnerName = isPlayed
     ? match.winning_team === 1 ? team1.label : team2.label
@@ -183,12 +225,14 @@ export default function FinalsMatchList({
   playerNames: playerNamesProp,
   sessionId,
   isActive,
+  funNames = false,
 }: {
   matches: FinalsMatch[];
   pairsInfo: Record<string, PairInfo[]>;
   playerNames?: Map<string, string>;
   sessionId: string;
   isActive: boolean;
+  funNames?: boolean;
 }) {
   // Build pairs map from all groups (usually just one since parent filters)
   const pairsMap = new Map<string, PairInfo>();
@@ -230,6 +274,7 @@ export default function FinalsMatchList({
             matchNumber={i + 1}
             sessionId={sessionId}
             isActive={isActive}
+            funNames={funNames}
           />
         ))}
       </div>

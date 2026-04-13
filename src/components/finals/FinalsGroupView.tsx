@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import FormatPicker from "./FormatPicker";
 import PairConfigurator from "./PairConfigurator";
 import GenerateMatchesButton from "./GenerateMatchesButton";
@@ -47,6 +47,7 @@ export default function FinalsGroupView({
   isActive,
   isGodMode,
 }: FinalsGroupViewProps) {
+  const [funNames, setFunNames] = useState(false);
   const isFixedPartner = format?.format_type === "fixed_partner";
   const isPlayoffs = format?.format_type === "playoffs";
   const matchesGenerated = format?.status === "matches_generated" || format?.status === "playoffs_complete" || format?.status === "completed";
@@ -151,6 +152,19 @@ export default function FinalsGroupView({
         />
       )}
 
+      {/* Fun team names toggle — testing only */}
+      {matchesGenerated && groupStageMatches.length > 0 && isGodMode && (
+        <div className="flex items-center justify-end gap-2">
+          <span className="text-[11px] text-stone-400">Fun names</span>
+          <button
+            onClick={() => setFunNames(!funNames)}
+            className={`relative w-9 h-5 rounded-full transition-colors ${funNames ? "bg-sky-500" : "bg-stone-300"}`}
+          >
+            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${funNames ? "translate-x-4" : ""}`} />
+          </button>
+        </div>
+      )}
+
       {/* Group stage matches — scroll down for history */}
       {matchesGenerated && groupStageMatches.length > 0 && (
         <FinalsMatchList
@@ -159,6 +173,7 @@ export default function FinalsGroupView({
           playerNames={isPlayoffs ? playerNames : undefined}
           sessionId={sessionId}
           isActive={isActive}
+          funNames={funNames}
         />
       )}
     </div>
