@@ -163,7 +163,7 @@ export default function FinalsStandings({
           <thead>
             <tr className="text-xs text-stone-400 uppercase">
               <th className="text-left py-1.5 pr-2">#</th>
-              <th className="text-left py-1.5">Pair</th>
+              <th className="text-left py-1.5">Team</th>
               <th className="text-center py-1.5 px-1.5">W</th>
               <th className="text-center py-1.5 px-1.5">L</th>
               <th className="text-center py-1.5 px-1.5">PF</th>
@@ -186,15 +186,10 @@ export default function FinalsStandings({
                 >
                   <td className="py-2 pr-2 text-stone-400 font-mono text-xs">{idx + 1}</td>
                   <td className="py-2">
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-stone-800">
-                        {s.label}
-                        {isWinner && " 🏆"}
-                      </span>
-                      <span className="text-[11px] text-stone-400">
-                        {s.player1_name} & {s.player2_name}
-                      </span>
-                    </div>
+                    <span className="font-semibold text-stone-800">
+                      {s.label}
+                      {isWinner && " 🏆"}
+                    </span>
                   </td>
                   <td className="text-center font-semibold text-green-600">{s.wins}</td>
                   <td className="text-center font-semibold text-red-400">{s.losses}</td>
