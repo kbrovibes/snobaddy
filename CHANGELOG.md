@@ -18,6 +18,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Finals badge on session list** — Badge now derives status from actual session states (In Progress if any session is active/completed, Completed only when all are done).
 - **Leaderboard excludes finals** — Finals matches (`finals_group` / `finals_final`) are no longer counted in the season leaderboard or match totals.
 - **No close/finalize on finals sessions** — Hid "Finalize Scores and Close" and "Close Session" buttons on finals sessions.
+- **Balanced auto-suggest pairing** — Fixed partner auto-suggest now uses fold pairing (#1 with #last, #2 with #second-last) so pair scores are balanced instead of top-heavy.
 
 ### Improved
 - **Instant group moves** — Dragging or changing a player's group now updates instantly in the UI. Changes are saved in batch when you confirm groups, not on every move.

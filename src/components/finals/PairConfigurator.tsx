@@ -26,10 +26,12 @@ function buildInitialPairs(players: PairPlayer[], saved: SavedPair[]): Pair[] {
 }
 
 function autoSuggestPairs(players: PairPlayer[]): Pair[] {
+  // Fold pairing: #1 with #N, #2 with #N-1, etc. — balances combined pair scores
   const sorted = [...players].sort((a, b) => (b.finals_score ?? 0) - (a.finals_score ?? 0));
   const pairs: Pair[] = [];
-  for (let i = 0; i + 1 < sorted.length; i += 2) {
-    pairs.push([sorted[i].player_id, sorted[i + 1].player_id]);
+  const half = Math.floor(sorted.length / 2);
+  for (let i = 0; i < half; i++) {
+    pairs.push([sorted[i].player_id, sorted[sorted.length - 1 - i].player_id]);
   }
   return pairs;
 }
