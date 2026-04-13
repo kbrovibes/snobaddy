@@ -24,10 +24,12 @@ export async function getActivePlayers(
     ? supabase
         .from("matches")
         .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team")
+        .is("match_type", null)
     : supabase
         .from("matches")
         .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team, sessions!inner(is_test_session)")
-        .eq("sessions.is_test_session", false);
+        .eq("sessions.is_test_session", false)
+        .is("match_type", null);
 
   const talliesQuery = includeTest
     ? supabase.from("session_tally").select("player_id, wins, losses")

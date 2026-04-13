@@ -323,8 +323,8 @@ export default async function SessionDetailPage({
             <CheckInButton sessionId={session.id} alreadyCheckedIn={isCheckedIn} />
           )}
 
-          {/* Finalize prompt — admin only, after 10pm PST, no activity in 20min */}
-          {isAdmin && !session.is_test_session && (
+          {/* Finalize prompt — admin only, not for finals, after 10pm PST, no activity in 20min */}
+          {isAdmin && !session.is_test_session && !isFinalsSession && (
             <FinalizeSessionButton
               sessionId={session.id}
               lastMatchAt={(recentMatches as { played_at?: string }[])[0]?.played_at ?? null}
@@ -462,7 +462,7 @@ export default async function SessionDetailPage({
       )}
 
       {/* Admin: finalize + God Mode: reset — grouped at bottom */}
-      {isAdmin && isActive && <CloseSessionButton sessionId={session.id} />}
+      {isAdmin && isActive && !isFinalsSession && <CloseSessionButton sessionId={session.id} />}
       {isGodMode && (isActive || (isCompleted && (tallyRows as TallyEntry[]).length === 0)) && (
         <ResetSessionButton sessionId={session.id} />
       )}

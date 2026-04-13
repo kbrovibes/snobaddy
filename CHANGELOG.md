@@ -15,6 +15,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 - **Finals session cleanup** — Hid regular session sections (Record a Score, Tonight's Scores, Matches) from finals sessions, since finals have their own dedicated UI.
+- **Finals badge on session list** — Badge now derives status from actual session states (In Progress if any session is active/completed, Completed only when all are done).
+- **Leaderboard excludes finals** — Finals matches (`finals_group` / `finals_final`) are no longer counted in the season leaderboard or match totals.
+- **No close/finalize on finals sessions** — Hid "Finalize Scores and Close" and "Close Session" buttons on finals sessions.
 
 ### Improved
 - **Instant group moves** — Dragging or changing a player's group now updates instantly in the UI. Changes are saved in batch when you confirm groups, not on every move.

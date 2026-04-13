@@ -40,6 +40,19 @@ function SessionCard({ label, session }: { label: string; session: FinalsSession
   );
 }
 
+// Derive display status from session states (more accurate than event.status)
+function deriveStatus(event: FinalsEvent, sessionPair?: FinalsSessionPair | null) {
+  const sessions = [sessionPair?.day1, sessionPair?.day2].filter(Boolean);
+  if (sessions.length > 0) {
+    const allCompleted = sessions.every((s) => s!.status === "completed");
+    const anyActive = sessions.some((s) => s!.status === "active");
+    const anyCompleted = sessions.some((s) => s!.status === "completed");
+    if (allCompleted) return statusLabel("completed");
+    if (anyActive || anyCompleted) return statusLabel("active");
+  }
+  return statusLabel(event.status);
+}
+
 export default function FinalsSection({
   event,
   sessionPair,
@@ -47,7 +60,7 @@ export default function FinalsSection({
   event: FinalsEvent | null;
   sessionPair?: FinalsSessionPair | null;
 }) {
-  const label = event ? statusLabel(event.status) : null;
+  const label = event ? deriveStatus(event, sessionPair) : null;
 
   return (
     <div>
