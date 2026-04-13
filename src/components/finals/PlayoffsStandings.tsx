@@ -9,8 +9,10 @@ interface PlayerStanding {
   name: string;
   wins: number;
   losses: number;
+  played: number;
+  total: number;
   pts: number;
-  pf: number; // total points scored by teams this player was on
+  pf: number;
   rank: number;
   advancesTop4: boolean;
 }
@@ -19,10 +21,19 @@ function computeIndividualStandings(
   matches: FinalsMatch[],
   playerNames: Map<string, string>
 ): PlayerStanding[] {
-  const stats = new Map<string, { wins: number; losses: number; pf: number }>();
+  const stats = new Map<string, { wins: number; losses: number; pf: number; played: number; total: number }>();
+
+  // Count how many matches each player is assigned to (played or not)
+  const totalPerPlayer = new Map<string, number>();
+  for (const id of playerNames.keys()) totalPerPlayer.set(id, 0);
+  for (const m of matches) {
+    for (const pid of [m.team1_player1, m.team1_player2, m.team2_player1, m.team2_player2]) {
+      totalPerPlayer.set(pid, (totalPerPlayer.get(pid) ?? 0) + 1);
+    }
+  }
 
   for (const id of playerNames.keys()) {
-    stats.set(id, { wins: 0, losses: 0, pf: 0 });
+    stats.set(id, { wins: 0, losses: 0, pf: 0, played: 0, total: totalPerPlayer.get(id) ?? 0 });
   }
 
   for (const m of matches) {
@@ -34,6 +45,7 @@ function computeIndividualStandings(
     for (const pid of team1) {
       const s = stats.get(pid);
       if (!s) continue;
+      s.played++;
       s.pf += m.team1_score;
       if (m.winning_team === 1) s.wins++;
       else s.losses++;
@@ -41,6 +53,7 @@ function computeIndividualStandings(
     for (const pid of team2) {
       const s = stats.get(pid);
       if (!s) continue;
+      s.played++;
       s.pf += m.team2_score;
       if (m.winning_team === 2) s.wins++;
       else s.losses++;
@@ -54,6 +67,8 @@ function computeIndividualStandings(
       name: playerNames.get(pid) ?? "Unknown",
       wins: s.wins,
       losses: s.losses,
+      played: s.played,
+      total: s.total,
       pts: s.wins * 2,
       pf: s.pf,
       rank: 0,
@@ -145,6 +160,7 @@ export default function PlayoffsStandings({
             <tr className="border-b border-stone-100 bg-stone-50 text-[11px] text-stone-400 uppercase">
               <th className="text-left px-3 py-1.5 font-medium w-8">#</th>
               <th className="text-left px-2 py-1.5 font-medium">Player</th>
+              <th className="text-center px-2 py-1.5 font-medium w-12">M</th>
               <th className="text-center px-2 py-1.5 font-medium w-10">W</th>
               <th className="text-center px-2 py-1.5 font-medium w-10">L</th>
               <th className="text-center px-2 py-1.5 font-medium w-10">Pts</th>
@@ -167,6 +183,7 @@ export default function PlayoffsStandings({
                     <span className="ml-1 text-[10px] text-green-600 font-semibold">🏁 Top 4</span>
                   )}
                 </td>
+                <td className="text-center px-2 py-1.5 text-xs text-stone-400">{s.played}/{s.total}</td>
                 <td className="text-center px-2 py-1.5 font-semibold text-green-600">{s.wins}</td>
                 <td className="text-center px-2 py-1.5 font-semibold text-red-400">{s.losses}</td>
                 <td className="text-center px-2 py-1.5 font-bold text-stone-700">{s.pts}</td>

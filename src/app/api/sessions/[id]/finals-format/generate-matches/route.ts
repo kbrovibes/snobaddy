@@ -60,6 +60,16 @@ function generatePlayoffsMatches(
   const n = playerIds.length;
   if (n < 4) return [];
 
+  // Fast path: exactly 4 players → deterministic all-play-all (3 matches)
+  if (n === 4 && matchesPerPlayer === 3) {
+    const [a, b, c, d] = playerIds;
+    return [
+      { session_id: sessionId, team1_player1_id: a, team1_player2_id: b, team2_player1_id: c, team2_player2_id: d, match_type: "finals_group", finals_group: groupLabel },
+      { session_id: sessionId, team1_player1_id: a, team1_player2_id: c, team2_player1_id: b, team2_player2_id: d, match_type: "finals_group", finals_group: groupLabel },
+      { session_id: sessionId, team1_player1_id: a, team1_player2_id: d, team2_player1_id: b, team2_player2_id: c, match_type: "finals_group", finals_group: groupLabel },
+    ];
+  }
+
   const totalMatches = (matchesPerPlayer * n) / 4;
 
   // Try up to 50 shuffles to find a valid deal

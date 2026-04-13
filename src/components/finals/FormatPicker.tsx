@@ -31,20 +31,45 @@ function defaultMatchesPerPlayer(playerCount: number): number {
   return best;
 }
 
-const FORMATS = [
-  {
-    type: "fixed_partner" as const,
+interface FormatOption {
+  type: "fixed_partner" | "playoffs";
+  title: string;
+  subtitle: string;
+  icon: string;
+  minPlayers: number;
+}
+
+function getFormats(playerCount: number): FormatOption[] {
+  const formats: FormatOption[] = [];
+
+  formats.push({
+    type: "fixed_partner",
     title: "Fixed-Partner All-Pairs",
     subtitle: "Admin assigns partner pairs. Every pair plays every other pair once.",
     icon: "🤝",
-  },
-  {
-    type: "playoffs" as const,
-    title: "Playoffs + Finals",
-    subtitle: "Players rotate partners in group stage. Top 4 advance to Best-of-3 Final.",
-    icon: "🏆",
-  },
-];
+    minPlayers: 4,
+  });
+
+  if (playerCount === 4) {
+    formats.push({
+      type: "playoffs",
+      title: "All-Play-All",
+      subtitle: "Play all 3 team configurations. Every player partners with every other player exactly once. Maximum fairness.",
+      icon: "🏆",
+      minPlayers: 4,
+    });
+  } else {
+    formats.push({
+      type: "playoffs",
+      title: "Playoffs + Finals",
+      subtitle: `Rotating partners, top 4 advance to Best-of-3 Final.`,
+      icon: "🏆",
+      minPlayers: 4,
+    });
+  }
+
+  return formats.filter((f) => playerCount >= f.minPlayers);
+}
 
 export default function FormatPicker({
   sessionId,
@@ -119,7 +144,7 @@ export default function FormatPicker({
     setSelecting(false);
   }
 
-  const lockedFmt = FORMATS.find((f) => f.type === displayType);
+  const lockedFmt = getFormats(playerCount).find((f) => f.type === displayType);
 
   async function handleReset() {
     setShowResetConfirm(false);
@@ -208,7 +233,7 @@ export default function FormatPicker({
 
       {/* Radio options */}
       <div className="flex flex-col gap-2">
-        {FORMATS.map((fmt) => {
+        {getFormats(playerCount).map((fmt) => {
           const isSelected = displayType === fmt.type;
           const showPlayoffsConfig = fmt.type === "playoffs" && isSelected;
           return (
@@ -235,7 +260,7 @@ export default function FormatPicker({
                 </div>
               </div>
 
-              {showPlayoffsConfig && (
+              {showPlayoffsConfig && playerCount > 4 && (
                 <div className="border-t border-sky-200 px-3 py-2 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
                   <span className="text-xs text-stone-600">Matches per player</span>
                   <div className="flex items-center gap-2">

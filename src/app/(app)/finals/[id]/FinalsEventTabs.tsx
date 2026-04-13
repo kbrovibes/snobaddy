@@ -910,17 +910,39 @@ function GroupsTab({
         />
       )}
 
-      {/* Group size summary */}
+      {/* Group size summary + format preview */}
       {hasBreakdown && Object.keys(groupCounts).length > 0 && (
-        <div className="flex gap-2 flex-wrap">
-          {["A", "B", "C"].filter((g) => groupCounts[g]).map((g) => (
-            <span
-              key={g}
-              className={`text-xs px-2.5 py-1 rounded-lg border font-medium ${GROUP_COLORS[g]}`}
-            >
-              Group {g}: {groupCounts[g]}
-            </span>
-          ))}
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2 flex-wrap">
+            {["A", "B", "C"].filter((g) => groupCounts[g]).map((g) => (
+              <span
+                key={g}
+                className={`text-xs px-2.5 py-1 rounded-lg border font-medium ${GROUP_COLORS[g]}`}
+              >
+                Group {g}: {groupCounts[g]}
+              </span>
+            ))}
+          </div>
+          <div className="bg-stone-50 rounded-lg px-3 py-2 flex flex-col gap-1">
+            <p className="text-[11px] font-semibold text-stone-500 uppercase">Supported Formats</p>
+            {["A", "B", "C"].filter((g) => groupCounts[g]).map((g) => {
+              const c = groupCounts[g];
+              const isGroupOf4 = c === 4;
+              const validMpp: number[] = [];
+              for (let m = 2; m <= Math.min(c, 12); m++) {
+                if ((m * c) % 4 === 0) validMpp.push(m);
+              }
+              return (
+                <p key={g} className="text-[11px] text-stone-500">
+                  <span className="font-medium text-stone-600">Group {g} ({c}p):</span>{" "}
+                  {isGroupOf4
+                    ? "All-Play-All (3 matches each, perfect fairness) or Playoffs"
+                    : `Playoffs — ${validMpp.join(", ")} matches/player`
+                  }
+                </p>
+              );
+            })}
+          </div>
         </div>
       )}
 
