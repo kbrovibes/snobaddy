@@ -82,8 +82,14 @@ function computeStandings(
     s.diff = s.pf - s.pa;
   }
 
-  // Sort: wins desc, then diff desc
-  standings.sort((a, b) => b.wins - a.wins || b.diff - a.diff);
+  // Sort: total pts desc (pf + wins*2), then wins desc, then diff desc
+  standings.sort((a, b) => {
+    const aPts = a.pf + a.wins * 2;
+    const bPts = b.pf + b.wins * 2;
+    if (bPts !== aPts) return bPts - aPts;
+    if (b.wins !== a.wins) return b.wins - a.wins;
+    return b.diff - a.diff;
+  });
 
   return standings;
 }
@@ -92,8 +98,9 @@ function detectTies(standings: PairStanding[]): { type: "none" | "2-way" | "3-wa
   if (standings.length < 2) return { type: "none", tiedPairs: [] };
 
   const top = standings[0];
+  const topPts = top.pf + top.wins * 2;
   const tied = standings.filter(
-    (s) => s.wins === top.wins && s.diff === top.diff
+    (s) => (s.pf + s.wins * 2) === topPts
   );
 
   if (tied.length === 1) return { type: "none", tiedPairs: [] };
@@ -157,6 +164,21 @@ export default function FinalsStandings({
         </div>
       )}
 
+      {/* Winner display — shown at top */}
+      {winner && (
+        <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-center">
+          <p className="text-lg font-bold text-green-700">
+            🏆 Group {activeGroup} Winner
+          </p>
+          <p className="text-sm text-green-600">
+            {winner.label}: {winner.player1_name.split(" ")[0]} & {winner.player2_name.split(" ")[0]}
+          </p>
+          <p className="text-xs text-green-500 mt-0.5">
+            {winner.wins}W – {winner.losses}L · {winner.pf + winner.wins * 2} pts
+          </p>
+        </div>
+      )}
+
       {/* Standings table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -166,9 +188,7 @@ export default function FinalsStandings({
               <th className="text-left py-1.5">Team</th>
               <th className="text-center py-1.5 px-1.5">W</th>
               <th className="text-center py-1.5 px-1.5">L</th>
-              <th className="text-center py-1.5 px-1.5">PF</th>
-              <th className="text-center py-1.5 px-1.5">PA</th>
-              <th className="text-center py-1.5 px-1.5">+/-</th>
+              <th className="text-center py-1.5 px-1.5">Pts</th>
             </tr>
           </thead>
           <tbody>
@@ -193,11 +213,7 @@ export default function FinalsStandings({
                   </td>
                   <td className="text-center font-semibold text-green-600">{s.wins}</td>
                   <td className="text-center font-semibold text-red-400">{s.losses}</td>
-                  <td className="text-center text-stone-500">{s.pf}</td>
-                  <td className="text-center text-stone-500">{s.pa}</td>
-                  <td className={`text-center font-semibold ${s.diff > 0 ? "text-green-600" : s.diff < 0 ? "text-red-400" : "text-stone-400"}`}>
-                    {s.diff > 0 ? `+${s.diff}` : s.diff}
-                  </td>
+                  <td className="text-center font-bold text-stone-700">{s.pf + s.wins * 2}</td>
                 </tr>
               );
             })}
@@ -255,20 +271,6 @@ export default function FinalsStandings({
         </div>
       )}
 
-      {/* Winner display */}
-      {winner && (
-        <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-center">
-          <p className="text-lg font-bold text-green-700">
-            🏆 Group {activeGroup} Winner
-          </p>
-          <p className="text-sm text-green-600">
-            {winner.label}: {winner.player1_name} & {winner.player2_name}
-          </p>
-          <p className="text-xs text-green-500 mt-0.5">
-            {winner.wins}W – {winner.losses}L · {winner.pf} PF · {winner.diff > 0 ? "+" : ""}{winner.diff} diff
-          </p>
-        </div>
-      )}
     </div>
   );
 }
