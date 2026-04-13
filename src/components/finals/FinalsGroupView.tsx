@@ -88,6 +88,14 @@ export default function FinalsGroupView({
 
   return (
     <div className="flex flex-col gap-3">
+      {/* Player list */}
+      {players.length > 0 && (
+        <p className="text-xs text-stone-400">
+          <span className="font-medium text-stone-500">{players.length} players:</span>{" "}
+          {players.map((p) => p.name.split(" ")[0]).sort().join(", ")}
+        </p>
+      )}
+
       {/* Format picker */}
       {isGodMode && (
         <FormatPicker
@@ -96,14 +104,6 @@ export default function FinalsGroupView({
           currentFormat={format}
           playerCount={players.length}
         />
-      )}
-
-      {/* Player list */}
-      {players.length > 0 && (
-        <p className="text-xs text-stone-400">
-          <span className="font-medium text-stone-500">{players.length} players:</span>{" "}
-          {players.map((p) => p.name.split(" ")[0]).sort().join(", ")}
-        </p>
       )}
 
       {!format && (
