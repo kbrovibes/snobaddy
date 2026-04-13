@@ -150,6 +150,10 @@ export async function POST(
   }
 
   // ── 5. Now safe to delete + restore status ────────────────────────────────
+  // Delete finals series and formats for this session
+  await serviceClient.from("finals_series").delete().eq("session_id", id);
+  await serviceClient.from("finals_formats").delete().eq("session_id", id);
+
   const [{ count: deletedMatches }, { count: deletedProposed }, { count: deletedTally }, { count: deletedCheckins }] = await Promise.all([
     serviceClient.from("matches").delete({ count: "exact" }).eq("session_id", id),
     serviceClient.from("proposed_matches").delete({ count: "exact" }).eq("session_id", id),
