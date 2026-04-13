@@ -21,6 +21,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Balanced auto-suggest pairing** — Fixed partner auto-suggest now uses fold pairing (#1 with #last, #2 with #second-last) so pair scores are balanced instead of top-heavy.
 - **Team labels + combined score** — Renamed "Pair" to "Team" everywhere (configurator, standings, match list). Shows combined team score in both the configurator and the locked/match view.
 - **Group tab persistence** — Active group tab (A/B/C) is preserved in URL when saving, so page refreshes don't jump back to Group A.
+- **One-step team save** — "Confirm Teams & Generate Matches" now saves teams and auto-generates matches in one click. Teams lock immediately, no separate generate step.
 
 ### Improved
 - **Instant group moves** — Dragging or changing a player's group now updates instantly in the UI. Changes are saved in batch when you confirm groups, not on every move.

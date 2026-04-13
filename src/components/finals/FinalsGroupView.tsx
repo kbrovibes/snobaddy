@@ -110,12 +110,12 @@ export default function FinalsGroupView({
         />
       )}
 
-      {/* Generate matches — both formats */}
-      {isGodMode && format && format.status === "configured" && (
+      {/* Generate matches — playoffs only (fixed_partner auto-generates on save) */}
+      {isGodMode && format && format.status === "configured" && isPlayoffs && (
         <GenerateMatchesButton
           sessionId={sessionId}
           finalsGroup={finalsGroup}
-          hasPairs={isPlayoffs ? true : hasPairs}
+          hasPairs={true}
         />
       )}
 

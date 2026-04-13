@@ -107,8 +107,8 @@ export default function PairConfigurator({
     setError(null);
     setSuccess(false);
 
+    // 1. Save pairs
     const pairsPayload = pairs.map((p) => ({ player1_id: p[0]!, player2_id: p[1]! }));
-
     const res = await fetch(`/api/sessions/${sessionId}/finals-format/pairs`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -116,11 +116,27 @@ export default function PairConfigurator({
     });
     const json = await res.json();
     if (!res.ok) {
-      setError(json.error ?? "Failed to save pairs");
-    } else {
-      setSuccess(true);
-      startTransition(() => router.refresh());
+      setError(json.error ?? "Failed to save teams");
+      setSaving(false);
+      return;
     }
+
+    // 2. Auto-generate matches (locks teams)
+    const genRes = await fetch(`/api/sessions/${sessionId}/finals-format/generate-matches`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ finals_group: finalsGroup }),
+    });
+    const genJson = await genRes.json();
+    if (!genRes.ok) {
+      setError(genJson.error ?? "Teams saved but failed to generate matches");
+      setSaving(false);
+      startTransition(() => router.refresh());
+      return;
+    }
+
+    setSuccess(true);
+    startTransition(() => router.refresh());
     setSaving(false);
   }
 
@@ -194,7 +210,7 @@ export default function PairConfigurator({
           disabled={!canSave || saving || isPending}
           className="w-full py-2 rounded-xl text-sm font-semibold text-white bg-stone-900 hover:bg-stone-800 disabled:opacity-40 transition-colors"
         >
-          {saving ? "Saving…" : success ? "Saved ✓" : "Save Teams"}
+          {saving ? "Saving & generating matches…" : success ? "Saved ✓" : "Confirm Teams & Generate Matches"}
         </button>
       )}
 
