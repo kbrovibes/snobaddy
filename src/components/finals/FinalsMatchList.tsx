@@ -149,19 +149,26 @@ function MatchCard({
 
       {/* Score entry (unplayed or editing) */}
       {((!isPlayed && isActive) || editing) && (
-        <div className="flex items-center gap-2 mt-2">
-          <input type="number" min="0" max="99" value={score1} onChange={(e) => setScore1(e.target.value)}
-            className="w-14 text-center border border-stone-200 rounded-lg px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="0" />
-          <span className="text-stone-300 text-xs">–</span>
-          <input type="number" min="0" max="99" value={score2} onChange={(e) => setScore2(e.target.value)}
-            className="w-14 text-center border border-stone-200 rounded-lg px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="0" />
-          <button onClick={handleSave} disabled={saving || isPending}
-            className="flex-1 text-xs font-semibold text-white bg-stone-900 hover:bg-stone-800 rounded-lg py-1.5 disabled:opacity-40">
-            {saving ? "…" : "Save"}
-          </button>
-          {editing && (
-            <button onClick={() => setEditing(false)} className="text-xs text-stone-400 hover:text-stone-600">Cancel</button>
-          )}
+        <div className="mt-2 flex flex-col gap-2">
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+            <input type="number" min="0" max="99" value={score1} onChange={(e) => setScore1(e.target.value)}
+              className="w-full text-center border border-stone-200 rounded-lg py-1.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sky-300 bg-stone-50" placeholder="—" />
+            <span className="text-stone-300 text-center w-6">–</span>
+            <input type="number" min="0" max="99" value={score2} onChange={(e) => setScore2(e.target.value)}
+              className="w-full text-center border border-stone-200 rounded-lg py-1.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sky-300 bg-stone-50" placeholder="—" />
+          </div>
+          <div className="flex gap-2">
+            <button onClick={handleSave} disabled={saving || isPending}
+              className="flex-1 text-xs font-semibold text-white bg-stone-900 hover:bg-stone-800 rounded-lg py-2 disabled:opacity-40 transition-colors">
+              {saving ? "Saving…" : "Save Score"}
+            </button>
+            {editing && (
+              <button onClick={() => setEditing(false)}
+                className="px-3 text-xs text-stone-400 hover:text-stone-600 border border-stone-200 rounded-lg py-2 transition-colors">
+                Cancel
+              </button>
+            )}
+          </div>
         </div>
       )}
 
