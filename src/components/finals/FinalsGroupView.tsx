@@ -98,6 +98,14 @@ export default function FinalsGroupView({
         />
       )}
 
+      {/* Player list */}
+      {players.length > 0 && (
+        <p className="text-xs text-stone-400">
+          <span className="font-medium text-stone-500">{players.length} players:</span>{" "}
+          {players.map((p) => p.name.split(" ")[0]).sort().join(", ")}
+        </p>
+      )}
+
       {!format && (
         <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg text-center">
           Select a format above to get started.
