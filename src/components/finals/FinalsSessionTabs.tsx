@@ -55,8 +55,6 @@ export default function FinalsSessionTabs({
     window.history.replaceState({}, "", url.toString());
   }
 
-  const groupMatches = matches.filter((m) => m.finals_group === activeGroup);
-
   return (
     <div className="flex flex-col gap-3">
       {/* Group tabs */}
@@ -92,18 +90,21 @@ export default function FinalsSessionTabs({
         </div>
       )}
 
-      {/* Active group content */}
-      <FinalsGroupView
-        key={activeGroup}
-        sessionId={sessionId}
-        finalsGroup={activeGroup}
-        format={formats[activeGroup] ?? null}
-        players={groups[activeGroup] ?? []}
-        matches={groupMatches}
-        series={seriesMap[activeGroup] ?? null}
-        isActive={isActive}
-        isGodMode={isGodMode}
-      />
+      {/* All groups rendered, only active one visible — preserves local state */}
+      {groupLabels.map((g) => (
+        <div key={g} className={activeGroup === g ? "" : "hidden"}>
+          <FinalsGroupView
+            sessionId={sessionId}
+            finalsGroup={g}
+            format={formats[g] ?? null}
+            players={groups[g] ?? []}
+            matches={matches.filter((m) => m.finals_group === g)}
+            series={seriesMap[g] ?? null}
+            isActive={isActive}
+            isGodMode={isGodMode}
+          />
+        </div>
+      ))}
     </div>
   );
 }
