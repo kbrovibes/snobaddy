@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import FinalsGroupView from "./FinalsGroupView";
 import type { FinalsFormatData } from "./FormatPicker";
 import type { PairPlayer } from "./PairConfigurator";
@@ -40,7 +41,19 @@ export default function FinalsSessionTabs({
   isGodMode,
 }: FinalsSessionTabsProps) {
   const groupLabels = Object.keys(groups).sort();
-  const [activeGroup, setActiveGroup] = useState(groupLabels[0] ?? "A");
+  const searchParams = useSearchParams();
+  const initialGroup = searchParams.get("group");
+  const [activeGroup, setActiveGroup] = useState(
+    initialGroup && groupLabels.includes(initialGroup) ? initialGroup : groupLabels[0] ?? "A"
+  );
+
+  function selectGroup(g: string) {
+    setActiveGroup(g);
+    // Persist to URL so router.refresh() preserves the active group
+    const url = new URL(window.location.href);
+    url.searchParams.set("group", g);
+    window.history.replaceState({}, "", url.toString());
+  }
 
   const groupMatches = matches.filter((m) => m.finals_group === activeGroup);
 
@@ -60,7 +73,7 @@ export default function FinalsSessionTabs({
             return (
               <button
                 key={g}
-                onClick={() => setActiveGroup(g)}
+                onClick={() => selectGroup(g)}
                 className={`flex-1 text-sm font-semibold py-2 rounded-lg transition-colors ${
                   activeGroup === g
                     ? "bg-stone-900 text-white"
