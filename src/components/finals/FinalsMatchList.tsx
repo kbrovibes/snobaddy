@@ -92,12 +92,14 @@ function MatchCard({
   sessionId,
   isActive,
   funNames,
+  allComplete,
 }: {
   match: FinalsMatch;
   pairsMap: Map<string, PairInfo>;
   playerNames: Map<string, string>;
   matchNumber: number;
   funNames: boolean;
+  allComplete: boolean;
   sessionId: string;
   isActive: boolean;
 }) {
@@ -140,7 +142,7 @@ function MatchCard({
 
   return (
     <div className={`rounded-xl border px-3 py-2.5 transition-colors ${
-      isPlayed ? "bg-emerald-50/50 border-emerald-200" : "bg-white border-stone-200"
+      isPlayed && !allComplete ? "bg-emerald-50/50 border-emerald-200" : "bg-white border-stone-200"
     }`}>
       {/* Header: match number + status */}
       <div className="flex items-center justify-between mb-1.5">
@@ -152,7 +154,7 @@ function MatchCard({
               Edit
             </button>
           )}
-          {isPlayed && !editing && (
+          {isPlayed && !editing && !allComplete && (
             <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded-full">
               ✓
             </span>
@@ -244,6 +246,7 @@ export default function FinalsMatchList({
 
   const playerNames = playerNamesProp ?? new Map<string, string>();
   const playedCount = matches.filter((m) => m.winning_team != null).length;
+  const allComplete = matches.length > 0 && playedCount === matches.length;
 
   return (
     <div className="flex flex-col gap-3">
@@ -275,6 +278,7 @@ export default function FinalsMatchList({
             sessionId={sessionId}
             isActive={isActive}
             funNames={funNames}
+            allComplete={allComplete}
           />
         ))}
       </div>

@@ -130,7 +130,7 @@ export default function FinalsGroupView({
       {groupWinner && (
         <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-center">
           <p className="text-lg font-bold text-green-700">🏆 {groupWinner}</p>
-          <p className="text-xs text-green-500">Group {finalsGroup} Winner</p>
+          <p className="text-xs text-green-500">Group {finalsGroup} Winners</p>
         </div>
       )}
 
