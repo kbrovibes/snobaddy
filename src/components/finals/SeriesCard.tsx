@@ -86,17 +86,7 @@ export default function SeriesCard({
         );
       })}
 
-      {/* Winner */}
-      {seriesDecided && (
-        <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-center">
-          <p className="text-lg font-bold text-green-700">
-            🏆 {series.winning_team === 1 ? team1Label : team2Label}
-          </p>
-          <p className="text-xs text-green-500 mt-0.5">
-            Series: {series.team1_wins} – {series.team2_wins}
-          </p>
-        </div>
-      )}
+      {/* Winner banner handled by parent FinalsGroupView */}
     </div>
   );
 }

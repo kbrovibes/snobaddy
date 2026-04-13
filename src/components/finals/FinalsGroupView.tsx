@@ -86,8 +86,54 @@ export default function FinalsGroupView({
     ? matches.filter((m) => m.finals_group === finalsGroup && isSeriesMatch(m, series))
     : [];
 
+  // Detect group winner for any format
+  const groupWinner = (() => {
+    // Playoffs: winner comes from series
+    if (series?.winning_team != null) {
+      const w = series.winning_team === 1
+        ? [series.team1_player1_id, series.team1_player2_id]
+        : [series.team2_player1_id, series.team2_player2_id];
+      return w.map((id) => (playerNames.get(id) ?? "?").split(" ")[0]).join(" & ");
+    }
+    // Fixed-partner: winner is the top pair when all matches played
+    if (isFixedPartner && matchesGenerated && groupStageMatches.length > 0) {
+      const allPlayed = groupStageMatches.every((m) => m.winning_team != null);
+      if (allPlayed && pairsInfo.length > 0) {
+        // Compute standings inline
+        const pairStats = pairsInfo.map((pair) => {
+          let pf = 0, wins = 0;
+          for (const m of groupStageMatches) {
+            const isT1 = (m.team1_player1 === pair.player1_id && m.team1_player2 === pair.player2_id) ||
+                          (m.team1_player1 === pair.player2_id && m.team1_player2 === pair.player1_id);
+            const isT2 = (m.team2_player1 === pair.player1_id && m.team2_player2 === pair.player2_id) ||
+                          (m.team2_player1 === pair.player2_id && m.team2_player2 === pair.player1_id);
+            if (m.winning_team == null) continue;
+            if (isT1) { pf += m.team1_score; if (m.winning_team === 1) wins++; }
+            if (isT2) { pf += m.team2_score; if (m.winning_team === 2) wins++; }
+          }
+          return { pair, pts: pf + wins * 2 };
+        });
+        pairStats.sort((a, b) => b.pts - a.pts);
+        // Only declare winner if no tie at top
+        if (pairStats.length >= 2 && pairStats[0].pts > pairStats[1].pts) {
+          const w = pairStats[0].pair;
+          return `${w.player1_name.split(" ")[0]} & ${w.player2_name.split(" ")[0]}`;
+        }
+      }
+    }
+    return null;
+  })();
+
   return (
     <div className="flex flex-col gap-3">
+      {/* Group winner banner — always at top */}
+      {groupWinner && (
+        <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-center">
+          <p className="text-lg font-bold text-green-700">🏆 {groupWinner}</p>
+          <p className="text-xs text-green-500">Group {finalsGroup} Winner</p>
+        </div>
+      )}
+
       {/* Player list */}
       {players.length > 0 && (
         <p className="text-xs text-stone-400">

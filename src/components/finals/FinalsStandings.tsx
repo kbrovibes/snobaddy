@@ -164,21 +164,6 @@ export default function FinalsStandings({
         </div>
       )}
 
-      {/* Winner display — shown at top */}
-      {winner && (
-        <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-center">
-          <p className="text-lg font-bold text-green-700">
-            🏆 Group {activeGroup} Winner
-          </p>
-          <p className="text-sm text-green-600">
-            {winner.label}: {winner.player1_name.split(" ")[0]} & {winner.player2_name.split(" ")[0]}
-          </p>
-          <p className="text-xs text-green-500 mt-0.5">
-            {winner.wins}W – {winner.losses}L · {winner.pf + winner.wins * 2} pts
-          </p>
-        </div>
-      )}
-
       {/* Standings table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
