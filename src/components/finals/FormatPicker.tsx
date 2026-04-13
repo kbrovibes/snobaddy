@@ -73,6 +73,7 @@ export default function FormatPicker({
 
   const isLocked = currentFormat && currentFormat.status !== "configured";
   const displayType = selectedType ?? currentFormat?.format_type;
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const validValues = validMatchesPerPlayer(playerCount);
   const totalMatches = displayType === "playoffs" ? (matchesPerPlayer * playerCount) / 4 : 0;
 
@@ -101,6 +102,80 @@ export default function FormatPicker({
     setSelecting(false);
   }
 
+  const lockedFmt = FORMATS.find((f) => f.type === displayType);
+
+  async function handleReset() {
+    setShowResetConfirm(false);
+    setSelecting(true);
+    const res = await fetch(`/api/sessions/${sessionId}/finals-format/reset`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ finals_group: finalsGroup }),
+    });
+    if (res.ok) {
+      setSelectedType(null);
+      startTransition(() => router.refresh());
+    } else {
+      const json = await res.json();
+      setError(json.error ?? "Failed to reset");
+    }
+    setSelecting(false);
+  }
+
+  // ── Locked: compact single-line view ──────────────────────────────────────
+  if (isLocked && lockedFmt) {
+    return (
+      <div className="flex flex-col gap-1">
+        {error && (
+          <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+        )}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm">{lockedFmt.icon}</span>
+            <span className="text-sm font-semibold text-stone-700">{lockedFmt.title}</span>
+            {displayType === "playoffs" && (
+              <span className="text-xs text-stone-400">· {matchesPerPlayer} per player · {totalMatches} matches</span>
+            )}
+          </div>
+          <button
+            onClick={() => setShowResetConfirm(true)}
+            disabled={selecting || isPending}
+            className="text-[11px] text-sky-600 hover:text-sky-800 disabled:opacity-40"
+          >
+            Change
+          </button>
+        </div>
+
+        {/* Reset confirmation dialog */}
+        {showResetConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+            <div className="bg-white rounded-xl shadow-lg max-w-sm w-full p-5 flex flex-col gap-3">
+              <p className="text-sm font-semibold text-stone-900">Change Format</p>
+              <p className="text-sm text-stone-600 leading-relaxed">
+                This will delete all matches, scores, and series for this group. This cannot be undone.
+              </p>
+              <div className="flex gap-2 mt-1">
+                <button
+                  onClick={() => setShowResetConfirm(false)}
+                  className="flex-1 py-2 text-sm font-medium text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleReset}
+                  className="flex-1 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                >
+                  Reset & Change
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── Unlocked: full format picker ──────────────────────────────────────────
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
@@ -118,21 +193,19 @@ export default function FormatPicker({
       <div className="flex flex-col gap-2">
         {FORMATS.map((fmt) => {
           const isSelected = displayType === fmt.type;
-          const showPlayoffsConfig = fmt.type === "playoffs" && isSelected && !isLocked;
+          const showPlayoffsConfig = fmt.type === "playoffs" && isSelected;
           return (
             <div
               key={fmt.type}
-              onClick={() => !isLocked && setSelectedType(fmt.type)}
+              onClick={() => setSelectedType(fmt.type)}
               className={[
                 "rounded-xl border transition-all cursor-pointer",
                 isSelected
                   ? "border-sky-500 bg-sky-50"
                   : "border-stone-200 bg-white hover:border-stone-300",
-                isLocked ? "opacity-70 cursor-default" : "",
               ].join(" ")}
             >
               <div className="flex items-start gap-3 px-3 py-2.5">
-                {/* Radio dot */}
                 <div className={[
                   "w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 shrink-0",
                   isSelected ? "border-sky-500" : "border-stone-300",
@@ -145,7 +218,6 @@ export default function FormatPicker({
                 </div>
               </div>
 
-              {/* Inline playoffs config */}
               {showPlayoffsConfig && (
                 <div className="border-t border-sky-200 px-3 py-2 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
                   <span className="text-xs text-stone-600">Matches per player</span>
@@ -168,48 +240,14 @@ export default function FormatPicker({
         })}
       </div>
 
-      {/* Show match info when locked */}
-      {displayType === "playoffs" && isLocked && (
-        <p className="text-xs text-stone-400 px-1">
-          {matchesPerPlayer} matches per player · {totalMatches} total matches
-        </p>
-      )}
-
-      {/* Save button — only when there are unsaved changes */}
-      {hasUnsavedChanges && displayType && !isLocked && (
+      {/* Save button */}
+      {hasUnsavedChanges && displayType && (
         <button
           onClick={handleSave}
           disabled={selecting || isPending}
           className="w-full py-2 rounded-xl text-sm font-semibold text-white bg-sky-600 hover:bg-sky-700 disabled:opacity-40 transition-colors"
         >
           {selecting ? "Saving…" : "Save Format"}
-        </button>
-      )}
-
-      {/* Reset */}
-      {currentFormat && (
-        <button
-          onClick={async () => {
-            if (!confirm("Reset format? This will delete all matches and series for this group.")) return;
-            setSelecting(true);
-            const res = await fetch(`/api/sessions/${sessionId}/finals-format/reset`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ finals_group: finalsGroup }),
-            });
-            if (res.ok) {
-              setSelectedType(null);
-              startTransition(() => router.refresh());
-            } else {
-              const json = await res.json();
-              setError(json.error ?? "Failed to reset");
-            }
-            setSelecting(false);
-          }}
-          disabled={selecting || isPending}
-          className="text-xs text-red-400 hover:text-red-600 disabled:opacity-40 self-center"
-        >
-          Reset format
         </button>
       )}
     </div>
