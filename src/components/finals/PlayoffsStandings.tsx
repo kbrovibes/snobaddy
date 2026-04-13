@@ -164,7 +164,6 @@ export default function PlayoffsStandings({
               <th className="text-center px-2 py-1.5 font-medium w-10">W</th>
               <th className="text-center px-2 py-1.5 font-medium w-10">L</th>
               <th className="text-center px-2 py-1.5 font-medium w-10">Pts</th>
-              <th className="text-center px-2 py-1.5 font-medium w-12">PF</th>
             </tr>
           </thead>
           <tbody>
@@ -187,7 +186,6 @@ export default function PlayoffsStandings({
                 <td className="text-center px-2 py-1.5 font-semibold text-green-600">{s.wins}</td>
                 <td className="text-center px-2 py-1.5 font-semibold text-red-400">{s.losses}</td>
                 <td className="text-center px-2 py-1.5 font-bold text-stone-700">{s.pts}</td>
-                <td className="text-center px-2 py-1.5 text-stone-500">{s.pf}</td>
               </tr>
             ))}
           </tbody>
