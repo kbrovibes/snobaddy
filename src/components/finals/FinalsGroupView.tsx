@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import FormatPicker from "./FormatPicker";
 import PairConfigurator from "./PairConfigurator";
 import GenerateMatchesButton from "./GenerateMatchesButton";
@@ -47,10 +48,14 @@ export default function FinalsGroupView({
   isActive,
   isGodMode,
 }: FinalsGroupViewProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [funNames, setFunNames] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
   const isFixedPartner = format?.format_type === "fixed_partner";
   const isPlayoffs = format?.format_type === "playoffs";
   const matchesGenerated = format?.status === "matches_generated" || format?.status === "playoffs_complete" || format?.status === "completed";
+  const hasScores = matches.some((m) => m.finals_group === finalsGroup && m.winning_team !== null);
 
   // Fixed-partner: pairs from config
   const savedPairs: SavedPair[] = isFixedPartner
@@ -99,6 +104,31 @@ export default function FinalsGroupView({
         </p>
       )}
 
+      {/* Re-generate matches — only when no scores entered yet */}
+      {isGodMode && matchesGenerated && !hasScores && (
+        <button
+          onClick={async () => {
+            if (!confirm("Re-generate all matches for this group? Current match cards will be replaced.")) return;
+            setRegenerating(true);
+            const res = await fetch(`/api/sessions/${sessionId}/finals-format/generate-matches`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ finals_group: finalsGroup }),
+            });
+            if (!res.ok) {
+              const json = await res.json();
+              alert(json.error ?? "Failed to re-generate");
+            }
+            startTransition(() => router.refresh());
+            setRegenerating(false);
+          }}
+          disabled={regenerating || isPending}
+          className="text-xs text-amber-600 hover:text-amber-800 font-medium disabled:opacity-40"
+        >
+          {regenerating ? "Re-generating…" : "↻ Re-generate matches"}
+        </button>
+      )}
+
       {/* Fixed-Partner: pair config */}
       {isGodMode && isFixedPartner && !matchesGenerated && players.length > 0 && (
         <PairConfigurator
@@ -107,15 +137,6 @@ export default function FinalsGroupView({
           players={players}
           savedPairs={savedPairs}
           isLocked={format!.status !== "configured"}
-        />
-      )}
-
-      {/* Generate matches — playoffs only (fixed_partner auto-generates on save) */}
-      {isGodMode && format && format.status === "configured" && isPlayoffs && (
-        <GenerateMatchesButton
-          sessionId={sessionId}
-          finalsGroup={finalsGroup}
-          hasPairs={true}
         />
       )}
 

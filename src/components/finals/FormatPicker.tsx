@@ -71,7 +71,7 @@ export default function FormatPicker({
     ?? defaultMatchesPerPlayer(playerCount)
   );
 
-  const isLocked = currentFormat && currentFormat.status !== "configured";
+  const isLocked = !!currentFormat;
   const displayType = selectedType ?? currentFormat?.format_type;
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const validValues = validMatchesPerPlayer(playerCount);
@@ -88,6 +88,8 @@ export default function FormatPicker({
     setSelecting(true);
     setError(null);
     const config = displayType === "playoffs" ? { matches_per_player: matchesPerPlayer } : {};
+
+    // 1. Save format
     const res = await fetch(`/api/sessions/${sessionId}/finals-format`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -96,9 +98,24 @@ export default function FormatPicker({
     const json = await res.json();
     if (!res.ok) {
       setError(json.error ?? "Failed to save format");
-    } else {
-      startTransition(() => router.refresh());
+      setSelecting(false);
+      return;
     }
+
+    // 2. Auto-generate matches for playoffs (fixed_partner generates on team save)
+    if (displayType === "playoffs") {
+      const genRes = await fetch(`/api/sessions/${sessionId}/finals-format/generate-matches`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ finals_group: finalsGroup }),
+      });
+      if (!genRes.ok) {
+        const genJson = await genRes.json();
+        setError(genJson.error ?? "Format saved but failed to generate matches");
+      }
+    }
+
+    startTransition(() => router.refresh());
     setSelecting(false);
   }
 
@@ -247,7 +264,9 @@ export default function FormatPicker({
           disabled={selecting || isPending}
           className="w-full py-2 rounded-xl text-sm font-semibold text-white bg-sky-600 hover:bg-sky-700 disabled:opacity-40 transition-colors"
         >
-          {selecting ? "Saving…" : "Save Format"}
+          {selecting
+            ? displayType === "playoffs" ? "Saving & generating matches…" : "Saving…"
+            : displayType === "playoffs" ? "Confirm & Generate Matches" : "Save Format"}
         </button>
       )}
     </div>

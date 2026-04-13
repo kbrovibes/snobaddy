@@ -25,6 +25,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 - **Group tab state preserved** — Switching between Group A/B tabs no longer resets unsaved format selections or team configurations.
+- **Format locks after save** — Saving a format now shows the compact locked view immediately (no more toggling between options after save).
+- **Auto-generate matches for playoffs** — Saving playoffs format now auto-generates matches in one step, like fixed-partner.
+- **Re-generate matches** — "Re-generate matches" link available when no scores have been entered yet. Disappears once scoring starts.
 
 ### Improved
 - **Instant group moves** — Dragging or changing a player's group now updates instantly in the UI. Changes are saved in batch when you confirm groups, not on every move.
