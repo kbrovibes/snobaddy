@@ -19,7 +19,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Leaderboard excludes finals** — Finals matches (`finals_group` / `finals_final`) are no longer counted in the season leaderboard or match totals.
 - **No close/finalize on finals sessions** — Hid "Finalize Scores and Close" and "Close Session" buttons on finals sessions.
 - **Balanced auto-suggest pairing** — Fixed partner auto-suggest now uses fold pairing (#1 with #last, #2 with #second-last) so pair scores are balanced instead of top-heavy.
-- **Team labels + combined score** — Pair configurator now says "Team 1", "Team 2" etc. and shows combined team score (pts) for each pair.
+- **Team labels + combined score** — Renamed "Pair" to "Team" everywhere (configurator, standings, match list). Shows combined team score in both the configurator and the locked/match view.
 
 ### Improved
 - **Instant group moves** — Dragging or changing a player's group now updates instantly in the UI. Changes are saved in batch when you confirm groups, not on every move.

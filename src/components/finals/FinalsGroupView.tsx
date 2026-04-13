@@ -57,13 +57,19 @@ export default function FinalsGroupView({
     : [];
   const hasPairs = savedPairs.length > 0;
 
-  const pairsInfo: PairInfo[] = savedPairs.map((pair, idx) => ({
-    label: `Pair ${idx + 1}`,
-    player1_name: players.find((p) => p.player_id === pair.player1_id)?.name ?? "Unknown",
-    player2_name: players.find((p) => p.player_id === pair.player2_id)?.name ?? "Unknown",
-    player1_id: pair.player1_id,
-    player2_id: pair.player2_id,
-  }));
+  const pairsInfo: PairInfo[] = savedPairs.map((pair, idx) => {
+    const p1 = players.find((p) => p.player_id === pair.player1_id);
+    const p2 = players.find((p) => p.player_id === pair.player2_id);
+    const teamScore = (p1?.finals_score ?? 0) + (p2?.finals_score ?? 0);
+    const scoreStr = p1?.finals_score != null && p2?.finals_score != null ? ` (${teamScore.toFixed(1)})` : "";
+    return {
+      label: `Team ${idx + 1}${scoreStr}`,
+      player1_name: p1?.name ?? "Unknown",
+      player2_name: p2?.name ?? "Unknown",
+      player1_id: pair.player1_id,
+      player2_id: pair.player2_id,
+    };
+  });
   const pairsInfoMap: Record<string, PairInfo[]> = { [finalsGroup]: pairsInfo };
 
   const playerNames = new Map(players.map((p) => [p.player_id, p.name]));

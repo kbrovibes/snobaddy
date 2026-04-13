@@ -128,7 +128,7 @@ export default function PairConfigurator({
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <h3 className="text-xs font-semibold text-stone-500 uppercase tracking-wide">
-          Partner Pairs
+          Teams
         </h3>
         {!isLocked && (
           <button
@@ -194,12 +194,12 @@ export default function PairConfigurator({
           disabled={!canSave || saving || isPending}
           className="w-full py-2 rounded-xl text-sm font-semibold text-white bg-stone-900 hover:bg-stone-800 disabled:opacity-40 transition-colors"
         >
-          {saving ? "Saving…" : success ? "Saved ✓" : "Save Pairs"}
+          {saving ? "Saving…" : success ? "Saved ✓" : "Save Teams"}
         </button>
       )}
 
       {isLocked && (
-        <p className="text-xs text-stone-400 text-center">Pairs locked — matches generated.</p>
+        <p className="text-xs text-stone-400 text-center">Teams locked — matches generated.</p>
       )}
     </div>
   );
