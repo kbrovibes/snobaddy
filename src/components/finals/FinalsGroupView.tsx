@@ -66,10 +66,10 @@ export default function FinalsGroupView({
   const pairsInfo: PairInfo[] = savedPairs.map((pair, idx) => {
     const p1 = players.find((p) => p.player_id === pair.player1_id);
     const p2 = players.find((p) => p.player_id === pair.player2_id);
-    const teamScore = (p1?.finals_score ?? 0) + (p2?.finals_score ?? 0);
-    const scoreStr = p1?.finals_score != null && p2?.finals_score != null ? ` (${teamScore.toFixed(1)})` : "";
+    const p1First = (p1?.name ?? "Unknown").split(" ")[0];
+    const p2First = (p2?.name ?? "Unknown").split(" ")[0];
     return {
-      label: `Team ${idx + 1}${scoreStr}`,
+      label: `${p1First} & ${p2First}`,
       player1_name: p1?.name ?? "Unknown",
       player2_name: p2?.name ?? "Unknown",
       player1_id: pair.player1_id,
