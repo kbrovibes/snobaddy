@@ -118,46 +118,34 @@ function MatchCard({
         </div>
       </div>
 
-      {/* Teams */}
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-        <div className="flex flex-col">
-          <span className={`text-sm font-semibold truncate ${isPlayed && match.winning_team === 1 ? "text-emerald-700" : "text-stone-700"}`}>
+      {/* Teams — same layout as normal session match cards */}
+      <div className="text-sm">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+          <span className={`font-semibold truncate text-left ${isPlayed ? (match.winning_team === 1 ? "text-green-600" : "text-stone-400") : "text-stone-700"}`}>
             {team1.label}
           </span>
-          {isPlayed && !editing && (
-            <span className={`text-xs font-bold ${match.winning_team === 1 ? "text-emerald-600" : "text-stone-400"}`}>
-              {match.team1_score}
-            </span>
-          )}
-        </div>
-        <span className="text-stone-300 text-xs">vs</span>
-        <div className="flex flex-col items-end">
-          <span className={`text-sm font-semibold truncate text-right ${isPlayed && match.winning_team === 2 ? "text-emerald-700" : "text-stone-700"}`}>
+          <span className="text-stone-300 text-center w-6">vs</span>
+          <span className={`font-semibold truncate text-left ${isPlayed ? (match.winning_team === 2 ? "text-green-600" : "text-stone-400") : "text-stone-700"}`}>
             {team2.label}
           </span>
-          {isPlayed && !editing && (
-            <span className={`text-xs font-bold ${match.winning_team === 2 ? "text-emerald-600" : "text-stone-400"}`}>
-              {match.team2_score}
-            </span>
-          )}
         </div>
+
+        {/* Player names subtitle for pair labels */}
+        {pairsMap.size > 0 && team1.label !== team1.names && (
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 mt-0.5">
+            <p className="text-[11px] text-stone-400 truncate">{team1.names}</p>
+            <span className="w-6" />
+            <p className="text-[11px] text-stone-400 truncate">{team2.names}</p>
+          </div>
+        )}
+
+        {/* Score + winner line */}
+        {isPlayed && !editing && (
+          <div className="text-xs text-stone-400 mt-0.5">
+            {match.team1_score} – {match.team2_score} · {winnerName} won
+          </div>
+        )}
       </div>
-
-      {/* Player names subtitle for pair labels */}
-      {pairsMap.size > 0 && team1.label !== team1.names && (
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 mt-0.5">
-          <p className="text-[11px] text-stone-400 truncate">{team1.names}</p>
-          <span />
-          <p className="text-[11px] text-stone-400 truncate text-right">{team2.names}</p>
-        </div>
-      )}
-
-      {/* Winner callout */}
-      {isPlayed && !editing && winnerName && (
-        <p className="text-[11px] text-emerald-600 text-center mt-1">
-          {winnerName} win
-        </p>
-      )}
 
       {/* Score entry (unplayed or editing) */}
       {((!isPlayed && isActive) || editing) && (
