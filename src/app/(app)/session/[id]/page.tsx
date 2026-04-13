@@ -462,7 +462,7 @@ export default async function SessionDetailPage({
       )}
 
       {/* Admin: finalize + God Mode: reset — grouped at bottom */}
-      {isAdmin && isActive && !isFinalsSession && <CloseSessionButton sessionId={session.id} />}
+      {isAdmin && isActive && <CloseSessionButton sessionId={session.id} />}
       {isGodMode && (isActive || (isCompleted && (tallyRows as TallyEntry[]).length === 0)) && (
         <ResetSessionButton sessionId={session.id} />
       )}
