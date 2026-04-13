@@ -43,21 +43,19 @@ function generateFunName(name1: string, name2: string): string {
     return pts;
   }
 
-  const aSplits = splitPoints(a);
-  const bSplits = splitPoints(b);
+  // Pick best split for prefix of A: prefer syllable break, min 3 chars
+  const aSplit = aSplits.find((p) => p >= 3) ?? aSplits[0];
+  const aCut = Math.max(2, Math.min(aSplit, a.length));
 
-  // Take prefix of first name + suffix of second name
-  const aPrefix = a.slice(0, aSplits[0]);
-  const bSuffix = b.slice(bSplits[0]);
+  // Pick best split for suffix of B: prefer syllable break, keep min 3 chars from end
+  const bSplit = bSplits.find((p) => b.length - p >= 3) ?? bSplits[bSplits.length - 1];
+  const bCut = Math.min(bSplit, Math.max(0, b.length - 2));
 
-  // Capitalize nicely
+  const aPrefix = a.slice(0, aCut);
+  const bSuffix = b.length - bCut >= 2 ? b.slice(bCut) : b.slice(Math.max(0, b.length - 2));
+
+  // Capitalize the join point
   const fun = aPrefix + bSuffix.charAt(0).toUpperCase() + bSuffix.slice(1);
-
-  // If too short (< 3), fallback to first 2 + first 2
-  if (fun.length < 3) {
-    return a.slice(0, 2) + b.slice(0, 2).charAt(0).toUpperCase() + b.slice(1, 2);
-  }
-
   return fun;
 }
 
