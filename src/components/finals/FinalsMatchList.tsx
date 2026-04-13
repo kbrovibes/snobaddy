@@ -35,12 +35,12 @@ function getTeamLabel(
       (pair.player1_id === p1Id && pair.player2_id === p2Id) ||
       (pair.player1_id === p2Id && pair.player2_id === p1Id)
     ) {
-      return { label: pair.label, names: `${pair.player1_name} & ${pair.player2_name}` };
+      return { label: pair.label, names: `${pair.player1_name.split(" ")[0]} & ${pair.player2_name.split(" ")[0]}` };
     }
   }
-  // Fall back to player names
-  const n1 = playerNames.get(p1Id) ?? "?";
-  const n2 = playerNames.get(p2Id) ?? "?";
+  // Fall back to player names (first name only)
+  const n1 = (playerNames.get(p1Id) ?? "?").split(" ")[0];
+  const n2 = (playerNames.get(p2Id) ?? "?").split(" ")[0];
   return { label: `${n1} & ${n2}`, names: `${n1} & ${n2}` };
 }
 
