@@ -16,6 +16,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Live sessions banner** — Finals setup page shows a banner above the workflow when sessions are active or completed, with links to each session and a Live/Done badge.
 - **Create new finals** — When a finals event is completed, a "Create New Finals" button appears on the home page. The API now allows multiple finals per season (only one active at a time).
 - **Session links on finalized event** — Finalized finals event page shows clickable links to Day 1 and Day 2 sessions between the winner cards and setup details.
+- **Start session button placement** — When there are more than 5 past sessions, the "Start New Session" button moves above the session list so admins don't have to scroll down.
 
 ---
 

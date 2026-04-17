@@ -53,9 +53,15 @@ export default async function SessionListPage({
 
       {isAdmin && <FinalsSection event={finalsEvent} sessionPair={finalsSessionPair} />}
 
+      {isAdmin && sessions.length > 5 && (
+        <div className="flex justify-center">
+          <CreateSessionButton />
+        </div>
+      )}
+
       <SessionListClient sessions={sessions} isAdmin={isAdmin} />
 
-      {isAdmin && (
+      {isAdmin && sessions.length <= 5 && (
         <div className="flex justify-center pt-2">
           <CreateSessionButton />
         </div>
