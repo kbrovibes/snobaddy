@@ -14,6 +14,8 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Finals event summary page** — A finalized finals event shows winner cards at top, then "View Setup Details" toggle, then per-group details. Overall rankings hidden on session pages. The preparatory tabs (Players, Groups, Sessions) are available behind the toggle.
 - **Pair configurator redesign** — Replaced native dropdowns with custom styled player pickers. Team cards have bordered containers, tap-to-open player lists with scores, and clear visual states for assigned/unassigned slots.
 - **Live sessions banner** — Finals setup page shows a banner above the workflow when sessions are active or completed, with links to each session and a Live/Done badge.
+- **Create new finals** — When a finals event is completed, a "Create New Finals" button appears on the home page. The API now allows multiple finals per season (only one active at a time).
+- **Session links on finalized event** — Finalized finals event page shows clickable links to Day 1 and Day 2 sessions between the winner cards and setup details.
 
 ---
 

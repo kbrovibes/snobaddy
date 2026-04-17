@@ -191,6 +191,35 @@ function FinalsEventCompletedWrapper({
       matches={completedMatches}
       seriesMap={completedSeriesMap}
     >
+      {/* Session links */}
+      {(sessionPair.day1 || sessionPair.day2) && (
+        <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+          <div className="bg-stone-50 px-4 py-2 border-b border-stone-100">
+            <h3 className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide">
+              Sessions
+            </h3>
+          </div>
+          {sessionPair.day1 && (
+            <NavLink
+              href={`/session/${sessionPair.day1.id}`}
+              className="flex items-center justify-between px-4 py-2.5 hover:bg-stone-50 active:bg-sky-50 transition-colors border-b border-stone-100 last:border-0"
+            >
+              <span className="text-sm text-stone-700">Day 1 — Groups A & B</span>
+              <span className="text-xs text-sky-600">View →</span>
+            </NavLink>
+          )}
+          {sessionPair.day2 && (
+            <NavLink
+              href={`/session/${sessionPair.day2.id}`}
+              className="flex items-center justify-between px-4 py-2.5 hover:bg-stone-50 active:bg-sky-50 transition-colors"
+            >
+              <span className="text-sm text-stone-700">Day 2 — Group C</span>
+              <span className="text-xs text-sky-600">View →</span>
+            </NavLink>
+          )}
+        </div>
+      )}
+
       {/* Setup details toggle — between winner cards and group details */}
       <details className="group">
         <summary className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-stone-400 hover:text-stone-600 cursor-pointer transition-colors">

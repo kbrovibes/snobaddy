@@ -98,6 +98,11 @@ export default function FinalsSection({
             {sessionPair?.day2 && (
               <SessionCard label="Day 2 — Group C" session={sessionPair.day2} />
             )}
+            {event.status === "completed" && (
+              <div className="px-4 py-3 border-t border-stone-100">
+                <CreateFinalsButton label="Create New Finals" />
+              </div>
+            )}
           </>
         ) : (
           <div className="px-4 py-3">

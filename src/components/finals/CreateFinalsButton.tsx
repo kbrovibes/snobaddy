@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useNavigationLoader } from "@/components/NavigationLoader";
 
-export default function CreateFinalsButton() {
+export default function CreateFinalsButton({ label }: { label?: string } = {}) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -37,7 +37,7 @@ export default function CreateFinalsButton() {
         disabled={loading}
         className="w-full py-3 bg-amber-500 text-white font-semibold rounded-xl disabled:opacity-50 hover:bg-amber-600 active:bg-amber-700 transition-colors"
       >
-        {loading ? "Creating…" : "🏆 Create Finals Event"}
+        {loading ? "Creating…" : label ?? "🏆 Create Finals Event"}
       </button>
       {error && <p className="text-xs text-red-500 text-center">{error}</p>}
     </div>

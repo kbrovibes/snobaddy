@@ -28,11 +28,12 @@ export async function POST() {
     return NextResponse.json({ error: "No season found" }, { status: 400 });
   }
 
-  // Check if a finals event already exists for this season
+  // Check if a non-completed finals event already exists for this season
   const { data: existing } = await adminDb
     .from("finals_events")
-    .select("id")
+    .select("id, status")
     .eq("season_id", season.id)
+    .neq("status", "completed")
     .maybeSingle();
 
   if (existing) {
@@ -42,11 +43,17 @@ export async function POST() {
     );
   }
 
+  // Count existing finals to number the new one
+  const { count } = await adminDb
+    .from("finals_events")
+    .select("id", { count: "exact", head: true })
+    .eq("season_id", season.id);
+
   const { data: created, error } = await adminDb
     .from("finals_events")
     .insert({
       season_id: season.id,
-      name: `${season.name} Finals`,
+      name: (count ?? 0) > 0 ? `${season.name} Finals ${(count ?? 0) + 1}` : `${season.name} Finals`,
       status: "draft",
       created_by: (player as unknown as { id: string }).id,
     })
