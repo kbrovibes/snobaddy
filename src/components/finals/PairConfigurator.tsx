@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition, useCallback } from "react";
+import React, { useState, useTransition, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export interface PairPlayer {
@@ -26,7 +26,6 @@ function buildInitialPairs(players: PairPlayer[], saved: SavedPair[]): Pair[] {
 }
 
 function autoSuggestPairs(players: PairPlayer[]): Pair[] {
-  // Fold pairing: #1 with #N, #2 with #N-1, etc. — balances combined pair scores
   const sorted = [...players].sort((a, b) => (b.finals_score ?? 0) - (a.finals_score ?? 0));
   const pairs: Pair[] = [];
   const half = Math.floor(sorted.length / 2);
@@ -36,31 +35,107 @@ function autoSuggestPairs(players: PairPlayer[]): Pair[] {
   return pairs;
 }
 
-function PlayerDropdown({
-  players, value, assignedIds, currentSlotValue, onChange, disabled,
+function firstName(name: string) {
+  return name.split(" ")[0];
+}
+
+// --- Custom player picker ---
+
+function PlayerPicker({
+  players, value, assignedIds, currentSlotValue, onChange, disabled, label,
 }: {
-  players: PairPlayer[]; value: string | null; assignedIds: Set<string>;
-  currentSlotValue: string | null; onChange: (id: string | null) => void; disabled: boolean;
+  players: PairPlayer[];
+  value: string | null;
+  assignedIds: Set<string>;
+  currentSlotValue: string | null;
+  onChange: (id: string | null) => void;
+  disabled: boolean;
+  label: string;
 }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open]);
+
+  const selected = value ? players.find((p) => p.player_id === value) : null;
+
   return (
-    <select
-      value={value ?? ""}
-      onChange={(e) => onChange(e.target.value || null)}
-      disabled={disabled}
-      className="flex-1 min-w-0 text-sm border border-stone-200 rounded-lg px-2 py-1.5 bg-white text-stone-800 disabled:opacity-50 disabled:bg-stone-100"
-    >
-      <option value="">Select…</option>
-      {players.map((p) => {
-        const taken = assignedIds.has(p.player_id) && p.player_id !== currentSlotValue;
-        return (
-          <option key={p.player_id} value={p.player_id} disabled={taken}>
-            {p.name}{p.finals_score != null ? ` (${p.finals_score.toFixed(1)})` : ""}
-          </option>
-        );
-      })}
-    </select>
+    <div className="flex-1 min-w-0 relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => !disabled && setOpen(!open)}
+        disabled={disabled}
+        className={[
+          "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
+          "border",
+          selected
+            ? "bg-white border-stone-200 text-stone-800"
+            : "bg-stone-100 border-dashed border-stone-300 text-stone-400",
+          disabled ? "opacity-50 cursor-not-allowed" : "hover:border-sky-300 active:border-sky-400",
+          open ? "ring-2 ring-sky-200 border-sky-300" : "",
+        ].join(" ")}
+      >
+        <span className="block truncate">
+          {selected ? firstName(selected.name) : label}
+        </span>
+        {!disabled && (
+          <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-300 text-[10px]">
+            ▼
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute z-30 mt-1 w-full bg-white rounded-xl shadow-lg border border-stone-200 py-1 max-h-52 overflow-y-auto">
+          {/* Clear option */}
+          {value && (
+            <button
+              type="button"
+              onClick={() => { onChange(null); setOpen(false); }}
+              className="w-full text-left px-3 py-2 text-sm text-stone-400 hover:bg-stone-50 transition-colors"
+            >
+              Clear
+            </button>
+          )}
+          {players.map((p) => {
+            const taken = assignedIds.has(p.player_id) && p.player_id !== currentSlotValue;
+            const isSelected = p.player_id === value;
+            return (
+              <button
+                key={p.player_id}
+                type="button"
+                onClick={() => {
+                  if (!taken) { onChange(p.player_id); setOpen(false); }
+                }}
+                disabled={taken}
+                className={[
+                  "w-full text-left px-3 py-2 text-sm transition-colors flex items-center justify-between",
+                  isSelected ? "bg-sky-50 text-sky-700 font-semibold" : "",
+                  taken ? "text-stone-300 cursor-not-allowed" : "hover:bg-stone-50 text-stone-800",
+                ].join(" ")}
+              >
+                <span className="truncate">{firstName(p.name)}</span>
+                <span className="text-[11px] text-stone-400 ml-2 shrink-0">
+                  {p.finals_score != null ? p.finals_score.toFixed(1) : ""}
+                  {isSelected && " ✓"}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
+
+// --- Main component ---
 
 export default function PairConfigurator({
   sessionId,
@@ -107,7 +182,6 @@ export default function PairConfigurator({
     setError(null);
     setSuccess(false);
 
-    // 1. Save pairs
     const pairsPayload = pairs.map((p) => ({ player1_id: p[0]!, player2_id: p[1]! }));
     const res = await fetch(`/api/sessions/${sessionId}/finals-format/pairs`, {
       method: "POST",
@@ -121,7 +195,6 @@ export default function PairConfigurator({
       return;
     }
 
-    // 2. Auto-generate matches (locks teams)
     const genRes = await fetch(`/api/sessions/${sessionId}/finals-format/generate-matches`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -169,29 +242,33 @@ export default function PairConfigurator({
         const p2 = pair[1] ? players.find((p) => p.player_id === pair[1]) : null;
         const teamScore = (p1?.finals_score ?? 0) + (p2?.finals_score ?? 0);
         const showScore = p1?.finals_score != null && p2?.finals_score != null;
+        const isComplete = !!p1 && !!p2;
         return (
-          <div key={pairIdx} className="flex flex-col gap-1 bg-stone-50 rounded-lg px-3 py-2">
+          <div key={pairIdx} className={[
+            "flex flex-col gap-1.5 rounded-xl px-3 py-2.5 border transition-colors",
+            isComplete ? "bg-white border-stone-200" : "bg-stone-50 border-dashed border-stone-200",
+          ].join(" ")}>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-stone-400">
+              <span className="text-xs font-semibold text-stone-500">
                 Team {pairIdx + 1}
               </span>
               {showScore && (
-                <span className="text-[11px] text-stone-400">
+                <span className="text-[11px] text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded-full">
                   {teamScore.toFixed(1)} pts
                 </span>
               )}
             </div>
             <div className="flex items-center gap-2">
-              <PlayerDropdown
+              <PlayerPicker
                 players={players} value={pair[0]} assignedIds={assignedIds}
                 currentSlotValue={pair[0]} onChange={(id) => updatePair(pairIdx, 0, id)}
-                disabled={isLocked || saving || isPending}
+                disabled={isLocked || saving || isPending} label="Player 1"
               />
-              <span className="text-xs text-stone-300">&</span>
-              <PlayerDropdown
+              <span className="text-xs text-stone-300 font-medium">&</span>
+              <PlayerPicker
                 players={players} value={pair[1]} assignedIds={assignedIds}
                 currentSlotValue={pair[1]} onChange={(id) => updatePair(pairIdx, 1, id)}
-                disabled={isLocked || saving || isPending}
+                disabled={isLocked || saving || isPending} label="Player 2"
               />
             </div>
           </div>
@@ -200,7 +277,7 @@ export default function PairConfigurator({
 
       {unassigned.length > 0 && !isOdd && (
         <p className="text-xs text-amber-600">
-          {unassigned.length} unassigned: {unassigned.map((p) => p.name).join(", ")}
+          {unassigned.length} unassigned: {unassigned.map((p) => firstName(p.name)).join(", ")}
         </p>
       )}
 
@@ -208,7 +285,7 @@ export default function PairConfigurator({
         <button
           onClick={handleSave}
           disabled={!canSave || saving || isPending}
-          className="w-full py-2 rounded-xl text-sm font-semibold text-white bg-stone-900 hover:bg-stone-800 disabled:opacity-40 transition-colors"
+          className="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-stone-900 hover:bg-stone-800 disabled:opacity-40 transition-colors"
         >
           {saving ? "Saving & generating matches…" : success ? "Saved ✓" : "Confirm Teams & Generate Matches"}
         </button>
