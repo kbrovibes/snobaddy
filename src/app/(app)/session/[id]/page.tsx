@@ -316,6 +316,7 @@ export default async function SessionDetailPage({
           groups={finalsGroups}
           matches={finalsMatchesClient}
           seriesMap={finalsSeriesMap}
+          hideOverallRankings
         />
       )}
 

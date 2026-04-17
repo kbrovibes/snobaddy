@@ -11,7 +11,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ### Changed
 - **Finals completed view** — Winner/runner-up cards for all groups shown at top, then per-group details (standings, series timeline, collapsible match history) below, followed by overall rankings. Applies to both session and event pages.
 - **Finals event auto-finalization** — When both finals sessions are closed, the finals event automatically marks itself as completed. Reopening a session reverts the event to active.
-- **Finals event summary page** — A finalized finals event shows a summary with winner/runner-up cards, standings, and series timelines. The preparatory tabs (Players, Groups, Sessions) are available behind a "View Setup Details" toggle.
+- **Finals event summary page** — A finalized finals event shows winner cards at top, then "View Setup Details" toggle, then per-group details. Overall rankings hidden on session pages. The preparatory tabs (Players, Groups, Sessions) are available behind the toggle.
 - **Pair configurator redesign** — Replaced native dropdowns with custom styled player pickers. Team cards have bordered containers, tap-to-open player lists with scores, and clear visual states for assigned/unassigned slots.
 - **Live sessions banner** — Finals setup page shows a banner above the workflow when sessions are active or completed, with links to each session and a Live/Done badge.
 

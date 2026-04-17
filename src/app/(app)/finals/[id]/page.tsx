@@ -185,15 +185,13 @@ function FinalsEventCompletedWrapper({
   }>;
 }) {
   return (
-    <div className="flex flex-col gap-4">
-      <FinalsCompletedView
-        formats={completedFormats}
-        groups={completedGroups}
-        matches={completedMatches}
-        seriesMap={completedSeriesMap}
-      />
-
-      {/* Expand to see admin details */}
+    <FinalsCompletedView
+      formats={completedFormats}
+      groups={completedGroups}
+      matches={completedMatches}
+      seriesMap={completedSeriesMap}
+    >
+      {/* Setup details toggle — between winner cards and group details */}
       <details className="group">
         <summary className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-stone-400 hover:text-stone-600 cursor-pointer transition-colors">
           <span>View Setup Details</span>
@@ -208,6 +206,6 @@ function FinalsEventCompletedWrapper({
           />
         </div>
       </details>
-    </div>
+    </FinalsCompletedView>
   );
 }

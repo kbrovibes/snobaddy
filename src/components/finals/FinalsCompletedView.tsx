@@ -29,6 +29,8 @@ interface FinalsCompletedViewProps {
   groups: Record<string, PairPlayer[]>;
   matches: FinalsMatch[];
   seriesMap: Record<string, SeriesData>;
+  hideOverallRankings?: boolean;
+  children?: React.ReactNode;
 }
 
 function firstName(name: string) {
@@ -385,6 +387,8 @@ export default function FinalsCompletedView({
   groups,
   matches,
   seriesMap,
+  hideOverallRankings,
+  children,
 }: FinalsCompletedViewProps) {
   const groupLabels = Object.keys(groups).sort();
   const allRankings = buildOverallRankings(groupLabels, formats, groups, matches, seriesMap);
@@ -451,6 +455,9 @@ export default function FinalsCompletedView({
         </div>
       ))}
 
+      {/* Slot for content between cards and details (e.g. setup details toggle) */}
+      {children}
+
       {/* Per-group match details below */}
       {groupLabels.map((g) => {
         const format = formats[g];
@@ -468,7 +475,7 @@ export default function FinalsCompletedView({
       })}
 
       {/* Overall rankings */}
-      {allRankings.length > 0 && (
+      {!hideOverallRankings && allRankings.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
           <div className="bg-stone-50 px-4 py-2 border-b border-stone-100">
             <h3 className="text-xs font-semibold text-stone-500 uppercase tracking-wide">
