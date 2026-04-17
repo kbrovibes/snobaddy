@@ -131,7 +131,7 @@ function isSeriesMatch(m: FinalsMatch, series: SeriesData | null): boolean {
 
 // --- Per-group completed section ---
 
-function GroupCompletedSection({
+function GroupDetailSection({
   group,
   format,
   players,
@@ -151,28 +151,6 @@ function GroupCompletedSection({
   const groupStageMatches = groupMatches.filter((m) => !isSeriesMatch(m, series));
   const seriesMatches = series ? groupMatches.filter((m) => isSeriesMatch(m, series)) : [];
 
-  // Winner / runner-up
-  let winner: string | null = null;
-  let runnerUp: string | null = null;
-
-  if (isFixedPartner) {
-    const savedPairs: SavedPair[] = (format.config as { pairs?: SavedPair[] })?.pairs ?? [];
-    const stats = computeFixedPartnerStats(savedPairs, groupStageMatches, playerMap);
-    if (stats.length >= 1) winner = stats[0].label;
-    if (stats.length >= 2) runnerUp = stats[1].label;
-  }
-
-  if (series?.winning_team != null) {
-    const wIds = series.winning_team === 1
-      ? [series.team1_player1_id, series.team1_player2_id]
-      : [series.team2_player1_id, series.team2_player2_id];
-    const rIds = series.winning_team === 1
-      ? [series.team2_player1_id, series.team2_player2_id]
-      : [series.team1_player1_id, series.team1_player2_id];
-    winner = wIds.map((id) => firstName(playerMap.get(id) ?? "?")).join(" & ");
-    runnerUp = rIds.map((id) => firstName(playerMap.get(id) ?? "?")).join(" & ");
-  }
-
   // Build match label helper
   function matchLabel(m: FinalsMatch) {
     const t1 = [m.team1_player1, m.team1_player2].map((id) => firstName(playerMap.get(id) ?? "?")).join(" & ");
@@ -184,26 +162,8 @@ function GroupCompletedSection({
     <div className="flex flex-col gap-3">
       {/* Group heading */}
       <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
-        Group {group}
+        Group {group} — Details
       </h2>
-
-      {/* Winner & runner-up cards */}
-      <div className="grid grid-cols-2 gap-2">
-        {winner && (
-          <div className="bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-3 flex flex-col items-center gap-1 text-center">
-            <span className="text-2xl">🏆</span>
-            <span className="text-xs font-semibold text-stone-700">Winner</span>
-            <span className="text-sm font-bold text-stone-900">{winner}</span>
-          </div>
-        )}
-        {runnerUp && (
-          <div className="bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-3 flex flex-col items-center gap-1 text-center">
-            <span className="text-2xl">🥈</span>
-            <span className="text-xs font-semibold text-stone-700">Runner-up</span>
-            <span className="text-sm font-bold text-stone-900">{runnerUp}</span>
-          </div>
-        )}
-      </div>
 
       {/* Series timeline — if best-of-3 happened */}
       {series && seriesMatches.length > 0 && (
@@ -429,14 +389,74 @@ export default function FinalsCompletedView({
   const groupLabels = Object.keys(groups).sort();
   const allRankings = buildOverallRankings(groupLabels, formats, groups, matches, seriesMap);
 
+  // Compute winners/runner-ups for all groups up front
+  const groupResults = groupLabels.map((g) => {
+    const format = formats[g];
+    const players = groups[g] ?? [];
+    if (!format) return { group: g, winner: null, runnerUp: null };
+    const playerMap = new Map(players.map((p) => [p.player_id, p.name]));
+    const groupMatches = matches.filter((m) => m.finals_group === g);
+    const series = seriesMap[g] ?? null;
+    const groupStageMatches = groupMatches.filter((m) => !isSeriesMatch(m, series));
+
+    let winner: string | null = null;
+    let runnerUp: string | null = null;
+
+    if (format.format_type === "fixed_partner") {
+      const savedPairs: SavedPair[] = (format.config as { pairs?: SavedPair[] })?.pairs ?? [];
+      const stats = computeFixedPartnerStats(savedPairs, groupStageMatches, playerMap);
+      if (stats.length >= 1) winner = stats[0].label;
+      if (stats.length >= 2) runnerUp = stats[1].label;
+    }
+    if (series?.winning_team != null) {
+      const wIds = series.winning_team === 1
+        ? [series.team1_player1_id, series.team1_player2_id]
+        : [series.team2_player1_id, series.team2_player2_id];
+      const rIds = series.winning_team === 1
+        ? [series.team2_player1_id, series.team2_player2_id]
+        : [series.team1_player1_id, series.team1_player2_id];
+      winner = wIds.map((id) => firstName(playerMap.get(id) ?? "?")).join(" & ");
+      runnerUp = rIds.map((id) => firstName(playerMap.get(id) ?? "?")).join(" & ");
+    }
+    return { group: g, winner, runnerUp };
+  });
+
   return (
     <div className="flex flex-col gap-5">
-      {/* Per-group sections */}
+      {/* All group winner/runner-up cards at the top */}
+      {groupResults.map((r) => (
+        <div key={r.group} className="flex flex-col gap-2">
+          <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
+            Group {r.group}
+          </h2>
+          <div className="grid grid-cols-2 gap-2">
+            {r.winner && (
+              <div className="bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-3 flex flex-col items-center gap-1 text-center">
+                <span className="text-2xl">🏆</span>
+                <span className="text-xs font-semibold text-stone-700">Winner</span>
+                <span className="text-sm font-bold text-stone-900">{r.winner}</span>
+              </div>
+            )}
+            {r.runnerUp && (
+              <div className="bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-3 flex flex-col items-center gap-1 text-center">
+                <span className="text-2xl">🥈</span>
+                <span className="text-xs font-semibold text-stone-700">Runner-up</span>
+                <span className="text-sm font-bold text-stone-900">{r.runnerUp}</span>
+              </div>
+            )}
+          </div>
+          {!r.winner && !r.runnerUp && (
+            <p className="text-xs text-stone-400 text-center py-2">No results recorded</p>
+          )}
+        </div>
+      ))}
+
+      {/* Per-group match details below */}
       {groupLabels.map((g) => {
         const format = formats[g];
         if (!format) return null;
         return (
-          <GroupCompletedSection
+          <GroupDetailSection
             key={g}
             group={g}
             format={format}
