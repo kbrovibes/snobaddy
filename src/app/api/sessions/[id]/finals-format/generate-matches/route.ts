@@ -247,7 +247,7 @@ export async function POST(
   const { finals_group } = body as { finals_group: string };
 
   if (!finals_group || !["A", "B", "C"].includes(finals_group)) {
-    return NextResponse.json({ error: "finals_group must be A or B" }, { status: 400 });
+    return NextResponse.json({ error: "finals_group must be A, B, or C" }, { status: 400 });
   }
 
   const { data: format } = await supabase
