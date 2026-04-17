@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.28.0] - 2026-04-17
+
+### Changed
+- **Finals completed view** — When a finals session is finalized, the page now shows winner and runner-up cards per group plus an overall player rankings table. Non-finals cards (highlights, tally, scoreboard, match history) are hidden.
+
+---
+
 ## [0.27.1] - 2026-04-17
 
 ### Changed

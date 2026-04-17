@@ -35,6 +35,7 @@ import ResetSessionButton from "@/components/ResetSessionButton";
 import AutoRefreshToggle from "@/components/AutoRefreshToggle";
 import FinalizeSessionButton from "@/components/FinalizeSessionButton";
 import FinalsSessionTabs from "@/components/finals/FinalsSessionTabs";
+import FinalsCompletedView from "@/components/finals/FinalsCompletedView";
 import type { FinalsFormatData } from "@/components/finals/FormatPicker";
 import type { PairPlayer } from "@/components/finals/PairConfigurator";
 import type { FinalsMatch } from "@/components/finals/FinalsMatchList";
@@ -308,6 +309,16 @@ export default async function SessionDetailPage({
         </div>
       )}
 
+      {/* Finals: completed view — winners, runner-ups, rankings */}
+      {isFinalsSession && isCompleted && Object.keys(finalsGroups).length > 0 && (
+        <FinalsCompletedView
+          formats={finalsFormatsClient}
+          groups={finalsGroups}
+          matches={finalsMatchesClient}
+          seriesMap={finalsSeriesMap}
+        />
+      )}
+
       {/* Non-admin pending (regular sessions only) */}
       {isPending && !isAdmin && !isFinalsSession && (
         <div className="bg-orange-50 border border-orange-100 rounded-xl px-4 py-3 text-sm text-orange-700 text-center">
@@ -368,7 +379,7 @@ export default async function SessionDetailPage({
       {/* Completed session */}
       {isCompleted && (
         <>
-          {highlights && highlights.totalMatches >= 3 && (
+          {!isFinalsSession && highlights && highlights.totalMatches >= 3 && (
             <SessionHighlights highlights={highlights} nameMap={nameMap} />
           )}
           <div className="bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 flex items-center justify-between">
@@ -387,8 +398,8 @@ export default async function SessionDetailPage({
         </>
       )}
 
-      {/* Tally scoreboard — shown for completed sessions with tally data (no match records) */}
-      {isCompleted && (tallyRows as TallyEntry[]).length > 0 && (
+      {/* Tally scoreboard — shown for completed sessions with tally data (no match records), not finals */}
+      {isCompleted && !isFinalsSession && (tallyRows as TallyEntry[]).length > 0 && (
         <>
           <TallyHighlights entries={tallyRows as TallyEntry[]} nameMap={nameMap} />
           <TallyScoreboard
