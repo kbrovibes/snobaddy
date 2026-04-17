@@ -1174,8 +1174,53 @@ export default function FinalsEventTabs({
     setResetting(false);
   }
 
+  // Check if any sessions are active or completed
+  const liveSessions: { label: string; session: FinalsSessionInfo }[] = [];
+  if (sessionPair.day1 && (sessionPair.day1.status === "active" || sessionPair.day1.status === "completed")) {
+    liveSessions.push({ label: "Day 1 — Groups A & B", session: sessionPair.day1 });
+  }
+  if (sessionPair.day2 && (sessionPair.day2.status === "active" || sessionPair.day2.status === "completed")) {
+    liveSessions.push({ label: "Day 2 — Group C", session: sessionPair.day2 });
+  }
+  const hasActiveSessions = liveSessions.some((s) => s.session.status === "active");
+
   return (
     <div className="flex flex-col gap-4">
+      {/* Live sessions banner */}
+      {liveSessions.length > 0 && (
+        <div className={`rounded-xl px-4 py-3 flex flex-col gap-2 ${hasActiveSessions ? "bg-sky-50 border border-sky-200" : "bg-teal-50 border border-teal-200"}`}>
+          <div className="flex items-center gap-2">
+            {hasActiveSessions && <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />}
+            <span className={`text-xs font-semibold uppercase tracking-wide ${hasActiveSessions ? "text-sky-700" : "text-teal-700"}`}>
+              {hasActiveSessions ? "Sessions In Progress" : "Sessions Completed"}
+            </span>
+          </div>
+          {liveSessions.map((s) => {
+            const isActive = s.session.status === "active";
+            const formattedDate = new Date(s.session.date + "T12:00:00").toLocaleDateString("en-US", {
+              weekday: "short", month: "short", day: "numeric",
+            });
+            return (
+              <NavLink
+                key={s.session.id}
+                href={`/session/${s.session.id}`}
+                className="flex items-center justify-between px-3 py-2 bg-white rounded-lg hover:bg-stone-50 active:bg-sky-50 transition-colors"
+              >
+                <div>
+                  <p className="text-sm font-semibold text-stone-800">{s.label}</p>
+                  <p className="text-xs text-stone-400">{formattedDate}</p>
+                </div>
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                  isActive ? "text-white bg-sky-700" : "text-teal-600 bg-teal-100"
+                }`}>
+                  {isActive ? "Live" : "Done"}
+                </span>
+              </NavLink>
+            );
+          })}
+        </div>
+      )}
+
       {/* Step workflow arrows */}
       <WorkflowSteps
         steps={[
