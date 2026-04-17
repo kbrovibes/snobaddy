@@ -43,6 +43,9 @@ function generateFunName(name1: string, name2: string): string {
     return pts;
   }
 
+  const aSplits = splitPoints(a);
+  const bSplits = splitPoints(b);
+
   // Pick best split for prefix of A: prefer syllable break, min 3 chars
   const aSplit = aSplits.find((p) => p >= 3) ?? aSplits[0];
   const aCut = Math.max(2, Math.min(aSplit, a.length));

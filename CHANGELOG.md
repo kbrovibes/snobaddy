@@ -11,6 +11,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ### Changed
 - **Leaderboard is admin-only** — The Leaderboard tab is now hidden from non-admin players, and `/leaderboard` redirects non-admins to the home page.
 
+### Fixed
+- **Production build restored** — Fixed undeclared `aSplits`/`bSplits` in `FinalsMatchList.generateFunName` that had been failing Vercel typecheck since 2026-04-12, preventing production deploys.
+
 ---
 
 ## [0.27.0] - 2026-04-12
