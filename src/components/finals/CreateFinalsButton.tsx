@@ -31,13 +31,13 @@ export default function CreateFinalsButton({ label }: { label?: string } = {}) {
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col items-center gap-2">
       <button
         onClick={handleCreate}
         disabled={loading}
-        className="w-full py-3 bg-amber-500 text-white font-semibold rounded-xl disabled:opacity-50 hover:bg-amber-600 active:bg-amber-700 transition-colors"
+        className="px-5 py-2.5 text-sm font-semibold text-white bg-stone-900 rounded-xl disabled:opacity-50 hover:bg-stone-800 transition-colors"
       >
-        {loading ? "Creating…" : label ?? "🏆 Create Finals Event"}
+        {loading ? "Creating…" : label ?? "+ Create Finals Event"}
       </button>
       {error && <p className="text-xs text-red-500 text-center">{error}</p>}
     </div>
