@@ -18,6 +18,10 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Session links on finalized event** — Finalized finals event page shows clickable links to Day 1 and Day 2 sessions between the winner cards and setup details.
 - **Start session button placement** — When there are more than 5 past sessions, the "Start New Session" button moves above the session list so admins don't have to scroll down.
 
+### Fixed
+- **Create new finals** — Dropped unique constraint on `finals_events.season_id` that prevented creating a second finals event for the same season.
+- **Under Construction banner removed** — Finals section no longer shows the "Under Construction" badge.
+
 ---
 
 ## [0.27.1] - 2026-04-17
