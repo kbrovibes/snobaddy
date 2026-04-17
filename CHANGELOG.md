@@ -13,6 +13,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 - **Production build restored** — Fixed undeclared `aSplits`/`bSplits` in `FinalsMatchList.generateFunName` that had been failing Vercel typecheck since 2026-04-12, preventing production deploys.
+- **Leaderboard now counts regular matches** — Season leaderboard and season match count were filtering on `match_type IS NULL` to exclude finals, but regular matches use `match_type = 'regular'` (not NULL), so every individual match record was being excluded. Filter now explicitly selects regular matches. Players who had only recorded individual matches (no tallies) were missing from the leaderboard entirely.
 
 ---
 

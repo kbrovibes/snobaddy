@@ -466,12 +466,12 @@ export async function getSeasonMatchCount(options?: { includeTestSessions?: bool
   const includeTest = options?.includeTestSessions ?? false;
 
   const matchQuery = includeTest
-    ? supabase.from("matches").select("*", { count: "exact", head: true }).is("match_type", null)
+    ? supabase.from("matches").select("*", { count: "exact", head: true }).eq("match_type", "regular")
     : supabase
         .from("matches")
         .select("*, sessions!inner(is_test_session)", { count: "exact", head: true })
         .eq("sessions.is_test_session", false)
-        .is("match_type", null);
+        .eq("match_type", "regular");
 
   const tallyQuery = includeTest
     ? supabase.from("session_tally").select("wins")
