@@ -9,7 +9,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [0.28.0] - 2026-04-17
 
 ### Changed
-- **Finals completed view** — When a finals session is finalized, the page now shows winner and runner-up cards per group (side-by-side, center-aligned) plus an overall player rankings table. Non-finals cards (highlights, tally, scoreboard, match history) are hidden.
+- **Finals completed view** — When a finals session is finalized, the page now shows per-group winner/runner-up cards, standings tables, best-of-3 series timeline, collapsible match history, and an overall player rankings table. Non-finals cards (highlights, tally, scoreboard) are hidden.
 
 ---
 
