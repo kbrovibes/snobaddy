@@ -4,6 +4,7 @@ import { getActivePlayers } from "@/lib/db/players";
 import { getSeasonMatchCount } from "@/lib/db/matches";
 import LeaderboardTable from "./LeaderboardTable";
 import { createClient } from "@/lib/supabase-server";
+import { redirect } from "next/navigation";
 
 export default async function LeaderboardPage() {
   const supabase = await createClient();
@@ -11,6 +12,8 @@ export default async function LeaderboardPage() {
   const { data: currentPlayer } = await supabase
     .from("players").select("is_admin").eq("user_id", user!.id).maybeSingle();
   const isAdmin = currentPlayer?.is_admin ?? false;
+
+  if (!isAdmin) redirect("/");
 
   const [allPlayers, allPlayersWithTest, totalMatches, totalMatchesWithTest] = await Promise.all([
     getActivePlayers(),

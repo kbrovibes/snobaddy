@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 const NAV_ITEMS = [
   { href: "/", label: "Session", icon: "🏸", adminOnly: false },
   { href: "/players", label: "Players", icon: "👥", adminOnly: false },
-  { href: "/leaderboard", label: "Leaderboard", icon: "🏆", adminOnly: false },
+  { href: "/leaderboard", label: "Leaderboard", icon: "🏆", adminOnly: true },
 ];
 
 export default function BottomNav({ isAdmin, isGodMode }: { isAdmin: boolean; isGodMode: boolean }) {

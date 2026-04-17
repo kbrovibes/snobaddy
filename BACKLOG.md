@@ -35,6 +35,7 @@ Single source of truth for all planned and completed work.
 - [ ] **08 — Ethan Mode** · [spec](specs/08-ethan-mode.md) · Easter egg: DB-persisted admin toggle that biases match suggestions (Chitra favored, Kiran Iyer skipped); banner visible to all when active
 - [x] **12 — Match Queue Improvements** · [spec](specs/12-match-queue-improvements.md) · Optimal team balancing within each match; auto-backfill queue when a match is removed; dynamic queue cap based on checked-in count (no auto-gen until 8 players)
 - [x] **13 — UI Tweaks** · [spec](specs/13-ui-tweaks.md) · Session stats show total match count; player detail groups results by session; leaderboard drops Skill Level column
+- [x] **31 — Admin-only Leaderboard** · [spec](specs/31-admin-only-leaderboard.md) · Hide Leaderboard tab from non-admins; redirect `/leaderboard` to `/` for non-admins
 
 ---
 

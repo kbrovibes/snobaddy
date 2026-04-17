@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.27.1] - 2026-04-17
+
+### Changed
+- **Leaderboard is admin-only** — The Leaderboard tab is now hidden from non-admin players, and `/leaderboard` redirects non-admins to the home page.
+
+---
+
 ## [0.27.0] - 2026-04-12
 
 ### Added
