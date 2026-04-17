@@ -29,5 +29,39 @@ export async function POST(
     .eq("status", "active");
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Auto-finalize finals event if both sessions are now completed
+  const { data: session } = await supabase
+    .from("sessions")
+    .select("finals_event_id")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (session?.finals_event_id) {
+    const { data: event } = await supabase
+      .from("finals_events")
+      .select("finals1_session_id, finals2_session_id")
+      .eq("id", session.finals_event_id)
+      .maybeSingle();
+
+    if (event) {
+      const siblingIds = [event.finals1_session_id, event.finals2_session_id].filter(Boolean) as string[];
+      const { data: siblings } = await supabase
+        .from("sessions")
+        .select("status")
+        .in("id", siblingIds);
+
+      const allCompleted = siblings?.length === siblingIds.length &&
+        siblings.every((s) => s.status === "completed");
+
+      if (allCompleted) {
+        await supabase
+          .from("finals_events")
+          .update({ status: "completed" })
+          .eq("id", session.finals_event_id);
+      }
+    }
+  }
+
   return NextResponse.json({ ok: true });
 }

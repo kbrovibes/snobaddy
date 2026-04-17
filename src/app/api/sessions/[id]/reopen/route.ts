@@ -21,5 +21,21 @@ export async function POST(
     .eq("status", "completed");
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Un-finalize finals event if it was completed
+  const { data: session } = await supabase
+    .from("sessions")
+    .select("finals_event_id")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (session?.finals_event_id) {
+    await supabase
+      .from("finals_events")
+      .update({ status: "active" })
+      .eq("id", session.finals_event_id)
+      .eq("status", "completed");
+  }
+
   return NextResponse.json({ ok: true });
 }
