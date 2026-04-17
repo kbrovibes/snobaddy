@@ -230,35 +230,29 @@ export default function FinalsCompletedView({
     <div className="flex flex-col gap-4">
       {/* Winner & runner-up cards per group */}
       {allResults.map((r) => (
-        <div key={r.group} className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="bg-stone-50 px-4 py-2 border-b border-stone-100">
-            <h3 className="text-xs font-semibold text-stone-500 uppercase tracking-wide">
-              Group {r.group}
-            </h3>
-          </div>
-          <div className="px-4 py-3 flex flex-col gap-2">
+        <div key={r.group} className="flex flex-col gap-2">
+          <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
+            Group {r.group}
+          </h2>
+          <div className="grid grid-cols-2 gap-2">
             {r.winner && (
-              <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+              <div className="bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-3 flex flex-col items-center gap-1 text-center">
                 <span className="text-2xl">🏆</span>
-                <div>
-                  <p className="text-sm font-bold text-green-700">{r.winner}</p>
-                  <p className="text-[11px] text-green-500">Winner</p>
-                </div>
+                <span className="text-xs font-semibold text-stone-700">Winner</span>
+                <span className="text-sm font-bold text-stone-900">{r.winner}</span>
               </div>
             )}
             {r.runnerUp && (
-              <div className="flex items-center gap-3 bg-stone-50 border border-stone-200 rounded-xl px-4 py-3">
+              <div className="bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-3 flex flex-col items-center gap-1 text-center">
                 <span className="text-2xl">🥈</span>
-                <div>
-                  <p className="text-sm font-bold text-stone-700">{r.runnerUp}</p>
-                  <p className="text-[11px] text-stone-400">Runner-up</p>
-                </div>
+                <span className="text-xs font-semibold text-stone-700">Runner-up</span>
+                <span className="text-sm font-bold text-stone-900">{r.runnerUp}</span>
               </div>
             )}
-            {!r.winner && !r.runnerUp && (
-              <p className="text-xs text-stone-400 text-center py-2">No results recorded</p>
-            )}
           </div>
+          {!r.winner && !r.runnerUp && (
+            <p className="text-xs text-stone-400 text-center py-2">No results recorded</p>
+          )}
         </div>
       ))}
 
