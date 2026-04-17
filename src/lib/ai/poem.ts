@@ -7,13 +7,16 @@ export async function generatePlayerPoem(
   name: string,
   context: PlayerPoemContext
 ): Promise<string> {
-  const { wins, losses, recentSessions, topPartner, onlyTestSessions } = context;
+  const { wins, losses, recentSessions, topPartner, onlyTestSessions, gender } = context;
   const totalMatches = wins + losses;
+  const pronounHint = gender === "female"
+    ? `If you use pronouns, use she/her for ${name}.`
+    : `If you use pronouns, use he/him for ${name}.`;
 
   let prompt: string;
 
   if (onlyTestSessions) {
-    prompt = `Write a funny, light-hearted 2–3 line poem about a badminton player named ${name} who has only ever played in test sessions — they're more of a quality-assurance expert than an actual player. Make it playful and self-aware, as if they're a professional app tester who somehow ended up on a badminton court. Keep it warm and friendly, not insulting. Use their name. Return only the poem, no title or preamble.`;
+    prompt = `Write a funny, light-hearted 2–3 line poem about a badminton player named ${name} who has only ever played in test sessions — they're more of a quality-assurance expert than an actual player. Make it playful and self-aware, as if they're a professional app tester who somehow ended up on a badminton court. Keep it warm and friendly, not insulting. ${pronounHint} Use their name. Return only the poem, no title or preamble.`;
   } else {
     const lines: string[] = [];
 
@@ -35,7 +38,7 @@ export async function generatePlayerPoem(
     }
 
     const context_str = lines.join(". ");
-    prompt = `Write a funny, light-hearted 2–3 line poem about a badminton player named ${name}. Context: ${context_str}. Use their name in the poem. Reference something specific from their stats or partner if interesting. Keep it warm, witty, and rhyming — nothing controversial, insulting, or edgy. Return only the poem, no title or preamble.`;
+    prompt = `Write a funny, light-hearted 2–3 line poem about a badminton player named ${name}. Context: ${context_str}. ${pronounHint} Use their name in the poem. Reference something specific from their stats or partner if interesting. Keep it warm, witty, and rhyming — nothing controversial, insulting, or edgy. Return only the poem, no title or preamble.`;
   }
 
   const message = await client.messages.create({

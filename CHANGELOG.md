@@ -11,9 +11,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ### Changed
 - **Leaderboard is admin-only** — The Leaderboard tab is now hidden from non-admin players, and `/leaderboard` redirects non-admins to the home page.
 
+### Added
+- **Player gender field (backend only)** — Added a `gender` column on `players` (default `male`, also accepts `female`). Not shown anywhere in the UI — it's only used to guide pronoun choice in generated player poems. Seven players (Swathi, Kiran Iyer, Deepa, Jeeta, Nihita, Gazal, Robyn) marked female.
+
 ### Fixed
 - **Production build restored** — Fixed undeclared `aSplits`/`bSplits` in `FinalsMatchList.generateFunName` that had been failing Vercel typecheck since 2026-04-12, preventing production deploys.
 - **Leaderboard now counts regular matches** — Season leaderboard and season match count were filtering on `match_type IS NULL` to exclude finals, but regular matches use `match_type = 'regular'` (not NULL), so every individual match record was being excluded. Filter now explicitly selects regular matches. Players who had only recorded individual matches (no tallies) were missing from the leaderboard entirely.
+- **Poem pronouns** — Player poem prompts now hint the player's gender, so poems for players like Kiran Iyer no longer mistakenly use he/him. (Re-run `scripts/regenerate-poems.mjs` to regenerate existing poems.)
 
 ---
 

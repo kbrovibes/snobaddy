@@ -212,11 +212,13 @@ export interface PlayerPoemContext {
   recentSessions: Array<{ date: string; wins: number; losses: number }>;
   topPartner: string | null;
   onlyTestSessions: boolean; // true = player has real data only in test sessions
+  gender: "male" | "female";
 }
 
 export async function getPlayerPoemContext(playerId: string): Promise<PlayerPoemContext> {
   // Fetch individual matches (non-test + test, so we can detect test-only players)
-  const [{ data: allMatchData }, { data: realMatchData }, { data: tallyData }] = await Promise.all([
+  const [{ data: playerRow }, { data: allMatchData }, { data: realMatchData }, { data: tallyData }] = await Promise.all([
+    serviceClient.from("players").select("gender").eq("id", playerId).maybeSingle(),
     serviceClient
       .from("matches")
       .select("session_id, sessions(is_test_session)")
@@ -294,7 +296,8 @@ export async function getPlayerPoemContext(playerId: string): Promise<PlayerPoem
     ? Array.from(partnerCount.entries()).sort((a, b) => b[1] - a[1])[0][0]
     : null;
 
-  return { wins, losses, recentSessions, topPartner, onlyTestSessions };
+  const gender = (playerRow?.gender === "female" ? "female" : "male") as "male" | "female";
+  return { wins, losses, recentSessions, topPartner, onlyTestSessions, gender };
 }
 
 export async function getPlayerPoem(
