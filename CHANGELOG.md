@@ -27,6 +27,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Poem pronouns** — Player poem prompts now hint the player's gender, so poems for players like Kiran Iyer no longer mistakenly use he/him. (Re-run `scripts/regenerate-poems.mjs` to regenerate existing poems.)
 - **Finals Group C match generation** — DB `matches_finals_group_check` was restricted to `('A','B')`, so generating matches for Group C failed with a constraint violation. Constraint now allows A/B/C. Stale "must be A or B" error message updated.
 
+### Added
+- **Playoffs Top-4 tie-breaker picker** — When the Top-4 cutoff in playoffs mode has a tie on both Pts and PF, the admin now sees an amber banner listing the tied players and must manually check the one(s) that should advance. "Generate Best-of-3 Finals" is blocked until the tie is resolved. Previously the 4th seed was silently chosen alphabetically.
+
 ---
 
 ## [0.27.0] - 2026-04-12
