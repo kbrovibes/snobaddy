@@ -123,13 +123,19 @@ export default function FinalsSection({
           </div>
           {pastEvents.map((e) => {
             const s = statusLabel(e.status);
+            const date = new Date(e.created_at).toLocaleDateString("en-US", {
+              month: "short", day: "numeric", year: "numeric",
+            });
             return (
               <NavLink
                 key={e.id}
                 href={`/finals/${e.id}`}
                 className="flex items-center justify-between px-4 py-2.5 hover:bg-stone-50 active:bg-amber-50 transition-colors border-b border-stone-100 last:border-0"
               >
-                <span className="text-sm text-stone-700">{e.name}</span>
+                <div>
+                  <span className="text-sm text-stone-700">{e.name}</span>
+                  <p className="text-xs text-stone-400">{date}</p>
+                </div>
                 <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${s.cls}`}>
                   {s.text}
                 </span>
