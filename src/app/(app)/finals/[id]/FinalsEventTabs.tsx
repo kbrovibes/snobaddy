@@ -141,11 +141,13 @@ function PlayersTab({
   eventStatus,
   allPlayers,
   participants,
+  onGoToGroups,
 }: {
   eventId: string;
   eventStatus: FinalsEvent["status"];
   allPlayers: PlayerStats[];
   participants: FinalsParticipant[];
+  onGoToGroups?: () => void;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -351,6 +353,16 @@ function PlayersTab({
             </button>
           )}
         </div>
+      )}
+
+      {/* Next step nudge */}
+      {!editing && savedIds.size > 0 && isDraft && onGoToGroups && (
+        <button
+          onClick={onGoToGroups}
+          className="w-full py-2.5 text-sm font-semibold text-sky-600 border border-sky-200 rounded-xl hover:bg-sky-50 transition-colors"
+        >
+          Next: Set Up Groups →
+        </button>
       )}
     </div>
   );
@@ -1239,6 +1251,7 @@ export default function FinalsEventTabs({
           eventStatus={event.status}
           allPlayers={allPlayers}
           participants={participants}
+          onGoToGroups={() => setTab("groups")}
         />
       )}
 
