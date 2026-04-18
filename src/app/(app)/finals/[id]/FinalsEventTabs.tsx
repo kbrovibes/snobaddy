@@ -1147,7 +1147,13 @@ export default function FinalsEventTabs({
   participants: FinalsParticipant[];
   sessionPair: FinalsSessionPair;
 }) {
-  const [tab, setTab] = useState<Tab>("players");
+  // Auto-select the latest relevant tab based on event status
+  const initialTab: Tab = (() => {
+    if (event.status === "sessions_created" || event.status === "active" || event.status === "completed") return "sessions";
+    if (event.status === "breakdown_generated") return "groups";
+    return "players";
+  })();
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [deleting, setDeleting] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
