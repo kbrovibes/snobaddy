@@ -6,6 +6,7 @@ import type { FinalsSessionPair } from "@/lib/db/finals";
 import { getActivePlayers } from "@/lib/db/players";
 import FinalsEventTabs from "./FinalsEventTabs";
 import FinalsCompletedView from "@/components/finals/FinalsCompletedView";
+import DeleteFinalsButton from "@/components/finals/DeleteFinalsButton";
 import type { FinalsFormatData } from "@/components/finals/FormatPicker";
 import type { PairPlayer } from "@/components/finals/PairConfigurator";
 import type { FinalsMatch } from "@/components/finals/FinalsMatchList";
@@ -190,6 +191,7 @@ function FinalsEventCompletedWrapper({
       groups={completedGroups}
       matches={completedMatches}
       seriesMap={completedSeriesMap}
+      hideOverallRankings
     >
       {/* Session links */}
       {(sessionPair.day1 || sessionPair.day2) && (
@@ -235,6 +237,8 @@ function FinalsEventCompletedWrapper({
           />
         </div>
       </details>
+
+      <DeleteFinalsButton eventId={event!.id} />
     </FinalsCompletedView>
   );
 }
