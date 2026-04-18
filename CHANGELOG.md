@@ -22,6 +22,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Create new finals** — Dropped unique constraint on `finals_events.season_id` that prevented creating a second finals event for the same season.
 - **Under Construction banner removed** — Finals section no longer shows the "Under Construction" badge.
 - **Create Finals button style** — Matched the "Create Finals" button to the same size and color as "Start New Session" (stone-900, compact).
+- **Past finals visible** — All previous finals events now show in a "Past Finals" section below the current one on the home page, with links to each.
 
 ---
 

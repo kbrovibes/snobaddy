@@ -56,9 +56,11 @@ function deriveStatus(event: FinalsEvent, sessionPair?: FinalsSessionPair | null
 export default function FinalsSection({
   event,
   sessionPair,
+  pastEvents,
 }: {
   event: FinalsEvent | null;
   sessionPair?: FinalsSessionPair | null;
+  pastEvents?: FinalsEvent[];
 }) {
   const label = event ? deriveStatus(event, sessionPair) : null;
 
@@ -110,6 +112,32 @@ export default function FinalsSection({
           </div>
         )}
       </div>
+
+      {/* Past finals */}
+      {pastEvents && pastEvents.length > 0 && (
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden mt-2">
+          <div className="px-4 py-2 bg-stone-50 border-b border-stone-100">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-stone-400">
+              Past Finals
+            </p>
+          </div>
+          {pastEvents.map((e) => {
+            const s = statusLabel(e.status);
+            return (
+              <NavLink
+                key={e.id}
+                href={`/finals/${e.id}`}
+                className="flex items-center justify-between px-4 py-2.5 hover:bg-stone-50 active:bg-amber-50 transition-colors border-b border-stone-100 last:border-0"
+              >
+                <span className="text-sm text-stone-700">{e.name}</span>
+                <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${s.cls}`}>
+                  {s.text}
+                </span>
+              </NavLink>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

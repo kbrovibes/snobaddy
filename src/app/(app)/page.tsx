@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { getActiveSession, getAllSessions } from "@/lib/db/sessions";
-import { getActiveFinals, getFinalsSessionPair } from "@/lib/db/finals";
+import { getActiveFinals, getAllFinals, getFinalsSessionPair } from "@/lib/db/finals";
 import { createClient } from "@/lib/supabase-server";
 import CreateSessionButton from "@/components/CreateSessionButton";
 import FinalsSection from "@/components/finals/FinalsSection";
@@ -31,10 +31,13 @@ export default async function SessionListPage({
     .maybeSingle();
   const isAdmin = currentPlayer?.is_admin ?? false;
 
-  const [sessions, finalsEvent] = await Promise.all([
+  const [sessions, allFinalsEvents] = await Promise.all([
     getAllSessions(),
-    isAdmin ? getActiveFinals() : Promise.resolve(null),
+    isAdmin ? getAllFinals() : Promise.resolve([]),
   ]);
+  // Current = most recent non-completed, or most recent overall
+  const finalsEvent = allFinalsEvents.find((e) => e.status !== "completed") ?? allFinalsEvents[0] ?? null;
+  const pastFinalsEvents = allFinalsEvents.filter((e) => e.id !== finalsEvent?.id);
   const finalsSessionPair = finalsEvent
     ? await getFinalsSessionPair(finalsEvent.finals1_session_id, finalsEvent.finals2_session_id)
     : null;
@@ -51,7 +54,7 @@ export default async function SessionListPage({
         </div>
       </div>
 
-      {isAdmin && <FinalsSection event={finalsEvent} sessionPair={finalsSessionPair} />}
+      {isAdmin && <FinalsSection event={finalsEvent} sessionPair={finalsSessionPair} pastEvents={pastFinalsEvents} />}
 
       {isAdmin && sessions.length > 5 && (
         <div className="flex justify-center">

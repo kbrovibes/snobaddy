@@ -31,6 +31,23 @@ export async function getActiveFinals(): Promise<FinalsEvent | null> {
   };
 }
 
+export async function getAllFinals(): Promise<FinalsEvent[]> {
+  const supabase = await createClient();
+
+  const { data } = await supabase
+    .from("finals_events")
+    .select("*, seasons(name), finals_participants(count)")
+    .order("created_at", { ascending: false });
+
+  if (!data) return [];
+  return data.map((d) => ({
+    ...d,
+    season: (d.seasons as unknown as { name: string } | null),
+    participant_count:
+      (d.finals_participants as unknown as { count: number }[])?.[0]?.count ?? 0,
+  }));
+}
+
 export async function getFinalsById(id: string): Promise<FinalsEvent | null> {
   const supabase = await createClient();
 
