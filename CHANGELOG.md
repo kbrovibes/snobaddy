@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.28.2] - 2026-04-18
+
+### Fixed
+- **Fun names in all finals modes** — Fun names toggle now works in both fixed-partner and playoffs modes (was only working in playoffs).
+- **Fun name blending** — Names now use at least 2 characters from each player, preferring 3 at syllable breaks for more readable mashups.
+
+---
+
 ## [0.28.1] - 2026-04-18
 
 ### Fixed

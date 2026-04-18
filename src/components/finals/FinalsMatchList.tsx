@@ -24,42 +24,42 @@ export interface PairInfo {
 }
 
 // Generate a fun blended team name from two first names
-// e.g. Karthik + Sahit → KarHit, Varun + Vasu → VaVa
+// Uses at least 2 chars from each name, prefers 3 when it reads better
+// e.g. Karthik + Sahit → KarHit, Varun + Vasu → VarAsu, Jo + Al → JoAl
 function generateFunName(name1: string, name2: string): string {
   const a = name1.split(" ")[0];
   const b = name2.split(" ")[0];
+  const vowels = new Set("aeiouAEIOU");
 
-  // Find a good split point for each name (prefer syllable-ish breaks)
-  // Try splitting at vowel→consonant boundaries for natural feel
-  function splitPoints(name: string): number[] {
-    const vowels = new Set("aeiouAEIOU");
-    const pts: number[] = [];
+  // Find syllable-ish split points (vowel→consonant boundaries)
+  function syllableBreaks(name: string): number[] {
+    const breaks: number[] = [];
     for (let i = 2; i <= Math.min(name.length - 1, 5); i++) {
-      // Prefer right after a vowel (syllable break)
-      if (vowels.has(name[i - 1]) && !vowels.has(name[i])) pts.unshift(i);
-      else pts.push(i);
+      if (vowels.has(name[i - 1]) && !vowels.has(name[i])) breaks.push(i);
     }
-    if (pts.length === 0) pts.push(Math.ceil(name.length / 2));
-    return pts;
+    return breaks;
   }
 
-  const aSplits = splitPoints(a);
-  const bSplits = splitPoints(b);
+  const aBreaks = syllableBreaks(a);
+  const bBreaks = syllableBreaks(b);
 
-  // Pick best split for prefix of A: prefer syllable break, min 3 chars
-  const aSplit = aSplits.find((p) => p >= 3) ?? aSplits[0];
-  const aCut = Math.max(2, Math.min(aSplit, a.length));
+  // For prefix of A: prefer 3-char syllable break, fall back to 2 chars
+  const aCut = aBreaks.find((p) => p >= 3) ?? aBreaks.find((p) => p >= 2) ?? Math.min(3, a.length);
+  // Ensure at least 2 chars from A
+  const aLen = Math.max(2, Math.min(aCut, a.length));
 
-  // Pick best split for suffix of B: prefer syllable break, keep min 3 chars from end
-  const bSplit = bSplits.find((p) => b.length - p >= 3) ?? bSplits[bSplits.length - 1];
-  const bCut = Math.min(bSplit, Math.max(0, b.length - 2));
+  // For suffix of B: prefer 3-char syllable break from end, fall back to 2 chars
+  const bCutPoint = bBreaks.find((p) => b.length - p >= 3) ?? bBreaks.find((p) => b.length - p >= 2);
+  const bStart = bCutPoint != null ? bCutPoint : Math.max(0, b.length - 3);
+  // Ensure at least 2 chars from B
+  const bLen = b.length - bStart;
+  const finalBStart = bLen >= 2 ? bStart : Math.max(0, b.length - 2);
 
-  const aPrefix = a.slice(0, aCut);
-  const bSuffix = b.length - bCut >= 2 ? b.slice(bCut) : b.slice(Math.max(0, b.length - 2));
+  const aPrefix = a.slice(0, aLen);
+  const bSuffix = b.slice(finalBStart);
 
-  // Capitalize the join point
-  const fun = aPrefix + bSuffix.charAt(0).toUpperCase() + bSuffix.slice(1);
-  return fun;
+  // Capitalize the join point for readability
+  return aPrefix + bSuffix.charAt(0).toUpperCase() + bSuffix.slice(1);
 }
 
 function getTeamLabel(
@@ -75,7 +75,10 @@ function getTeamLabel(
       (pair.player1_id === p1Id && pair.player2_id === p2Id) ||
       (pair.player1_id === p2Id && pair.player2_id === p1Id)
     ) {
-      return { label: pair.label, names: `${pair.player1_name.split(" ")[0]} & ${pair.player2_name.split(" ")[0]}` };
+      const n1 = pair.player1_name.split(" ")[0];
+      const n2 = pair.player2_name.split(" ")[0];
+      const label = funNames ? generateFunName(n1, n2) : pair.label;
+      return { label, names: `${n1} & ${n2}` };
     }
   }
   // Fall back to player names (first name only)

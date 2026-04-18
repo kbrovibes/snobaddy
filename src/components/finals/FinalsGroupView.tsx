@@ -245,7 +245,7 @@ export default function FinalsGroupView({
         <FinalsMatchList
           matches={groupStageMatches}
           pairsInfo={isFixedPartner ? pairsInfoMap : {}}
-          playerNames={isPlayoffs ? playerNames : undefined}
+          playerNames={playerNames}
           sessionId={sessionId}
           isActive={isActive}
           funNames={funNames}
