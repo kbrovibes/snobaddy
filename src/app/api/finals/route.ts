@@ -28,21 +28,6 @@ export async function POST() {
     return NextResponse.json({ error: "No season found" }, { status: 400 });
   }
 
-  // Check if a non-completed finals event already exists for this season
-  const { data: existing } = await adminDb
-    .from("finals_events")
-    .select("id, status")
-    .eq("season_id", season.id)
-    .neq("status", "completed")
-    .maybeSingle();
-
-  if (existing) {
-    return NextResponse.json(
-      { error: "A Finals Event already exists for this season", id: existing.id },
-      { status: 409 }
-    );
-  }
-
   // Count existing finals to number the new one
   const { count } = await adminDb
     .from("finals_events")
