@@ -35,7 +35,7 @@ export default function CreateFinalsButton({ label }: { label?: string } = {}) {
       <button
         onClick={handleCreate}
         disabled={loading}
-        className="px-4 py-1.5 text-xs font-semibold text-sky-700 bg-sky-50 border border-sky-200 rounded-lg disabled:opacity-50 hover:bg-sky-100 transition-colors"
+        className="px-5 py-2.5 text-sm font-semibold text-white bg-stone-900 rounded-xl disabled:opacity-50 hover:bg-stone-800 transition-colors"
       >
         {loading ? "Creating…" : label ?? "+ Create Finals Event"}
       </button>

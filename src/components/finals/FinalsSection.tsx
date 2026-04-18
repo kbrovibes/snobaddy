@@ -66,11 +66,10 @@ export default function FinalsSection({
 
   return (
     <div>
-      <div className="flex items-center justify-between px-1 mb-1">
+      <div className="flex items-center px-1 mb-1">
         <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">
           Season Finals
         </p>
-        {event && <CreateFinalsButton label="+ New" />}
       </div>
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         {event ? (
@@ -108,6 +107,12 @@ export default function FinalsSection({
           </div>
         )}
       </div>
+
+      {event && (
+        <div className="flex justify-center pt-2">
+          <CreateFinalsButton label="+ Create New Finals" />
+        </div>
+      )}
 
       {/* Past finals */}
       {pastEvents && pastEvents.length > 0 && (
