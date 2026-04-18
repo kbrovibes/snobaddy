@@ -66,6 +66,11 @@ export default function FinalsSection({
 
   return (
     <div>
+      {event && (
+        <div className="flex justify-center mb-3">
+          <CreateFinalsButton label="+ Create New Finals" />
+        </div>
+      )}
       <div className="flex items-center px-1 mb-1">
         <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">
           Season Finals
@@ -107,12 +112,6 @@ export default function FinalsSection({
           </div>
         )}
       </div>
-
-      {event && (
-        <div className="flex justify-center pt-2">
-          <CreateFinalsButton label="+ Create New Finals" />
-        </div>
-      )}
 
       {/* Past finals */}
       {pastEvents && pastEvents.length > 0 && (
