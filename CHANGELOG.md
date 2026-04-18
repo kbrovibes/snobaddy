@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.28.1] - 2026-04-18
+
+### Fixed
+- **Delete finals event** — Fixed foreign key constraint error when deleting a finalized finals event (`sessions.finals_event_id` reference was not cleared before deletion).
+- **Delete confirmation dialog** — Replaced native browser popup with a styled in-app confirmation modal matching the rest of the UI.
+
+---
+
 ## [0.28.0] - 2026-04-17
 
 ### Changed

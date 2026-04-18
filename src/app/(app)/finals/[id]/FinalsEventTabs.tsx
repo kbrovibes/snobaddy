@@ -1157,6 +1157,7 @@ export default function FinalsEventTabs({
   const [deleting, setDeleting] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const { startLoading } = useNavigationLoader();
@@ -1166,7 +1167,7 @@ export default function FinalsEventTabs({
     event.status !== "draft" && event.status !== "breakdown_generated";
 
   async function handleDelete() {
-    if (!confirm("Delete this Finals Event and all its data? This cannot be undone.")) return;
+    setShowDeleteConfirm(false);
     setDeleting(true);
     const res = await fetch(`/api/finals/${event.id}`, { method: "DELETE" });
     if (res.ok) {
@@ -1317,12 +1318,36 @@ export default function FinalsEventTabs({
           </>
         )}
         <button
-          onClick={handleDelete}
+          onClick={() => setShowDeleteConfirm(true)}
           disabled={deleting || resetting || isPending}
           className="w-full py-2.5 text-sm font-medium text-red-400 hover:text-red-600 border border-red-100 hover:border-red-300 rounded-xl transition-colors disabled:opacity-50"
         >
           {deleting ? "Deleting…" : "Delete Finals Event"}
         </button>
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+            <div className="bg-white rounded-xl shadow-lg max-w-sm w-full p-5 flex flex-col gap-3">
+              <p className="text-sm font-semibold text-stone-900">Delete Finals Event</p>
+              <p className="text-sm text-stone-600 leading-relaxed">
+                This will permanently delete all groups, sessions, matches, and participant data. This cannot be undone.
+              </p>
+              <div className="flex gap-2 mt-1">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 py-2 text-sm font-medium text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="flex-1 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
