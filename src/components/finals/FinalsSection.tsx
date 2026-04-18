@@ -66,10 +66,11 @@ export default function FinalsSection({
 
   return (
     <div>
-      <div className="flex items-center gap-2 px-1 mb-1">
+      <div className="flex items-center justify-between px-1 mb-1">
         <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">
           Season Finals
         </p>
+        {event && <CreateFinalsButton label="+ New" />}
       </div>
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         {event ? (
@@ -97,9 +98,6 @@ export default function FinalsSection({
             {sessionPair?.day2 && (
               <SessionCard label="Day 2 — Group C" session={sessionPair.day2} />
             )}
-            <div className="px-4 py-3 border-t border-stone-100">
-              <CreateFinalsButton label="+ Create New Finals" />
-            </div>
           </>
         ) : (
           <div className="px-4 py-3">
