@@ -65,10 +65,14 @@ export async function DELETE(
 
   if (!event) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  // Break circular FKs: clear refs in both directions before deleting
-  const sessionIds = [event.finals1_session_id, event.finals2_session_id].filter(Boolean) as string[];
+  // Break circular FKs: clear ALL session refs pointing at this event
+  await adminDb.from("finals_events").update({ finals1_session_id: null, finals2_session_id: null }).eq("id", id);
+
+  // Find all sessions linked to this finals event (not just the two stored on the event)
+  const { data: linkedSessions } = await adminDb.from("sessions").select("id").eq("finals_event_id", id);
+  const sessionIds = (linkedSessions ?? []).map((s: { id: string }) => s.id);
+
   if (sessionIds.length > 0) {
-    await adminDb.from("finals_events").update({ finals1_session_id: null, finals2_session_id: null }).eq("id", id);
     await adminDb.from("sessions").update({ finals_event_id: null }).in("id", sessionIds);
     await adminDb.from("matches").delete().in("session_id", sessionIds).in("match_type", ["finals_group", "finals_final"]);
     await adminDb.from("finals_formats").delete().in("session_id", sessionIds);
