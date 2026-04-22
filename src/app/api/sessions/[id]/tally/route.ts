@@ -20,25 +20,28 @@ export async function POST(
 
   const { id: sessionId } = await params;
 
-  // Guard: reject if match records already exist for this session
-  const { count: matchCount } = await adminDb
-    .from("matches")
-    .select("*", { count: "exact", head: true })
-    .eq("session_id", sessionId);
-  if ((matchCount ?? 0) > 0) {
-    return NextResponse.json(
-      { error: "Cannot add tallies: matches already recorded for this session" },
-      { status: 409 }
-    );
-  }
-
-  // Session must exist and be completed; also fetch extraction snapshot for logging
+  // Session must exist; fetch status, whiteboard_mode, and extraction snapshot
   const { data: session } = await adminDb
     .from("sessions")
-    .select("status, tally_extraction_raw")
+    .select("status, tally_extraction_raw, whiteboard_mode")
     .eq("id", sessionId)
     .single();
   if (!session) return NextResponse.json({ error: "Session not found" }, { status: 404 });
+
+  // Guard: reject if match records already exist (unless whiteboard mode)
+  if (!session.whiteboard_mode) {
+    const { count: matchCount } = await adminDb
+      .from("matches")
+      .select("*", { count: "exact", head: true })
+      .eq("session_id", sessionId);
+    if ((matchCount ?? 0) > 0) {
+      return NextResponse.json(
+        { error: "Cannot add tallies: matches already recorded for this session" },
+        { status: 409 }
+      );
+    }
+  }
+
   if (session.status !== "completed") {
     return NextResponse.json(
       { error: "Tally mode is only available for completed sessions" },

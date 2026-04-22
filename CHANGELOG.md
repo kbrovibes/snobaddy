@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.29.0] - 2026-04-21
+
+### Added
+- **Whiteboard Mode** — New default score-tracking mode for regular sessions. Shows a 2-column grid of all checked-in players with quick-tap +W/+L buttons. No need to pick 4 players or enter scores — just tap wins and losses as they happen.
+- **4-tap match detection** — When 4 consecutive taps form a valid match (2 wins + 2 losses across 4 players), a toast offers to save it as a match record with assumed 21-15 score.
+- **Checked-out player handling** — Players who leave early appear greyed out at the bottom of the whiteboard with their stats preserved (read-only).
+- **Whiteboard mode toggle** — Admins can toggle whiteboard mode off to fall back to the existing simple/full score entry modes.
+
+---
+
 ## [0.28.3] - 2026-04-21
 
 ### Improved

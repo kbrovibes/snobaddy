@@ -11,6 +11,7 @@ export interface Session {
   season: { id: string; name: string };
   session_type?: "regular" | "finals";
   finals_event_id?: string | null;
+  whiteboard_mode: boolean;
 }
 
 export interface SessionRow {
@@ -55,7 +56,7 @@ export async function getTodaySession(): Promise<Session | null> {
     .maybeSingle();
 
   if (!data) return null;
-  return { ...data, simple_score_tracking: true, tally_photo_path: null, season: (data.seasons as unknown as Session["season"]) };
+  return { ...data, simple_score_tracking: true, tally_photo_path: null, whiteboard_mode: true, season: (data.seasons as unknown as Session["season"]) };
 }
 
 export async function getUpcomingSession(): Promise<Session | null> {
@@ -71,7 +72,7 @@ export async function getUpcomingSession(): Promise<Session | null> {
     .maybeSingle();
 
   if (!data) return null;
-  return { ...data, simple_score_tracking: true, tally_photo_path: null, season: (data.seasons as unknown as Session["season"]) };
+  return { ...data, simple_score_tracking: true, tally_photo_path: null, whiteboard_mode: true, season: (data.seasons as unknown as Session["season"]) };
 }
 
 export async function getActiveSession(): Promise<Session | null> {
@@ -83,7 +84,7 @@ export async function getActiveSession(): Promise<Session | null> {
     .limit(1)
     .maybeSingle();
   if (!data) return null;
-  return { ...data, simple_score_tracking: true, tally_photo_path: null, season: (data.seasons as unknown as Session["season"]) };
+  return { ...data, simple_score_tracking: true, tally_photo_path: null, whiteboard_mode: true, season: (data.seasons as unknown as Session["season"]) };
 }
 
 export async function getAllSessions(): Promise<SessionRow[]> {
@@ -111,7 +112,7 @@ export async function getSessionById(id: string): Promise<Session | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("sessions")
-    .select("id, date, status, auto_generate_matches, simple_score_tracking, is_test_session, tally_photo_path, session_type, finals_event_id, seasons(id, name)")
+    .select("id, date, status, auto_generate_matches, simple_score_tracking, is_test_session, tally_photo_path, session_type, finals_event_id, whiteboard_mode, seasons(id, name)")
     .eq("id", id)
     .maybeSingle();
 
@@ -131,11 +132,12 @@ export async function getSessionById(id: string): Promise<Session | null> {
       simple_score_tracking: true,
       is_test_session: false,
       tally_photo_path: null,
+      whiteboard_mode: true,
       season: (fallback.seasons as unknown as Session["season"]),
     };
   }
 
-  const row = data as typeof data & { auto_generate_matches?: boolean; simple_score_tracking?: boolean; is_test_session?: boolean; tally_photo_path?: string | null; session_type?: string; finals_event_id?: string | null };
+  const row = data as typeof data & { auto_generate_matches?: boolean; simple_score_tracking?: boolean; is_test_session?: boolean; tally_photo_path?: string | null; session_type?: string; finals_event_id?: string | null; whiteboard_mode?: boolean };
   return {
     ...data,
     auto_generate_matches: row.auto_generate_matches ?? true,
@@ -144,6 +146,7 @@ export async function getSessionById(id: string): Promise<Session | null> {
     tally_photo_path: row.tally_photo_path ?? null,
     session_type: (row.session_type as "regular" | "finals" | undefined) ?? "regular",
     finals_event_id: row.finals_event_id ?? null,
+    whiteboard_mode: row.whiteboard_mode ?? true,
     season: (data.seasons as unknown as Session["season"]),
   };
 }

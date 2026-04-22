@@ -10,7 +10,8 @@ import {
 import { getSessionMatches, getSessionScoreboard, getSessionHighlights } from "@/lib/db/matches";
 import { getProposedMatches } from "@/lib/db/proposed";
 import { getOnlinePlayerIds, getActivePlayerList } from "@/lib/db/players";
-import { getSessionTally, type TallyEntry } from "@/lib/db/tally";
+import { getSessionTally, getWhiteboardPlayers, type TallyEntry } from "@/lib/db/tally";
+import WhiteboardTally from "@/components/WhiteboardTally";
 import { getAppSetting } from "@/lib/db/settings";
 import { createClient } from "@/lib/supabase-server";
 import { buildNameMap, shortName } from "@/lib/display-name";
@@ -78,6 +79,10 @@ export default async function SessionDetailPage({
 
   const checkedInPlayers = session.status === "active"
     ? await getCheckedInPlayers(session.id)
+    : [];
+
+  const whiteboardPlayers = (session.status === "active" && session.whiteboard_mode)
+    ? await getWhiteboardPlayers(session.id)
     : [];
 
   const isCheckedIn = checkedInPlayers.some((p) => p.player_id === playerId);
@@ -356,20 +361,30 @@ export default async function SessionDetailPage({
           {/* Match entry — not shown for Finals sessions */}
           {!isFinalsSession && (
             <>
-              <SimpleMatchForm
-                sessionId={session.id}
-                checkedInPlayers={checkedInPlayers}
-                isAdmin={isAdmin}
-                simpleMode={session.simple_score_tracking}
-              />
-              {!session.simple_score_tracking && (
-                <ProposedMatchList
+              {session.whiteboard_mode ? (
+                <WhiteboardTally
                   sessionId={session.id}
-                  matches={proposedMatches}
-                  checkedInPlayers={checkedInPlayers}
+                  players={whiteboardPlayers}
                   isAdmin={isAdmin}
-                  autoGenerate={session.auto_generate_matches ?? true}
                 />
+              ) : (
+                <>
+                  <SimpleMatchForm
+                    sessionId={session.id}
+                    checkedInPlayers={checkedInPlayers}
+                    isAdmin={isAdmin}
+                    simpleMode={session.simple_score_tracking}
+                  />
+                  {!session.simple_score_tracking && (
+                    <ProposedMatchList
+                      sessionId={session.id}
+                      matches={proposedMatches}
+                      checkedInPlayers={checkedInPlayers}
+                      isAdmin={isAdmin}
+                      autoGenerate={session.auto_generate_matches ?? true}
+                    />
+                  )}
+                </>
               )}
             </>
           )}
@@ -423,8 +438,8 @@ export default async function SessionDetailPage({
         </>
       )}
 
-      {/* Match scoreboard — not shown for Finals sessions */}
-      {!isFinalsSession && (isActive || isCompleted) && (tallyRows as TallyEntry[]).length === 0 && (
+      {/* Match scoreboard — not shown for Finals or active whiteboard sessions */}
+      {!isFinalsSession && (isActive || isCompleted) && (tallyRows as TallyEntry[]).length === 0 && !(isActive && session.whiteboard_mode) && (
         <SessionScoreboard
           scoreboard={scoreboard}
           playerId={playerId}

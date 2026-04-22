@@ -21,16 +21,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Scores cannot be tied" }, { status: 400 });
   }
 
-  // Guard: reject if tally data already exists for this session
-  const { count: tallyCount } = await supabase
-    .from("session_tally")
-    .select("*", { count: "exact", head: true })
-    .eq("session_id", session_id);
-  if ((tallyCount ?? 0) > 0) {
-    return NextResponse.json(
-      { error: "Cannot record matches: tally data already exists for this session" },
-      { status: 409 }
-    );
+  // Guard: reject if tally data already exists for this session (unless whiteboard mode)
+  const { data: sessionRow } = await supabase
+    .from("sessions")
+    .select("whiteboard_mode")
+    .eq("id", session_id)
+    .maybeSingle();
+  if (!sessionRow?.whiteboard_mode) {
+    const { count: tallyCount } = await supabase
+      .from("session_tally")
+      .select("*", { count: "exact", head: true })
+      .eq("session_id", session_id);
+    if ((tallyCount ?? 0) > 0) {
+      return NextResponse.json(
+        { error: "Cannot record matches: tally data already exists for this session" },
+        { status: 409 }
+      );
+    }
   }
 
   // Validate all players are checked in to this session
