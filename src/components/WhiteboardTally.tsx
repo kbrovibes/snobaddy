@@ -128,58 +128,50 @@ export default function WhiteboardTally({ sessionId, players, isAdmin }: Props) 
     const out = player.checked_out;
 
     return (
-      <div className={`flex items-center gap-2 py-2 px-2 ${out ? "opacity-40" : ""}`}>
-        {/* Name */}
-        <span className={`flex-1 text-sm font-medium truncate ${out ? "text-stone-400" : "text-stone-800"}`}>
-          {player.name}
-        </span>
-
-        {/* Wins */}
+      <div className={`flex flex-col gap-1 py-1.5 px-2 ${out ? "opacity-40" : ""}`}>
+        {/* Name + W/L counts */}
+        <div className="flex items-center justify-between">
+          <span className={`text-sm font-medium truncate ${out ? "text-stone-400" : "text-stone-800"}`}>
+            {player.name}
+          </span>
+          <span className="text-xs text-stone-400 ml-1 shrink-0">
+            <span className={out ? "text-stone-400" : "text-green-700"}>{t.wins}</span>
+            <span className="text-stone-300">W</span>
+            {" "}
+            <span className={out ? "text-stone-400" : "text-orange-600"}>{t.losses}</span>
+            <span className="text-stone-300">L</span>
+          </span>
+        </div>
+        {/* Buttons row */}
         {!out && (
-          <button
-            onClick={() => handleTap(player.player_id, player.name, "wins", -1)}
-            disabled={t.wins <= 0}
-            className="w-6 h-7 flex items-center justify-center rounded text-stone-400 text-xs font-bold disabled:opacity-20 active:bg-stone-100"
-          >
-            −
-          </button>
-        )}
-        <span className={`text-sm font-bold w-6 text-center ${out ? "text-stone-400" : "text-green-700"}`}>
-          {t.wins}
-        </span>
-        <span className={`text-xs font-bold ${out ? "text-stone-300" : "text-green-600"}`}>W</span>
-        {!out && (
-          <button
-            onClick={() => handleTap(player.player_id, player.name, "wins", 1)}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-green-100 text-green-700 text-base font-bold active:bg-green-300 transition-colors"
-          >
-            +
-          </button>
-        )}
-
-        <div className="w-2" />
-
-        {/* Losses */}
-        {!out && (
-          <button
-            onClick={() => handleTap(player.player_id, player.name, "losses", -1)}
-            disabled={t.losses <= 0}
-            className="w-6 h-7 flex items-center justify-center rounded text-stone-400 text-xs font-bold disabled:opacity-20 active:bg-stone-100"
-          >
-            −
-          </button>
-        )}
-        <span className={`text-sm font-bold w-6 text-center ${out ? "text-stone-400" : "text-orange-600"}`}>
-          {t.losses}
-        </span>
-        <span className={`text-xs font-bold ${out ? "text-stone-300" : "text-orange-500"}`}>L</span>
-        {!out && (
-          <button
-            onClick={() => handleTap(player.player_id, player.name, "losses", 1)}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-orange-100 text-orange-600 text-base font-bold active:bg-orange-300 transition-colors"
-          >
-            +
-          </button>
+          <div className="flex gap-1">
+            <button
+              onClick={() => handleTap(player.player_id, player.name, "wins", 1)}
+              className="flex-1 h-7 flex items-center justify-center rounded-md bg-green-100 text-green-700 text-xs font-bold active:bg-green-300 transition-colors"
+            >
+              +W
+            </button>
+            <button
+              onClick={() => handleTap(player.player_id, player.name, "losses", 1)}
+              className="flex-1 h-7 flex items-center justify-center rounded-md bg-orange-100 text-orange-600 text-xs font-bold active:bg-orange-300 transition-colors"
+            >
+              +L
+            </button>
+            <button
+              onClick={() => handleTap(player.player_id, player.name, "wins", -1)}
+              disabled={t.wins <= 0}
+              className="w-7 h-7 flex items-center justify-center rounded-md bg-stone-100 text-stone-400 text-xs disabled:opacity-20 active:bg-stone-200"
+            >
+              −W
+            </button>
+            <button
+              onClick={() => handleTap(player.player_id, player.name, "losses", -1)}
+              disabled={t.losses <= 0}
+              className="w-7 h-7 flex items-center justify-center rounded-md bg-stone-100 text-stone-400 text-xs disabled:opacity-20 active:bg-stone-200"
+            >
+              −L
+            </button>
+          </div>
         )}
       </div>
     );
@@ -211,11 +203,20 @@ export default function WhiteboardTally({ sessionId, players, isAdmin }: Props) 
         </div>
       )}
 
-      {/* Active players */}
-      <div className="flex flex-col divide-y divide-stone-100">
-        {activePlayers.map((p) => (
-          <PlayerRow key={p.player_id} player={p} />
-        ))}
+      {/* Active players — 2-column grid */}
+      <div className="grid grid-cols-2 gap-x-0 divide-x divide-stone-100">
+        {/* Left column */}
+        <div className="flex flex-col divide-y divide-stone-100">
+          {activePlayers.filter((_, i) => i % 2 === 0).map((p) => (
+            <PlayerRow key={p.player_id} player={p} />
+          ))}
+        </div>
+        {/* Right column */}
+        <div className="flex flex-col divide-y divide-stone-100">
+          {activePlayers.filter((_, i) => i % 2 === 1).map((p) => (
+            <PlayerRow key={p.player_id} player={p} />
+          ))}
+        </div>
       </div>
 
       {/* Checked-out players */}
@@ -226,10 +227,17 @@ export default function WhiteboardTally({ sessionId, players, isAdmin }: Props) 
             <span className="text-xs text-stone-400">left early</span>
             <div className="flex-1 h-px bg-stone-200" />
           </div>
-          <div className="flex flex-col">
-            {checkedOutPlayers.map((p) => (
-              <PlayerRow key={p.player_id} player={p} />
-            ))}
+          <div className="grid grid-cols-2 gap-x-0 divide-x divide-stone-100">
+            <div className="flex flex-col divide-y divide-stone-100">
+              {checkedOutPlayers.filter((_, i) => i % 2 === 0).map((p) => (
+                <PlayerRow key={p.player_id} player={p} />
+              ))}
+            </div>
+            <div className="flex flex-col divide-y divide-stone-100">
+              {checkedOutPlayers.filter((_, i) => i % 2 === 1).map((p) => (
+                <PlayerRow key={p.player_id} player={p} />
+              ))}
+            </div>
           </div>
         </>
       )}
