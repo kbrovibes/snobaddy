@@ -149,22 +149,22 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
         {/* Row 1: Avatar + Name + W/L counts */}
         <div className="flex items-center gap-1.5">
           <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold shrink-0 ${
-            out ? "bg-stone-200 text-stone-600" : getAvatarColor(player.name)
+            out ? "bg-stone-300 text-stone-700" : getAvatarColor(player.name)
           }`}>
             {getInitials(player.name)}
           </span>
-          <span className={`text-xs font-medium truncate flex-1 ${out ? "text-stone-900" : "text-stone-600"}`}>
+          <span className={`text-xs font-semibold truncate flex-1 ${out ? "text-black" : "text-stone-600"}`}>
             {player.name}
           </span>
           <div className="flex items-baseline gap-2 shrink-0">
             <span className={`text-lg font-bold tabular-nums transition-transform duration-150 ${
               flash === "wins" ? "scale-125" : ""
-            } ${out ? "text-stone-700" : "text-green-700"}`}>{t.wins}</span>
-            <span className={`text-[10px] font-medium ${out ? "text-stone-500" : "text-green-600"}`}>W</span>
+            } ${out ? "text-black" : "text-green-700"}`}>{t.wins}</span>
+            <span className={`text-[10px] font-medium ${out ? "text-stone-600" : "text-green-600"}`}>W</span>
             <span className={`text-lg font-bold tabular-nums transition-transform duration-150 ${
               flash === "losses" ? "scale-125" : ""
-            } ${out ? "text-stone-700" : "text-orange-600"}`}>{t.losses}</span>
-            <span className={`text-[10px] font-medium ${out ? "text-stone-500" : "text-orange-500"}`}>L</span>
+            } ${out ? "text-black" : "text-orange-600"}`}>{t.losses}</span>
+            <span className={`text-[10px] font-medium ${out ? "text-stone-600" : "text-orange-500"}`}>L</span>
           </div>
         </div>
         {/* Row 2: +/- buttons */}
@@ -184,13 +184,13 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
             </button>
             <button
               onClick={() => handleTap(player.player_id, player.name, "wins", -1)}
-              className="h-6 w-6 flex items-center justify-center rounded bg-stone-50 text-stone-400 text-[10px] active:bg-stone-200"
+              className="h-6 w-6 flex items-center justify-center rounded bg-stone-100 text-stone-600 text-[10px] font-medium active:bg-stone-200"
             >
               −W
             </button>
             <button
               onClick={() => handleTap(player.player_id, player.name, "losses", -1)}
-              className="h-6 w-6 flex items-center justify-center rounded bg-stone-50 text-stone-400 text-[10px] active:bg-stone-200"
+              className="h-6 w-6 flex items-center justify-center rounded bg-stone-100 text-stone-600 text-[10px] font-medium active:bg-stone-200"
             >
               −L
             </button>
