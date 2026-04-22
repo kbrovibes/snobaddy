@@ -147,14 +147,14 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
             <button
               onClick={() => handleTap(player.player_id, player.name, "wins", -1)}
               disabled={t.wins <= 0}
-              className="h-6 w-6 flex items-center justify-center rounded bg-stone-50 text-stone-400 text-[10px] disabled:opacity-20 active:bg-stone-200"
+              className="h-6 w-6 flex items-center justify-center rounded bg-stone-50 text-stone-400 text-[10px] active:bg-stone-200"
             >
               −W
             </button>
             <button
               onClick={() => handleTap(player.player_id, player.name, "losses", -1)}
               disabled={t.losses <= 0}
-              className="h-6 w-6 flex items-center justify-center rounded bg-stone-50 text-stone-400 text-[10px] disabled:opacity-20 active:bg-stone-200"
+              className="h-6 w-6 flex items-center justify-center rounded bg-stone-50 text-stone-400 text-[10px] active:bg-stone-200"
             >
               −L
             </button>
