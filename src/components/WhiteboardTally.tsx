@@ -119,12 +119,12 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
           <span className={`text-sm font-medium truncate ${out ? "text-stone-400" : "text-stone-800"}`}>
             {player.name}
           </span>
-          <span className="text-xs text-stone-400 ml-1 shrink-0">
-            <span className={out ? "text-stone-400" : "text-green-700"}>{t.wins}</span>
-            <span className="text-stone-300">W</span>
-            {" "}
-            <span className={out ? "text-stone-400" : "text-orange-600"}>{t.losses}</span>
-            <span className="text-stone-300">L</span>
+          <span className="text-sm ml-2 shrink-0 flex items-center gap-2">
+            <span className={`font-bold ${out ? "text-stone-400" : "text-green-700"}`}>{t.wins}</span>
+            <span className={`text-xs ${out ? "text-stone-300" : "text-green-600"}`}>W</span>
+            <span className="text-stone-200">·</span>
+            <span className={`font-bold ${out ? "text-stone-400" : "text-orange-600"}`}>{t.losses}</span>
+            <span className={`text-xs ${out ? "text-stone-300" : "text-orange-500"}`}>L</span>
           </span>
         </div>
         {/* Buttons row */}

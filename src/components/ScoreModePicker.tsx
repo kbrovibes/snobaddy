@@ -41,38 +41,30 @@ export default function ScoreModePicker({
         <span className="text-xs font-semibold text-stone-400 uppercase tracking-wide">Score Entry</span>
         {!isAdmin && <span className="text-xs text-stone-400">(admin only)</span>}
       </div>
-      <div className={`flex flex-col gap-1.5 ${switching ? "opacity-50" : ""}`}>
-        {MODES.map(({ value, label, desc }) => (
+      <div className={`flex gap-1.5 ${switching ? "opacity-50" : ""}`}>
+        {MODES.map(({ value, label }) => (
           <button
             key={value}
             onClick={() => setMode(value)}
             disabled={!isAdmin || switching}
-            className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-left transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-center transition-colors ${
               currentMode === value
                 ? "bg-sky-50 border border-sky-200"
                 : "border border-stone-100 hover:border-stone-200"
             } ${!isAdmin ? "cursor-default" : ""}`}
           >
-            {/* Radio circle */}
-            <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+            <span className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${
               currentMode === value ? "border-sky-500" : "border-stone-300"
             }`}>
               {currentMode === value && (
-                <span className="w-2 h-2 rounded-full bg-sky-500" />
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
               )}
             </span>
-            <div>
-              <span className={`text-sm font-medium ${
-                currentMode === value ? "text-sky-800" : "text-stone-700"
-              }`}>
-                {label}
-              </span>
-              <span className={`text-xs ml-1.5 ${
-                currentMode === value ? "text-sky-600" : "text-stone-400"
-              }`}>
-                {desc}
-              </span>
-            </div>
+            <span className={`text-xs font-medium ${
+              currentMode === value ? "text-sky-800" : "text-stone-600"
+            }`}>
+              {label}
+            </span>
           </button>
         ))}
       </div>
