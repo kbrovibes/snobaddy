@@ -5,10 +5,10 @@ import { useState } from "react";
 
 export type ScoreMode = "whiteboard" | "simple" | "full";
 
-const MODES: { value: ScoreMode; label: string }[] = [
-  { value: "whiteboard", label: "Whiteboard" },
-  { value: "simple", label: "Win/Loss" },
-  { value: "full", label: "Full Score" },
+const MODES: { value: ScoreMode; label: string; desc: string }[] = [
+  { value: "whiteboard", label: "Whiteboard", desc: "— tap +W / +L" },
+  { value: "simple", label: "Win/Loss", desc: "— pick 4 players" },
+  { value: "full", label: "Full Score", desc: "— with scores" },
 ];
 
 export default function ScoreModePicker({
@@ -41,19 +41,38 @@ export default function ScoreModePicker({
         <span className="text-xs font-semibold text-stone-400 uppercase tracking-wide">Score Entry</span>
         {!isAdmin && <span className="text-xs text-stone-400">(admin only)</span>}
       </div>
-      <div className={`flex rounded-lg bg-stone-100 p-0.5 ${switching ? "opacity-50" : ""}`}>
-        {MODES.map(({ value, label }) => (
+      <div className={`flex flex-col gap-1.5 ${switching ? "opacity-50" : ""}`}>
+        {MODES.map(({ value, label, desc }) => (
           <button
             key={value}
             onClick={() => setMode(value)}
             disabled={!isAdmin || switching}
-            className={`flex-1 text-xs font-semibold py-1.5 rounded-md transition-all duration-200 ${
+            className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-left transition-colors ${
               currentMode === value
-                ? "bg-white text-stone-900 shadow-sm"
-                : "text-stone-500 hover:text-stone-700"
+                ? "bg-sky-50 border border-sky-200"
+                : "border border-stone-100 hover:border-stone-200"
             } ${!isAdmin ? "cursor-default" : ""}`}
           >
-            {label}
+            {/* Radio circle */}
+            <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+              currentMode === value ? "border-sky-500" : "border-stone-300"
+            }`}>
+              {currentMode === value && (
+                <span className="w-2 h-2 rounded-full bg-sky-500" />
+              )}
+            </span>
+            <div>
+              <span className={`text-sm font-medium ${
+                currentMode === value ? "text-sky-800" : "text-stone-700"
+              }`}>
+                {label}
+              </span>
+              <span className={`text-xs ml-1.5 ${
+                currentMode === value ? "text-sky-600" : "text-stone-400"
+              }`}>
+                {desc}
+              </span>
+            </div>
           </button>
         ))}
       </div>

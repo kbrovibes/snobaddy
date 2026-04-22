@@ -378,24 +378,20 @@ export default async function SessionDetailPage({
                   />
                 )}
                 {scoreMode !== "whiteboard" && (
-                  <>
-                    <SimpleMatchForm
-                      sessionId={session.id}
-                      checkedInPlayers={checkedInPlayers}
-                      isAdmin={isAdmin}
-                      simpleMode={session.simple_score_tracking}
-                    />
-                    {scoreMode === "full" && (
-                      <ProposedMatchList
-                        sessionId={session.id}
-                        matches={proposedMatches}
-                        checkedInPlayers={checkedInPlayers}
-                        isAdmin={isAdmin}
-                        autoGenerate={session.auto_generate_matches ?? true}
-                      />
-                    )}
-                  </>
+                  <SimpleMatchForm
+                    sessionId={session.id}
+                    checkedInPlayers={checkedInPlayers}
+                    isAdmin={isAdmin}
+                    simpleMode={session.simple_score_tracking}
+                  />
                 )}
+                <ProposedMatchList
+                  sessionId={session.id}
+                  matches={proposedMatches}
+                  checkedInPlayers={checkedInPlayers}
+                  isAdmin={isAdmin}
+                  autoGenerate={session.auto_generate_matches ?? true}
+                />
               </>
             );
           })()}
