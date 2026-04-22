@@ -10,7 +10,8 @@ import {
 import { getSessionMatches, getSessionScoreboard, getSessionHighlights } from "@/lib/db/matches";
 import { getProposedMatches } from "@/lib/db/proposed";
 import { getOnlinePlayerIds, getActivePlayerList } from "@/lib/db/players";
-import { getSessionTally, getWhiteboardPlayers, type TallyEntry } from "@/lib/db/tally";
+import { getSessionTally, getWhiteboardPlayers, getWhiteboardLog, type TallyEntry } from "@/lib/db/tally";
+import WhiteboardFeed from "@/components/WhiteboardFeed";
 import WhiteboardTally from "@/components/WhiteboardTally";
 import ScoreModePicker, { type ScoreMode } from "@/components/ScoreModePicker";
 import { getAppSetting } from "@/lib/db/settings";
@@ -84,6 +85,10 @@ export default async function SessionDetailPage({
 
   const whiteboardPlayers = (session.status === "active" && session.whiteboard_mode)
     ? await getWhiteboardPlayers(session.id)
+    : [];
+
+  const whiteboardLog = (session.status === "active" && session.whiteboard_mode)
+    ? await getWhiteboardLog(session.id)
     : [];
 
   const isCheckedIn = checkedInPlayers.some((p) => p.player_id === playerId);
@@ -454,8 +459,17 @@ export default async function SessionDetailPage({
         />
       )}
 
-      {/* Match history — not shown for Finals sessions */}
-      {!isFinalsSession && (isActive || isCompleted) && recentMatches.length > 0 && (
+      {/* Whiteboard activity feed — shown for active whiteboard sessions */}
+      {!isFinalsSession && isActive && session.whiteboard_mode && (whiteboardLog.length > 0 || recentMatches.length > 0) && (
+        <WhiteboardFeed
+          logEntries={whiteboardLog}
+          matches={recentMatches}
+          nameMap={nameMap}
+        />
+      )}
+
+      {/* Match history — not shown for Finals or active whiteboard sessions */}
+      {!isFinalsSession && (isActive || isCompleted) && recentMatches.length > 0 && !(isActive && session.whiteboard_mode) && (
         <div className="bg-white rounded-xl shadow-sm px-4 py-3">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
             Matches · {recentMatches.length}

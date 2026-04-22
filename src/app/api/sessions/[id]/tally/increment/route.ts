@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase-server";
+import { supabase as adminDb } from "@/lib/supabase";
 import { incrementTally } from "@/lib/db/tally";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -47,5 +48,14 @@ export async function POST(
   }
 
   const result = await incrementTally(sessionId, player_id, field, delta);
+
+  // Log the edit to whiteboard_log
+  await adminDb.from("whiteboard_log").insert({
+    session_id: sessionId,
+    player_id,
+    field,
+    delta,
+  });
+
   return NextResponse.json({ ok: true, ...result });
 }

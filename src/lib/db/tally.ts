@@ -1,6 +1,32 @@
 import { supabase as adminDb } from "@/lib/supabase";
 import { createClient } from "@/lib/supabase-server";
 
+export interface WhiteboardLogEntry {
+  id: string;
+  player_name: string;
+  field: "wins" | "losses";
+  delta: 1 | -1;
+  created_at: string;
+}
+
+export async function getWhiteboardLog(sessionId: string): Promise<WhiteboardLogEntry[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("whiteboard_log")
+    .select("id, field, delta, created_at, players(name)")
+    .eq("session_id", sessionId)
+    .order("created_at", { ascending: false })
+    .limit(100);
+
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    player_name: (r.players as unknown as { name: string }).name,
+    field: r.field as "wins" | "losses",
+    delta: r.delta as 1 | -1,
+    created_at: r.created_at,
+  }));
+}
+
 export interface WhiteboardPlayer {
   player_id: string;
   name: string;
