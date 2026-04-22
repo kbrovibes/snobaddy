@@ -77,6 +77,9 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     const current = tallies[playerId] ?? { wins: 0, losses: 0 };
     if (delta === -1 && current[field] <= 0) return;
 
+    // Haptic feedback
+    if (navigator.vibrate) navigator.vibrate(delta === 1 ? 15 : 10);
+
     // Optimistic update
     setTallies((prev) => ({
       ...prev,
