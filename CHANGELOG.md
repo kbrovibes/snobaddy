@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.28.3] - 2026-04-21
+
+### Improved
+- **Alphabetical player dropdowns** — Player selection dropdowns in match recording (both simple and full score modes) are now sorted alphabetically instead of by check-in order.
+
+---
+
 ## [0.28.2] - 2026-04-18
 
 ### Fixed

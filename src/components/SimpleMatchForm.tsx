@@ -47,7 +47,9 @@ export default function SimpleMatchForm({
   }
 
   function options(exclude: string[]) {
-    return checkedInPlayers.filter((p) => !exclude.includes(p.player_id));
+    return checkedInPlayers
+      .filter((p) => !exclude.includes(p.player_id))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   async function toggleMode() {
