@@ -143,38 +143,33 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     const flash = tapFlash[player.player_id];
 
     return (
-      <div className={`py-2 px-2 transition-colors duration-300 ${
+      <div className={`py-1.5 px-2 transition-colors duration-300 ${
         flash === "wins" ? "bg-green-50" : flash === "losses" ? "bg-orange-50" : ""
-      } ${out ? "opacity-40" : ""}`}>
-        {/* Avatar + Name */}
-        <div className="flex items-center gap-1.5 mb-1">
+      }`}>
+        {/* Row 1: Avatar + Name + W/L counts */}
+        <div className="flex items-center gap-1.5">
           <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold shrink-0 ${
-            out ? "bg-stone-100 text-stone-400" : getAvatarColor(player.name)
+            out ? "bg-stone-200 text-stone-600" : getAvatarColor(player.name)
           }`}>
             {getInitials(player.name)}
           </span>
-          <span className={`text-xs font-medium truncate ${out ? "text-stone-400" : "text-stone-600"}`}>
+          <span className={`text-xs font-medium truncate flex-1 ${out ? "text-stone-900" : "text-stone-600"}`}>
             {player.name}
           </span>
-        </div>
-        {/* W/L counts — big and prominent */}
-        <div className="flex items-center gap-3 pl-6">
-          <div className="flex items-baseline gap-1">
-            <span className={`text-xl font-bold tabular-nums transition-transform duration-150 ${
+          <div className="flex items-baseline gap-2 shrink-0">
+            <span className={`text-lg font-bold tabular-nums transition-transform duration-150 ${
               flash === "wins" ? "scale-125" : ""
-            } ${out ? "text-stone-400" : "text-green-700"}`}>{t.wins}</span>
-            <span className={`text-xs font-medium ${out ? "text-stone-300" : "text-green-600"}`}>W</span>
-          </div>
-          <div className="flex items-baseline gap-1">
-            <span className={`text-xl font-bold tabular-nums transition-transform duration-150 ${
+            } ${out ? "text-stone-700" : "text-green-700"}`}>{t.wins}</span>
+            <span className={`text-[10px] font-medium ${out ? "text-stone-500" : "text-green-600"}`}>W</span>
+            <span className={`text-lg font-bold tabular-nums transition-transform duration-150 ${
               flash === "losses" ? "scale-125" : ""
-            } ${out ? "text-stone-400" : "text-orange-600"}`}>{t.losses}</span>
-            <span className={`text-xs font-medium ${out ? "text-stone-300" : "text-orange-500"}`}>L</span>
+            } ${out ? "text-stone-700" : "text-orange-600"}`}>{t.losses}</span>
+            <span className={`text-[10px] font-medium ${out ? "text-stone-500" : "text-orange-500"}`}>L</span>
           </div>
         </div>
-        {/* Small +/- buttons */}
+        {/* Row 2: +/- buttons */}
         {!out && (
-          <div className="flex gap-1 mt-1 pl-6">
+          <div className="flex gap-1 mt-0.5 pl-6">
             <button
               onClick={() => handleTap(player.player_id, player.name, "wins", 1)}
               className="h-6 px-2 rounded bg-green-50 text-green-600 text-[10px] font-bold active:bg-green-200 transition-colors"
@@ -189,14 +184,12 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
             </button>
             <button
               onClick={() => handleTap(player.player_id, player.name, "wins", -1)}
-              disabled={t.wins <= 0}
               className="h-6 w-6 flex items-center justify-center rounded bg-stone-50 text-stone-400 text-[10px] active:bg-stone-200"
             >
               −W
             </button>
             <button
               onClick={() => handleTap(player.player_id, player.name, "losses", -1)}
-              disabled={t.losses <= 0}
               className="h-6 w-6 flex items-center justify-center rounded bg-stone-50 text-stone-400 text-[10px] active:bg-stone-200"
             >
               −L
@@ -208,9 +201,9 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm px-2 py-3 flex flex-col">
+    <div className="bg-white rounded-xl shadow-sm px-2 py-2 flex flex-col">
       {/* Header + save flash */}
-      <div className="flex items-center justify-between px-2 mb-2">
+      <div className="flex items-center justify-between px-2 mb-1">
         <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">Whiteboard</h2>
         {saveFlash && (
           <span className="text-xs text-green-600 font-medium animate-pulse">
@@ -245,7 +238,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
         <>
           <div className="flex items-center gap-2 mt-2 mb-1 px-2">
             <div className="flex-1 h-px bg-stone-200" />
-            <span className="text-xs text-stone-400">left early</span>
+            <span className="text-xs text-stone-400">checked out</span>
             <div className="flex-1 h-px bg-stone-200" />
           </div>
           <div className="grid grid-cols-2 gap-x-0 divide-x divide-stone-100">
