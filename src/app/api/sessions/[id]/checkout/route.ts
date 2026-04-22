@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase-server";
 import { replacePlayerInProposedMatches, backfillMatchQueue } from "@/lib/db/proposed";
+import { notifyPlayer } from "@/lib/push";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(
@@ -28,6 +29,15 @@ export async function POST(
     .is("checked_out_at", null);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Notify checked-out player if an admin checked them out (not self)
+  if (targetPlayerId !== currentPlayer.id) {
+    notifyPlayer(targetPlayerId, {
+      title: "Checked Out",
+      body: "You've been checked out of tonight's session",
+      url: `/session/${id}`,
+    }).catch(() => {});
+  }
 
   // Update any proposed matches that include the departed player
   await replacePlayerInProposedMatches(id, targetPlayerId);

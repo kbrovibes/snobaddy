@@ -5,6 +5,8 @@ import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import NavigationLoader from "@/components/NavigationLoader";
 import PullToRefresh from "@/components/PullToRefresh";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
+import PushNotificationBanner from "@/components/PushNotificationBanner";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -47,9 +49,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         {/* pt-14 clears the fixed header, pb-16 clears the fixed bottom nav */}
         <main className="flex-1 pt-14 pb-16">
           <PullToRefresh />
+          <PushNotificationBanner vapidPublicKey={process.env.VAPID_PUBLIC_KEY ?? ""} />
           {children}
         </main>
         <BottomNav isAdmin={player?.is_admin ?? false} isGodMode={player?.is_god_mode ?? false} />
+        <ServiceWorkerRegistration />
       </div>
     </NavigationLoader>
   );

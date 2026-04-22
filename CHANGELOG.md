@@ -6,6 +6,17 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.0] - 2026-04-22
+
+### Added
+- **Push Notifications** — Opt-in browser push notifications via Web Push API. Admins get notified when a session is opened or closed. Players get notified when an admin checks them in or out. Works on Android Chrome and iOS Safari (16.4+, home screen required).
+- **Notification opt-in banner** — A dismissable banner prompts users to enable notifications. Tap "Enable" to subscribe, or dismiss to hide it permanently.
+
+### Changed
+- **Whiteboard mode layout** — W/L counts are now the hero element (large bold numbers), with +/- buttons smaller underneath.
+
+---
+
 ## [0.29.0] - 2026-04-21
 
 ### Added

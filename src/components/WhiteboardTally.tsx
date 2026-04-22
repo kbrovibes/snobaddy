@@ -113,46 +113,48 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     const out = player.checked_out;
 
     return (
-      <div className={`flex flex-col gap-1 py-1.5 px-2 ${out ? "opacity-40" : ""}`}>
-        {/* Name + W/L counts */}
-        <div className="flex items-center justify-between">
-          <span className={`text-sm font-medium truncate ${out ? "text-stone-400" : "text-stone-800"}`}>
-            {player.name}
-          </span>
-          <span className="text-sm ml-2 shrink-0 flex items-center gap-2">
-            <span className={`font-bold ${out ? "text-stone-400" : "text-green-700"}`}>{t.wins}</span>
-            <span className={`text-xs ${out ? "text-stone-300" : "text-green-600"}`}>W</span>
-            <span className="text-stone-200">·</span>
-            <span className={`font-bold ${out ? "text-stone-400" : "text-orange-600"}`}>{t.losses}</span>
-            <span className={`text-xs ${out ? "text-stone-300" : "text-orange-500"}`}>L</span>
-          </span>
+      <div className={`py-2 px-2 ${out ? "opacity-40" : ""}`}>
+        {/* Name */}
+        <div className={`text-xs font-medium truncate mb-1 ${out ? "text-stone-400" : "text-stone-600"}`}>
+          {player.name}
         </div>
-        {/* Buttons row */}
+        {/* W/L counts — big and prominent */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-baseline gap-1">
+            <span className={`text-xl font-bold tabular-nums ${out ? "text-stone-400" : "text-green-700"}`}>{t.wins}</span>
+            <span className={`text-xs font-medium ${out ? "text-stone-300" : "text-green-600"}`}>W</span>
+          </div>
+          <div className="flex items-baseline gap-1">
+            <span className={`text-xl font-bold tabular-nums ${out ? "text-stone-400" : "text-orange-600"}`}>{t.losses}</span>
+            <span className={`text-xs font-medium ${out ? "text-stone-300" : "text-orange-500"}`}>L</span>
+          </div>
+        </div>
+        {/* Small +/- buttons */}
         {!out && (
-          <div className="flex gap-1">
+          <div className="flex gap-1 mt-1">
             <button
               onClick={() => handleTap(player.player_id, player.name, "wins", 1)}
-              className="flex-1 h-7 flex items-center justify-center rounded-md bg-green-100 text-green-700 text-xs font-bold active:bg-green-300 transition-colors"
+              className="h-6 px-2 rounded bg-green-50 text-green-600 text-[10px] font-bold active:bg-green-200 transition-colors"
             >
               +W
             </button>
             <button
               onClick={() => handleTap(player.player_id, player.name, "losses", 1)}
-              className="flex-1 h-7 flex items-center justify-center rounded-md bg-orange-100 text-orange-600 text-xs font-bold active:bg-orange-300 transition-colors"
+              className="h-6 px-2 rounded bg-orange-50 text-orange-500 text-[10px] font-bold active:bg-orange-200 transition-colors"
             >
               +L
             </button>
             <button
               onClick={() => handleTap(player.player_id, player.name, "wins", -1)}
               disabled={t.wins <= 0}
-              className="w-7 h-7 flex items-center justify-center rounded-md bg-stone-100 text-stone-400 text-xs disabled:opacity-20 active:bg-stone-200"
+              className="h-6 w-6 flex items-center justify-center rounded bg-stone-50 text-stone-400 text-[10px] disabled:opacity-20 active:bg-stone-200"
             >
               −W
             </button>
             <button
               onClick={() => handleTap(player.player_id, player.name, "losses", -1)}
               disabled={t.losses <= 0}
-              className="w-7 h-7 flex items-center justify-center rounded-md bg-stone-100 text-stone-400 text-xs disabled:opacity-20 active:bg-stone-200"
+              className="h-6 w-6 flex items-center justify-center rounded bg-stone-50 text-stone-400 text-[10px] disabled:opacity-20 active:bg-stone-200"
             >
               −L
             </button>

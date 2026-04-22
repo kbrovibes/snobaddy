@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase-server";
+import { notifyAdmins } from "@/lib/push";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(
@@ -62,6 +63,18 @@ export async function POST(
       }
     }
   }
+
+  // Notify admin subscribers (fire-and-forget)
+  const { data: closedSess } = await supabase
+    .from("sessions").select("date").eq("id", id).maybeSingle();
+  const closeDateLabel = closedSess?.date
+    ? new Date(closedSess.date + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })
+    : "today";
+  notifyAdmins({
+    title: "Session Closed",
+    body: `Session for ${closeDateLabel} has been closed`,
+    url: `/session/${id}`,
+  }).catch(() => {});
 
   return NextResponse.json({ ok: true });
 }

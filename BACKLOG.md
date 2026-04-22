@@ -8,6 +8,8 @@ Single source of truth for all planned and completed work.
 
 ## Queue
 
+- [x] **32 — Push Notifications** · [spec](specs/32-push-notifications.md) · Web Push notifications for session open/close (admins) and check-in/out (players); service worker + VAPID + `push_subscriptions` table
+
 - [ ] **30 — On-Demand E2E Test Suite** · [spec](specs/30-on-demand-test-suite.md) · Playwright E2E tests (mobile viewport) covering all features; run on-demand via `npm run test`, not on every deploy; smoke + full + per-feature modes
 
 - [ ] **29 — Account Linking** · [spec](specs/29-account-linking.md) · On sign-up, detect matching unverified player, show "Is this you?" with stats, merge accounts safely — 13 tasks across 3 phases
@@ -70,7 +72,6 @@ Add specs for these before implementing. Use the spec template in `AGENTS.md`.
 - **Player profile page** — edit own skill level, view personal match history
 - **Prize highlights** — season-end view: most matches, highest win%, most improved
 - **PWA / add to home screen** — installable on phones; app-like experience at the court
-- **Push notifications** — notify players when a session goes active
 - **Per-session history** — browse any past session: who played, match log, scoreboard
 
 ---

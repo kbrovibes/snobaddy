@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase-server";
+import { notifyPlayer } from "@/lib/push";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(
@@ -51,5 +52,15 @@ export async function POST(
 
   if (error?.code === "23505") return NextResponse.json({ ok: true, already: true });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Notify checked-in player if an admin checked them in (not self)
+  if (targetPlayerId !== currentPlayer.id) {
+    notifyPlayer(targetPlayerId, {
+      title: "Checked In",
+      body: "You've been checked in to tonight's session",
+      url: `/session/${id}`,
+    }).catch(() => {});
+  }
+
   return NextResponse.json({ ok: true });
 }
