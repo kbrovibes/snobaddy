@@ -14,6 +14,10 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Checked-out player handling** — Players who leave early appear greyed out at the bottom of the whiteboard with their stats preserved (read-only).
 - **Whiteboard mode toggle** — Admins can toggle whiteboard mode off to fall back to the existing simple/full score entry modes.
 
+### Changed
+- **Whiteboard layout** — Switched from card grid to single-box table rows for a cleaner, more whiteboard-like look.
+- **Auto-save matches** — 4-tap match detection now auto-saves instead of showing a popup. Brief flash confirms the save.
+
 ---
 
 ## [0.28.3] - 2026-04-21
