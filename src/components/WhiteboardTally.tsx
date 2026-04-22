@@ -30,6 +30,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
   );
   const [matchFlash, setMatchFlash] = useState<string | null>(null);
   const [saveFlash, setSaveFlash] = useState<string | null>(null);
+  const [tapFlash, setTapFlash] = useState<Record<string, "wins" | "losses" | null>>({});
   const recentChangesRef = useRef<TallyChange[]>([]);
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -77,8 +78,10 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     const current = tallies[playerId] ?? { wins: 0, losses: 0 };
     if (delta === -1 && current[field] <= 0) return;
 
-    // Haptic feedback
+    // Haptic feedback + tap flash
     if (navigator.vibrate) navigator.vibrate(delta === 1 ? 15 : 10);
+    setTapFlash((prev) => ({ ...prev, [playerId]: field }));
+    setTimeout(() => setTapFlash((prev) => ({ ...prev, [playerId]: null })), 400);
 
     // Optimistic update
     setTallies((prev) => ({
@@ -111,30 +114,67 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     scheduleRefresh();
   }
 
+  const AVATAR_COLORS = [
+    "bg-sky-100 text-sky-700",
+    "bg-violet-100 text-violet-700",
+    "bg-emerald-100 text-emerald-700",
+    "bg-amber-100 text-amber-700",
+    "bg-rose-100 text-rose-700",
+    "bg-teal-100 text-teal-700",
+    "bg-indigo-100 text-indigo-700",
+    "bg-pink-100 text-pink-700",
+  ];
+
+  function getInitials(name: string) {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return name.slice(0, 2).toUpperCase();
+  }
+
+  function getAvatarColor(name: string) {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+  }
+
   function PlayerRow({ player }: { player: WhiteboardPlayer }) {
     const t = tallies[player.player_id] ?? { wins: 0, losses: 0 };
     const out = player.checked_out;
+    const flash = tapFlash[player.player_id];
 
     return (
-      <div className={`py-2 px-2 ${out ? "opacity-40" : ""}`}>
-        {/* Name */}
-        <div className={`text-xs font-medium truncate mb-1 ${out ? "text-stone-400" : "text-stone-600"}`}>
-          {player.name}
+      <div className={`py-2 px-2 transition-colors duration-300 ${
+        flash === "wins" ? "bg-green-50" : flash === "losses" ? "bg-orange-50" : ""
+      } ${out ? "opacity-40" : ""}`}>
+        {/* Avatar + Name */}
+        <div className="flex items-center gap-1.5 mb-1">
+          <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold shrink-0 ${
+            out ? "bg-stone-100 text-stone-400" : getAvatarColor(player.name)
+          }`}>
+            {getInitials(player.name)}
+          </span>
+          <span className={`text-xs font-medium truncate ${out ? "text-stone-400" : "text-stone-600"}`}>
+            {player.name}
+          </span>
         </div>
         {/* W/L counts — big and prominent */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 pl-6">
           <div className="flex items-baseline gap-1">
-            <span className={`text-xl font-bold tabular-nums ${out ? "text-stone-400" : "text-green-700"}`}>{t.wins}</span>
+            <span className={`text-xl font-bold tabular-nums transition-transform duration-150 ${
+              flash === "wins" ? "scale-125" : ""
+            } ${out ? "text-stone-400" : "text-green-700"}`}>{t.wins}</span>
             <span className={`text-xs font-medium ${out ? "text-stone-300" : "text-green-600"}`}>W</span>
           </div>
           <div className="flex items-baseline gap-1">
-            <span className={`text-xl font-bold tabular-nums ${out ? "text-stone-400" : "text-orange-600"}`}>{t.losses}</span>
+            <span className={`text-xl font-bold tabular-nums transition-transform duration-150 ${
+              flash === "losses" ? "scale-125" : ""
+            } ${out ? "text-stone-400" : "text-orange-600"}`}>{t.losses}</span>
             <span className={`text-xs font-medium ${out ? "text-stone-300" : "text-orange-500"}`}>L</span>
           </div>
         </div>
         {/* Small +/- buttons */}
         {!out && (
-          <div className="flex gap-1 mt-1">
+          <div className="flex gap-1 mt-1 pl-6">
             <button
               onClick={() => handleTap(player.player_id, player.name, "wins", 1)}
               className="h-6 px-2 rounded bg-green-50 text-green-600 text-[10px] font-bold active:bg-green-200 transition-colors"
