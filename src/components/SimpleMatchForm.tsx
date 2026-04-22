@@ -30,7 +30,6 @@ export default function SimpleMatchForm({
   const [score2, setScore2] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [toggling, setToggling] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -50,18 +49,6 @@ export default function SimpleMatchForm({
     return checkedInPlayers
       .filter((p) => !exclude.includes(p.player_id))
       .sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  async function toggleMode() {
-    if (!isAdmin) return;
-    setToggling(true);
-    await fetch(`/api/sessions/${sessionId}/simple-mode`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ simple_score_tracking: !simpleMode }),
-    });
-    router.refresh();
-    setToggling(false);
   }
 
   async function save() {
@@ -126,20 +113,10 @@ export default function SimpleMatchForm({
   return (
     <div className="bg-white rounded-xl shadow-sm px-4 py-3 flex flex-col gap-3">
 
-      {/* Header row: title + toggle */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">Record a Score</h2>
-        <button
-          onClick={toggleMode}
-          disabled={toggling || !isAdmin}
-          className={`flex items-center gap-2 ${isAdmin ? "disabled:opacity-50" : "opacity-60 cursor-default"}`}
-        >
-          <span className="text-xs text-stone-500">Win/Loss Only</span>
-          <span className={`relative inline-flex w-10 h-6 rounded-full transition-colors duration-200 ${simpleMode ? "bg-sky-500" : "bg-stone-200"}`}>
-            <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${simpleMode ? "translate-x-4" : "translate-x-0"}`} />
-          </span>
-        </button>
-      </div>
+      {/* Header */}
+      <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
+        {simpleMode ? "Record Win/Loss" : "Record a Match"}
+      </h2>
 
       {/* 3-col layout: winners | vs | losers */}
       <div className="grid grid-cols-[1fr_2rem_1fr] items-start gap-2">

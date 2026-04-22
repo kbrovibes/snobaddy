@@ -15,8 +15,10 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Whiteboard mode toggle** — Admins can toggle whiteboard mode off to fall back to the existing simple/full score entry modes.
 
 ### Changed
-- **Whiteboard layout** — Switched from card grid to single-box table rows for a cleaner, more whiteboard-like look.
-- **Auto-save matches** — 4-tap match detection now auto-saves instead of showing a popup. Brief flash confirms the save.
+- **Whiteboard layout** — 2-column compact rows inside a single box (half the scroll for 20+ players).
+- **Auto-save matches** — 4-tap match detection now auto-saves silently with a brief flash confirmation.
+- **Score entry mode picker** — Replaced separate toggles with a unified 3-way segmented control: Whiteboard / Win/Loss / Full Score. Admin-only, shown above the score entry area.
+- **Save feedback** — Each tally tap shows a brief "Saved" flash in the whiteboard header so you know it persisted.
 
 ---
 

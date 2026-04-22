@@ -12,6 +12,7 @@ import { getProposedMatches } from "@/lib/db/proposed";
 import { getOnlinePlayerIds, getActivePlayerList } from "@/lib/db/players";
 import { getSessionTally, getWhiteboardPlayers, type TallyEntry } from "@/lib/db/tally";
 import WhiteboardTally from "@/components/WhiteboardTally";
+import ScoreModePicker, { type ScoreMode } from "@/components/ScoreModePicker";
 import { getAppSetting } from "@/lib/db/settings";
 import { createClient } from "@/lib/supabase-server";
 import { buildNameMap, shortName } from "@/lib/display-name";
@@ -358,36 +359,46 @@ export default async function SessionDetailPage({
             </div>
           )}
 
-          {/* Match entry — not shown for Finals sessions */}
-          {!isFinalsSession && (
-            <>
-              {session.whiteboard_mode ? (
-                <WhiteboardTally
+          {/* Score entry — not shown for Finals sessions */}
+          {!isFinalsSession && (() => {
+            const scoreMode: ScoreMode = session.whiteboard_mode
+              ? "whiteboard"
+              : session.simple_score_tracking ? "simple" : "full";
+            return (
+              <>
+                <ScoreModePicker
                   sessionId={session.id}
-                  players={whiteboardPlayers}
+                  currentMode={scoreMode}
                   isAdmin={isAdmin}
                 />
-              ) : (
-                <>
-                  <SimpleMatchForm
+                {scoreMode === "whiteboard" && (
+                  <WhiteboardTally
                     sessionId={session.id}
-                    checkedInPlayers={checkedInPlayers}
-                    isAdmin={isAdmin}
-                    simpleMode={session.simple_score_tracking}
+                    players={whiteboardPlayers}
                   />
-                  {!session.simple_score_tracking && (
-                    <ProposedMatchList
+                )}
+                {scoreMode !== "whiteboard" && (
+                  <>
+                    <SimpleMatchForm
                       sessionId={session.id}
-                      matches={proposedMatches}
                       checkedInPlayers={checkedInPlayers}
                       isAdmin={isAdmin}
-                      autoGenerate={session.auto_generate_matches ?? true}
+                      simpleMode={session.simple_score_tracking}
                     />
-                  )}
-                </>
-              )}
-            </>
-          )}
+                    {scoreMode === "full" && (
+                      <ProposedMatchList
+                        sessionId={session.id}
+                        matches={proposedMatches}
+                        checkedInPlayers={checkedInPlayers}
+                        isAdmin={isAdmin}
+                        autoGenerate={session.auto_generate_matches ?? true}
+                      />
+                    )}
+                  </>
+                )}
+              </>
+            );
+          })()}
 
         </>
       )}

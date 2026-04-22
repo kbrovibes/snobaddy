@@ -14,7 +14,6 @@ interface WhiteboardPlayer {
 interface Props {
   sessionId: string;
   players: WhiteboardPlayer[];
-  isAdmin: boolean;
 }
 
 interface TallyChange {
@@ -24,13 +23,13 @@ interface TallyChange {
   timestamp: number;
 }
 
-export default function WhiteboardTally({ sessionId, players, isAdmin }: Props) {
+export default function WhiteboardTally({ sessionId, players }: Props) {
   const router = useRouter();
   const [tallies, setTallies] = useState<Record<string, { wins: number; losses: number }>>(
     () => Object.fromEntries(players.map((p) => [p.player_id, { wins: p.wins, losses: p.losses }]))
   );
-  const [toggling, setToggling] = useState(false);
   const [matchFlash, setMatchFlash] = useState<string | null>(null);
+  const [saveFlash, setSaveFlash] = useState<string | null>(null);
   const recentChangesRef = useRef<TallyChange[]>([]);
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -98,6 +97,8 @@ export default function WhiteboardTally({ sessionId, players, isAdmin }: Props) 
       const data = await res.json();
       if (res.ok) {
         setTallies((prev) => ({ ...prev, [playerId]: { wins: data.wins, losses: data.losses } }));
+        setSaveFlash(`${playerName} ${field === "wins" ? "W" : "L"} ${delta > 0 ? "+" : "−"}1`);
+        setTimeout(() => setSaveFlash(null), 1500);
       } else {
         setTallies((prev) => ({ ...prev, [playerId]: current }));
       }
@@ -105,22 +106,6 @@ export default function WhiteboardTally({ sessionId, players, isAdmin }: Props) 
       setTallies((prev) => ({ ...prev, [playerId]: current }));
     }
     scheduleRefresh();
-  }
-
-  async function toggleOff() {
-    if (!isAdmin) return;
-    setToggling(true);
-    const res = await fetch(`/api/sessions/${sessionId}/whiteboard-mode`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ whiteboard_mode: false }),
-    });
-    if (!res.ok) {
-      const data = await res.json();
-      alert(data.error ?? "Cannot disable whiteboard mode");
-    }
-    router.refresh();
-    setToggling(false);
   }
 
   function PlayerRow({ player }: { player: WhiteboardPlayer }) {
@@ -179,29 +164,20 @@ export default function WhiteboardTally({ sessionId, players, isAdmin }: Props) 
 
   return (
     <div className="bg-white rounded-xl shadow-sm px-2 py-3 flex flex-col">
-      {/* Header */}
+      {/* Header + save flash */}
       <div className="flex items-center justify-between px-2 mb-2">
         <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">Whiteboard</h2>
-        {isAdmin && (
-          <button
-            onClick={toggleOff}
-            disabled={toggling}
-            className="flex items-center gap-2 disabled:opacity-50"
-          >
-            <span className="text-xs text-stone-500">Whiteboard</span>
-            <span className="relative inline-flex w-10 h-6 rounded-full transition-colors duration-200 bg-sky-500">
-              <span className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 translate-x-4" />
-            </span>
-          </button>
+        {saveFlash && (
+          <span className="text-xs text-green-600 font-medium animate-pulse">
+            Saved: {saveFlash}
+          </span>
+        )}
+        {matchFlash && !saveFlash && (
+          <span className="text-xs text-sky-600 font-medium">
+            Match: {matchFlash}
+          </span>
         )}
       </div>
-
-      {/* Match auto-saved flash */}
-      {matchFlash && (
-        <div className="mx-2 mb-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-lg text-xs text-green-700 font-medium">
-          Match saved: {matchFlash}
-        </div>
-      )}
 
       {/* Active players — 2-column grid */}
       <div className="grid grid-cols-2 gap-x-0 divide-x divide-stone-100">

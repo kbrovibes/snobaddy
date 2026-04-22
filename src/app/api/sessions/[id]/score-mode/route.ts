@@ -2,6 +2,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { supabase } from "@/lib/supabase";
 
+export type ScoreMode = "whiteboard" | "simple" | "full";
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -14,11 +16,19 @@ export async function PATCH(
   const { data: player } = await authClient.from("players").select("is_admin").eq("user_id", user.id).maybeSingle();
   if (!player?.is_admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const { whiteboard_mode } = await request.json();
+  const { mode } = await request.json() as { mode: ScoreMode };
+  if (!["whiteboard", "simple", "full"].includes(mode)) {
+    return NextResponse.json({ error: "Invalid mode" }, { status: 400 });
+  }
+
+  const update = {
+    whiteboard_mode: mode === "whiteboard",
+    simple_score_tracking: mode !== "full",
+  };
 
   const { error } = await supabase
     .from("sessions")
-    .update({ whiteboard_mode })
+    .update(update)
     .eq("id", id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
