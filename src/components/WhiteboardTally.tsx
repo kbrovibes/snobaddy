@@ -54,8 +54,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     if (wins.length !== 2 || losses.length !== 2) return;
     if (new Set(last4.map((c) => c.player_id)).size !== 4) return;
 
-    // Auto-save the match
-    const label = `${wins.map((w) => w.name).join(" & ")} beat ${losses.map((l) => l.name).join(" & ")}`;
+    const label = `${wins.map((w) => firstName(w.name)).join(" & ")} beat ${losses.map((l) => firstName(l.name)).join(" & ")}`;
     try {
       await fetch("/api/matches", {
         method: "POST",
@@ -74,32 +73,29 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     recentChangesRef.current = [];
   }
 
-  async function handleTap(playerId: string, playerName: string, field: "wins" | "losses", delta: 1 | -1) {
+  async function handleTap(playerId: string, playerName: string, field: "wins" | "losses") {
     const current = tallies[playerId] ?? { wins: 0, losses: 0 };
-    if (delta === -1 && current[field] <= 0) return;
 
     // Haptic feedback + tap flash
-    if (navigator.vibrate) navigator.vibrate(delta === 1 ? 15 : 10);
+    if (navigator.vibrate) navigator.vibrate(15);
     setTapFlash((prev) => ({ ...prev, [playerId]: field }));
     setTimeout(() => setTapFlash((prev) => ({ ...prev, [playerId]: null })), 400);
 
     // Optimistic update
     setTallies((prev) => ({
       ...prev,
-      [playerId]: { ...prev[playerId], [field]: Math.max(0, (prev[playerId]?.[field] ?? 0) + delta) },
+      [playerId]: { ...prev[playerId], [field]: (prev[playerId]?.[field] ?? 0) + 1 },
     }));
 
-    if (delta === 1) {
-      recentChangesRef.current = [...recentChangesRef.current, { player_id: playerId, name: playerName, field, timestamp: Date.now() }];
-      autoSaveMatch(recentChangesRef.current);
-    }
+    recentChangesRef.current = [...recentChangesRef.current, { player_id: playerId, name: playerName, field, timestamp: Date.now() }];
+    autoSaveMatch(recentChangesRef.current);
 
     setSaveStatus((prev) => ({ ...prev, [playerId]: "saving" }));
     try {
       const res = await fetch(`/api/sessions/${sessionId}/tally/increment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ player_id: playerId, field, delta }),
+        body: JSON.stringify({ player_id: playerId, field, delta: 1 }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -123,125 +119,116 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     return name.trim().split(/\s+/)[0];
   }
 
-  function PlayerRow({ player }: { player: WhiteboardPlayer }) {
+  function StatusIcon({ playerId }: { playerId: string }) {
+    const status = saveStatus[playerId];
+    if (status === "saving") return <span className="w-3 h-3 shrink-0 rounded-full border-2 border-stone-300 border-t-stone-600 animate-spin" />;
+    if (status === "saved") return <span className="text-green-500 text-xs shrink-0">&#10003;</span>;
+    if (status === "error") return <span className="text-red-500 text-xs shrink-0">&#10007;</span>;
+    return null;
+  }
+
+  function PlayerTableRow({ player }: { player: WhiteboardPlayer }) {
     const t = tallies[player.player_id] ?? { wins: 0, losses: 0 };
     const out = player.checked_out;
     const flash = tapFlash[player.player_id];
-    const status = saveStatus[player.player_id];
 
     return (
-      <div className={`py-1.5 px-2 transition-colors duration-300 ${
+      <tr className={`transition-colors duration-300 ${
         flash === "wins" ? "bg-green-50" : flash === "losses" ? "bg-orange-50" : ""
       }`}>
-        {/* Row 1: Name + save indicator + W/L counts */}
-        <div className="flex items-center gap-1.5">
-          <span className={`text-sm font-semibold truncate flex-1 ${out ? "text-black" : "text-stone-700"}`}>
-            {firstName(player.name)}
+        {/* Name + status */}
+        <td className="py-2 pl-3 pr-1">
+          <div className="flex items-center gap-1">
+            <span className={`text-sm font-medium truncate ${out ? "text-black" : "text-stone-800"}`}>
+              {firstName(player.name)}
+            </span>
+            <StatusIcon playerId={player.player_id} />
+          </div>
+        </td>
+        {/* W count */}
+        <td className="py-2 px-1 text-center">
+          <span className={`text-lg font-bold tabular-nums transition-transform duration-150 inline-block ${
+            flash === "wins" ? "scale-125" : ""
+          } ${out ? "text-black" : "text-green-700"}`}>
+            {t.wins}
           </span>
-          {/* Save status indicator */}
-          {status === "saving" && (
-            <span className="w-3.5 h-3.5 shrink-0 rounded-full border-2 border-stone-300 border-t-stone-600 animate-spin" />
+        </td>
+        {/* L count */}
+        <td className="py-2 px-1 text-center">
+          <span className={`text-lg font-bold tabular-nums transition-transform duration-150 inline-block ${
+            flash === "losses" ? "scale-125" : ""
+          } ${out ? "text-black" : "text-orange-600"}`}>
+            {t.losses}
+          </span>
+        </td>
+        {/* Action buttons */}
+        <td className="py-2 pr-3 pl-1">
+          {!out && (
+            <div className="flex gap-1 justify-end">
+              <button
+                onClick={() => handleTap(player.player_id, player.name, "wins")}
+                className="h-8 w-10 rounded-lg bg-green-100 text-green-700 text-xs font-bold active:bg-green-300 transition-colors"
+              >
+                +W
+              </button>
+              <button
+                onClick={() => handleTap(player.player_id, player.name, "losses")}
+                className="h-8 w-10 rounded-lg bg-orange-100 text-orange-600 text-xs font-bold active:bg-orange-300 transition-colors"
+              >
+                +L
+              </button>
+            </div>
           )}
-          {status === "saved" && (
-            <span className="text-green-500 text-xs shrink-0 animate-pulse">&#10003;</span>
-          )}
-          {status === "error" && (
-            <span className="text-red-500 text-xs shrink-0">&#10007;</span>
-          )}
-          <div className="flex items-baseline gap-2 shrink-0">
-            <span className={`text-lg font-bold tabular-nums transition-transform duration-150 ${
-              flash === "wins" ? "scale-125" : ""
-            } ${out ? "text-black" : "text-green-700"}`}>{t.wins}</span>
-            <span className={`text-[10px] font-medium ${out ? "text-stone-600" : "text-green-600"}`}>W</span>
-            <span className={`text-lg font-bold tabular-nums transition-transform duration-150 ${
-              flash === "losses" ? "scale-125" : ""
-            } ${out ? "text-black" : "text-orange-600"}`}>{t.losses}</span>
-            <span className={`text-[10px] font-medium ${out ? "text-stone-600" : "text-orange-500"}`}>L</span>
-          </div>
-        </div>
-        {/* Row 2: +/- buttons */}
-        {!out && (
-          <div className="flex gap-1 mt-0.5">
-            <button
-              onClick={() => handleTap(player.player_id, player.name, "wins", 1)}
-              className="flex-1 h-7 rounded-md bg-green-100 text-green-700 text-xs font-bold active:bg-green-300 transition-colors"
-            >
-              +W
-            </button>
-            <button
-              onClick={() => handleTap(player.player_id, player.name, "losses", 1)}
-              className="flex-1 h-7 rounded-md bg-orange-100 text-orange-600 text-xs font-bold active:bg-orange-300 transition-colors"
-            >
-              +L
-            </button>
-            <button
-              onClick={() => handleTap(player.player_id, player.name, "wins", -1)}
-              className="h-6 px-1.5 rounded bg-stone-100 text-stone-500 text-[10px] active:bg-stone-200 transition-colors"
-            >
-              −W
-            </button>
-            <button
-              onClick={() => handleTap(player.player_id, player.name, "losses", -1)}
-              className="h-6 px-1.5 rounded bg-stone-100 text-stone-500 text-[10px] active:bg-stone-200 transition-colors"
-            >
-              −L
-            </button>
-          </div>
-        )}
-      </div>
+        </td>
+      </tr>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm px-2 py-2 flex flex-col">
-      {/* Header + save flash */}
-      <div className="flex items-center justify-between px-2 mb-1">
-        <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">Whiteboard</h2>
-        {matchFlash && (
-          <span className="text-xs text-sky-600 font-medium">
-            Match: {matchFlash}
-          </span>
-        )}
-      </div>
-
-      {/* Active players — 2-column grid */}
-      <div className="grid grid-cols-2 gap-x-0 divide-x divide-stone-100">
-        {/* Left column */}
-        <div className="flex flex-col divide-y divide-stone-100">
-          {activePlayers.filter((_, i) => i % 2 === 0).map((p) => (
-            <PlayerRow key={p.player_id} player={p} />
-          ))}
+    <div className="bg-white rounded-xl shadow-sm flex flex-col">
+      {/* Match auto-saved flash */}
+      {matchFlash && (
+        <div className="mx-3 mt-2 px-3 py-1.5 bg-sky-50 border border-sky-200 rounded-lg text-xs text-sky-700 font-medium">
+          Match saved: {matchFlash}
         </div>
-        {/* Right column */}
-        <div className="flex flex-col divide-y divide-stone-100">
-          {activePlayers.filter((_, i) => i % 2 === 1).map((p) => (
-            <PlayerRow key={p.player_id} player={p} />
-          ))}
-        </div>
-      </div>
-
-      {/* Checked-out players */}
-      {checkedOutPlayers.length > 0 && (
-        <>
-          <div className="flex items-center gap-2 mt-2 mb-1 px-2">
-            <div className="flex-1 h-px bg-stone-200" />
-            <span className="text-xs text-stone-400">checked out</span>
-            <div className="flex-1 h-px bg-stone-200" />
-          </div>
-          <div className="grid grid-cols-2 gap-x-0 divide-x divide-stone-100">
-            <div className="flex flex-col divide-y divide-stone-100">
-              {checkedOutPlayers.filter((_, i) => i % 2 === 0).map((p) => (
-                <PlayerRow key={p.player_id} player={p} />
-              ))}
-            </div>
-            <div className="flex flex-col divide-y divide-stone-100">
-              {checkedOutPlayers.filter((_, i) => i % 2 === 1).map((p) => (
-                <PlayerRow key={p.player_id} player={p} />
-              ))}
-            </div>
-          </div>
-        </>
       )}
+
+      {/* Table */}
+      <table className="w-full">
+        <thead className="sticky top-0 bg-white z-10">
+          <tr className="border-b border-stone-200">
+            <th className="py-2 pl-3 pr-1 text-left text-xs font-semibold text-stone-400 uppercase tracking-wide">Player</th>
+            <th className="py-2 px-1 text-center text-xs font-semibold text-green-600 uppercase tracking-wide w-10">W</th>
+            <th className="py-2 px-1 text-center text-xs font-semibold text-orange-500 uppercase tracking-wide w-10">L</th>
+            <th className="py-2 pr-3 pl-1 text-right text-xs font-semibold text-stone-400 uppercase tracking-wide w-24"></th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-stone-100">
+          {activePlayers.map((p) => (
+            <PlayerTableRow key={p.player_id} player={p} />
+          ))}
+        </tbody>
+        {checkedOutPlayers.length > 0 && (
+          <>
+            <tbody>
+              <tr>
+                <td colSpan={4} className="py-2">
+                  <div className="flex items-center gap-2 px-3">
+                    <div className="flex-1 h-px bg-stone-200" />
+                    <span className="text-xs text-stone-400">checked out</span>
+                    <div className="flex-1 h-px bg-stone-200" />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tbody className="divide-y divide-stone-50">
+              {checkedOutPlayers.map((p) => (
+                <PlayerTableRow key={p.player_id} player={p} />
+              ))}
+            </tbody>
+          </>
+        )}
+      </table>
     </div>
   );
 }

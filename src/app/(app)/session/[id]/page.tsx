@@ -12,6 +12,7 @@ import { getProposedMatches } from "@/lib/db/proposed";
 import { getOnlinePlayerIds, getActivePlayerList } from "@/lib/db/players";
 import { getSessionTally, getWhiteboardPlayers, getWhiteboardLog, type TallyEntry } from "@/lib/db/tally";
 import WhiteboardTally from "@/components/WhiteboardTally";
+import UndoLogEntry from "@/components/UndoLogEntry";
 import ScoreModePicker, { type ScoreMode } from "@/components/ScoreModePicker";
 import { getAppSetting } from "@/lib/db/settings";
 import { createClient } from "@/lib/supabase-server";
@@ -512,10 +513,13 @@ export default async function SessionDetailPage({
                 return (
                   <div key={e.id} className="flex items-center gap-2 text-xs text-stone-500">
                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isWin ? "bg-green-400" : "bg-orange-400"}`} />
-                    <span className="font-medium text-stone-700">{e.player_name.split(" ")[0]}</span>
+                    <span className="font-medium text-stone-700 flex-1">{e.player_name.split(" ")[0]}</span>
                     <span className={isWin ? "text-green-600" : "text-orange-500"}>
                       {e.delta > 0 ? "+" : "−"}1 {isWin ? "W" : "L"}
                     </span>
+                    {isActive && (
+                      <UndoLogEntry sessionId={session.id} logId={e.id} />
+                    )}
                   </div>
                 );
               });
