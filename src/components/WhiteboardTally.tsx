@@ -119,27 +119,8 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     scheduleRefresh();
   }
 
-  const AVATAR_COLORS = [
-    "bg-sky-100 text-sky-700",
-    "bg-violet-100 text-violet-700",
-    "bg-emerald-100 text-emerald-700",
-    "bg-amber-100 text-amber-700",
-    "bg-rose-100 text-rose-700",
-    "bg-teal-100 text-teal-700",
-    "bg-indigo-100 text-indigo-700",
-    "bg-pink-100 text-pink-700",
-  ];
-
-  function getInitials(name: string) {
-    const parts = name.trim().split(/\s+/);
-    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    return name.slice(0, 2).toUpperCase();
-  }
-
-  function getAvatarColor(name: string) {
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+  function firstName(name: string) {
+    return name.trim().split(/\s+/)[0];
   }
 
   function PlayerRow({ player }: { player: WhiteboardPlayer }) {
@@ -152,15 +133,10 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
       <div className={`py-1.5 px-2 transition-colors duration-300 ${
         flash === "wins" ? "bg-green-50" : flash === "losses" ? "bg-orange-50" : ""
       }`}>
-        {/* Row 1: Avatar + Name + save indicator + W/L counts */}
+        {/* Row 1: Name + save indicator + W/L counts */}
         <div className="flex items-center gap-1.5">
-          <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold shrink-0 ${
-            out ? "bg-stone-300 text-stone-700" : getAvatarColor(player.name)
-          }`}>
-            {getInitials(player.name)}
-          </span>
-          <span className={`text-xs font-semibold truncate flex-1 ${out ? "text-black" : "text-stone-600"}`}>
-            {player.name}
+          <span className={`text-xs font-semibold truncate flex-1 ${out ? "text-black" : "text-stone-700"}`}>
+            {firstName(player.name)}
           </span>
           {/* Save status indicator */}
           {status === "saving" && (
@@ -185,21 +161,31 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
         </div>
         {/* Row 2: +/- buttons */}
         {!out && (
-          <div className="flex gap-1 mt-0.5 pl-6">
-            {([
-              { label: "+W", field: "wins" as const, delta: 1 as const },
-              { label: "+L", field: "losses" as const, delta: 1 as const },
-              { label: "−W", field: "wins" as const, delta: -1 as const },
-              { label: "−L", field: "losses" as const, delta: -1 as const },
-            ]).map((btn) => (
-              <button
-                key={btn.label}
-                onClick={() => handleTap(player.player_id, player.name, btn.field, btn.delta)}
-                className="h-6 px-2 rounded bg-stone-100 text-stone-700 text-[10px] font-semibold active:bg-stone-300 transition-colors"
-              >
-                {btn.label}
-              </button>
-            ))}
+          <div className="flex gap-1 mt-0.5">
+            <button
+              onClick={() => handleTap(player.player_id, player.name, "wins", 1)}
+              className="flex-1 h-7 rounded-md bg-green-100 text-green-700 text-xs font-bold active:bg-green-300 transition-colors"
+            >
+              +W
+            </button>
+            <button
+              onClick={() => handleTap(player.player_id, player.name, "losses", 1)}
+              className="flex-1 h-7 rounded-md bg-orange-100 text-orange-600 text-xs font-bold active:bg-orange-300 transition-colors"
+            >
+              +L
+            </button>
+            <button
+              onClick={() => handleTap(player.player_id, player.name, "wins", -1)}
+              className="h-6 px-1.5 rounded bg-stone-100 text-stone-500 text-[10px] active:bg-stone-200 transition-colors"
+            >
+              −W
+            </button>
+            <button
+              onClick={() => handleTap(player.player_id, player.name, "losses", -1)}
+              className="h-6 px-1.5 rounded bg-stone-100 text-stone-500 text-[10px] active:bg-stone-200 transition-colors"
+            >
+              −L
+            </button>
           </div>
         )}
       </div>
