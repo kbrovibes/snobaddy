@@ -221,8 +221,9 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
       )}
 
       {/* 2-column tables */}
-      <div className="grid grid-cols-2 divide-x divide-stone-200">
+      <div className="grid grid-cols-[1fr_1px_1fr]">
         <HalfTable players={leftActive} showHeader={true} />
+        <div className="bg-stone-200 my-2" />
         <HalfTable players={rightActive} showHeader={true} />
       </div>
 
@@ -234,8 +235,9 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
             <span className="text-[10px] text-stone-400">checked out</span>
             <div className="flex-1 h-px bg-stone-200" />
           </div>
-          <div className="grid grid-cols-2 divide-x divide-stone-200">
+          <div className="grid grid-cols-[1fr_1px_1fr]">
             <HalfTable players={leftOut} showHeader={false} />
+            <div className="bg-stone-200 my-1" />
             <HalfTable players={rightOut} showHeader={false} />
           </div>
         </>
