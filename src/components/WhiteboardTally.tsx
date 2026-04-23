@@ -29,8 +29,8 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     () => Object.fromEntries(players.map((p) => [p.player_id, { wins: p.wins, losses: p.losses }]))
   );
   const [matchFlash, setMatchFlash] = useState<string | null>(null);
-  const [saveFlash, setSaveFlash] = useState<string | null>(null);
   const [tapFlash, setTapFlash] = useState<Record<string, "wins" | "losses" | null>>({});
+  const [saveStatus, setSaveStatus] = useState<Record<string, "saving" | "saved" | "error" | null>>({});
   const recentChangesRef = useRef<TallyChange[]>([]);
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -94,6 +94,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
       autoSaveMatch(recentChangesRef.current);
     }
 
+    setSaveStatus((prev) => ({ ...prev, [playerId]: "saving" }));
     try {
       const res = await fetch(`/api/sessions/${sessionId}/tally/increment`, {
         method: "POST",
@@ -103,13 +104,17 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
       const data = await res.json();
       if (res.ok) {
         setTallies((prev) => ({ ...prev, [playerId]: { wins: data.wins, losses: data.losses } }));
-        setSaveFlash(`${playerName} ${field === "wins" ? "W" : "L"} ${delta > 0 ? "+" : "−"}1`);
-        setTimeout(() => setSaveFlash(null), 1500);
+        setSaveStatus((prev) => ({ ...prev, [playerId]: "saved" }));
+        setTimeout(() => setSaveStatus((prev) => ({ ...prev, [playerId]: null })), 1200);
       } else {
         setTallies((prev) => ({ ...prev, [playerId]: current }));
+        setSaveStatus((prev) => ({ ...prev, [playerId]: "error" }));
+        setTimeout(() => setSaveStatus((prev) => ({ ...prev, [playerId]: null })), 2000);
       }
     } catch {
       setTallies((prev) => ({ ...prev, [playerId]: current }));
+      setSaveStatus((prev) => ({ ...prev, [playerId]: "error" }));
+      setTimeout(() => setSaveStatus((prev) => ({ ...prev, [playerId]: null })), 2000);
     }
     scheduleRefresh();
   }
@@ -141,12 +146,13 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     const t = tallies[player.player_id] ?? { wins: 0, losses: 0 };
     const out = player.checked_out;
     const flash = tapFlash[player.player_id];
+    const status = saveStatus[player.player_id];
 
     return (
       <div className={`py-1.5 px-2 transition-colors duration-300 ${
         flash === "wins" ? "bg-green-50" : flash === "losses" ? "bg-orange-50" : ""
       }`}>
-        {/* Row 1: Avatar + Name + W/L counts */}
+        {/* Row 1: Avatar + Name + save indicator + W/L counts */}
         <div className="flex items-center gap-1.5">
           <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold shrink-0 ${
             out ? "bg-stone-300 text-stone-700" : getAvatarColor(player.name)
@@ -156,6 +162,16 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
           <span className={`text-xs font-semibold truncate flex-1 ${out ? "text-black" : "text-stone-600"}`}>
             {player.name}
           </span>
+          {/* Save status indicator */}
+          {status === "saving" && (
+            <span className="w-3.5 h-3.5 shrink-0 rounded-full border-2 border-stone-300 border-t-stone-600 animate-spin" />
+          )}
+          {status === "saved" && (
+            <span className="text-green-500 text-xs shrink-0 animate-pulse">&#10003;</span>
+          )}
+          {status === "error" && (
+            <span className="text-red-500 text-xs shrink-0">&#10007;</span>
+          )}
           <div className="flex items-baseline gap-2 shrink-0">
             <span className={`text-lg font-bold tabular-nums transition-transform duration-150 ${
               flash === "wins" ? "scale-125" : ""
@@ -195,12 +211,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
       {/* Header + save flash */}
       <div className="flex items-center justify-between px-2 mb-1">
         <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">Whiteboard</h2>
-        {saveFlash && (
-          <span className="text-xs text-green-600 font-medium animate-pulse">
-            Saved: {saveFlash}
-          </span>
-        )}
-        {matchFlash && !saveFlash && (
+        {matchFlash && (
           <span className="text-xs text-sky-600 font-medium">
             Match: {matchFlash}
           </span>
