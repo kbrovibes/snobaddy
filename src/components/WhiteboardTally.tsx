@@ -170,30 +170,20 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
         {/* Row 2: +/- buttons */}
         {!out && (
           <div className="flex gap-1 mt-0.5 pl-6">
-            <button
-              onClick={() => handleTap(player.player_id, player.name, "wins", 1)}
-              className="h-6 px-2 rounded bg-green-50 text-green-600 text-[10px] font-bold active:bg-green-200 transition-colors"
-            >
-              +W
-            </button>
-            <button
-              onClick={() => handleTap(player.player_id, player.name, "losses", 1)}
-              className="h-6 px-2 rounded bg-orange-50 text-orange-500 text-[10px] font-bold active:bg-orange-200 transition-colors"
-            >
-              +L
-            </button>
-            <button
-              onClick={() => handleTap(player.player_id, player.name, "wins", -1)}
-              className="h-6 w-6 flex items-center justify-center rounded bg-stone-100 text-stone-600 text-[10px] font-medium active:bg-stone-200"
-            >
-              −W
-            </button>
-            <button
-              onClick={() => handleTap(player.player_id, player.name, "losses", -1)}
-              className="h-6 w-6 flex items-center justify-center rounded bg-stone-100 text-stone-600 text-[10px] font-medium active:bg-stone-200"
-            >
-              −L
-            </button>
+            {([
+              { label: "+W", field: "wins" as const, delta: 1 as const },
+              { label: "+L", field: "losses" as const, delta: 1 as const },
+              { label: "−W", field: "wins" as const, delta: -1 as const },
+              { label: "−L", field: "losses" as const, delta: -1 as const },
+            ]).map((btn) => (
+              <button
+                key={btn.label}
+                onClick={() => handleTap(player.player_id, player.name, btn.field, btn.delta)}
+                className="h-6 px-2 rounded bg-stone-100 text-stone-700 text-[10px] font-semibold active:bg-stone-300 transition-colors"
+              >
+                {btn.label}
+              </button>
+            ))}
           </div>
         )}
       </div>
