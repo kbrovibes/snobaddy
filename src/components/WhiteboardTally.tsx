@@ -137,43 +137,43 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
         flash === "wins" ? "bg-green-50" : flash === "losses" ? "bg-orange-50" : ""
       }`}>
         {/* Name + status */}
-        <td className="py-2 pl-3 pr-1">
+        <td className="py-1.5 pl-2 pr-0.5">
           <div className="flex items-center gap-1">
-            <span className={`text-sm font-medium truncate ${out ? "text-black" : "text-stone-800"}`}>
+            <span className={`text-xs font-medium truncate ${out ? "text-black" : "text-stone-800"}`}>
               {firstName(player.name)}
             </span>
             <StatusIcon playerId={player.player_id} />
           </div>
         </td>
         {/* W count */}
-        <td className="py-2 px-1 text-center">
-          <span className={`text-lg font-bold tabular-nums transition-transform duration-150 inline-block ${
+        <td className="py-1.5 px-0.5 text-center">
+          <span className={`text-sm font-bold tabular-nums transition-transform duration-150 inline-block ${
             flash === "wins" ? "scale-125" : ""
           } ${out ? "text-black" : "text-green-700"}`}>
             {t.wins}
           </span>
         </td>
         {/* L count */}
-        <td className="py-2 px-1 text-center">
-          <span className={`text-lg font-bold tabular-nums transition-transform duration-150 inline-block ${
+        <td className="py-1.5 px-0.5 text-center">
+          <span className={`text-sm font-bold tabular-nums transition-transform duration-150 inline-block ${
             flash === "losses" ? "scale-125" : ""
           } ${out ? "text-black" : "text-orange-600"}`}>
             {t.losses}
           </span>
         </td>
         {/* Action buttons */}
-        <td className="py-2 pr-3 pl-1">
+        <td className="py-1.5 pr-1 pl-0.5">
           {!out && (
-            <div className="flex gap-1 justify-end">
+            <div className="flex gap-0.5 justify-end">
               <button
                 onClick={() => handleTap(player.player_id, player.name, "wins")}
-                className="h-8 w-10 rounded-lg bg-green-100 text-green-700 text-xs font-bold active:bg-green-300 transition-colors"
+                className="h-7 w-8 rounded-md bg-green-100 text-green-700 text-[10px] font-bold active:bg-green-300 transition-colors"
               >
                 +W
               </button>
               <button
                 onClick={() => handleTap(player.player_id, player.name, "losses")}
-                className="h-8 w-10 rounded-lg bg-orange-100 text-orange-600 text-xs font-bold active:bg-orange-300 transition-colors"
+                className="h-7 w-8 rounded-md bg-orange-100 text-orange-600 text-[10px] font-bold active:bg-orange-300 transition-colors"
               >
                 +L
               </button>
@@ -184,6 +184,33 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     );
   }
 
+  function HalfTable({ players, showHeader }: { players: WhiteboardPlayer[]; showHeader: boolean }) {
+    return (
+      <table className="w-full">
+        {showHeader && (
+          <thead className="sticky top-0 bg-white z-10">
+            <tr className="border-b border-stone-200">
+              <th className="py-1.5 pl-2 pr-0.5 text-left text-[10px] font-semibold text-stone-400 uppercase">Player</th>
+              <th className="py-1.5 px-0.5 text-center text-[10px] font-semibold text-green-600 uppercase w-6">W</th>
+              <th className="py-1.5 px-0.5 text-center text-[10px] font-semibold text-orange-500 uppercase w-6">L</th>
+              <th className="py-1.5 pr-1 pl-0.5 w-[4.5rem]"></th>
+            </tr>
+          </thead>
+        )}
+        <tbody className="divide-y divide-stone-100">
+          {players.map((p) => (
+            <PlayerTableRow key={p.player_id} player={p} />
+          ))}
+        </tbody>
+      </table>
+    );
+  }
+
+  const leftActive = activePlayers.filter((_, i) => i % 2 === 0);
+  const rightActive = activePlayers.filter((_, i) => i % 2 === 1);
+  const leftOut = checkedOutPlayers.filter((_, i) => i % 2 === 0);
+  const rightOut = checkedOutPlayers.filter((_, i) => i % 2 === 1);
+
   return (
     <div className="bg-white rounded-xl shadow-sm flex flex-col">
       {/* Match auto-saved flash */}
@@ -193,42 +220,26 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
         </div>
       )}
 
-      {/* Table */}
-      <table className="w-full">
-        <thead className="sticky top-0 bg-white z-10">
-          <tr className="border-b border-stone-200">
-            <th className="py-2 pl-3 pr-1 text-left text-xs font-semibold text-stone-400 uppercase tracking-wide">Player</th>
-            <th className="py-2 px-1 text-center text-xs font-semibold text-green-600 uppercase tracking-wide w-10">W</th>
-            <th className="py-2 px-1 text-center text-xs font-semibold text-orange-500 uppercase tracking-wide w-10">L</th>
-            <th className="py-2 pr-3 pl-1 text-right text-xs font-semibold text-stone-400 uppercase tracking-wide w-24"></th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-stone-100">
-          {activePlayers.map((p) => (
-            <PlayerTableRow key={p.player_id} player={p} />
-          ))}
-        </tbody>
-        {checkedOutPlayers.length > 0 && (
-          <>
-            <tbody>
-              <tr>
-                <td colSpan={4} className="py-2">
-                  <div className="flex items-center gap-2 px-3">
-                    <div className="flex-1 h-px bg-stone-200" />
-                    <span className="text-xs text-stone-400">checked out</span>
-                    <div className="flex-1 h-px bg-stone-200" />
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-            <tbody className="divide-y divide-stone-50">
-              {checkedOutPlayers.map((p) => (
-                <PlayerTableRow key={p.player_id} player={p} />
-              ))}
-            </tbody>
-          </>
-        )}
-      </table>
+      {/* 2-column tables */}
+      <div className="grid grid-cols-2 divide-x divide-stone-200">
+        <HalfTable players={leftActive} showHeader={true} />
+        <HalfTable players={rightActive} showHeader={true} />
+      </div>
+
+      {/* Checked-out players */}
+      {checkedOutPlayers.length > 0 && (
+        <>
+          <div className="flex items-center gap-2 px-3 py-1.5">
+            <div className="flex-1 h-px bg-stone-200" />
+            <span className="text-[10px] text-stone-400">checked out</span>
+            <div className="flex-1 h-px bg-stone-200" />
+          </div>
+          <div className="grid grid-cols-2 divide-x divide-stone-200">
+            <HalfTable players={leftOut} showHeader={false} />
+            <HalfTable players={rightOut} showHeader={false} />
+          </div>
+        </>
+      )}
     </div>
   );
 }
