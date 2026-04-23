@@ -135,7 +135,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
       }`}>
         {/* Row 1: Name + save indicator + W/L counts */}
         <div className="flex items-center gap-1.5">
-          <span className={`text-xs font-semibold truncate flex-1 ${out ? "text-black" : "text-stone-700"}`}>
+          <span className={`text-sm font-semibold truncate flex-1 ${out ? "text-black" : "text-stone-700"}`}>
             {firstName(player.name)}
           </span>
           {/* Save status indicator */}

@@ -11,7 +11,6 @@ import { getSessionMatches, getSessionScoreboard, getSessionHighlights } from "@
 import { getProposedMatches } from "@/lib/db/proposed";
 import { getOnlinePlayerIds, getActivePlayerList } from "@/lib/db/players";
 import { getSessionTally, getWhiteboardPlayers, getWhiteboardLog, type TallyEntry } from "@/lib/db/tally";
-import WhiteboardFeed from "@/components/WhiteboardFeed";
 import WhiteboardTally from "@/components/WhiteboardTally";
 import ScoreModePicker, { type ScoreMode } from "@/components/ScoreModePicker";
 import { getAppSetting } from "@/lib/db/settings";
@@ -459,52 +458,68 @@ export default async function SessionDetailPage({
         />
       )}
 
-      {/* Whiteboard activity feed — shown for active whiteboard sessions */}
-      {!isFinalsSession && isActive && session.whiteboard_mode && (whiteboardLog.length > 0 || recentMatches.length > 0) && (
-        <WhiteboardFeed
-          logEntries={whiteboardLog}
-          matches={recentMatches}
-          nameMap={nameMap}
-        />
-      )}
-
-      {/* Match history — not shown for Finals or active whiteboard sessions */}
-      {!isFinalsSession && (isActive || isCompleted) && recentMatches.length > 0 && !(isActive && session.whiteboard_mode) && (
+      {/* Match history + whiteboard edits — not shown for Finals sessions */}
+      {!isFinalsSession && (isActive || isCompleted) && (recentMatches.length > 0 || whiteboardLog.length > 0) && (
         <div className="bg-white rounded-xl shadow-sm px-4 py-3">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
-            Matches · {recentMatches.length}
+            {isActive && session.whiteboard_mode ? "Activity" : `Matches · ${recentMatches.length}`}
           </h2>
           <div className="flex flex-col gap-3">
-            {recentMatches.map((m) => {
-              const team1Names = m.team1.map((n) => shortName(n, nameMap));
-              const team2Names = m.team2.map((n) => shortName(n, nameMap));
-              const winnerNames = m.winning_team === 1 ? team1Names : team2Names;
-              return (
-                <div key={m.id} className="text-sm">
-                  <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                    <span className={`font-semibold truncate text-left ${m.winning_team === 1 ? "text-green-600" : "text-stone-400"}`}>
-                      {team1Names.join(" & ")}
-                    </span>
-                    <span className="text-stone-300 text-center w-6">vs</span>
-                    <span className={`font-semibold truncate text-left ${m.winning_team === 2 ? "text-green-600" : "text-stone-400"}`}>
-                      {team2Names.join(" & ")}
+            {/* Interleave matches and whiteboard log entries by time, newest first */}
+            {(() => {
+              type FeedItem = { type: "match"; data: typeof recentMatches[0]; ts: number }
+                | { type: "log"; data: typeof whiteboardLog[0]; ts: number };
+              const items: FeedItem[] = [
+                ...recentMatches.map((m) => ({ type: "match" as const, data: m, ts: new Date(m.played_at).getTime() })),
+                ...whiteboardLog.map((e) => ({ type: "log" as const, data: e, ts: new Date(e.created_at).getTime() })),
+              ].sort((a, b) => b.ts - a.ts);
+
+              return items.map((item) => {
+                if (item.type === "match") {
+                  const m = item.data;
+                  const team1Names = m.team1.map((n: string) => shortName(n, nameMap));
+                  const team2Names = m.team2.map((n: string) => shortName(n, nameMap));
+                  const winnerNames = m.winning_team === 1 ? team1Names : team2Names;
+                  return (
+                    <div key={m.id} className="text-sm">
+                      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                        <span className={`font-semibold truncate text-left ${m.winning_team === 1 ? "text-green-600" : "text-stone-400"}`}>
+                          {team1Names.join(" & ")}
+                        </span>
+                        <span className="text-stone-300 text-center w-6">vs</span>
+                        <span className={`font-semibold truncate text-left ${m.winning_team === 2 ? "text-green-600" : "text-stone-400"}`}>
+                          {team2Names.join(" & ")}
+                        </span>
+                      </div>
+                      <div className="text-xs text-stone-400 mt-0.5">
+                        {m.team1_score} – {m.team2_score} · {winnerNames.join(" & ")} won
+                      </div>
+                      {isAdmin && isActive && (
+                        <MatchAdminControls
+                          matchId={m.id}
+                          team1Names={m.team1.map((n: string) => shortName(n, nameMap)) as [string, string]}
+                          team2Names={m.team2.map((n: string) => shortName(n, nameMap)) as [string, string]}
+                          team1Score={m.team1_score}
+                          team2Score={m.team2_score}
+                        />
+                      )}
+                    </div>
+                  );
+                }
+
+                const e = item.data;
+                const isWin = e.field === "wins";
+                return (
+                  <div key={e.id} className="flex items-center gap-2 text-xs text-stone-500">
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isWin ? "bg-green-400" : "bg-orange-400"}`} />
+                    <span className="font-medium text-stone-700">{e.player_name.split(" ")[0]}</span>
+                    <span className={isWin ? "text-green-600" : "text-orange-500"}>
+                      {e.delta > 0 ? "+" : "−"}1 {isWin ? "W" : "L"}
                     </span>
                   </div>
-                  <div className="text-xs text-stone-400 mt-0.5">
-                    {m.team1_score} – {m.team2_score} · {winnerNames.join(" & ")} won
-                  </div>
-                  {isAdmin && isActive && (
-                    <MatchAdminControls
-                      matchId={m.id}
-                      team1Names={m.team1.map((n) => shortName(n, nameMap)) as [string, string]}
-                      team2Names={m.team2.map((n) => shortName(n, nameMap)) as [string, string]}
-                      team1Score={m.team1_score}
-                      team2Score={m.team2_score}
-                    />
-                  )}
-                </div>
-              );
-            })}
+                );
+              });
+            })()}
           </div>
         </div>
       )}
