@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sessions — Dark Mode Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .step { display: none; }
+    .step.active { display: flex; flex-direction: column; }
+  </style>
+</head>
+<body class="bg-stone-950 min-h-screen">
+
+<!-- Sidebar TOC -->
+<div class="fixed left-0 top-0 bottom-0 w-48 bg-stone-900 border-r border-stone-700 py-6 px-3 flex flex-col gap-1 overflow-y-auto z-50">
+  <a href="index.html" class="text-xs font-bold text-stone-100 px-2 py-1.5 mb-2">🏸 Dark Mode Mockups</a>
+  <a href="auth-flow.html" class="text-xs px-2 py-1.5 rounded-lg text-stone-400 hover:bg-stone-800">🔐 Auth Flow</a>
+  <a href="sessions.html" class="bg-sky-900/50 text-sky-400 font-semibold text-xs px-2 py-1.5 rounded-lg">🏸 Sessions</a>
+  <a href="players-leaderboard.html" class="text-xs px-2 py-1.5 rounded-lg text-stone-400 hover:bg-stone-800">👥 Players & Leaderboard</a>
+  <a href="finals.html" class="text-xs px-2 py-1.5 rounded-lg text-stone-400 hover:bg-stone-800">🏆 Finals</a>
+</div>
+
+<div class="ml-48 flex flex-col items-center py-8">
+
+  <!-- Step navigation -->
+  <div class="mb-6 text-center">
+    <h1 class="text-2xl font-bold text-stone-100 mb-3">Sessions</h1>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <button onclick="goTo(0)" id="btn-0" class="px-3 py-1.5 text-sm rounded-lg bg-stone-100 text-stone-900 font-medium">0 List</button>
+      <button onclick="goTo(1)" id="btn-1" class="px-3 py-1.5 text-sm rounded-lg bg-stone-800 text-stone-400 font-medium border border-stone-600">1 No Active</button>
+      <button onclick="goTo(2)" id="btn-2" class="px-3 py-1.5 text-sm rounded-lg bg-stone-800 text-stone-400 font-medium border border-stone-600">2 Detail</button>
+      <button onclick="goTo(3)" id="btn-3" class="px-3 py-1.5 text-sm rounded-lg bg-stone-800 text-stone-400 font-medium border border-stone-600">3 Whiteboard</button>
+      <button onclick="goTo(4)" id="btn-4" class="px-3 py-1.5 text-sm rounded-lg bg-stone-800 text-stone-400 font-medium border border-stone-600">4 Scoreboard</button>
+      <button onclick="goTo(5)" id="btn-5" class="px-3 py-1.5 text-sm rounded-lg bg-stone-800 text-stone-400 font-medium border border-stone-600">5 Activity</button>
+      <button onclick="goTo(6)" id="btn-6" class="px-3 py-1.5 text-sm rounded-lg bg-stone-800 text-stone-400 font-medium border border-stone-600">6 Record</button>
+      <button onclick="goTo(7)" id="btn-7" class="px-3 py-1.5 text-sm rounded-lg bg-stone-800 text-stone-400 font-medium border border-stone-600">7 Completed</button>
+    </div>
+  </div>
+
+  <!-- Phone frame -->
+  <div class="w-[390px] min-h-[700px] bg-stone-900 rounded-3xl border-4 border-stone-600 shadow-2xl shadow-black/30 overflow-hidden flex flex-col relative">
+
+    <!-- Fixed Header -->
+    <header class="h-14 bg-stone-900 border-b border-stone-700 flex items-center justify-between px-4 shrink-0 z-10">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">🏸</span>
+        <div class="leading-tight">
+          <span class="font-bold text-stone-50 text-sm">Serve Snoqualmie</span>
+          <span class="block text-[10px] uppercase tracking-wide text-stone-400 -mt-0.5">Badminton</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-sky-400 cursor-pointer">Logout</span>
+        <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+      </div>
+    </header>
+
+    <!-- Scrollable content area -->
+    <div class="flex-1 overflow-y-auto">
+
+      <!-- Step 0: Session List -->
+      <div id="step-0" class="step active p-4 gap-4">
+        <div class="flex items-center gap-3 mb-1">
+          <div class="w-10 h-10 bg-stone-700 rounded-lg flex items-center justify-center text-xs text-stone-400">Logo</div>
+          <span class="text-lg font-bold text-stone-50">Spring 2026</span>
+        </div>
+
+        <!-- Active session card -->
+        <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-4 cursor-pointer border border-stone-700" onclick="goTo(2)">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-semibold text-stone-50">Mon, Apr 7</span>
+                <span class="bg-sky-900 text-sky-300 rounded-full px-2 py-0.5 text-xs font-medium">In Progress</span>
+              </div>
+              <div class="text-sm text-stone-400">6:00 PM</div>
+              <div class="text-sm text-stone-400">12 players checked in</div>
+            </div>
+            <span class="text-stone-500 text-xl">&rarr;</span>
+          </div>
+        </div>
+
+        <!-- Season Finals -->
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-sm font-semibold text-stone-400 uppercase tracking-wide">Season Finals</span>
+            <span class="bg-amber-900/50 text-amber-400 rounded-full px-2 py-0.5 text-xs font-medium">Under Construction</span>
+          </div>
+          <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-4 cursor-pointer border border-stone-700">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-semibold text-stone-50 mb-1">Spring 2026 Finals</div>
+                <div class="text-sm text-stone-400">26 players added</div>
+              </div>
+              <span class="text-sky-400 text-sm font-medium">Groups Ready &rarr;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming -->
+        <div>
+          <span class="text-sm font-semibold text-stone-400 uppercase tracking-wide mb-2 block">Upcoming</span>
+          <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-4 border border-stone-700">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-semibold text-stone-50">Mon, Apr 13</span>
+                <div class="text-sm text-stone-400">Opens at 6pm</div>
+              </div>
+              <span class="bg-stone-700 text-stone-400 rounded-full px-2 py-0.5 text-xs font-medium">Upcoming &rarr;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Past Sessions -->
+        <div>
+          <span class="text-sm font-semibold text-stone-400 uppercase tracking-wide mb-2 block">Past Sessions</span>
+          <div class="flex flex-col gap-2">
+            <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-4 border border-stone-700">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold text-stone-50">Thu, Apr 3</span>
+                  <div class="text-sm text-stone-400">14 matches played</div>
+                </div>
+                <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+              </div>
+            </div>
+            <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-4 border border-stone-700">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold text-stone-50">Mon, Mar 31</span>
+                  <div class="text-sm text-stone-400">11 matches played</div>
+                </div>
+                <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+              </div>
+            </div>
+            <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-4 border border-stone-700">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold text-stone-50">Thu, Mar 27</span>
+                  <div class="text-sm text-stone-400">9 matches played</div>
+                </div>
+                <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 1: No Active Session -->
+      <div id="step-1" class="step p-4 gap-4">
+        <div class="flex items-center gap-3 mb-1">
+          <div class="w-10 h-10 bg-stone-700 rounded-lg flex items-center justify-center text-xs text-stone-400">Logo</div>
+          <span class="text-lg font-bold text-stone-50">Spring 2026</span>
+        </div>
+
+        <div class="flex flex-col items-center gap-3 py-6">
+          <span class="text-stone-500 text-sm">No active session</span>
+          <button class="bg-stone-100 text-stone-900 rounded-xl px-6 py-2.5 text-sm font-semibold">Create Session</button>
+        </div>
+
+        <div>
+          <span class="text-sm font-semibold text-stone-400 uppercase tracking-wide mb-2 block">Upcoming</span>
+          <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-4 border border-stone-700">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-semibold text-stone-50">Mon, Apr 13</span>
+                <div class="text-sm text-stone-400">Opens at 6pm</div>
+              </div>
+              <span class="bg-stone-700 text-stone-400 rounded-full px-2 py-0.5 text-xs font-medium">Upcoming &rarr;</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-sm font-semibold text-stone-400 uppercase tracking-wide mb-2 block">Past Sessions</span>
+          <div class="flex flex-col gap-2">
+            <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-4 border border-stone-700">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold text-stone-50">Thu, Apr 3</span>
+                  <div class="text-sm text-stone-400">14 matches played</div>
+                </div>
+                <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+              </div>
+            </div>
+            <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-4 border border-stone-700">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold text-stone-50">Mon, Mar 31</span>
+                  <div class="text-sm text-stone-400">11 matches played</div>
+                </div>
+                <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Session Detail Active -->
+      <div id="step-2" class="step p-4 gap-4">
+        <div>
+          <span class="text-sky-400 text-sm cursor-pointer" onclick="goTo(0)">&larr; All Sessions</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="text-lg font-bold text-stone-50">Monday, Apr 7</span>
+          <span class="bg-sky-900 text-sky-300 rounded-full px-2 py-0.5 text-xs font-medium">In Progress</span>
+        </div>
+
+        <!-- Checked in bar -->
+        <div class="bg-green-900 text-green-400 rounded-xl p-3 flex items-center justify-between border border-green-700">
+          <span class="text-sm font-medium">&#10003; You're checked in</span>
+          <button class="bg-stone-700 text-stone-300 rounded-lg px-3 py-1 text-xs font-medium">Leave</button>
+        </div>
+
+        <!-- Who's Here -->
+        <div>
+          <span class="text-sm font-semibold text-stone-400 uppercase tracking-wide mb-3 block">Who's Here</span>
+          <div class="flex flex-col gap-2">
+            <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-3 flex items-center justify-between border border-stone-700">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-400 text-sm font-medium w-28">Karthik</span>
+                <span class="text-xs text-stone-300 tracking-wide">&#9679;&#9679;&#9679;&#9679;<span class="text-stone-600">&#9679;</span></span>
+              </div>
+              <span class="text-xs text-stone-500">6:02 PM</span>
+            </div>
+            <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-3 flex items-center justify-between border border-stone-700">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-400 text-sm font-medium w-28">Priya</span>
+                <span class="text-xs text-stone-300 tracking-wide">&#9679;&#9679;&#9679;<span class="text-stone-600">&#9679;&#9679;</span></span>
+              </div>
+              <span class="text-xs text-stone-500">6:05 PM</span>
+            </div>
+            <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-3 flex items-center justify-between border border-stone-700">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-400 text-sm font-medium w-28">Arjun</span>
+                <span class="text-xs text-stone-300 tracking-wide">&#9679;&#9679;&#9679;&#9679;&#9679;</span>
+              </div>
+              <span class="text-xs text-stone-500">6:08 PM</span>
+            </div>
+            <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-3 flex items-center justify-between border border-stone-700">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-400 text-sm font-medium w-28">Rahul</span>
+                <span class="text-xs text-stone-300 tracking-wide">&#9679;&#9679;<span class="text-stone-600">&#9679;&#9679;&#9679;</span></span>
+              </div>
+              <span class="text-xs text-stone-500">6:10 PM</span>
+            </div>
+            <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-3 flex items-center justify-between border border-stone-700">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-400 text-sm font-medium w-28">Sanjay</span>
+                <span class="text-xs text-stone-300 tracking-wide">&#9679;&#9679;&#9679;<span class="text-stone-600">&#9679;&#9679;</span></span>
+              </div>
+              <span class="text-xs text-stone-500">6:12 PM</span>
+            </div>
+            <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-3 flex items-center justify-between border border-stone-700">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-400 text-sm font-medium w-28">Deepa</span>
+                <span class="text-xs text-stone-300 tracking-wide">&#9679;&#9679;&#9679;&#9679;<span class="text-stone-600">&#9679;</span></span>
+              </div>
+              <span class="text-xs text-stone-500">6:15 PM</span>
+            </div>
+            <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-3 flex items-center justify-between border border-stone-700">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-400 text-sm font-medium w-28">Mani</span>
+                <span class="text-xs text-stone-300 tracking-wide">&#9679;&#9679;&#9679;<span class="text-stone-600">&#9679;&#9679;</span></span>
+              </div>
+              <span class="text-xs text-stone-500">6:18 PM</span>
+            </div>
+            <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm p-3 flex items-center justify-between border border-stone-700">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-400 text-sm font-medium w-28">Venkat</span>
+                <span class="text-xs text-stone-300 tracking-wide">&#9679;&#9679;&#9679;&#9679;&#9679;</span>
+              </div>
+              <span class="text-xs text-stone-500">6:22 PM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Whiteboard Mode -->
+      <div id="step-3" class="step p-4 gap-3">
+        <div>
+          <span class="text-sky-400 text-sm cursor-pointer" onclick="goTo(0)">&larr; All Sessions</span>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-lg font-bold text-stone-50">Monday, Apr 7</span>
+            <span class="bg-sky-900 text-sky-300 rounded-full px-2 py-0.5 text-xs font-medium">Live</span>
+          </div>
+          <span class="text-xs text-stone-500">8 matches</span>
+        </div>
+
+        <!-- 2-column whiteboard table -->
+        <div class="bg-stone-800 rounded-xl border border-stone-700 overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-stone-700 text-stone-500 text-xs uppercase tracking-wide">
+                <th class="text-left p-2.5 font-semibold">Player</th>
+                <th class="text-center p-2.5 font-semibold w-8">W</th>
+                <th class="text-center p-2.5 font-semibold w-8">L</th>
+                <th class="text-center p-2.5 font-semibold w-16" colspan="2"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-700">
+              <!-- Column layout: left half players -->
+              <tr>
+                <td class="p-2.5 text-stone-100 font-medium">Karthik</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">3</td>
+                <td class="text-center p-2.5 text-orange-400 font-bold">1</td>
+                <td class="text-center p-1.5">
+                  <button class="bg-green-900 text-green-400 text-xs font-bold px-2 py-1 rounded">+W</button>
+                </td>
+                <td class="text-center p-1.5">
+                  <button class="bg-amber-900 text-orange-400 text-xs font-bold px-2 py-1 rounded">+L</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-stone-100 font-medium">Arjun</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">4</td>
+                <td class="text-center p-2.5 text-orange-400 font-bold">1</td>
+                <td class="text-center p-1.5">
+                  <button class="bg-green-900 text-green-400 text-xs font-bold px-2 py-1 rounded">+W</button>
+                </td>
+                <td class="text-center p-1.5">
+                  <button class="bg-amber-900 text-orange-400 text-xs font-bold px-2 py-1 rounded">+L</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-stone-100 font-medium">Venkat</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">3</td>
+                <td class="text-center p-2.5 text-orange-400 font-bold">1</td>
+                <td class="text-center p-1.5">
+                  <button class="bg-green-900 text-green-400 text-xs font-bold px-2 py-1 rounded">+W</button>
+                </td>
+                <td class="text-center p-1.5">
+                  <button class="bg-amber-900 text-orange-400 text-xs font-bold px-2 py-1 rounded">+L</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-stone-100 font-medium">Deepa</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">2</td>
+                <td class="text-center p-2.5 text-orange-400 font-bold">2</td>
+                <td class="text-center p-1.5">
+                  <button class="bg-green-900 text-green-400 text-xs font-bold px-2 py-1 rounded">+W</button>
+                </td>
+                <td class="text-center p-1.5">
+                  <button class="bg-amber-900 text-orange-400 text-xs font-bold px-2 py-1 rounded">+L</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-stone-100 font-medium">Sanjay</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">2</td>
+                <td class="text-center p-2.5 text-orange-400 font-bold">1</td>
+                <td class="text-center p-1.5">
+                  <button class="bg-green-900 text-green-400 text-xs font-bold px-2 py-1 rounded">+W</button>
+                </td>
+                <td class="text-center p-1.5">
+                  <button class="bg-amber-900 text-orange-400 text-xs font-bold px-2 py-1 rounded">+L</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-stone-100 font-medium">Priya</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">1</td>
+                <td class="text-center p-2.5 text-orange-400 font-bold">2</td>
+                <td class="text-center p-1.5">
+                  <button class="bg-green-900 text-green-400 text-xs font-bold px-2 py-1 rounded">+W</button>
+                </td>
+                <td class="text-center p-1.5">
+                  <button class="bg-amber-900 text-orange-400 text-xs font-bold px-2 py-1 rounded">+L</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-stone-100 font-medium">Mani</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">1</td>
+                <td class="text-center p-2.5 text-orange-400 font-bold">2</td>
+                <td class="text-center p-1.5">
+                  <button class="bg-green-900 text-green-400 text-xs font-bold px-2 py-1 rounded">+W</button>
+                </td>
+                <td class="text-center p-1.5">
+                  <button class="bg-amber-900 text-orange-400 text-xs font-bold px-2 py-1 rounded">+L</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-stone-500 font-medium">Rahul <span class="text-xs text-stone-600">(left)</span></td>
+                <td class="text-center p-2.5 text-stone-600">0</td>
+                <td class="text-center p-2.5 text-stone-600">2</td>
+                <td class="text-center p-1.5" colspan="2">
+                  <span class="text-xs text-stone-600">checked out</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Step 4: Scoreboard -->
+      <div id="step-4" class="step p-4 gap-4">
+        <div>
+          <span class="text-sky-400 text-sm cursor-pointer" onclick="goTo(0)">&larr; All Sessions</span>
+        </div>
+
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-lg font-bold text-stone-50">Monday, Apr 7</span>
+          <span class="bg-sky-900 text-sky-300 rounded-full px-2 py-0.5 text-xs font-medium">In Progress</span>
+        </div>
+
+        <span class="text-xs uppercase text-stone-500 tracking-wide font-semibold">Tonight's Scores &middot; 8 matches</span>
+
+        <div class="bg-stone-800 rounded-xl shadow-black/20 shadow-sm overflow-hidden border border-stone-700">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-stone-700 bg-stone-800 text-stone-500 text-xs uppercase tracking-wide">
+                <th class="text-left p-3 font-semibold">Player</th>
+                <th class="text-center p-3 font-semibold w-8">M</th>
+                <th class="text-center p-3 font-semibold w-8">W</th>
+                <th class="text-center p-3 font-semibold w-8">L</th>
+                <th class="text-center p-3 font-semibold w-10">Pts</th>
+                <th class="text-right p-3 font-semibold w-12">W%</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-700">
+              <tr>
+                <td class="p-3 text-sky-400 font-medium">Arjun</td>
+                <td class="text-center p-3 text-stone-300">5</td>
+                <td class="text-center p-3 text-stone-300">4</td>
+                <td class="text-center p-3 text-stone-300">1</td>
+                <td class="text-center p-3 text-stone-100 font-semibold">12</td>
+                <td class="text-right p-3 text-green-400 font-medium">80%</td>
+              </tr>
+              <tr>
+                <td class="p-3 text-sky-400 font-medium">Venkat</td>
+                <td class="text-center p-3 text-stone-300">4</td>
+                <td class="text-center p-3 text-stone-300">3</td>
+                <td class="text-center p-3 text-stone-300">1</td>
+                <td class="text-center p-3 text-stone-100 font-semibold">9</td>
+                <td class="text-right p-3 text-green-400 font-medium">75%</td>
+              </tr>
+              <tr>
+                <td class="p-3 text-sky-400 font-medium">Karthik</td>
+                <td class="text-center p-3 text-stone-300">4</td>
+                <td class="text-center p-3 text-stone-300">3</td>
+                <td class="text-center p-3 text-stone-300">1</td>
+                <td class="text-center p-3 text-stone-100 font-semibold">9</td>
+                <td class="text-right p-3 text-green-400 font-medium">75%</td>
+              </tr>
+              <tr>
+                <td class="p-3 text-sky-400 font-medium">Deepa</td>
+                <td class="text-center p-3 text-stone-300">4</td>
+                <td class="text-center p-3 text-stone-300">2</td>
+                <td class="text-center p-3 text-stone-300">2</td>
+                <td class="text-center p-3 text-stone-100 font-semibold">6</td>
+                <td class="text-right p-3 text-green-400 font-medium">50%</td>
+              </tr>
+              <tr>
+                <td class="p-3 text-sky-400 font-medium">Sanjay</td>
+                <td class="text-center p-3 text-stone-300">3</td>
+                <td class="text-center p-3 text-stone-300">2</td>
+                <td class="text-center p-3 text-stone-300">1</td>
+                <td class="text-center p-3 text-stone-100 font-semibold">6</td>
+                <td class="text-right p-3 text-green-400 font-medium">67%</td>
+              </tr>
+              <tr>
+                <td class="p-3 text-sky-400 font-medium">Priya</td>
+                <td class="text-center p-3 text-stone-300">3</td>
+                <td class="text-center p-3 text-stone-300">1</td>
+                <td class="text-center p-3 text-stone-300">2</td>
+                <td class="text-center p-3 text-stone-100 font-semibold">3</td>
+                <td class="text-right p-3 text-stone-400">33%</td>
+              </tr>
+              <tr>
+                <td class="p-3 text-sky-400 font-medium">Mani</td>
+                <td class="text-center p-3 text-stone-300">3</td>
+                <td class="text-center p-3 text-stone-300">1</td>
+                <td class="text-center p-3 text-stone-300">2</td>
+                <td class="text-center p-3 text-stone-100 font-semibold">3</td>
+                <td class="text-right p-3 text-stone-400">33%</td>
+              </tr>
+              <tr>
+                <td class="p-3 text-sky-400 font-medium">Rahul</td>
+                <td class="text-center p-3 text-stone-300">2</td>
+                <td class="text-center p-3 text-stone-300">0</td>
+                <td class="text-center p-3 text-stone-300">2</td>
+                <td class="text-center p-3 text-stone-100 font-semibold">0</td>
+                <td class="text-right p-3 text-stone-400">0%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Step 5: Activity Feed -->
+      <div id="step-5" class="step p-4 gap-3">
+        <div>
+          <span class="text-sky-400 text-sm cursor-pointer" onclick="goTo(0)">&larr; All Sessions</span>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <span class="text-lg font-bold text-stone-50">Activity Feed</span>
+          <span class="text-xs text-stone-500">8 entries</span>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs text-stone-500">8:42 PM</span>
+              <button class="text-xs bg-stone-700 text-stone-400 px-2 py-0.5 rounded hover:bg-stone-600">Undo</button>
+            </div>
+            <div class="text-sm text-stone-200">
+              <span class="text-green-400 font-semibold">Karthik</span> & <span class="text-green-400 font-semibold">Arjun</span> beat
+              <span class="text-orange-400">Rahul</span> & <span class="text-orange-400">Priya</span>
+            </div>
+          </div>
+
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs text-stone-500">8:28 PM</span>
+              <button class="text-xs bg-stone-700 text-stone-400 px-2 py-0.5 rounded hover:bg-stone-600">Undo</button>
+            </div>
+            <div class="text-sm text-stone-200">
+              <span class="text-green-400 font-semibold">Venkat</span> & <span class="text-green-400 font-semibold">Deepa</span> beat
+              <span class="text-orange-400">Mani</span> & <span class="text-orange-400">Sanjay</span>
+            </div>
+          </div>
+
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs text-stone-500">8:15 PM</span>
+              <button class="text-xs bg-stone-700 text-stone-400 px-2 py-0.5 rounded hover:bg-stone-600">Undo</button>
+            </div>
+            <div class="text-sm text-stone-200">
+              <span class="text-green-400 font-semibold">Arjun</span> & <span class="text-green-400 font-semibold">Sanjay</span> beat
+              <span class="text-orange-400">Priya</span> & <span class="text-orange-400">Mani</span>
+            </div>
+          </div>
+
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs text-stone-500">7:58 PM</span>
+              <button class="text-xs bg-stone-700 text-stone-400 px-2 py-0.5 rounded hover:bg-stone-600">Undo</button>
+            </div>
+            <div class="text-sm text-stone-200">
+              <span class="text-green-400 font-semibold">Karthik</span> & <span class="text-green-400 font-semibold">Venkat</span> beat
+              <span class="text-orange-400">Deepa</span> & <span class="text-orange-400">Rahul</span>
+            </div>
+          </div>
+
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs text-stone-500">7:40 PM</span>
+              <button class="text-xs bg-stone-700 text-stone-400 px-2 py-0.5 rounded hover:bg-stone-600">Undo</button>
+            </div>
+            <div class="text-sm text-stone-200">
+              <span class="text-sky-400 font-medium">Rahul</span> checked out
+            </div>
+          </div>
+
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs text-stone-500">6:22 PM</span>
+            </div>
+            <div class="text-sm text-stone-200">
+              <span class="text-sky-400 font-medium">Venkat</span> checked in
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6: Record Match (overlay) -->
+      <div id="step-6" class="step p-4 gap-4">
+        <div>
+          <span class="text-sky-400 text-sm cursor-pointer" onclick="goTo(3)">&larr; Back</span>
+        </div>
+
+        <span class="text-lg font-bold text-stone-50">Record a Match</span>
+
+        <!-- Winners -->
+        <div>
+          <span class="text-sm font-semibold text-stone-400 uppercase tracking-wide mb-2 block">Winners</span>
+          <div class="flex flex-col gap-2">
+            <div class="bg-stone-700 border border-stone-600 rounded-lg p-3 flex items-center justify-between">
+              <span class="text-stone-100 text-sm">Arjun</span>
+              <svg class="w-4 h-4 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="bg-stone-700 border border-stone-600 rounded-lg p-3 flex items-center justify-between">
+              <span class="text-stone-100 text-sm">Karthik</span>
+              <svg class="w-4 h-4 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Losers -->
+        <div>
+          <span class="text-sm font-semibold text-stone-400 uppercase tracking-wide mb-2 block">Losers</span>
+          <div class="flex flex-col gap-2">
+            <div class="bg-stone-700 border border-stone-600 rounded-lg p-3 flex items-center justify-between">
+              <span class="text-stone-100 text-sm">Rahul</span>
+              <svg class="w-4 h-4 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="bg-stone-700 border border-stone-600 rounded-lg p-3 flex items-center justify-between">
+              <span class="text-stone-100 text-sm">Priya</span>
+              <svg class="w-4 h-4 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-3 mt-2">
+          <button class="flex-1 bg-stone-700 text-red-400 rounded-xl py-3 font-semibold text-sm border border-stone-600">Cancel</button>
+          <button class="flex-1 bg-sky-600 text-white rounded-xl py-3 font-semibold text-sm">Save Match</button>
+        </div>
+        <span class="text-xs text-stone-500 text-center">Simple mode &middot; Scores auto-set to 21-15</span>
+      </div>
+
+      <!-- Step 7: Completed Session -->
+      <div id="step-7" class="step p-4 gap-4">
+        <div>
+          <span class="text-sky-400 text-sm cursor-pointer" onclick="goTo(0)">&larr; All Sessions</span>
+        </div>
+
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-lg font-bold text-stone-50">Thursday, Apr 3</span>
+          <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs font-medium">Finalized</span>
+        </div>
+
+        <!-- Award cards -->
+        <div class="flex gap-3 overflow-x-auto pb-1" style="scrollbar-width: none;">
+          <div class="bg-stone-800 rounded-xl p-3 min-w-[120px] text-center border border-amber-700/50">
+            <div class="text-2xl mb-1">🏆</div>
+            <div class="text-sm font-bold text-stone-50">Arjun</div>
+            <div class="text-xs text-amber-400 font-medium">Most Wins (6)</div>
+          </div>
+          <div class="bg-stone-800 rounded-xl p-3 min-w-[120px] text-center border border-sky-700/50">
+            <div class="text-2xl mb-1">🔥</div>
+            <div class="text-sm font-bold text-stone-50">Venkat</div>
+            <div class="text-xs text-sky-400 font-medium">Best W% (86%)</div>
+          </div>
+          <div class="bg-stone-800 rounded-xl p-3 min-w-[120px] text-center border border-emerald-700/50">
+            <div class="text-2xl mb-1">🏸</div>
+            <div class="text-sm font-bold text-stone-50">Karthik</div>
+            <div class="text-xs text-emerald-400 font-medium">Most Played (8)</div>
+          </div>
+        </div>
+
+        <!-- Compact scoreboard -->
+        <div class="bg-stone-800 rounded-xl border border-stone-700 overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-stone-700 text-stone-500 text-xs uppercase tracking-wide">
+                <th class="text-left p-2.5 font-semibold">Player</th>
+                <th class="text-center p-2.5 font-semibold w-8">W</th>
+                <th class="text-center p-2.5 font-semibold w-8">L</th>
+                <th class="text-right p-2.5 font-semibold w-12">W%</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-700">
+              <tr>
+                <td class="p-2.5 text-stone-100 font-medium">Arjun</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">6</td>
+                <td class="text-center p-2.5 text-orange-400">1</td>
+                <td class="text-right p-2.5 text-green-400 font-medium">86%</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-stone-100 font-medium">Venkat</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">6</td>
+                <td class="text-center p-2.5 text-orange-400">1</td>
+                <td class="text-right p-2.5 text-green-400 font-medium">86%</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-stone-100 font-medium">Karthik</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">5</td>
+                <td class="text-center p-2.5 text-orange-400">3</td>
+                <td class="text-right p-2.5 text-green-400 font-medium">63%</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-stone-100 font-medium">Deepa</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">4</td>
+                <td class="text-center p-2.5 text-orange-400">3</td>
+                <td class="text-right p-2.5 text-green-400 font-medium">57%</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-stone-100 font-medium">Sanjay</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">3</td>
+                <td class="text-center p-2.5 text-orange-400">4</td>
+                <td class="text-right p-2.5 text-stone-400">43%</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-stone-100 font-medium">Priya</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">2</td>
+                <td class="text-center p-2.5 text-orange-400">5</td>
+                <td class="text-right p-2.5 text-stone-400">29%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Admin controls -->
+        <div class="bg-stone-800 rounded-xl border border-stone-700 p-3">
+          <span class="text-xs text-stone-500 uppercase tracking-wide font-semibold mb-2 block">Admin</span>
+          <div class="flex gap-2">
+            <button class="flex-1 bg-stone-700 text-stone-300 rounded-lg py-2 text-xs font-medium border border-stone-600">Re-open Session</button>
+            <button class="flex-1 bg-stone-700 text-red-400 rounded-lg py-2 text-xs font-medium border border-stone-600">Delete Session</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Fixed Bottom Nav -->
+    <nav class="h-14 bg-stone-900 border-t border-stone-700 flex items-center justify-around shrink-0">
+      <div class="flex flex-col items-center gap-0.5 text-sky-400"><span class="text-lg">🏸</span><span class="text-[10px] font-semibold">Session</span></div>
+      <div class="flex flex-col items-center gap-0.5 text-stone-500"><span class="text-lg">👥</span><span class="text-[10px]">Players</span></div>
+      <div class="flex flex-col items-center gap-0.5 text-stone-500"><span class="text-lg">🏆</span><span class="text-[10px]">Leaderboard</span></div>
+    </nav>
+
+    <div id="step-nav"></div>
+
+  </div>
+
+  <script>
+    const totalSteps = 8;
+    let currentStep = 0;
+
+    function goTo(step) {
+      if (step < 0 || step >= totalSteps) return;
+      currentStep = step;
+      document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+      document.getElementById('step-' + step).classList.add('active');
+      for (let i = 0; i < totalSteps; i++) {
+        const btn = document.getElementById('btn-' + i);
+        if (i === step) {
+          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-stone-100 text-stone-900 font-medium';
+        } else {
+          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-stone-800 text-stone-400 font-medium border border-stone-600';
+        }
+      }
+      updateNav();
+      document.querySelector('.flex-1.overflow-y-auto')?.scrollTo(0,0);
+    }
+
+    function updateNav() {
+      const nav = document.getElementById('step-nav');
+      if (!nav) return;
+      const isFirst = currentStep === 0;
+      const isLast = currentStep === totalSteps - 1;
+      nav.innerHTML = `
+        <div class="flex items-center justify-between px-4 py-3 border-t border-stone-700 bg-stone-900">
+          ${isFirst ? '<div></div>' : '<button onclick="goTo(currentStep-1)" class="text-sm text-stone-400 hover:text-stone-200">&lt; Back</button>'}
+          ${isLast
+            ? '<a href="index.html" class="text-sm text-sky-400 hover:text-sky-300">\u2190 All Mockups</a>'
+            : '<button onclick="goTo(currentStep+1)" class="text-sm font-semibold text-sky-400 hover:text-sky-300">Next &gt;</button>'
+          }
+        </div>
+      `;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') goTo(currentStep + 1);
+      if (e.key === 'ArrowLeft') goTo(currentStep - 1);
+    });
+
+    goTo(0);
+  </script>
+
+</div>
+</body>
+</html>

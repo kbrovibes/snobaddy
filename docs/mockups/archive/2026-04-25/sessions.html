@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snobaddy — Sessions Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .step { display: none; }
+    .step.active { display: flex; flex-direction: column; }
+  </style>
+</head>
+<body class="bg-stone-200 min-h-screen">
+
+<!-- Sidebar TOC -->
+<div class="fixed left-0 top-0 bottom-0 w-48 bg-white border-r border-stone-200 py-6 px-3 flex flex-col gap-1 overflow-y-auto z-50">
+  <a href="index.html" class="text-xs font-bold text-stone-900 px-2 py-1.5 mb-2">🏸 Snobaddy Mockups</a>
+  <a href="auth-flow.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🔐 Auth Flow</a>
+  <a href="account-linking.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🔗 Account Linking</a>
+  <a href="sessions.html" class="bg-sky-50 text-sky-700 font-semibold text-xs px-2 py-1.5 rounded-lg">🏸 Sessions</a>
+  <a href="players-leaderboard.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">👥 Players & Leaderboard</a>
+  <a href="finals-setup.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🏆 Finals Setup</a>
+  <a href="finals-matchday.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Fixed Partner)</a>
+  <a href="finals-matchday-playoffs.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Playoffs)</a>
+</div>
+
+<div class="ml-48 flex flex-col items-center py-8">
+
+  <!-- Step navigation -->
+  <div class="mb-6 text-center">
+    <h1 class="text-2xl font-bold text-stone-800 mb-3">Sessions</h1>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <button onclick="goTo(0)" id="btn-0" class="px-3 py-1.5 text-sm rounded-lg bg-stone-900 text-white font-medium">0 Active Session</button>
+      <button onclick="goTo(1)" id="btn-1" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">1 No Active</button>
+      <button onclick="goTo(2)" id="btn-2" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">2 Player View</button>
+      <button onclick="goTo(3)" id="btn-3" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">3 Scoreboard</button>
+      <button onclick="goTo(4)" id="btn-4" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">4 Record Match</button>
+    </div>
+  </div>
+
+  <!-- Phone frame -->
+  <div class="w-[390px] min-h-[700px] bg-stone-50 rounded-3xl border-4 border-stone-400 shadow-2xl overflow-hidden flex flex-col relative">
+
+    <!-- Fixed Header -->
+    <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0 z-10">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">&#127992;</span>
+        <div class="leading-tight">
+          <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+          <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+        <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+      </div>
+    </header>
+
+    <!-- Scrollable content area -->
+    <div class="flex-1 overflow-y-auto">
+
+      <!-- Step 0: Session List - Active Session -->
+      <div id="step-0" class="step active p-4 gap-4">
+        <!-- Season header -->
+        <div class="flex items-center gap-3 mb-1">
+          <div class="w-10 h-10 bg-stone-300 rounded-lg flex items-center justify-center text-xs text-stone-500">Logo</div>
+          <span class="text-lg font-bold text-stone-900">Spring 2026</span>
+        </div>
+
+        <!-- Active session card -->
+        <div class="bg-white rounded-xl shadow-sm p-4 cursor-pointer" onclick="goTo(2)">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-semibold text-stone-900">Mon, Apr 7</span>
+                <span class="bg-sky-700 text-white rounded-full px-2 py-0.5 text-xs font-medium">In Progress</span>
+              </div>
+              <div class="text-sm text-stone-500">6:00 PM</div>
+              <div class="text-sm text-stone-500">12 players checked in</div>
+            </div>
+            <span class="text-stone-400 text-xl">&rarr;</span>
+          </div>
+        </div>
+
+        <!-- Season Finals -->
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide">Season Finals</span>
+            <span class="bg-amber-100 text-amber-700 rounded-full px-2 py-0.5 text-xs font-medium">Under Construction</span>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-4 cursor-pointer">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-semibold text-stone-900 mb-1">Spring 2026 Finals</div>
+                <div class="text-sm text-stone-500">26 players added</div>
+              </div>
+              <span class="text-sky-600 text-sm font-medium">Groups Ready &rarr;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming -->
+        <div>
+          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-2 block">Upcoming</span>
+          <div class="bg-white rounded-xl shadow-sm p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-semibold text-stone-900">Mon, Apr 13</span>
+                <div class="text-sm text-stone-500">Opens at 6pm</div>
+              </div>
+              <span class="bg-stone-100 text-stone-500 rounded-full px-2 py-0.5 text-xs font-medium">Upcoming &rarr;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Past Sessions -->
+        <div>
+          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-2 block">Past Sessions</span>
+          <div class="flex flex-col gap-2">
+            <div class="bg-white rounded-xl shadow-sm p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold text-stone-900">Thu, Apr 3</span>
+                  <div class="text-sm text-stone-500">14 matches played</div>
+                </div>
+                <span class="bg-teal-50 text-teal-600 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold text-stone-900">Mon, Mar 31</span>
+                  <div class="text-sm text-stone-500">11 matches played</div>
+                </div>
+                <span class="bg-teal-50 text-teal-600 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold text-stone-900">Thu, Mar 27</span>
+                  <div class="text-sm text-stone-500">9 matches played</div>
+                </div>
+                <span class="bg-teal-50 text-teal-600 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 1: Session List - No Active Session -->
+      <div id="step-1" class="step p-4 gap-4">
+        <!-- Season header -->
+        <div class="flex items-center gap-3 mb-1">
+          <div class="w-10 h-10 bg-stone-300 rounded-lg flex items-center justify-center text-xs text-stone-500">Logo</div>
+          <span class="text-lg font-bold text-stone-900">Spring 2026</span>
+        </div>
+
+        <!-- No active session -->
+        <div class="flex flex-col items-center gap-3 py-6">
+          <span class="text-stone-400 text-sm">No active session</span>
+          <button class="bg-stone-900 text-white rounded-xl px-6 py-2.5 text-sm font-semibold">Create Session</button>
+        </div>
+
+        <!-- Season Finals -->
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide">Season Finals</span>
+            <span class="bg-amber-100 text-amber-700 rounded-full px-2 py-0.5 text-xs font-medium">Under Construction</span>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-4 cursor-pointer">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-semibold text-stone-900 mb-1">Spring 2026 Finals</div>
+                <div class="text-sm text-stone-500">26 players added</div>
+              </div>
+              <span class="text-sky-600 text-sm font-medium">Groups Ready &rarr;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming -->
+        <div>
+          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-2 block">Upcoming</span>
+          <div class="bg-white rounded-xl shadow-sm p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-semibold text-stone-900">Mon, Apr 13</span>
+                <div class="text-sm text-stone-500">Opens at 6pm</div>
+              </div>
+              <span class="bg-stone-100 text-stone-500 rounded-full px-2 py-0.5 text-xs font-medium">Upcoming &rarr;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Past Sessions -->
+        <div>
+          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-2 block">Past Sessions</span>
+          <div class="flex flex-col gap-2">
+            <div class="bg-white rounded-xl shadow-sm p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold text-stone-900">Thu, Apr 3</span>
+                  <div class="text-sm text-stone-500">14 matches played</div>
+                </div>
+                <span class="bg-teal-50 text-teal-600 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold text-stone-900">Mon, Mar 31</span>
+                  <div class="text-sm text-stone-500">11 matches played</div>
+                </div>
+                <span class="bg-teal-50 text-teal-600 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold text-stone-900">Thu, Mar 27</span>
+                  <div class="text-sm text-stone-500">9 matches played</div>
+                </div>
+                <span class="bg-teal-50 text-teal-600 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Session Detail - Player View -->
+      <div id="step-2" class="step p-4 gap-4">
+        <div>
+          <span class="text-sky-600 text-sm cursor-pointer" onclick="goTo(0)">&larr; All Sessions</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="text-lg font-bold text-stone-900">Monday, Apr 7</span>
+          <span class="bg-sky-700 text-white rounded-full px-2 py-0.5 text-xs font-medium">In Progress</span>
+        </div>
+
+        <!-- Checked in bar -->
+        <div class="bg-green-50 text-green-700 rounded-xl p-3 flex items-center justify-between">
+          <span class="text-sm font-medium">&#10003; You're checked in</span>
+          <button class="bg-stone-100 text-stone-500 rounded-lg px-3 py-1 text-xs font-medium">Leave</button>
+        </div>
+
+        <!-- Who's Here -->
+        <div>
+          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-3 block">Who's Here</span>
+          <div class="flex flex-col gap-2">
+            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-600 text-sm font-medium w-28">Karthik R.</span>
+                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9679;&#9675;</span>
+              </div>
+              <span class="text-xs text-stone-400">6:02 PM</span>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-600 text-sm font-medium w-28">Priya M.</span>
+                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9675;&#9675;</span>
+              </div>
+              <span class="text-xs text-stone-400">6:05 PM</span>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-600 text-sm font-medium w-28">Alex T.</span>
+                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9679;&#9679;</span>
+              </div>
+              <span class="text-xs text-stone-400">6:08 PM</span>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-600 text-sm font-medium w-28">Jordan L.</span>
+                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9675;&#9675;&#9675;</span>
+              </div>
+              <span class="text-xs text-stone-400">6:10 PM</span>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-600 text-sm font-medium w-28">Sam W.</span>
+                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9675;&#9675;</span>
+              </div>
+              <span class="text-xs text-stone-400">6:12 PM</span>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-600 text-sm font-medium w-28">Dana K.</span>
+                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9679;&#9675;</span>
+              </div>
+              <span class="text-xs text-stone-400">6:15 PM</span>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-600 text-sm font-medium w-28">Riley N.</span>
+                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9675;&#9675;</span>
+              </div>
+              <span class="text-xs text-stone-400">6:18 PM</span>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-sky-600 text-sm font-medium w-28">Casey B.</span>
+                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9679;&#9679;</span>
+              </div>
+              <span class="text-xs text-stone-400">6:22 PM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Session Detail - Scoreboard -->
+      <div id="step-3" class="step p-4 gap-4">
+        <div>
+          <span class="text-sky-600 text-sm cursor-pointer" onclick="goTo(0)">&larr; All Sessions</span>
+        </div>
+
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-lg font-bold text-stone-900">Monday, Apr 7</span>
+          <span class="bg-sky-700 text-white rounded-full px-2 py-0.5 text-xs font-medium">In Progress</span>
+        </div>
+
+        <span class="text-xs uppercase text-stone-500 tracking-wide font-semibold">Tonight's Scores &middot; 8 matches</span>
+
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-stone-100 text-stone-500 text-xs uppercase tracking-wide">
+                <th class="text-left p-3 font-semibold">Player</th>
+                <th class="text-center p-3 font-semibold w-8">M</th>
+                <th class="text-center p-3 font-semibold w-8">W</th>
+                <th class="text-center p-3 font-semibold w-8">L</th>
+                <th class="text-center p-3 font-semibold w-10">Pts</th>
+                <th class="text-right p-3 font-semibold w-12">W%</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-sky-600 font-medium">Alex T.</td>
+                <td class="text-center p-3 text-stone-600">5</td>
+                <td class="text-center p-3 text-stone-600">4</td>
+                <td class="text-center p-3 text-stone-600">1</td>
+                <td class="text-center p-3 text-stone-900 font-semibold">12</td>
+                <td class="text-right p-3 text-emerald-600 font-medium">80%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-sky-600 font-medium">Casey B.</td>
+                <td class="text-center p-3 text-stone-600">4</td>
+                <td class="text-center p-3 text-stone-600">3</td>
+                <td class="text-center p-3 text-stone-600">1</td>
+                <td class="text-center p-3 text-stone-900 font-semibold">9</td>
+                <td class="text-right p-3 text-emerald-600 font-medium">75%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-sky-600 font-medium">Karthik R.</td>
+                <td class="text-center p-3 text-stone-600">4</td>
+                <td class="text-center p-3 text-stone-600">3</td>
+                <td class="text-center p-3 text-stone-600">1</td>
+                <td class="text-center p-3 text-stone-900 font-semibold">9</td>
+                <td class="text-right p-3 text-emerald-600 font-medium">75%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-sky-600 font-medium">Dana K.</td>
+                <td class="text-center p-3 text-stone-600">4</td>
+                <td class="text-center p-3 text-stone-600">2</td>
+                <td class="text-center p-3 text-stone-600">2</td>
+                <td class="text-center p-3 text-stone-900 font-semibold">6</td>
+                <td class="text-right p-3 text-emerald-600 font-medium">50%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-sky-600 font-medium">Sam W.</td>
+                <td class="text-center p-3 text-stone-600">3</td>
+                <td class="text-center p-3 text-stone-600">2</td>
+                <td class="text-center p-3 text-stone-600">1</td>
+                <td class="text-center p-3 text-stone-900 font-semibold">6</td>
+                <td class="text-right p-3 text-emerald-600 font-medium">67%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-sky-600 font-medium">Priya M.</td>
+                <td class="text-center p-3 text-stone-600">3</td>
+                <td class="text-center p-3 text-stone-600">1</td>
+                <td class="text-center p-3 text-stone-600">2</td>
+                <td class="text-center p-3 text-stone-900 font-semibold">3</td>
+                <td class="text-right p-3 text-stone-600">33%</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="p-3 text-sky-600 font-medium">Riley N.</td>
+                <td class="text-center p-3 text-stone-600">3</td>
+                <td class="text-center p-3 text-stone-600">1</td>
+                <td class="text-center p-3 text-stone-600">2</td>
+                <td class="text-center p-3 text-stone-900 font-semibold">3</td>
+                <td class="text-right p-3 text-stone-600">33%</td>
+              </tr>
+              <tr>
+                <td class="p-3 text-sky-600 font-medium">Jordan L.</td>
+                <td class="text-center p-3 text-stone-600">2</td>
+                <td class="text-center p-3 text-stone-600">0</td>
+                <td class="text-center p-3 text-stone-600">2</td>
+                <td class="text-center p-3 text-stone-900 font-semibold">0</td>
+                <td class="text-right p-3 text-stone-600">0%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Step 4: Admin - Record Match -->
+      <div id="step-4" class="step p-4 gap-4">
+        <div>
+          <span class="text-sky-600 text-sm cursor-pointer" onclick="goTo(2)">&larr; Back</span>
+        </div>
+
+        <span class="text-lg font-bold text-stone-900">Record a Match</span>
+
+        <!-- Winners -->
+        <div>
+          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-2 block">Winners</span>
+          <div class="flex flex-col gap-2">
+            <div class="bg-white border border-stone-200 rounded-lg p-3 flex items-center justify-between">
+              <span class="text-stone-900 text-sm">Alex T.</span>
+              <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="bg-white border border-stone-200 rounded-lg p-3 flex items-center justify-between">
+              <span class="text-stone-900 text-sm">Karthik R.</span>
+              <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Losers -->
+        <div>
+          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-2 block">Losers</span>
+          <div class="flex flex-col gap-2">
+            <div class="bg-white border border-stone-200 rounded-lg p-3 flex items-center justify-between">
+              <span class="text-stone-900 text-sm">Jordan L.</span>
+              <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="bg-white border border-stone-200 rounded-lg p-3 flex items-center justify-between">
+              <span class="text-stone-900 text-sm">Priya M.</span>
+              <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save button -->
+        <button class="bg-stone-900 text-white rounded-xl py-3 w-full font-semibold text-sm mt-2">Save Match</button>
+        <span class="text-xs text-stone-400 text-center">Simple mode &middot; Scores auto-set to 21-15</span>
+      </div>
+
+    </div>
+
+    <!-- Fixed Bottom Nav -->
+    <nav class="bg-white border-t border-stone-100 flex items-center justify-around py-2 shrink-0">
+      <div class="flex flex-col items-center cursor-pointer" onclick="goTo(0)">
+        <span class="text-base">&#127992;</span>
+        <span class="text-xs text-sky-600 font-medium">Session</span>
+      </div>
+      <div class="flex flex-col items-center cursor-pointer">
+        <span class="text-base">&#128101;</span>
+        <span class="text-xs text-stone-400">Players</span>
+      </div>
+      <div class="flex flex-col items-center cursor-pointer">
+        <span class="text-base">&#127942;</span>
+        <span class="text-xs text-stone-400">Leaderboard</span>
+      </div>
+    </nav>
+
+    <div id="step-nav"></div>
+
+  </div>
+
+  <script>
+    const totalSteps = 5;
+    let currentStep = 0;
+
+    function goTo(step) {
+      if (step < 0 || step >= totalSteps) return;
+      currentStep = step;
+      document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+      document.getElementById('step-' + step).classList.add('active');
+      for (let i = 0; i < totalSteps; i++) {
+        const btn = document.getElementById('btn-' + i);
+        if (i === step) {
+          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-stone-900 text-white font-medium';
+        } else {
+          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300';
+        }
+      }
+      updateNav();
+    }
+
+    function updateNav() {
+      const nav = document.getElementById('step-nav');
+      if (!nav) return;
+      const isFirst = currentStep === 0;
+      const isLast = currentStep === totalSteps - 1;
+      nav.innerHTML = `
+        <div class="flex items-center justify-between px-4 py-3 border-t border-stone-100 bg-white">
+          ${isFirst ? '<div></div>' : '<button onclick="goTo(currentStep-1)" class="text-sm text-stone-500 hover:text-stone-700">&lt; Back</button>'}
+          ${isLast
+            ? '<a href="index.html" class="text-sm text-sky-500 hover:text-sky-700">\u2190 All Mockups</a>'
+            : '<button onclick="goTo(currentStep+1)" class="text-sm font-semibold text-sky-600 hover:text-sky-800">Next &gt;</button>'
+          }
+        </div>
+      `;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') goTo(currentStep + 1);
+      if (e.key === 'ArrowLeft') goTo(currentStep - 1);
+    });
+
+    goTo(0);
+  </script>
+
+</div><!-- end ml-48 wrapper -->
+
+</body>
+</html>

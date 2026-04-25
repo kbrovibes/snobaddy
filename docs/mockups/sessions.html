@@ -3,517 +3,891 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Snobaddy — Sessions Mockup</title>
+  <title>Sessions — Snobaddy Mockups</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .step { display: none; }
-    .step.active { display: flex; flex-direction: column; }
+    .step.active { display: flex; flex-direction: column; height: 100%; }
+    @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
   </style>
 </head>
-<body class="bg-stone-200 min-h-screen">
+<body class="bg-stone-100 min-h-screen">
 
-<!-- Sidebar TOC -->
-<div class="fixed left-0 top-0 bottom-0 w-48 bg-white border-r border-stone-200 py-6 px-3 flex flex-col gap-1 overflow-y-auto z-50">
-  <a href="index.html" class="text-xs font-bold text-stone-900 px-2 py-1.5 mb-2">🏸 Snobaddy Mockups</a>
-  <a href="auth-flow.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🔐 Auth Flow</a>
-  <a href="account-linking.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🔗 Account Linking</a>
-  <a href="sessions.html" class="bg-sky-50 text-sky-700 font-semibold text-xs px-2 py-1.5 rounded-lg">🏸 Sessions</a>
-  <a href="players-leaderboard.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">👥 Players & Leaderboard</a>
-  <a href="finals-setup.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🏆 Finals Setup</a>
-  <a href="finals-matchday.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Fixed Partner)</a>
-  <a href="finals-matchday-playoffs.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Playoffs)</a>
-</div>
-
-<div class="ml-48 flex flex-col items-center py-8">
-
-  <!-- Step navigation -->
-  <div class="mb-6 text-center">
-    <h1 class="text-2xl font-bold text-stone-800 mb-3">Sessions</h1>
-    <div class="flex gap-2 flex-wrap justify-center">
-      <button onclick="goTo(0)" id="btn-0" class="px-3 py-1.5 text-sm rounded-lg bg-stone-900 text-white font-medium">0 Active Session</button>
-      <button onclick="goTo(1)" id="btn-1" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">1 No Active</button>
-      <button onclick="goTo(2)" id="btn-2" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">2 Player View</button>
-      <button onclick="goTo(3)" id="btn-3" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">3 Scoreboard</button>
-      <button onclick="goTo(4)" id="btn-4" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">4 Record Match</button>
-    </div>
+  <!-- Sidebar -->
+  <div class="fixed left-0 top-0 bottom-0 w-48 bg-white border-r border-stone-200 py-6 px-3 flex flex-col gap-1 overflow-y-auto z-50">
+    <a href="index.html" class="text-xs font-bold text-stone-900 px-2 py-1.5 mb-2">🏸 Snobaddy Mockups</a>
+    <a href="auth-flow.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">🔐 Auth Flow</a>
+    <a href="account-linking.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">🔗 Account Linking</a>
+    <a href="sessions.html" class="text-xs px-2 py-1.5 rounded-lg bg-sky-50 text-sky-700 font-semibold">🏸 Sessions</a>
+    <a href="players-leaderboard.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">👥 Players & Leaderboard</a>
+    <a href="finals-setup.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">🏆 Finals Setup</a>
+    <a href="finals-matchday.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">⚔️ Finals Match Day</a>
   </div>
 
-  <!-- Phone frame -->
-  <div class="w-[390px] min-h-[700px] bg-stone-50 rounded-3xl border-4 border-stone-400 shadow-2xl overflow-hidden flex flex-col relative">
+  <!-- Main content -->
+  <div class="ml-48 flex flex-col items-center py-8">
+    <h1 class="text-xl font-bold text-stone-900 mb-1">Sessions</h1>
+    <p class="text-sm text-stone-500 mb-4">Session list, detail, whiteboard, scores, activity, match form, completed</p>
 
-    <!-- Fixed Header -->
-    <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0 z-10">
-      <div class="flex items-center gap-2">
-        <span class="text-lg">&#127992;</span>
-        <div class="leading-tight">
-          <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
-          <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
-        </div>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
-        <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
-      </div>
-    </header>
+    <!-- Step buttons -->
+    <div class="flex gap-2 mb-6 flex-wrap justify-center max-w-2xl">
+      <button id="btn-0" onclick="goTo(0)" class="px-3 py-1.5 text-xs rounded-full bg-stone-900 text-white">1. Session List</button>
+      <button id="btn-1" onclick="goTo(1)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">2. No Active</button>
+      <button id="btn-2" onclick="goTo(2)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">3. Detail</button>
+      <button id="btn-3" onclick="goTo(3)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">4. Whiteboard</button>
+      <button id="btn-4" onclick="goTo(4)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">5. Scoreboard</button>
+      <button id="btn-5" onclick="goTo(5)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">6. Activity</button>
+      <button id="btn-6" onclick="goTo(6)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">7. Record Match</button>
+      <button id="btn-7" onclick="goTo(7)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">8. Completed</button>
+    </div>
 
-    <!-- Scrollable content area -->
-    <div class="flex-1 overflow-y-auto">
+    <!-- Phone frame -->
+    <div class="w-[390px] h-[844px] rounded-3xl border-4 border-stone-400 shadow-2xl bg-stone-50 overflow-hidden flex flex-col">
 
-      <!-- Step 0: Session List - Active Session -->
-      <div id="step-0" class="step active p-4 gap-4">
-        <!-- Season header -->
-        <div class="flex items-center gap-3 mb-1">
-          <div class="w-10 h-10 bg-stone-300 rounded-lg flex items-center justify-center text-xs text-stone-500">Logo</div>
-          <span class="text-lg font-bold text-stone-900">Spring 2026</span>
-        </div>
-
-        <!-- Active session card -->
-        <div class="bg-white rounded-xl shadow-sm p-4 cursor-pointer" onclick="goTo(2)">
-          <div class="flex items-center justify-between">
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <span class="font-semibold text-stone-900">Mon, Apr 7</span>
-                <span class="bg-sky-700 text-white rounded-full px-2 py-0.5 text-xs font-medium">In Progress</span>
-              </div>
-              <div class="text-sm text-stone-500">6:00 PM</div>
-              <div class="text-sm text-stone-500">12 players checked in</div>
-            </div>
-            <span class="text-stone-400 text-xl">&rarr;</span>
-          </div>
-        </div>
-
-        <!-- Season Finals -->
-        <div>
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide">Season Finals</span>
-            <span class="bg-amber-100 text-amber-700 rounded-full px-2 py-0.5 text-xs font-medium">Under Construction</span>
-          </div>
-          <div class="bg-white rounded-xl shadow-sm p-4 cursor-pointer">
-            <div class="flex items-center justify-between">
-              <div>
-                <div class="font-semibold text-stone-900 mb-1">Spring 2026 Finals</div>
-                <div class="text-sm text-stone-500">26 players added</div>
-              </div>
-              <span class="text-sky-600 text-sm font-medium">Groups Ready &rarr;</span>
+      <!-- Step 1: Session List (admin, active session) -->
+      <div class="step active">
+        <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🏸</span>
+            <div class="leading-tight">
+              <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+              <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
             </div>
           </div>
-        </div>
-
-        <!-- Upcoming -->
-        <div>
-          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-2 block">Upcoming</span>
-          <div class="bg-white rounded-xl shadow-sm p-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <span class="font-semibold text-stone-900">Mon, Apr 13</span>
-                <div class="text-sm text-stone-500">Opens at 6pm</div>
-              </div>
-              <span class="bg-stone-100 text-stone-500 rounded-full px-2 py-0.5 text-xs font-medium">Upcoming &rarr;</span>
-            </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+            <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
           </div>
-        </div>
+        </header>
 
-        <!-- Past Sessions -->
-        <div>
-          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-2 block">Past Sessions</span>
-          <div class="flex flex-col gap-2">
-            <div class="bg-white rounded-xl shadow-sm p-4">
-              <div class="flex items-center justify-between">
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-4">
+            <!-- Season header -->
+            <div class="flex items-center gap-2 mb-4">
+              <span class="text-lg">🏸</span>
+              <h2 class="text-lg font-bold text-stone-900">Spring 2026</h2>
+            </div>
+
+            <!-- Active session -->
+            <div class="bg-white border border-sky-200 rounded-xl shadow-sm p-4 mb-3">
+              <div class="flex items-center justify-between mb-2">
                 <div>
-                  <span class="font-semibold text-stone-900">Thu, Apr 3</span>
-                  <div class="text-sm text-stone-500">14 matches played</div>
+                  <p class="font-bold text-stone-900">Monday, April 21</p>
+                  <p class="text-xs text-stone-500">6:00 PM — 10:00 PM</p>
                 </div>
-                <span class="bg-teal-50 text-teal-600 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-100 text-sky-700">
+                  <span class="w-1.5 h-1.5 rounded-full bg-sky-500 pulse-dot"></span>
+                  In Progress
+                </span>
               </div>
+              <p class="text-xs text-stone-500">14 players checked in</p>
+              <button class="mt-3 w-full py-2 bg-sky-600 text-white text-xs font-semibold rounded-lg">Open Session</button>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-4">
+
+            <!-- Finals card -->
+            <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-4 mb-4">
               <div class="flex items-center justify-between">
-                <div>
-                  <span class="font-semibold text-stone-900">Mon, Mar 31</span>
-                  <div class="text-sm text-stone-500">11 matches played</div>
+                <div class="flex items-center gap-2">
+                  <span>🏆</span>
+                  <div>
+                    <p class="font-semibold text-stone-900 text-sm">Spring 2026 Finals</p>
+                    <p class="text-[10px] text-stone-500">26 players · 3 groups</p>
+                  </div>
                 </div>
-                <span class="bg-teal-50 text-teal-600 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">Setup</span>
               </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-4">
-              <div class="flex items-center justify-between">
+
+            <!-- Past sessions -->
+            <p class="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-2">Past Sessions</p>
+            <div class="space-y-2">
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3 flex items-center justify-between">
                 <div>
-                  <span class="font-semibold text-stone-900">Thu, Mar 27</span>
-                  <div class="text-sm text-stone-500">9 matches played</div>
+                  <p class="text-sm font-medium text-stone-900">Thursday, April 17</p>
+                  <p class="text-[10px] text-stone-500">12 players · 8 matches</p>
                 </div>
-                <span class="bg-teal-50 text-teal-600 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-teal-50 text-teal-600">Finalized</span>
+              </div>
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-stone-900">Monday, April 14</p>
+                  <p class="text-[10px] text-stone-500">16 players · 11 matches</p>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-teal-50 text-teal-600">Finalized</span>
+              </div>
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-stone-900">Thursday, April 10</p>
+                  <p class="text-[10px] text-stone-500">10 players · 6 matches</p>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-teal-50 text-teal-600">Finalized</span>
+              </div>
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-stone-900">Monday, April 7</p>
+                  <p class="text-[10px] text-stone-500">14 players · 9 matches</p>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-teal-50 text-teal-600">Finalized</span>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Step 1: Session List - No Active Session -->
-      <div id="step-1" class="step p-4 gap-4">
-        <!-- Season header -->
-        <div class="flex items-center gap-3 mb-1">
-          <div class="w-10 h-10 bg-stone-300 rounded-lg flex items-center justify-center text-xs text-stone-500">Logo</div>
-          <span class="text-lg font-bold text-stone-900">Spring 2026</span>
-        </div>
-
-        <!-- No active session -->
-        <div class="flex flex-col items-center gap-3 py-6">
-          <span class="text-stone-400 text-sm">No active session</span>
-          <button class="bg-stone-900 text-white rounded-xl px-6 py-2.5 text-sm font-semibold">Create Session</button>
-        </div>
-
-        <!-- Season Finals -->
-        <div>
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide">Season Finals</span>
-            <span class="bg-amber-100 text-amber-700 rounded-full px-2 py-0.5 text-xs font-medium">Under Construction</span>
-          </div>
-          <div class="bg-white rounded-xl shadow-sm p-4 cursor-pointer">
-            <div class="flex items-center justify-between">
-              <div>
-                <div class="font-semibold text-stone-900 mb-1">Spring 2026 Finals</div>
-                <div class="text-sm text-stone-500">26 players added</div>
-              </div>
-              <span class="text-sky-600 text-sm font-medium">Groups Ready &rarr;</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Upcoming -->
-        <div>
-          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-2 block">Upcoming</span>
-          <div class="bg-white rounded-xl shadow-sm p-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <span class="font-semibold text-stone-900">Mon, Apr 13</span>
-                <div class="text-sm text-stone-500">Opens at 6pm</div>
-              </div>
-              <span class="bg-stone-100 text-stone-500 rounded-full px-2 py-0.5 text-xs font-medium">Upcoming &rarr;</span>
-            </div>
+            <button class="w-full mt-4 py-3 bg-stone-900 text-white text-sm font-semibold rounded-xl">Create New Session</button>
           </div>
         </div>
 
-        <!-- Past Sessions -->
-        <div>
-          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-2 block">Past Sessions</span>
-          <div class="flex flex-col gap-2">
-            <div class="bg-white rounded-xl shadow-sm p-4">
-              <div class="flex items-center justify-between">
-                <div>
-                  <span class="font-semibold text-stone-900">Thu, Apr 3</span>
-                  <div class="text-sm text-stone-500">14 matches played</div>
-                </div>
-                <span class="bg-teal-50 text-teal-600 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
-              </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm p-4">
-              <div class="flex items-center justify-between">
-                <div>
-                  <span class="font-semibold text-stone-900">Mon, Mar 31</span>
-                  <div class="text-sm text-stone-500">11 matches played</div>
-                </div>
-                <span class="bg-teal-50 text-teal-600 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
-              </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm p-4">
-              <div class="flex items-center justify-between">
-                <div>
-                  <span class="font-semibold text-stone-900">Thu, Mar 27</span>
-                  <div class="text-sm text-stone-500">9 matches played</div>
-                </div>
-                <span class="bg-teal-50 text-teal-600 rounded-full px-2 py-0.5 text-xs font-medium">Completed</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <nav class="h-14 bg-white border-t border-stone-100 flex items-center justify-around shrink-0">
+          <div class="flex flex-col items-center gap-0.5 text-sky-600"><span class="text-lg">🏸</span><span class="text-[10px] font-semibold">Session</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">👥</span><span class="text-[10px]">Players</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">🏆</span><span class="text-[10px]">Leaderboard</span></div>
+        </nav>
       </div>
 
-      <!-- Step 2: Session Detail - Player View -->
-      <div id="step-2" class="step p-4 gap-4">
-        <div>
-          <span class="text-sky-600 text-sm cursor-pointer" onclick="goTo(0)">&larr; All Sessions</span>
+      <!-- Step 2: No active session -->
+      <div class="step">
+        <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🏸</span>
+            <div class="leading-tight">
+              <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+              <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+            <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-4">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="text-lg">🏸</span>
+              <h2 class="text-lg font-bold text-stone-900">Spring 2026</h2>
+            </div>
+
+            <!-- Upcoming session -->
+            <div class="bg-white border border-amber-200 rounded-xl shadow-sm p-4 mb-3">
+              <div class="flex items-center justify-between mb-2">
+                <div>
+                  <p class="font-bold text-stone-900">Thursday, April 24</p>
+                  <p class="text-xs text-stone-500">6:00 PM — 10:00 PM</p>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">Upcoming</span>
+              </div>
+              <p class="text-xs text-stone-400">No players checked in yet</p>
+              <button class="mt-3 w-full py-2 bg-stone-900 text-white text-xs font-semibold rounded-lg">Start Session</button>
+            </div>
+
+            <!-- Past sessions -->
+            <p class="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-2 mt-4">Past Sessions</p>
+            <div class="space-y-2">
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-stone-900">Monday, April 21</p>
+                  <p class="text-[10px] text-stone-500">14 players · 9 matches</p>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-teal-50 text-teal-600">Finalized</span>
+              </div>
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-stone-900">Thursday, April 17</p>
+                  <p class="text-[10px] text-stone-500">12 players · 8 matches</p>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-teal-50 text-teal-600">Finalized</span>
+              </div>
+            </div>
+
+            <button class="w-full mt-4 py-3 bg-stone-900 text-white text-sm font-semibold rounded-xl">Create New Session</button>
+          </div>
         </div>
 
-        <div class="flex items-center gap-2">
-          <span class="text-lg font-bold text-stone-900">Monday, Apr 7</span>
-          <span class="bg-sky-700 text-white rounded-full px-2 py-0.5 text-xs font-medium">In Progress</span>
+        <nav class="h-14 bg-white border-t border-stone-100 flex items-center justify-around shrink-0">
+          <div class="flex flex-col items-center gap-0.5 text-sky-600"><span class="text-lg">🏸</span><span class="text-[10px] font-semibold">Session</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">👥</span><span class="text-[10px]">Players</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">🏆</span><span class="text-[10px]">Leaderboard</span></div>
+        </nav>
+      </div>
+
+      <!-- Step 3: Session detail (active, admin) -->
+      <div class="step">
+        <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🏸</span>
+            <div class="leading-tight">
+              <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+              <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+            <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-3">
+            <a href="#" class="text-xs text-sky-600 mb-2 inline-block">← All Sessions</a>
+            <div class="flex items-center justify-between mb-1">
+              <h2 class="text-lg font-bold text-stone-900">Monday, April 21</h2>
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-100 text-sky-700">
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-500 pulse-dot"></span>
+                In Progress
+              </span>
+            </div>
+
+            <!-- Auto Refresh toggle -->
+            <div class="flex items-center justify-between bg-white border border-stone-100 rounded-lg px-3 py-2 mb-4">
+              <span class="text-xs text-stone-600">Auto Refresh</span>
+              <div class="w-9 h-5 bg-sky-500 rounded-full relative cursor-pointer">
+                <div class="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow"></div>
+              </div>
+            </div>
+
+            <!-- Who's Here -->
+            <h3 class="text-sm font-semibold text-stone-900 mb-2">Who's Here</h3>
+            <div class="bg-white border border-stone-100 rounded-xl shadow-sm overflow-hidden mb-3">
+              <table class="w-full text-xs">
+                <thead>
+                  <tr class="border-b border-stone-100">
+                    <th class="text-left py-2 px-3 text-stone-500 font-medium">Name</th>
+                    <th class="text-center py-2 px-3 text-stone-500 font-medium">Skill</th>
+                    <th class="text-center py-2 px-3 text-stone-500 font-medium">Arrived</th>
+                    <th class="text-right py-2 px-3 text-stone-500 font-medium"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-stone-50">
+                    <td class="py-2 px-3 font-medium text-stone-900">Ajay</td>
+                    <td class="py-2 px-3 text-center"><span class="flex gap-0.5 justify-center"><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-200"></span></span></td>
+                    <td class="py-2 px-3 text-center text-stone-500">6:02p</td>
+                    <td class="py-2 px-3 text-right"><span class="text-red-600 cursor-pointer">Checkout</span></td>
+                  </tr>
+                  <tr class="border-b border-stone-50">
+                    <td class="py-2 px-3 font-medium text-stone-900">Deepa</td>
+                    <td class="py-2 px-3 text-center"><span class="flex gap-0.5 justify-center"><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-200"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-200"></span></span></td>
+                    <td class="py-2 px-3 text-center text-stone-500">6:05p</td>
+                    <td class="py-2 px-3 text-right"><span class="text-red-600 cursor-pointer">Checkout</span></td>
+                  </tr>
+                  <tr class="border-b border-stone-50">
+                    <td class="py-2 px-3 font-medium text-stone-900">Karthik</td>
+                    <td class="py-2 px-3 text-center"><span class="flex gap-0.5 justify-center"><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-200"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-200"></span></span></td>
+                    <td class="py-2 px-3 text-center text-stone-500">6:10p</td>
+                    <td class="py-2 px-3 text-right"><span class="text-red-600 cursor-pointer">Checkout</span></td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 px-3 font-medium text-stone-900">Rahul</td>
+                    <td class="py-2 px-3 text-center"><span class="flex gap-0.5 justify-center"><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span><span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span></span></td>
+                    <td class="py-2 px-3 text-center text-stone-500">6:12p</td>
+                    <td class="py-2 px-3 text-right"><span class="text-red-600 cursor-pointer">Checkout</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <button class="w-full py-2 text-xs text-sky-600 font-medium bg-sky-50 rounded-lg mb-4">See More (10 more)</button>
+
+            <!-- Admin actions -->
+            <div class="flex gap-2">
+              <button class="flex-1 py-2.5 bg-stone-900 text-white text-xs font-semibold rounded-xl">+ Record Match</button>
+              <button class="flex-1 py-2.5 bg-white border border-stone-200 text-stone-700 text-xs font-semibold rounded-xl">Finalize</button>
+            </div>
+          </div>
         </div>
 
-        <!-- Checked in bar -->
-        <div class="bg-green-50 text-green-700 rounded-xl p-3 flex items-center justify-between">
-          <span class="text-sm font-medium">&#10003; You're checked in</span>
-          <button class="bg-stone-100 text-stone-500 rounded-lg px-3 py-1 text-xs font-medium">Leave</button>
+        <nav class="h-14 bg-white border-t border-stone-100 flex items-center justify-around shrink-0">
+          <div class="flex flex-col items-center gap-0.5 text-sky-600"><span class="text-lg">🏸</span><span class="text-[10px] font-semibold">Session</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">👥</span><span class="text-[10px]">Players</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">🏆</span><span class="text-[10px]">Leaderboard</span></div>
+        </nav>
+      </div>
+
+      <!-- Step 4: Whiteboard mode -->
+      <div class="step">
+        <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🏸</span>
+            <div class="leading-tight">
+              <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+              <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+            <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-3">
+            <!-- Segmented control -->
+            <div class="bg-stone-100 rounded-xl p-1 flex mb-4">
+              <button class="flex-1 py-1.5 text-[10px] font-semibold bg-white rounded-lg shadow-sm text-stone-900">Whiteboard</button>
+              <button class="flex-1 py-1.5 text-[10px] text-stone-500">Win-Loss</button>
+              <button class="flex-1 py-1.5 text-[10px] text-stone-500">Full Score</button>
+            </div>
+
+            <!-- 2-column whiteboard -->
+            <div class="bg-white border border-stone-100 rounded-xl shadow-sm overflow-hidden">
+              <div class="grid grid-cols-2">
+                <!-- Left column -->
+                <div class="border-r border-stone-200">
+                  <div class="flex items-center justify-between px-3 py-2 border-b border-stone-50">
+                    <span class="text-xs font-semibold text-stone-900">Ajay</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">3</span>
+                      <span class="text-xs font-bold text-orange-600">1</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2 border-b border-stone-50">
+                    <span class="text-xs font-semibold text-stone-900">Arjun</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">2</span>
+                      <span class="text-xs font-bold text-orange-600">2</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2 border-b border-stone-50">
+                    <span class="text-xs font-semibold text-stone-900">Chitra</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">1</span>
+                      <span class="text-xs font-bold text-orange-600">0</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2 border-b border-stone-50">
+                    <span class="text-xs font-semibold text-stone-900">Deepa</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">2</span>
+                      <span class="text-xs font-bold text-orange-600">1</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2 border-b border-stone-50">
+                    <span class="text-xs font-semibold text-stone-900">Gautham</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">1</span>
+                      <span class="text-xs font-bold text-orange-600">3</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2 border-b border-stone-50">
+                    <span class="text-xs font-semibold text-stone-900">Karthik</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">2</span>
+                      <span class="text-xs font-bold text-orange-600">2</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2">
+                    <span class="text-xs font-semibold text-stone-900">Kiran</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">0</span>
+                      <span class="text-xs font-bold text-orange-600">1</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right column -->
+                <div>
+                  <div class="flex items-center justify-between px-3 py-2 border-b border-stone-50">
+                    <span class="text-xs font-semibold text-stone-900">Mani</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">3</span>
+                      <span class="text-xs font-bold text-orange-600">0</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2 border-b border-stone-50">
+                    <span class="text-xs font-semibold text-stone-900">Nandini</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">1</span>
+                      <span class="text-xs font-bold text-orange-600">2</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2 border-b border-stone-50">
+                    <span class="text-xs font-semibold text-stone-900">Priya</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">2</span>
+                      <span class="text-xs font-bold text-orange-600">1</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2 border-b border-stone-50">
+                    <span class="text-xs font-semibold text-stone-900">Rahul</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">4</span>
+                      <span class="text-xs font-bold text-orange-600">1</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2 border-b border-stone-50">
+                    <span class="text-xs font-semibold text-stone-900">Ravi</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">1</span>
+                      <span class="text-xs font-bold text-orange-600">2</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2 border-b border-stone-50">
+                    <span class="text-xs font-semibold text-stone-900">Sanjay</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">0</span>
+                      <span class="text-xs font-bold text-orange-600">2</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2">
+                    <span class="text-xs font-semibold text-stone-900">Venkat</span>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-bold text-green-700">1</span>
+                      <span class="text-xs font-bold text-orange-600">1</span>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700 rounded-md">+W</button>
+                      <button class="px-1.5 py-0.5 text-[10px] font-semibold bg-orange-100 text-orange-600 rounded-md">+L</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Checked out -->
+            <p class="text-xs font-semibold text-stone-400 uppercase tracking-wide mt-4 mb-2">Checked Out</p>
+            <div class="bg-white border border-stone-100 rounded-xl shadow-sm px-3 py-2 opacity-50">
+              <div class="flex items-center justify-between py-1">
+                <span class="text-xs text-stone-400">Suresh</span>
+                <span class="text-[10px] text-stone-300">1W 0L</span>
+              </div>
+              <div class="flex items-center justify-between py-1">
+                <span class="text-xs text-stone-400">Alok</span>
+                <span class="text-[10px] text-stone-300">0W 1L</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Who's Here -->
-        <div>
-          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-3 block">Who's Here</span>
-          <div class="flex flex-col gap-2">
-            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <span class="text-sky-600 text-sm font-medium w-28">Karthik R.</span>
-                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9679;&#9675;</span>
-              </div>
-              <span class="text-xs text-stone-400">6:02 PM</span>
+        <nav class="h-14 bg-white border-t border-stone-100 flex items-center justify-around shrink-0">
+          <div class="flex flex-col items-center gap-0.5 text-sky-600"><span class="text-lg">🏸</span><span class="text-[10px] font-semibold">Session</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">👥</span><span class="text-[10px]">Players</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">🏆</span><span class="text-[10px]">Leaderboard</span></div>
+        </nav>
+      </div>
+
+      <!-- Step 5: Tonight's Scoreboard -->
+      <div class="step">
+        <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🏸</span>
+            <div class="leading-tight">
+              <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+              <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <span class="text-sky-600 text-sm font-medium w-28">Priya M.</span>
-                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9675;&#9675;</span>
-              </div>
-              <span class="text-xs text-stone-400">6:05 PM</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+            <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-3">
+            <div class="bg-stone-100 rounded-xl p-1 flex mb-4">
+              <button class="flex-1 py-1.5 text-[10px] text-stone-500">Whiteboard</button>
+              <button class="flex-1 py-1.5 text-[10px] font-semibold bg-white rounded-lg shadow-sm text-stone-900">Win-Loss</button>
+              <button class="flex-1 py-1.5 text-[10px] text-stone-500">Full Score</button>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <span class="text-sky-600 text-sm font-medium w-28">Alex T.</span>
-                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9679;&#9679;</span>
-              </div>
-              <span class="text-xs text-stone-400">6:08 PM</span>
+
+            <h3 class="text-sm font-semibold text-stone-900 mb-3">Tonight's Scores</h3>
+
+            <div class="bg-white border border-stone-100 rounded-xl shadow-sm overflow-hidden">
+              <table class="w-full text-xs">
+                <thead>
+                  <tr class="border-b border-stone-100 bg-stone-50">
+                    <th class="text-left py-2 px-3 text-stone-500 font-medium">Player</th>
+                    <th class="text-center py-2 px-3 text-stone-500 font-medium">W</th>
+                    <th class="text-center py-2 px-3 text-stone-500 font-medium">L</th>
+                    <th class="text-right py-2 px-3 text-stone-500 font-medium">Win%</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-stone-50 bg-amber-50">
+                    <td class="py-2.5 px-3 font-semibold text-stone-900">Rahul</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-green-700">4</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-orange-600">1</td>
+                    <td class="py-2.5 px-3 text-right font-semibold text-stone-900">80%</td>
+                  </tr>
+                  <tr class="border-b border-stone-50">
+                    <td class="py-2.5 px-3 font-medium text-stone-900">Ajay</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-green-700">3</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-orange-600">1</td>
+                    <td class="py-2.5 px-3 text-right text-stone-700">75%</td>
+                  </tr>
+                  <tr class="border-b border-stone-50">
+                    <td class="py-2.5 px-3 font-medium text-stone-900">Mani</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-green-700">3</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-orange-600">0</td>
+                    <td class="py-2.5 px-3 text-right text-stone-700">100%</td>
+                  </tr>
+                  <tr class="border-b border-stone-50">
+                    <td class="py-2.5 px-3 font-medium text-stone-900">Deepa</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-green-700">2</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-orange-600">1</td>
+                    <td class="py-2.5 px-3 text-right text-stone-700">67%</td>
+                  </tr>
+                  <tr class="border-b border-stone-50">
+                    <td class="py-2.5 px-3 font-medium text-stone-900">Priya</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-green-700">2</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-orange-600">1</td>
+                    <td class="py-2.5 px-3 text-right text-stone-700">67%</td>
+                  </tr>
+                  <tr class="border-b border-stone-50">
+                    <td class="py-2.5 px-3 font-medium text-stone-900">Karthik</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-green-700">2</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-orange-600">2</td>
+                    <td class="py-2.5 px-3 text-right text-stone-700">50%</td>
+                  </tr>
+                  <tr class="border-b border-stone-50">
+                    <td class="py-2.5 px-3 font-medium text-stone-900">Arjun</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-green-700">2</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-orange-600">2</td>
+                    <td class="py-2.5 px-3 text-right text-stone-700">50%</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-medium text-stone-900">Gautham</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-green-700">1</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-orange-600">3</td>
+                    <td class="py-2.5 px-3 text-right text-stone-700">25%</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <span class="text-sky-600 text-sm font-medium w-28">Jordan L.</span>
-                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9675;&#9675;&#9675;</span>
-              </div>
-              <span class="text-xs text-stone-400">6:10 PM</span>
+          </div>
+        </div>
+
+        <nav class="h-14 bg-white border-t border-stone-100 flex items-center justify-around shrink-0">
+          <div class="flex flex-col items-center gap-0.5 text-sky-600"><span class="text-lg">🏸</span><span class="text-[10px] font-semibold">Session</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">👥</span><span class="text-[10px]">Players</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">🏆</span><span class="text-[10px]">Leaderboard</span></div>
+        </nav>
+      </div>
+
+      <!-- Step 6: Activity Feed -->
+      <div class="step">
+        <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🏸</span>
+            <div class="leading-tight">
+              <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+              <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <span class="text-sky-600 text-sm font-medium w-28">Sam W.</span>
-                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9675;&#9675;</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+            <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-3">
+            <h3 class="text-sm font-semibold text-stone-900 mb-3">Activity Feed</h3>
+
+            <div class="space-y-2">
+              <!-- Match entry -->
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <p class="text-xs font-medium text-stone-900"><span class="text-green-700">Ajay & Deepa</span> beat <span class="text-orange-600">Arjun & Gautham</span></p>
+                    <p class="text-[10px] text-stone-500 mt-0.5">21 — 15</p>
+                  </div>
+                  <span class="text-[10px] text-stone-400">8:42p</span>
+                </div>
               </div>
-              <span class="text-xs text-stone-400">6:12 PM</span>
+
+              <!-- Tally entry -->
+              <div class="bg-green-50 border border-green-100 rounded-xl p-3">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-medium text-green-700">+1W Ajay</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-stone-400">8:42p</span>
+                    <button class="text-[10px] text-red-500 font-medium">Undo</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Match entry -->
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <p class="text-xs font-medium text-stone-900"><span class="text-green-700">Rahul & Mani</span> beat <span class="text-orange-600">Karthik & Nandini</span></p>
+                    <p class="text-[10px] text-stone-500 mt-0.5">21 — 18</p>
+                  </div>
+                  <span class="text-[10px] text-stone-400">8:35p</span>
+                </div>
+              </div>
+
+              <!-- Tally entry -->
+              <div class="bg-orange-50 border border-orange-100 rounded-xl p-3">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-medium text-orange-600">+1L Sanjay</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-stone-400">8:30p</span>
+                    <button class="text-[10px] text-red-500 font-medium">Undo</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Match entry -->
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <p class="text-xs font-medium text-stone-900"><span class="text-green-700">Priya & Venkat</span> beat <span class="text-orange-600">Ravi & Sanjay</span></p>
+                    <p class="text-[10px] text-stone-500 mt-0.5">21 — 12</p>
+                  </div>
+                  <span class="text-[10px] text-stone-400">8:22p</span>
+                </div>
+              </div>
+
+              <!-- Match entry -->
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <p class="text-xs font-medium text-stone-900"><span class="text-green-700">Mani & Karthik</span> beat <span class="text-orange-600">Kiran & Ravi</span></p>
+                    <p class="text-[10px] text-stone-500 mt-0.5">21 — 19</p>
+                  </div>
+                  <span class="text-[10px] text-stone-400">8:10p</span>
+                </div>
+              </div>
+
+              <!-- Tally entry -->
+              <div class="bg-green-50 border border-green-100 rounded-xl p-3">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-medium text-green-700">+1W Rahul</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-stone-400">7:55p</span>
+                    <button class="text-[10px] text-red-500 font-medium">Undo</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Match entry -->
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <p class="text-xs font-medium text-stone-900"><span class="text-green-700">Rahul & Ajay</span> beat <span class="text-orange-600">Deepa & Gautham</span></p>
+                    <p class="text-[10px] text-stone-500 mt-0.5">21 — 17</p>
+                  </div>
+                  <span class="text-[10px] text-stone-400">7:48p</span>
+                </div>
+              </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <span class="text-sky-600 text-sm font-medium w-28">Dana K.</span>
-                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9679;&#9675;</span>
+          </div>
+        </div>
+
+        <nav class="h-14 bg-white border-t border-stone-100 flex items-center justify-around shrink-0">
+          <div class="flex flex-col items-center gap-0.5 text-sky-600"><span class="text-lg">🏸</span><span class="text-[10px] font-semibold">Session</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">👥</span><span class="text-[10px]">Players</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">🏆</span><span class="text-[10px]">Leaderboard</span></div>
+        </nav>
+      </div>
+
+      <!-- Step 7: Record Match Form -->
+      <div class="step">
+        <div class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <button class="text-sm font-medium text-red-400">Cancel</button>
+          <span class="text-sm font-bold text-stone-900">Record Match</span>
+          <button class="text-sm font-medium text-sky-600">Save Match</button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-4">
+            <!-- Team 1 -->
+            <div class="mb-4">
+              <p class="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-2">Team 1</p>
+              <div class="space-y-2">
+                <select class="w-full px-3 py-2.5 border border-stone-200 rounded-xl text-sm bg-white text-stone-900 focus:outline-none focus:ring-2 focus:ring-sky-400">
+                  <option>Ajay</option>
+                </select>
+                <select class="w-full px-3 py-2.5 border border-stone-200 rounded-xl text-sm bg-white text-stone-900 focus:outline-none focus:ring-2 focus:ring-sky-400">
+                  <option>Deepa</option>
+                </select>
               </div>
-              <span class="text-xs text-stone-400">6:15 PM</span>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <span class="text-sky-600 text-sm font-medium w-28">Riley N.</span>
-                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9675;&#9675;</span>
-              </div>
-              <span class="text-xs text-stone-400">6:18 PM</span>
+
+            <!-- VS divider -->
+            <div class="flex items-center gap-4 my-4">
+              <div class="flex-1 h-px bg-stone-200"></div>
+              <span class="text-sm font-bold text-stone-400">VS</span>
+              <div class="flex-1 h-px bg-stone-200"></div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-3 flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <span class="text-sky-600 text-sm font-medium w-28">Casey B.</span>
-                <span class="text-xs text-stone-400 tracking-wide">&#9679;&#9679;&#9679;&#9679;&#9679;</span>
+
+            <!-- Team 2 -->
+            <div class="mb-6">
+              <p class="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-2">Team 2</p>
+              <div class="space-y-2">
+                <select class="w-full px-3 py-2.5 border border-stone-200 rounded-xl text-sm bg-white text-stone-900 focus:outline-none focus:ring-2 focus:ring-sky-400">
+                  <option>Arjun</option>
+                </select>
+                <select class="w-full px-3 py-2.5 border border-stone-200 rounded-xl text-sm bg-white text-stone-900 focus:outline-none focus:ring-2 focus:ring-sky-400">
+                  <option>Gautham</option>
+                </select>
               </div>
-              <span class="text-xs text-stone-400">6:22 PM</span>
+            </div>
+
+            <!-- Scores -->
+            <div class="mb-6">
+              <p class="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-2">Score</p>
+              <div class="flex items-center gap-4">
+                <div class="flex-1 text-center">
+                  <input type="number" value="21" class="w-full text-center text-2xl font-bold border border-stone-200 rounded-xl py-3 bg-white focus:outline-none focus:ring-2 focus:ring-sky-400">
+                  <p class="text-[10px] text-stone-400 mt-1">Team 1</p>
+                </div>
+                <span class="text-lg text-stone-300 font-bold">/</span>
+                <div class="flex-1 text-center">
+                  <input type="number" value="15" class="w-full text-center text-2xl font-bold border border-stone-200 rounded-xl py-3 bg-white focus:outline-none focus:ring-2 focus:ring-sky-400">
+                  <p class="text-[10px] text-stone-400 mt-1">Team 2</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Winner indicator -->
+            <div class="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+              <span class="text-green-600 text-sm font-semibold">🏆 Team 1 wins!</span>
+              <p class="text-xs text-green-500 mt-0.5">Ajay & Deepa</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Step 3: Session Detail - Scoreboard -->
-      <div id="step-3" class="step p-4 gap-4">
-        <div>
-          <span class="text-sky-600 text-sm cursor-pointer" onclick="goTo(0)">&larr; All Sessions</span>
-        </div>
-
-        <div class="flex items-center gap-2 mb-1">
-          <span class="text-lg font-bold text-stone-900">Monday, Apr 7</span>
-          <span class="bg-sky-700 text-white rounded-full px-2 py-0.5 text-xs font-medium">In Progress</span>
-        </div>
-
-        <span class="text-xs uppercase text-stone-500 tracking-wide font-semibold">Tonight's Scores &middot; 8 matches</span>
-
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="border-b border-stone-100 text-stone-500 text-xs uppercase tracking-wide">
-                <th class="text-left p-3 font-semibold">Player</th>
-                <th class="text-center p-3 font-semibold w-8">M</th>
-                <th class="text-center p-3 font-semibold w-8">W</th>
-                <th class="text-center p-3 font-semibold w-8">L</th>
-                <th class="text-center p-3 font-semibold w-10">Pts</th>
-                <th class="text-right p-3 font-semibold w-12">W%</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="border-b border-stone-50">
-                <td class="p-3 text-sky-600 font-medium">Alex T.</td>
-                <td class="text-center p-3 text-stone-600">5</td>
-                <td class="text-center p-3 text-stone-600">4</td>
-                <td class="text-center p-3 text-stone-600">1</td>
-                <td class="text-center p-3 text-stone-900 font-semibold">12</td>
-                <td class="text-right p-3 text-emerald-600 font-medium">80%</td>
-              </tr>
-              <tr class="border-b border-stone-50">
-                <td class="p-3 text-sky-600 font-medium">Casey B.</td>
-                <td class="text-center p-3 text-stone-600">4</td>
-                <td class="text-center p-3 text-stone-600">3</td>
-                <td class="text-center p-3 text-stone-600">1</td>
-                <td class="text-center p-3 text-stone-900 font-semibold">9</td>
-                <td class="text-right p-3 text-emerald-600 font-medium">75%</td>
-              </tr>
-              <tr class="border-b border-stone-50">
-                <td class="p-3 text-sky-600 font-medium">Karthik R.</td>
-                <td class="text-center p-3 text-stone-600">4</td>
-                <td class="text-center p-3 text-stone-600">3</td>
-                <td class="text-center p-3 text-stone-600">1</td>
-                <td class="text-center p-3 text-stone-900 font-semibold">9</td>
-                <td class="text-right p-3 text-emerald-600 font-medium">75%</td>
-              </tr>
-              <tr class="border-b border-stone-50">
-                <td class="p-3 text-sky-600 font-medium">Dana K.</td>
-                <td class="text-center p-3 text-stone-600">4</td>
-                <td class="text-center p-3 text-stone-600">2</td>
-                <td class="text-center p-3 text-stone-600">2</td>
-                <td class="text-center p-3 text-stone-900 font-semibold">6</td>
-                <td class="text-right p-3 text-emerald-600 font-medium">50%</td>
-              </tr>
-              <tr class="border-b border-stone-50">
-                <td class="p-3 text-sky-600 font-medium">Sam W.</td>
-                <td class="text-center p-3 text-stone-600">3</td>
-                <td class="text-center p-3 text-stone-600">2</td>
-                <td class="text-center p-3 text-stone-600">1</td>
-                <td class="text-center p-3 text-stone-900 font-semibold">6</td>
-                <td class="text-right p-3 text-emerald-600 font-medium">67%</td>
-              </tr>
-              <tr class="border-b border-stone-50">
-                <td class="p-3 text-sky-600 font-medium">Priya M.</td>
-                <td class="text-center p-3 text-stone-600">3</td>
-                <td class="text-center p-3 text-stone-600">1</td>
-                <td class="text-center p-3 text-stone-600">2</td>
-                <td class="text-center p-3 text-stone-900 font-semibold">3</td>
-                <td class="text-right p-3 text-stone-600">33%</td>
-              </tr>
-              <tr class="border-b border-stone-50">
-                <td class="p-3 text-sky-600 font-medium">Riley N.</td>
-                <td class="text-center p-3 text-stone-600">3</td>
-                <td class="text-center p-3 text-stone-600">1</td>
-                <td class="text-center p-3 text-stone-600">2</td>
-                <td class="text-center p-3 text-stone-900 font-semibold">3</td>
-                <td class="text-right p-3 text-stone-600">33%</td>
-              </tr>
-              <tr>
-                <td class="p-3 text-sky-600 font-medium">Jordan L.</td>
-                <td class="text-center p-3 text-stone-600">2</td>
-                <td class="text-center p-3 text-stone-600">0</td>
-                <td class="text-center p-3 text-stone-600">2</td>
-                <td class="text-center p-3 text-stone-900 font-semibold">0</td>
-                <td class="text-right p-3 text-stone-600">0%</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Step 4: Admin - Record Match -->
-      <div id="step-4" class="step p-4 gap-4">
-        <div>
-          <span class="text-sky-600 text-sm cursor-pointer" onclick="goTo(2)">&larr; Back</span>
-        </div>
-
-        <span class="text-lg font-bold text-stone-900">Record a Match</span>
-
-        <!-- Winners -->
-        <div>
-          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-2 block">Winners</span>
-          <div class="flex flex-col gap-2">
-            <div class="bg-white border border-stone-200 rounded-lg p-3 flex items-center justify-between">
-              <span class="text-stone-900 text-sm">Alex T.</span>
-              <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      <!-- Step 8: Completed session -->
+      <div class="step">
+        <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🏸</span>
+            <div class="leading-tight">
+              <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+              <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
             </div>
-            <div class="bg-white border border-stone-200 rounded-lg p-3 flex items-center justify-between">
-              <span class="text-stone-900 text-sm">Karthik R.</span>
-              <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+            <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-3">
+            <a href="#" class="text-xs text-sky-600 mb-2 inline-block">← All Sessions</a>
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-lg font-bold text-stone-900">Monday, April 21</h2>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-teal-50 text-teal-600">Finalized</span>
             </div>
+
+            <!-- Session Awards -->
+            <h3 class="text-sm font-semibold text-stone-900 mb-2">Session Awards</h3>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3 text-center">
+                <span class="text-xl">🗡️</span>
+                <p class="text-[10px] font-semibold text-stone-900 mt-1">Sultan/Slayer</p>
+                <p class="text-xs font-bold text-sky-700">Rahul</p>
+                <p class="text-[10px] text-stone-400">4W 1L</p>
+              </div>
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3 text-center">
+                <span class="text-xl">💪</span>
+                <p class="text-[10px] font-semibold text-stone-900 mt-1">Iron Shuttle</p>
+                <p class="text-xs font-bold text-sky-700">Mani</p>
+                <p class="text-[10px] text-stone-400">5 matches</p>
+              </div>
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3 text-center">
+                <span class="text-xl">🛡️</span>
+                <p class="text-[10px] font-semibold text-stone-900 mt-1">Untouchable</p>
+                <p class="text-xs font-bold text-sky-700">Mani</p>
+                <p class="text-[10px] text-stone-400">100% win rate</p>
+              </div>
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3 text-center">
+                <span class="text-xl">🎯</span>
+                <p class="text-[10px] font-semibold text-stone-900 mt-1">Point Collector</p>
+                <p class="text-xs font-bold text-sky-700">Ajay</p>
+                <p class="text-[10px] text-stone-400">84 pts scored</p>
+              </div>
+            </div>
+            <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3 text-center mb-4">
+              <span class="text-xl">⚡</span>
+              <p class="text-[10px] font-semibold text-stone-900 mt-1">No Mercy</p>
+              <p class="text-xs font-bold text-sky-700">Priya</p>
+              <p class="text-[10px] text-stone-400">Biggest margin: 21-8</p>
+            </div>
+
+            <!-- Final scoreboard -->
+            <h3 class="text-sm font-semibold text-stone-900 mb-2">Final Scoreboard</h3>
+            <div class="bg-white border border-stone-100 rounded-xl shadow-sm overflow-hidden mb-4">
+              <table class="w-full text-xs">
+                <thead>
+                  <tr class="border-b border-stone-100 bg-stone-50">
+                    <th class="text-left py-2 px-3 text-stone-500 font-medium">Player</th>
+                    <th class="text-center py-2 px-3 text-stone-500 font-medium">W</th>
+                    <th class="text-center py-2 px-3 text-stone-500 font-medium">L</th>
+                    <th class="text-right py-2 px-3 text-stone-500 font-medium">Win%</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-stone-50 bg-amber-50"><td class="py-2 px-3 font-semibold">Rahul</td><td class="text-center text-green-700 font-bold">4</td><td class="text-center text-orange-600 font-bold">1</td><td class="text-right">80%</td></tr>
+                  <tr class="border-b border-stone-50"><td class="py-2 px-3 font-medium">Mani</td><td class="text-center text-green-700 font-bold">3</td><td class="text-center text-orange-600 font-bold">0</td><td class="text-right">100%</td></tr>
+                  <tr class="border-b border-stone-50"><td class="py-2 px-3 font-medium">Ajay</td><td class="text-center text-green-700 font-bold">3</td><td class="text-center text-orange-600 font-bold">1</td><td class="text-right">75%</td></tr>
+                  <tr class="border-b border-stone-50"><td class="py-2 px-3 font-medium">Deepa</td><td class="text-center text-green-700 font-bold">2</td><td class="text-center text-orange-600 font-bold">1</td><td class="text-right">67%</td></tr>
+                  <tr><td class="py-2 px-3 font-medium">Priya</td><td class="text-center text-green-700 font-bold">2</td><td class="text-center text-orange-600 font-bold">1</td><td class="text-right">67%</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Admin: Reopen -->
+            <button class="w-full py-2.5 bg-white border border-stone-300 text-stone-700 text-xs font-semibold rounded-xl">Reopen Session</button>
           </div>
         </div>
 
-        <!-- Losers -->
-        <div>
-          <span class="text-sm font-semibold text-stone-700 uppercase tracking-wide mb-2 block">Losers</span>
-          <div class="flex flex-col gap-2">
-            <div class="bg-white border border-stone-200 rounded-lg p-3 flex items-center justify-between">
-              <span class="text-stone-900 text-sm">Jordan L.</span>
-              <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </div>
-            <div class="bg-white border border-stone-200 rounded-lg p-3 flex items-center justify-between">
-              <span class="text-stone-900 text-sm">Priya M.</span>
-              <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </div>
-          </div>
+        <div class="p-4 flex justify-between items-center border-t border-stone-100">
+          <button onclick="goTo(6)" class="text-xs text-stone-400 font-medium">← Back</button>
+          <a href="index.html" class="text-xs text-sky-600 font-medium">All Mockups →</a>
         </div>
-
-        <!-- Save button -->
-        <button class="bg-stone-900 text-white rounded-xl py-3 w-full font-semibold text-sm mt-2">Save Match</button>
-        <span class="text-xs text-stone-400 text-center">Simple mode &middot; Scores auto-set to 21-15</span>
       </div>
 
     </div>
-
-    <!-- Fixed Bottom Nav -->
-    <nav class="bg-white border-t border-stone-100 flex items-center justify-around py-2 shrink-0">
-      <div class="flex flex-col items-center cursor-pointer" onclick="goTo(0)">
-        <span class="text-base">&#127992;</span>
-        <span class="text-xs text-sky-600 font-medium">Session</span>
-      </div>
-      <div class="flex flex-col items-center cursor-pointer">
-        <span class="text-base">&#128101;</span>
-        <span class="text-xs text-stone-400">Players</span>
-      </div>
-      <div class="flex flex-col items-center cursor-pointer">
-        <span class="text-base">&#127942;</span>
-        <span class="text-xs text-stone-400">Leaderboard</span>
-      </div>
-    </nav>
-
-    <div id="step-nav"></div>
-
   </div>
 
   <script>
-    const totalSteps = 5;
-    let currentStep = 0;
-
-    function goTo(step) {
-      if (step < 0 || step >= totalSteps) return;
-      currentStep = step;
-      document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
-      document.getElementById('step-' + step).classList.add('active');
-      for (let i = 0; i < totalSteps; i++) {
-        const btn = document.getElementById('btn-' + i);
-        if (i === step) {
-          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-stone-900 text-white font-medium';
-        } else {
-          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300';
-        }
-      }
-      updateNav();
+    let current = 0;
+    const steps = document.querySelectorAll('.step');
+    const btns = document.querySelectorAll('[id^="btn-"]');
+    function goTo(n) {
+      steps.forEach(s => s.classList.remove('active'));
+      btns.forEach(b => { b.className = b.className.replace(/bg-stone-900 text-white/, 'bg-white text-stone-700 border border-stone-300'); });
+      steps[n].classList.add('active');
+      btns[n].className = btns[n].className.replace(/bg-white text-stone-700 border border-stone-300/, 'bg-stone-900 text-white');
+      current = n;
     }
-
-    function updateNav() {
-      const nav = document.getElementById('step-nav');
-      if (!nav) return;
-      const isFirst = currentStep === 0;
-      const isLast = currentStep === totalSteps - 1;
-      nav.innerHTML = `
-        <div class="flex items-center justify-between px-4 py-3 border-t border-stone-100 bg-white">
-          ${isFirst ? '<div></div>' : '<button onclick="goTo(currentStep-1)" class="text-sm text-stone-500 hover:text-stone-700">&lt; Back</button>'}
-          ${isLast
-            ? '<a href="index.html" class="text-sm text-sky-500 hover:text-sky-700">\u2190 All Mockups</a>'
-            : '<button onclick="goTo(currentStep+1)" class="text-sm font-semibold text-sky-600 hover:text-sky-800">Next &gt;</button>'
-          }
-        </div>
-      `;
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') goTo(currentStep + 1);
-      if (e.key === 'ArrowLeft') goTo(currentStep - 1);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' && current < steps.length - 1) goTo(current + 1);
+      if (e.key === 'ArrowLeft' && current > 0) goTo(current - 1);
     });
-
-    goTo(0);
   </script>
-
-</div><!-- end ml-48 wrapper -->
-
 </body>
 </html>

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finals Setup - Snobaddy Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .step-btn.active { background: #0c4a6e; color: white; }
+    .step-content { display: none; }
+    .step-content.active { display: block; }
+  </style>
+</head>
+<body class="bg-stone-200 min-h-screen">
+
+<!-- Sidebar TOC -->
+<div class="fixed left-0 top-0 bottom-0 w-48 bg-white border-r border-stone-200 py-6 px-3 flex flex-col gap-1 overflow-y-auto z-50">
+  <a href="index.html" class="text-xs font-bold text-stone-900 px-2 py-1.5 mb-2">🏸 Snobaddy Mockups</a>
+  <a href="auth-flow.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🔐 Auth Flow</a>
+  <a href="account-linking.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🔗 Account Linking</a>
+  <a href="sessions.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🏸 Sessions</a>
+  <a href="players-leaderboard.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">👥 Players & Leaderboard</a>
+  <a href="finals-setup.html" class="bg-sky-50 text-sky-700 font-semibold text-xs px-2 py-1.5 rounded-lg">🏆 Finals Setup</a>
+  <a href="finals-matchday.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Fixed Partner)</a>
+  <a href="finals-matchday.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Playoffs)</a>
+</div>
+
+<div class="ml-48 flex flex-col items-center py-8">
+
+  <!-- Title bar with step buttons -->
+  <div class="mb-6 text-center">
+    <h1 class="text-lg font-bold text-stone-800 mb-3">Finals Setup Flow</h1>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <button onclick="goTo(0)" id="step-btn-0" class="step-btn active px-3 py-1.5 text-xs font-medium rounded-full bg-stone-300 text-stone-700 transition">0 Players (Edit)</button>
+      <button onclick="goTo(1)" id="step-btn-1" class="step-btn px-3 py-1.5 text-xs font-medium rounded-full bg-stone-300 text-stone-700 transition">1 Players (Saved)</button>
+      <button onclick="goTo(2)" id="step-btn-2" class="step-btn px-3 py-1.5 text-xs font-medium rounded-full bg-stone-300 text-stone-700 transition">2 Groups (Generate)</button>
+      <button onclick="goTo(3)" id="step-btn-3" class="step-btn px-3 py-1.5 text-xs font-medium rounded-full bg-stone-300 text-stone-700 transition">3 Groups (Results)</button>
+      <button onclick="goTo(4)" id="step-btn-4" class="step-btn px-3 py-1.5 text-xs font-medium rounded-full bg-stone-300 text-stone-700 transition">4 Sessions (Schedule)</button>
+      <button onclick="goTo(5)" id="step-btn-5" class="step-btn px-3 py-1.5 text-xs font-medium rounded-full bg-stone-300 text-stone-700 transition">5 Sessions (Created)</button>
+    </div>
+  </div>
+
+  <!-- Phone frame -->
+  <div class="w-[390px] min-h-[700px] bg-stone-50 rounded-3xl shadow-2xl overflow-hidden relative flex flex-col">
+
+    <!-- Fixed header -->
+    <header class="h-14 bg-white flex items-center justify-between px-4 shrink-0 border-b border-stone-100">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">&#127992;</span>
+        <div>
+          <div class="text-sm font-bold text-stone-900 leading-tight">Serve Snoqualmie</div>
+          <div class="text-[10px] font-semibold tracking-widest text-stone-400 uppercase">Badminton</div>
+        </div>
+      </div>
+      <div class="w-9 h-9 rounded-full bg-red-600 flex items-center justify-center text-white text-xs font-bold">KR</div>
+    </header>
+
+    <!-- Scrollable content -->
+    <div class="flex-1 overflow-y-auto">
+
+      <!-- ===================== STEP 0: Players Tab - Edit Mode ===================== -->
+      <div id="step-0" class="step-content active p-4 space-y-4">
+        <a href="#" class="text-sky-600 text-sm font-medium">&lt; Sessions</a>
+
+        <!-- Title area -->
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🏆</span>
+            <h2 class="text-xl font-bold text-stone-900">Spring 2026 Finals</h2>
+          </div>
+          <p class="text-sm text-stone-400 mt-0.5">Spring 2026</p>
+        </div>
+
+        <!-- Workflow arrows: Players active, Groups locked, Sessions locked -->
+        <div class="flex gap-1">
+          <!-- Players: active -->
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 Z" fill="#0284c7"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center text-[10px] font-bold text-white">1</span>
+              <span class="text-xs font-semibold text-white">Players</span>
+            </div>
+          </div>
+          <!-- Groups: locked -->
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 L20,20 Z" fill="white" stroke="#d6d3d1" stroke-width="2" stroke-dasharray="6,3"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-stone-200 flex items-center justify-center text-[10px] font-bold text-stone-400">2</span>
+              <span class="text-xs font-medium text-stone-400">Groups</span>
+            </div>
+          </div>
+          <!-- Sessions: locked -->
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 L20,20 Z" fill="white" stroke="#d6d3d1" stroke-width="2" stroke-dasharray="6,3"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-stone-200 flex items-center justify-center text-[10px] font-bold text-stone-400">3</span>
+              <span class="text-xs font-medium text-stone-400">Sessions</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Player count + Edit -->
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-stone-700">26 players in pool <span class="text-stone-400">(unsaved)</span></span>
+          <button class="text-xs font-semibold text-sky-600 border border-sky-600 rounded-lg px-3 py-1">Edit</button>
+        </div>
+
+        <!-- Search -->
+        <input type="text" placeholder="Search player to add..." class="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm text-stone-600 bg-white">
+
+        <!-- Add all link -->
+        <a href="#" class="text-sky-600 text-sm font-medium">+ Add all season players</a>
+
+        <!-- Player pills -->
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Ajay <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Alok <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Arjun <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Arun <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Deepa <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Gautham <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Gazal <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Jeeta <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Kian <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Kiran <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Kishore <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Michael <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Miz <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Monsur <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Nanda <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Nihita <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Rakesh <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Revo <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Robyn <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Sahit <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Sai <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Sekhar <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Swathi <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Tridib <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Vinoj <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Zillur <button class="text-stone-400 hover:text-stone-600 ml-0.5">&times;</button></span>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="flex gap-3">
+          <button onclick="goTo(1)" class="flex-1 bg-sky-600 text-white font-semibold py-3 rounded-xl text-sm">Save 26 Players</button>
+          <button class="flex-1 border border-stone-300 text-stone-600 font-semibold py-3 rounded-xl text-sm">Cancel</button>
+        </div>
+      </div>
+
+      <!-- ===================== STEP 1: Players Tab - Saved ===================== -->
+      <div id="step-1" class="step-content p-4 space-y-4">
+        <a href="#" class="text-sky-600 text-sm font-medium">&lt; Sessions</a>
+
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🏆</span>
+            <h2 class="text-xl font-bold text-stone-900">Spring 2026 Finals</h2>
+          </div>
+          <p class="text-sm text-stone-400 mt-0.5">Spring 2026</p>
+        </div>
+
+        <!-- Workflow arrows: Players active, others locked -->
+        <div class="flex gap-1">
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 Z" fill="#0284c7"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center text-[10px] font-bold text-white">1</span>
+              <span class="text-xs font-semibold text-white">Players</span>
+            </div>
+          </div>
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 L20,20 Z" fill="white" stroke="#a8a29e" stroke-width="2"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-stone-200 flex items-center justify-center text-[10px] font-bold text-stone-500">2</span>
+              <span class="text-xs font-medium text-stone-500">Groups</span>
+            </div>
+          </div>
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 L20,20 Z" fill="white" stroke="#d6d3d1" stroke-width="2" stroke-dasharray="6,3"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-stone-200 flex items-center justify-center text-[10px] font-bold text-stone-400">3</span>
+              <span class="text-xs font-medium text-stone-400">Sessions</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Player count + Edit -->
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-stone-700">26 players in pool</span>
+          <button class="text-xs font-semibold text-sky-600 border border-sky-600 rounded-lg px-3 py-1">Edit</button>
+        </div>
+
+        <!-- Player pills (no x buttons) -->
+        <div class="flex flex-wrap gap-2">
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Ajay</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Alok</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Arjun</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Arun</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Deepa</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Gautham</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Gazal</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Jeeta</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Kian</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Kiran</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Kishore</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Michael</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Miz</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Monsur</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Nanda</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Nihita</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Rakesh</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Revo</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Robyn</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Sahit</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Sai</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Sekhar</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Swathi</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Tridib</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Vinoj</span>
+          <span class="rounded-full bg-stone-100 text-stone-700 px-3 py-1 text-sm">Zillur</span>
+        </div>
+      </div>
+
+      <!-- ===================== STEP 2: Groups Tab - Generate ===================== -->
+      <div id="step-2" class="step-content p-4 space-y-4">
+        <a href="#" class="text-sky-600 text-sm font-medium">&lt; Sessions</a>
+
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🏆</span>
+            <h2 class="text-xl font-bold text-stone-900">Spring 2026 Finals</h2>
+          </div>
+          <p class="text-sm text-stone-400 mt-0.5">Spring 2026</p>
+        </div>
+
+        <!-- Workflow arrows: Players done, Groups active, Sessions locked -->
+        <div class="flex gap-1">
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 Z" fill="#059669"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center text-[10px] font-bold text-white">&#10003;</span>
+              <span class="text-xs font-semibold text-white">Players</span>
+            </div>
+          </div>
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 L20,20 Z" fill="#0284c7"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center text-[10px] font-bold text-white">2</span>
+              <span class="text-xs font-semibold text-white">Groups</span>
+            </div>
+          </div>
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 L20,20 Z" fill="white" stroke="#d6d3d1" stroke-width="2" stroke-dasharray="6,3"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-stone-200 flex items-center justify-center text-[10px] font-bold text-stone-400">3</span>
+              <span class="text-xs font-medium text-stone-400">Sessions</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="flex gap-3">
+          <button onclick="goTo(3)" class="flex-1 bg-stone-900 text-white font-semibold py-3 rounded-xl text-sm">Generate Breakdown</button>
+          <button onclick="goTo(0)" class="flex-1 border border-stone-300 text-stone-600 font-semibold py-3 rounded-xl text-sm">Edit Players</button>
+        </div>
+
+        <!-- Empty state -->
+        <div class="border-2 border-dashed border-stone-300 rounded-xl p-8 text-center">
+          <p class="text-sm text-stone-400">No breakdown generated yet</p>
+        </div>
+      </div>
+
+      <!-- ===================== STEP 3: Groups Tab - Results ===================== -->
+      <div id="step-3" class="step-content p-4 space-y-4">
+        <a href="#" class="text-sky-600 text-sm font-medium">&lt; Sessions</a>
+
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🏆</span>
+            <h2 class="text-xl font-bold text-stone-900">Spring 2026 Finals</h2>
+          </div>
+          <p class="text-sm text-stone-400 mt-0.5">Spring 2026</p>
+        </div>
+
+        <!-- Workflow arrows: Players done, Groups active, Sessions locked -->
+        <div class="flex gap-1">
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 Z" fill="#059669"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center text-[10px] font-bold text-white">&#10003;</span>
+              <span class="text-xs font-semibold text-white">Players</span>
+            </div>
+          </div>
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 L20,20 Z" fill="#0284c7"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center text-[10px] font-bold text-white">2</span>
+              <span class="text-xs font-semibold text-white">Groups</span>
+            </div>
+          </div>
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 L20,20 Z" fill="white" stroke="#d6d3d1" stroke-width="2" stroke-dasharray="6,3"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-stone-200 flex items-center justify-center text-[10px] font-bold text-stone-400">3</span>
+              <span class="text-xs font-medium text-stone-400">Sessions</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group badges -->
+        <div class="flex gap-3">
+          <div class="flex items-center gap-2 bg-sky-100 text-sky-700 rounded-full px-4 py-1.5">
+            <span class="text-sm font-semibold">Group A</span>
+            <span class="w-6 h-6 rounded-full bg-sky-200 text-sky-800 flex items-center justify-center text-xs font-bold">10</span>
+          </div>
+          <div class="flex items-center gap-2 bg-amber-100 text-amber-700 rounded-full px-4 py-1.5">
+            <span class="text-sm font-semibold">Group B</span>
+            <span class="w-6 h-6 rounded-full bg-amber-200 text-amber-800 flex items-center justify-center text-xs font-bold">8</span>
+          </div>
+          <div class="flex items-center gap-2 bg-stone-100 text-stone-600 rounded-full px-4 py-1.5">
+            <span class="text-sm font-semibold">Group C</span>
+            <span class="w-6 h-6 rounded-full bg-stone-200 text-stone-700 flex items-center justify-center text-xs font-bold">8</span>
+          </div>
+        </div>
+
+        <!-- Supported Formats -->
+        <div class="bg-stone-50 rounded-lg p-3 space-y-1.5">
+          <div class="text-xs font-semibold text-stone-500 uppercase tracking-wide">Supported Formats</div>
+          <div class="text-xs text-stone-600">Group A (10p): <span class="font-medium">Playoffs</span> &mdash; 2, 4, 6 matches/player</div>
+          <div class="text-xs text-stone-600">Group B (8p): <span class="font-medium">All-Play-All</span> or <span class="font-medium">Playoffs</span></div>
+          <div class="text-xs text-stone-600">Group C (8p): <span class="font-medium">All-Play-All</span> or <span class="font-medium">Playoffs</span></div>
+        </div>
+
+        <!-- Ranked player table -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-stone-100 text-xs text-stone-500 uppercase tracking-wide">
+                <th class="text-left py-2 px-3 font-medium">#</th>
+                <th class="text-left py-2 px-2 font-medium">Player</th>
+                <th class="text-center py-2 px-2 font-medium">Skill</th>
+                <th class="text-center py-2 px-2 font-medium">Score</th>
+                <th class="text-center py-2 px-2 font-medium">Grp</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Group A divider -->
+              <tr class="bg-sky-50">
+                <td colspan="5" class="text-xs font-semibold text-sky-700 px-3 py-1.5">Group A</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="py-2 px-3 text-stone-400 text-xs">1</td>
+                <td class="py-2 px-2 font-medium text-stone-800">Arjun</td>
+                <td class="text-center py-2 px-2 text-amber-500">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td class="text-center py-2 px-2 text-stone-600">142</td>
+                <td class="text-center py-2 px-2">
+                  <select class="text-xs border border-stone-200 rounded px-1.5 py-0.5 bg-white text-stone-600">
+                    <option selected>A</option><option>B</option><option>C</option>
+                  </select>
+                </td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="py-2 px-3 text-stone-400 text-xs">2</td>
+                <td class="py-2 px-2 font-medium text-stone-800">Kiran</td>
+                <td class="text-center py-2 px-2 text-amber-500">&#9679;&#9679;&#9679;&#9679;&#9675;</td>
+                <td class="text-center py-2 px-2 text-stone-600">138</td>
+                <td class="text-center py-2 px-2">
+                  <select class="text-xs border border-stone-200 rounded px-1.5 py-0.5 bg-white text-stone-600">
+                    <option selected>A</option><option>B</option><option>C</option>
+                  </select>
+                </td>
+              </tr>
+              <!-- Group B divider -->
+              <tr class="bg-amber-50">
+                <td colspan="5" class="text-xs font-semibold text-amber-700 px-3 py-1.5">Group B</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="py-2 px-3 text-stone-400 text-xs">11</td>
+                <td class="py-2 px-2 font-medium text-stone-800">Sahit</td>
+                <td class="text-center py-2 px-2 text-amber-500">&#9679;&#9679;&#9679;&#9675;&#9675;</td>
+                <td class="text-center py-2 px-2 text-stone-600">98</td>
+                <td class="text-center py-2 px-2">
+                  <select class="text-xs border border-stone-200 rounded px-1.5 py-0.5 bg-white text-stone-600">
+                    <option>A</option><option selected>B</option><option>C</option>
+                  </select>
+                </td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="py-2 px-3 text-stone-400 text-xs">12</td>
+                <td class="py-2 px-2 font-medium text-stone-800">Robyn</td>
+                <td class="text-center py-2 px-2 text-amber-500">&#9679;&#9679;&#9679;&#9675;&#9675;</td>
+                <td class="text-center py-2 px-2 text-stone-600">95</td>
+                <td class="text-center py-2 px-2">
+                  <select class="text-xs border border-stone-200 rounded px-1.5 py-0.5 bg-white text-stone-600">
+                    <option>A</option><option selected>B</option><option>C</option>
+                  </select>
+                </td>
+              </tr>
+              <!-- Group C divider -->
+              <tr class="bg-stone-100">
+                <td colspan="5" class="text-xs font-semibold text-stone-600 px-3 py-1.5">Group C</td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="py-2 px-3 text-stone-400 text-xs">19</td>
+                <td class="py-2 px-2 font-medium text-stone-800">Nanda</td>
+                <td class="text-center py-2 px-2 text-amber-500">&#9679;&#9679;&#9675;&#9675;&#9675;</td>
+                <td class="text-center py-2 px-2 text-stone-600">72</td>
+                <td class="text-center py-2 px-2">
+                  <select class="text-xs border border-stone-200 rounded px-1.5 py-0.5 bg-white text-stone-600">
+                    <option>A</option><option>B</option><option selected>C</option>
+                  </select>
+                </td>
+              </tr>
+              <tr class="border-b border-stone-50">
+                <td class="py-2 px-3 text-stone-400 text-xs">20</td>
+                <td class="py-2 px-2 font-medium text-stone-800">Zillur</td>
+                <td class="text-center py-2 px-2 text-amber-500">&#9679;&#9679;&#9675;&#9675;&#9675;</td>
+                <td class="text-center py-2 px-2 text-stone-600">68</td>
+                <td class="text-center py-2 px-2">
+                  <select class="text-xs border border-stone-200 rounded px-1.5 py-0.5 bg-white text-stone-600">
+                    <option>A</option><option>B</option><option selected>C</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Confirm button -->
+        <button onclick="goTo(4)" class="w-full bg-green-700 text-white font-semibold py-3 rounded-xl text-sm">Confirm Groups &rarr; Proceed to Sessions</button>
+      </div>
+
+      <!-- ===================== STEP 4: Sessions Tab - Schedule ===================== -->
+      <div id="step-4" class="step-content p-4 space-y-4">
+        <a href="#" class="text-sky-600 text-sm font-medium">&lt; Sessions</a>
+
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🏆</span>
+            <h2 class="text-xl font-bold text-stone-900">Spring 2026 Finals</h2>
+          </div>
+          <p class="text-sm text-stone-400 mt-0.5">Spring 2026</p>
+        </div>
+
+        <!-- Workflow arrows: Players done, Groups done, Sessions active -->
+        <div class="flex gap-1">
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 Z" fill="#059669"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center text-[10px] font-bold text-white">&#10003;</span>
+              <span class="text-xs font-semibold text-white">Players</span>
+            </div>
+          </div>
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 L20,20 Z" fill="#059669"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center text-[10px] font-bold text-white">&#10003;</span>
+              <span class="text-xs font-semibold text-white">Groups</span>
+            </div>
+          </div>
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 L20,20 Z" fill="#0284c7"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center text-[10px] font-bold text-white">3</span>
+              <span class="text-xs font-semibold text-white">Sessions</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Schedule card -->
+        <div class="bg-white rounded-xl shadow-sm p-4 space-y-4">
+          <h3 class="text-sm font-semibold text-stone-800">Schedule Finals Days</h3>
+
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-medium text-stone-500 block mb-1">Day 1 &mdash; Groups A &amp; B</label>
+              <input type="date" value="2026-04-13" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm text-stone-700 bg-white">
+            </div>
+            <div>
+              <label class="text-xs font-medium text-stone-500 block mb-1">Day 2 &mdash; Group C</label>
+              <input type="date" value="2026-04-16" class="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm text-stone-700 bg-white">
+            </div>
+          </div>
+        </div>
+
+        <button onclick="goTo(5)" class="w-full bg-stone-900 text-white font-semibold py-3 rounded-xl text-sm">Generate Finals Sessions</button>
+      </div>
+
+      <!-- ===================== STEP 5: Sessions Tab - Created ===================== -->
+      <div id="step-5" class="step-content p-4 space-y-4">
+        <a href="#" class="text-sky-600 text-sm font-medium">&lt; Sessions</a>
+
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🏆</span>
+            <h2 class="text-xl font-bold text-stone-900">Spring 2026 Finals</h2>
+          </div>
+          <p class="text-sm text-stone-400 mt-0.5">Spring 2026</p>
+        </div>
+
+        <!-- Workflow arrows: all done, Sessions active -->
+        <div class="flex gap-1">
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 Z" fill="#059669"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center text-[10px] font-bold text-white">&#10003;</span>
+              <span class="text-xs font-semibold text-white">Players</span>
+            </div>
+          </div>
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 L20,20 Z" fill="#059669"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center text-[10px] font-bold text-white">&#10003;</span>
+              <span class="text-xs font-semibold text-white">Groups</span>
+            </div>
+          </div>
+          <div class="flex-1 relative">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none" class="w-full h-10">
+              <path d="M0,0 L180,0 L200,20 L180,40 L0,40 L20,20 Z" fill="#0284c7"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-white/30 flex items-center justify-center text-[10px] font-bold text-white">3</span>
+              <span class="text-xs font-semibold text-white">Sessions</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Session cards -->
+        <div class="space-y-3">
+          <div class="bg-white rounded-xl shadow-sm p-4">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="text-sm font-semibold text-stone-800">Finals Day 1 &mdash; Groups A &amp; B</h3>
+              <span class="text-[10px] font-semibold bg-orange-100 text-orange-700 rounded-full px-2 py-0.5">Starting soon</span>
+            </div>
+            <p class="text-xs text-stone-400">Mon, Apr 13 &middot; 6:00 PM</p>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-4">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="text-sm font-semibold text-stone-800">Finals Day 2 &mdash; Group C</h3>
+              <span class="text-[10px] font-semibold bg-orange-100 text-orange-700 rounded-full px-2 py-0.5">Starting soon</span>
+            </div>
+            <p class="text-xs text-stone-400">Thu, Apr 16 &middot; 6:00 PM</p>
+          </div>
+        </div>
+
+        <p class="text-sm text-stone-400 text-center">Sessions are set</p>
+
+        <!-- Danger zone -->
+        <div class="flex gap-3 pt-2">
+          <button class="flex-1 border border-amber-400 text-amber-700 font-semibold py-2.5 rounded-xl text-sm">Reset to Draft</button>
+          <button class="flex-1 border border-red-400 text-red-600 font-semibold py-2.5 rounded-xl text-sm">Delete Finals Event</button>
+        </div>
+      </div>
+
+    </div><!-- end scrollable content -->
+    <div id="step-nav"></div>
+  </div><!-- end phone frame -->
+
+  <script>
+    const totalSteps = document.querySelectorAll('.step-content').length;
+    let currentStep = 0;
+
+    function goTo(step) {
+      if (step < 0 || step >= totalSteps) return;
+      currentStep = step;
+      document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.step-btn').forEach(el => el.classList.remove('active'));
+
+      document.getElementById('step-' + step).classList.add('active');
+      document.getElementById('step-btn-' + step).classList.add('active');
+      updateNav();
+    }
+
+    function updateNav() {
+      const nav = document.getElementById('step-nav');
+      if (!nav) return;
+      const isFirst = currentStep === 0;
+      const isLast = currentStep === totalSteps - 1;
+      nav.innerHTML = `
+        <div class="flex items-center justify-between px-4 py-3 border-t border-stone-100 bg-white">
+          ${isFirst ? '<div></div>' : '<button onclick="goTo(currentStep-1)" class="text-sm text-stone-500 hover:text-stone-700">&lt; Back</button>'}
+          ${isLast
+            ? '<a href="index.html" class="text-sm text-sky-500 hover:text-sky-700">\u2190 All Mockups</a>'
+            : '<button onclick="goTo(currentStep+1)" class="text-sm font-semibold text-sky-600 hover:text-sky-800">Next &gt;</button>'
+          }
+        </div>
+      `;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') goTo(currentStep + 1);
+      if (e.key === 'ArrowLeft') goTo(currentStep - 1);
+    });
+
+    goTo(0);
+  </script>
+
+</div><!-- end ml-48 wrapper -->
+
+</body>
+</html>

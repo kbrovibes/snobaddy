@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finals — Dark Mode Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .step { display: none; }
+    .step.active { display: flex; flex-direction: column; }
+  </style>
+</head>
+<body class="bg-stone-950 min-h-screen">
+
+<!-- Sidebar TOC -->
+<div class="fixed left-0 top-0 bottom-0 w-48 bg-stone-900 border-r border-stone-700 py-6 px-3 flex flex-col gap-1 overflow-y-auto z-50">
+  <a href="index.html" class="text-xs font-bold text-stone-100 px-2 py-1.5 mb-2">🏸 Dark Mode Mockups</a>
+  <a href="auth-flow.html" class="text-xs px-2 py-1.5 rounded-lg text-stone-400 hover:bg-stone-800">🔐 Auth Flow</a>
+  <a href="sessions.html" class="text-xs px-2 py-1.5 rounded-lg text-stone-400 hover:bg-stone-800">🏸 Sessions</a>
+  <a href="players-leaderboard.html" class="text-xs px-2 py-1.5 rounded-lg text-stone-400 hover:bg-stone-800">👥 Players & Leaderboard</a>
+  <a href="finals.html" class="bg-sky-900/50 text-sky-400 font-semibold text-xs px-2 py-1.5 rounded-lg">🏆 Finals</a>
+</div>
+
+<div class="ml-48 flex flex-col items-center py-8">
+
+  <!-- Step navigation -->
+  <div class="mb-6 text-center">
+    <h1 class="text-2xl font-bold text-stone-100 mb-3">Finals</h1>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <button onclick="goTo(0)" id="btn-0" class="px-3 py-1.5 text-sm rounded-lg bg-stone-100 text-stone-900 font-medium">0 Overview</button>
+      <button onclick="goTo(1)" id="btn-1" class="px-3 py-1.5 text-sm rounded-lg bg-stone-800 text-stone-400 font-medium border border-stone-600">1 Standings</button>
+      <button onclick="goTo(2)" id="btn-2" class="px-3 py-1.5 text-sm rounded-lg bg-stone-800 text-stone-400 font-medium border border-stone-600">2 Matches</button>
+      <button onclick="goTo(3)" id="btn-3" class="px-3 py-1.5 text-sm rounded-lg bg-stone-800 text-stone-400 font-medium border border-stone-600">3 Winner</button>
+    </div>
+  </div>
+
+  <!-- Phone frame -->
+  <div class="w-[390px] min-h-[700px] bg-stone-900 rounded-3xl border-4 border-stone-600 shadow-2xl shadow-black/30 overflow-hidden flex flex-col relative">
+
+    <!-- Fixed Header -->
+    <header class="h-14 bg-stone-900 border-b border-stone-700 flex items-center justify-between px-4 shrink-0 z-10">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">🏸</span>
+        <div class="leading-tight">
+          <span class="font-bold text-stone-50 text-sm">Serve Snoqualmie</span>
+          <span class="block text-[10px] uppercase tracking-wide text-stone-400 -mt-0.5">Badminton</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-sky-400 cursor-pointer">Logout</span>
+        <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+      </div>
+    </header>
+
+    <!-- Scrollable content area -->
+    <div class="flex-1 overflow-y-auto">
+
+      <!-- Step 0: Finals Event Overview -->
+      <div id="step-0" class="step active p-4 gap-4">
+        <div>
+          <span class="text-sky-400 text-sm cursor-pointer">&larr; Sessions</span>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-bold text-stone-50">Spring 2026 Finals</h2>
+          <p class="text-sm text-stone-400 mt-1">Season-ending tournament</p>
+        </div>
+
+        <!-- Status cards -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-stone-800 rounded-xl p-3 text-center border border-stone-700">
+            <div class="text-2xl font-bold text-stone-50">26</div>
+            <div class="text-xs text-stone-500 uppercase tracking-wide">Players</div>
+          </div>
+          <div class="bg-stone-800 rounded-xl p-3 text-center border border-stone-700">
+            <div class="text-2xl font-bold text-stone-50">4</div>
+            <div class="text-xs text-stone-500 uppercase tracking-wide">Groups</div>
+          </div>
+          <div class="bg-stone-800 rounded-xl p-3 text-center border border-stone-700">
+            <div class="text-2xl font-bold text-sky-400">3</div>
+            <div class="text-xs text-stone-500 uppercase tracking-wide">Sessions</div>
+          </div>
+          <div class="bg-stone-800 rounded-xl p-3 text-center border border-stone-700">
+            <div class="text-2xl font-bold text-amber-400">🏆</div>
+            <div class="text-xs text-stone-500 uppercase tracking-wide">Best of 3</div>
+          </div>
+        </div>
+
+        <!-- Group cards -->
+        <span class="text-sm font-semibold text-stone-400 uppercase tracking-wide">Groups</span>
+        <div class="flex flex-col gap-2">
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700 flex items-center justify-between cursor-pointer" onclick="goTo(1)">
+            <div>
+              <span class="text-sm font-bold text-stone-50">Group A</span>
+              <div class="text-xs text-stone-400 mt-0.5">Ajay, Alok, Arjun, Chitra, Deepa, Gautham</div>
+            </div>
+            <span class="bg-sky-900 text-sky-300 rounded-full px-2 py-0.5 text-xs font-medium">Active</span>
+          </div>
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700 flex items-center justify-between cursor-pointer" onclick="goTo(1)">
+            <div>
+              <span class="text-sm font-bold text-stone-50">Group B</span>
+              <div class="text-xs text-stone-400 mt-0.5">Karthik, Kiran, Mani, Nandini, Priya, Rahul</div>
+            </div>
+            <span class="bg-sky-900 text-sky-300 rounded-full px-2 py-0.5 text-xs font-medium">Active</span>
+          </div>
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700 flex items-center justify-between">
+            <div>
+              <span class="text-sm font-bold text-stone-50">Group C</span>
+              <div class="text-xs text-stone-400 mt-0.5">Ravi, Sanjay, Suresh, Venkat + 4 more</div>
+            </div>
+            <span class="bg-stone-700 text-stone-400 rounded-full px-2 py-0.5 text-xs font-medium">Pending</span>
+          </div>
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700 flex items-center justify-between">
+            <div>
+              <span class="text-sm font-bold text-stone-50">Group D</span>
+              <div class="text-xs text-stone-400 mt-0.5">6 players assigned</div>
+            </div>
+            <span class="bg-stone-700 text-stone-400 rounded-full px-2 py-0.5 text-xs font-medium">Pending</span>
+          </div>
+        </div>
+
+        <!-- Schedule -->
+        <span class="text-sm font-semibold text-stone-400 uppercase tracking-wide">Schedule</span>
+        <div class="flex flex-col gap-2">
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700 flex items-center justify-between">
+            <div>
+              <span class="text-sm font-medium text-stone-100">Day 1 — Group Stage</span>
+              <div class="text-xs text-stone-500">Thu, Apr 17</div>
+            </div>
+            <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs font-medium">Done</span>
+          </div>
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700 flex items-center justify-between">
+            <div>
+              <span class="text-sm font-medium text-stone-100">Day 2 — Semis</span>
+              <div class="text-xs text-stone-500">Mon, Apr 21</div>
+            </div>
+            <span class="bg-sky-900 text-sky-300 rounded-full px-2 py-0.5 text-xs font-medium">Today</span>
+          </div>
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700 flex items-center justify-between">
+            <div>
+              <span class="text-sm font-medium text-stone-100">Day 3 — Finals</span>
+              <div class="text-xs text-stone-500">Thu, Apr 24</div>
+            </div>
+            <span class="bg-stone-700 text-stone-400 rounded-full px-2 py-0.5 text-xs font-medium">Upcoming</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 1: Group Standings -->
+      <div id="step-1" class="step p-4 gap-4">
+        <div>
+          <span class="text-sky-400 text-sm cursor-pointer" onclick="goTo(0)">&larr; Finals Overview</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="text-lg font-bold text-stone-50">Group A Standings</span>
+        </div>
+
+        <!-- Group tabs -->
+        <div class="bg-stone-800 rounded-lg p-1 flex gap-1 border border-stone-700">
+          <button class="flex-1 text-xs font-medium py-1.5 px-3 rounded-md bg-sky-900 text-sky-300 shadow-sm">Group A</button>
+          <button class="flex-1 text-xs font-medium py-1.5 px-3 rounded-md text-stone-500">Group B</button>
+          <button class="flex-1 text-xs font-medium py-1.5 px-3 rounded-md text-stone-500">Group C</button>
+          <button class="flex-1 text-xs font-medium py-1.5 px-3 rounded-md text-stone-500">Group D</button>
+        </div>
+
+        <!-- Standings table -->
+        <div class="bg-stone-800 rounded-xl border border-stone-700 overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-stone-700 text-stone-500 text-xs uppercase tracking-wide">
+                <th class="text-left p-2.5 font-semibold w-6">#</th>
+                <th class="text-left p-2.5 font-semibold">Pair</th>
+                <th class="text-center p-2.5 font-semibold w-8">P</th>
+                <th class="text-center p-2.5 font-semibold w-8">W</th>
+                <th class="text-center p-2.5 font-semibold w-8">L</th>
+                <th class="text-right p-2.5 font-semibold w-10">Pts</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-700">
+              <tr class="bg-green-900/20">
+                <td class="p-2.5 text-stone-500 text-xs">1</td>
+                <td class="p-2.5">
+                  <span class="text-stone-100 font-medium">Arjun</span>
+                  <span class="text-stone-500">&</span>
+                  <span class="text-stone-100 font-medium">Deepa</span>
+                </td>
+                <td class="text-center p-2.5 text-stone-300">5</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">4</td>
+                <td class="text-center p-2.5 text-orange-400">1</td>
+                <td class="text-right p-2.5 text-stone-100 font-bold">12</td>
+              </tr>
+              <tr class="bg-green-900/20">
+                <td class="p-2.5 text-stone-500 text-xs">2</td>
+                <td class="p-2.5">
+                  <span class="text-stone-100 font-medium">Ajay</span>
+                  <span class="text-stone-500">&</span>
+                  <span class="text-stone-100 font-medium">Chitra</span>
+                </td>
+                <td class="text-center p-2.5 text-stone-300">5</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">3</td>
+                <td class="text-center p-2.5 text-orange-400">2</td>
+                <td class="text-right p-2.5 text-stone-100 font-bold">9</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 text-stone-500 text-xs">3</td>
+                <td class="p-2.5">
+                  <span class="text-stone-100 font-medium">Alok</span>
+                  <span class="text-stone-500">&</span>
+                  <span class="text-stone-100 font-medium">Gautham</span>
+                </td>
+                <td class="text-center p-2.5 text-stone-300">5</td>
+                <td class="text-center p-2.5 text-green-400 font-bold">2</td>
+                <td class="text-center p-2.5 text-orange-400">3</td>
+                <td class="text-right p-2.5 text-stone-100 font-bold">6</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="text-xs text-stone-500">
+          <span class="inline-block w-3 h-3 bg-green-900/40 rounded mr-1 align-middle"></span> Top 2 advance to semifinals
+        </div>
+      </div>
+
+      <!-- Step 2: Match List -->
+      <div id="step-2" class="step p-4 gap-3">
+        <div>
+          <span class="text-sky-400 text-sm cursor-pointer" onclick="goTo(1)">&larr; Standings</span>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <span class="text-lg font-bold text-stone-50">Group A Matches</span>
+          <span class="text-xs text-stone-500">6 matches</span>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <!-- Match 1 -->
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs text-stone-500">Match 1 &middot; Court 1</span>
+              <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs font-medium">Final</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-sm text-green-400 font-semibold">Arjun & Deepa</div>
+                <div class="text-sm text-orange-400">Alok & Gautham</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm text-green-400 font-bold">21</div>
+                <div class="text-sm text-orange-400">15</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Match 2 -->
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs text-stone-500">Match 2 &middot; Court 2</span>
+              <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs font-medium">Final</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-sm text-green-400 font-semibold">Ajay & Chitra</div>
+                <div class="text-sm text-orange-400">Arjun & Deepa</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm text-green-400 font-bold">21</div>
+                <div class="text-sm text-orange-400">18</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Match 3 -->
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs text-stone-500">Match 3 &middot; Court 1</span>
+              <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs font-medium">Final</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-sm text-green-400 font-semibold">Arjun & Deepa</div>
+                <div class="text-sm text-orange-400">Ajay & Chitra</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm text-green-400 font-bold">21</div>
+                <div class="text-sm text-orange-400">12</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Match 4 -->
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs text-stone-500">Match 4 &middot; Court 2</span>
+              <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs font-medium">Final</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-sm text-green-400 font-semibold">Ajay & Chitra</div>
+                <div class="text-sm text-orange-400">Alok & Gautham</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm text-green-400 font-bold">21</div>
+                <div class="text-sm text-orange-400">17</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Match 5 -->
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs text-stone-500">Match 5 &middot; Court 1</span>
+              <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs font-medium">Final</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-sm text-green-400 font-semibold">Alok & Gautham</div>
+                <div class="text-sm text-orange-400">Ajay & Chitra</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm text-green-400 font-bold">21</div>
+                <div class="text-sm text-orange-400">19</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Match 6 -->
+          <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs text-stone-500">Match 6 &middot; Court 2</span>
+              <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs font-medium">Final</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-sm text-green-400 font-semibold">Arjun & Deepa</div>
+                <div class="text-sm text-orange-400">Alok & Gautham</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm text-green-400 font-bold">21</div>
+                <div class="text-sm text-orange-400">14</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Winner Celebration -->
+      <div id="step-3" class="step p-4 gap-4 items-center">
+        <div class="self-start">
+          <span class="text-sky-400 text-sm cursor-pointer" onclick="goTo(0)">&larr; Finals Overview</span>
+        </div>
+
+        <div class="text-center mt-4">
+          <div class="text-5xl mb-2">🏆</div>
+          <h2 class="text-xl font-bold text-stone-50">Spring 2026 Champions!</h2>
+          <p class="text-sm text-stone-400 mt-1">Best of 3 Finals Series</p>
+        </div>
+
+        <!-- Winner card with glow -->
+        <div class="bg-stone-800 rounded-2xl p-6 border-2 border-sky-800 shadow-lg shadow-sky-900/30 text-center w-full">
+          <div class="text-4xl mb-3">👑</div>
+          <div class="flex items-center justify-center gap-3 mb-2">
+            <div class="w-12 h-12 bg-sky-900 rounded-full flex items-center justify-center text-sky-400 text-lg font-bold">AR</div>
+            <span class="text-stone-500 text-lg">&</span>
+            <div class="w-12 h-12 bg-sky-900 rounded-full flex items-center justify-center text-sky-400 text-lg font-bold">DK</div>
+          </div>
+          <div class="text-lg font-bold text-stone-50">Arjun & Deepa</div>
+          <div class="text-sm text-amber-400 font-medium mt-1">Won 2-0 in the Finals</div>
+        </div>
+
+        <!-- Series results -->
+        <div class="w-full">
+          <span class="text-sm font-semibold text-stone-400 uppercase tracking-wide mb-2 block">Finals Series</span>
+          <div class="flex flex-col gap-2">
+            <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs text-stone-500">Game 1</span>
+                <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs">Final</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-sm text-green-400 font-semibold">Arjun & Deepa</div>
+                  <div class="text-sm text-orange-400">Karthik & Venkat</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm text-green-400 font-bold">21</div>
+                  <div class="text-sm text-orange-400">16</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-stone-800 rounded-xl p-3 border border-stone-700">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs text-stone-500">Game 2</span>
+                <span class="bg-teal-900 text-teal-400 rounded-full px-2 py-0.5 text-xs">Final</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-sm text-green-400 font-semibold">Arjun & Deepa</div>
+                  <div class="text-sm text-orange-400">Karthik & Venkat</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm text-green-400 font-bold">21</div>
+                  <div class="text-sm text-orange-400">19</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Runner up -->
+        <div class="bg-stone-800 rounded-xl p-4 border border-stone-700 w-full text-center">
+          <div class="text-2xl mb-1">🥈</div>
+          <div class="text-sm font-bold text-stone-200">Runner Up</div>
+          <div class="text-sm text-stone-400">Karthik & Venkat</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Fixed Bottom Nav -->
+    <nav class="h-14 bg-stone-900 border-t border-stone-700 flex items-center justify-around shrink-0">
+      <div class="flex flex-col items-center gap-0.5 text-sky-400"><span class="text-lg">🏸</span><span class="text-[10px] font-semibold">Session</span></div>
+      <div class="flex flex-col items-center gap-0.5 text-stone-500"><span class="text-lg">👥</span><span class="text-[10px]">Players</span></div>
+      <div class="flex flex-col items-center gap-0.5 text-stone-500"><span class="text-lg">🏆</span><span class="text-[10px]">Leaderboard</span></div>
+    </nav>
+
+    <div id="step-nav"></div>
+
+  </div>
+
+  <script>
+    const totalSteps = 4;
+    let currentStep = 0;
+
+    function goTo(step) {
+      if (step < 0 || step >= totalSteps) return;
+      currentStep = step;
+      document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+      document.getElementById('step-' + step).classList.add('active');
+      for (let i = 0; i < totalSteps; i++) {
+        const btn = document.getElementById('btn-' + i);
+        if (i === step) {
+          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-stone-100 text-stone-900 font-medium';
+        } else {
+          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-stone-800 text-stone-400 font-medium border border-stone-600';
+        }
+      }
+      updateNav();
+      document.querySelector('.flex-1.overflow-y-auto')?.scrollTo(0,0);
+    }
+
+    function updateNav() {
+      const nav = document.getElementById('step-nav');
+      if (!nav) return;
+      const isFirst = currentStep === 0;
+      const isLast = currentStep === totalSteps - 1;
+      nav.innerHTML = `
+        <div class="flex items-center justify-between px-4 py-3 border-t border-stone-700 bg-stone-900">
+          ${isFirst ? '<div></div>' : '<button onclick="goTo(currentStep-1)" class="text-sm text-stone-400 hover:text-stone-200">&lt; Back</button>'}
+          ${isLast
+            ? '<a href="index.html" class="text-sm text-sky-400 hover:text-sky-300">\u2190 All Mockups</a>'
+            : '<button onclick="goTo(currentStep+1)" class="text-sm font-semibold text-sky-400 hover:text-sky-300">Next &gt;</button>'
+          }
+        </div>
+      `;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') goTo(currentStep + 1);
+      if (e.key === 'ArrowLeft') goTo(currentStep - 1);
+    });
+
+    goTo(0);
+  </script>
+
+</div>
+</body>
+</html>

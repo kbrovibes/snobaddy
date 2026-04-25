@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finals Match Day — Snobaddy Mockups</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .step { display: none; }
+    .step.active { display: flex; flex-direction: column; height: 100%; }
+  </style>
+</head>
+<body class="bg-stone-100 min-h-screen">
+
+  <!-- Sidebar -->
+  <div class="fixed left-0 top-0 bottom-0 w-48 bg-white border-r border-stone-200 py-6 px-3 flex flex-col gap-1 overflow-y-auto z-50">
+    <a href="index.html" class="text-xs font-bold text-stone-900 px-2 py-1.5 mb-2">🏸 Snobaddy Mockups</a>
+    <a href="auth-flow.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">🔐 Auth Flow</a>
+    <a href="account-linking.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">🔗 Account Linking</a>
+    <a href="sessions.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">🏸 Sessions</a>
+    <a href="players-leaderboard.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">👥 Players & Leaderboard</a>
+    <a href="finals-setup.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">🏆 Finals Setup</a>
+    <a href="finals-matchday.html" class="text-xs px-2 py-1.5 rounded-lg bg-sky-50 text-sky-700 font-semibold">⚔️ Finals Match Day</a>
+  </div>
+
+  <!-- Main content -->
+  <div class="ml-48 flex flex-col items-center py-8">
+    <h1 class="text-xl font-bold text-stone-900 mb-1">Finals Match Day</h1>
+    <p class="text-sm text-stone-500 mb-4">Fixed partner, round robin, standings, playoffs, finals series</p>
+
+    <!-- Step buttons -->
+    <div class="flex gap-2 mb-6 flex-wrap justify-center max-w-2xl">
+      <button id="btn-0" onclick="goTo(0)" class="px-3 py-1.5 text-xs rounded-full bg-stone-900 text-white">1. Pair Config</button>
+      <button id="btn-1" onclick="goTo(1)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">2. Round Robin</button>
+      <button id="btn-2" onclick="goTo(2)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">3. Group Table</button>
+      <button id="btn-3" onclick="goTo(3)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">4. Rotating</button>
+      <button id="btn-4" onclick="goTo(4)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">5. Individual</button>
+      <button id="btn-5" onclick="goTo(5)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">6. Best-of-3</button>
+    </div>
+
+    <!-- Phone frame -->
+    <div class="w-[390px] h-[844px] rounded-3xl border-4 border-stone-400 shadow-2xl bg-stone-50 overflow-hidden flex flex-col">
+
+      <!-- Step 1: Pair Configurator -->
+      <div class="step active">
+        <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🏸</span>
+            <div class="leading-tight">
+              <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+              <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+            <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-3">
+            <div class="flex items-center justify-between mb-1">
+              <h2 class="text-base font-bold text-stone-900">Group A — Pairs</h2>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-100 text-sky-700">Day 1</span>
+            </div>
+            <p class="text-xs text-stone-500 mb-4">Fixed Partner round robin</p>
+
+            <div class="grid grid-cols-2 gap-2 mb-4">
+              <div class="bg-white border-2 border-sky-200 rounded-xl shadow-sm p-3 text-center">
+                <p class="text-xs font-bold text-stone-900">Pair 1</p>
+                <p class="text-sm font-semibold text-sky-700 mt-1">Ajay</p>
+                <p class="text-[10px] text-stone-400">&</p>
+                <p class="text-sm font-semibold text-sky-700">Deepa</p>
+              </div>
+              <div class="bg-white border-2 border-amber-200 rounded-xl shadow-sm p-3 text-center">
+                <p class="text-xs font-bold text-stone-900">Pair 2</p>
+                <p class="text-sm font-semibold text-amber-700 mt-1">Arjun</p>
+                <p class="text-[10px] text-stone-400">&</p>
+                <p class="text-sm font-semibold text-amber-700">Gautham</p>
+              </div>
+              <div class="bg-white border-2 border-green-200 rounded-xl shadow-sm p-3 text-center">
+                <p class="text-xs font-bold text-stone-900">Pair 3</p>
+                <p class="text-sm font-semibold text-green-700 mt-1">Karthik</p>
+                <p class="text-[10px] text-stone-400">&</p>
+                <p class="text-sm font-semibold text-green-700">Mani</p>
+              </div>
+              <div class="bg-white border-2 border-purple-200 rounded-xl shadow-sm p-3 text-center">
+                <p class="text-xs font-bold text-stone-900">Pair 4</p>
+                <p class="text-sm font-semibold text-purple-700 mt-1">Priya</p>
+                <p class="text-[10px] text-stone-400">&</p>
+                <p class="text-sm font-semibold text-purple-700">Ravi</p>
+              </div>
+              <div class="bg-white border-2 border-rose-200 rounded-xl shadow-sm p-3 text-center col-span-2">
+                <p class="text-xs font-bold text-stone-900">Pair 5</p>
+                <p class="text-sm font-semibold text-rose-700 mt-1">Sanjay & Venkat</p>
+              </div>
+            </div>
+
+            <button class="w-full py-3 bg-stone-900 text-white text-sm font-semibold rounded-xl">Lock Pairs</button>
+          </div>
+        </div>
+
+        <nav class="h-14 bg-white border-t border-stone-100 flex items-center justify-around shrink-0">
+          <div class="flex flex-col items-center gap-0.5 text-sky-600"><span class="text-lg">🏸</span><span class="text-[10px] font-semibold">Session</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">👥</span><span class="text-[10px]">Players</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">🏆</span><span class="text-[10px]">Leaderboard</span></div>
+        </nav>
+      </div>
+
+      <!-- Step 2: Round Robin matches -->
+      <div class="step">
+        <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🏸</span>
+            <div class="leading-tight">
+              <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+              <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+            <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-3">
+            <h2 class="text-base font-bold text-stone-900 mb-1">Group A — Round Robin</h2>
+            <p class="text-xs text-stone-500 mb-3">Match 3 of 10</p>
+
+            <div class="space-y-3">
+              <!-- Completed match -->
+              <div class="bg-white border border-green-200 rounded-xl shadow-sm p-3">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-[10px] text-stone-400">Match 1</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-teal-50 text-teal-600">Done</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-bold text-green-700">Ajay & Deepa</p>
+                    <p class="text-lg font-bold text-green-700">21</p>
+                  </div>
+                  <span class="text-xs text-stone-300 px-2">vs</span>
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-medium text-stone-500">Arjun & Gautham</p>
+                    <p class="text-lg font-bold text-stone-400">15</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Completed match -->
+              <div class="bg-white border border-green-200 rounded-xl shadow-sm p-3">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-[10px] text-stone-400">Match 2</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-teal-50 text-teal-600">Done</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-bold text-green-700">Karthik & Mani</p>
+                    <p class="text-lg font-bold text-green-700">21</p>
+                  </div>
+                  <span class="text-xs text-stone-300 px-2">vs</span>
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-medium text-stone-500">Sanjay & Venkat</p>
+                    <p class="text-lg font-bold text-stone-400">12</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Active match -->
+              <div class="bg-white border-2 border-sky-300 rounded-xl shadow-sm p-3">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-[10px] text-stone-400">Match 3</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-sky-100 text-sky-700">In Progress</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-semibold text-stone-900">Ajay & Deepa</p>
+                    <input type="number" placeholder="—" class="w-12 text-center text-lg font-bold border border-stone-200 rounded-lg py-1 mx-auto mt-1 block focus:outline-none focus:ring-2 focus:ring-sky-400">
+                  </div>
+                  <span class="text-xs text-stone-300 px-2">vs</span>
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-semibold text-stone-900">Karthik & Mani</p>
+                    <input type="number" placeholder="—" class="w-12 text-center text-lg font-bold border border-stone-200 rounded-lg py-1 mx-auto mt-1 block focus:outline-none focus:ring-2 focus:ring-sky-400">
+                  </div>
+                </div>
+                <button class="w-full mt-2 py-2 bg-sky-600 text-white text-xs font-semibold rounded-lg">Record</button>
+              </div>
+
+              <!-- Upcoming match -->
+              <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3 opacity-60">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-[10px] text-stone-400">Match 4</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-stone-100 text-stone-500">Upcoming</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <p class="text-xs text-stone-500 flex-1 text-center">Priya & Ravi</p>
+                  <span class="text-xs text-stone-300 px-2">vs</span>
+                  <p class="text-xs text-stone-500 flex-1 text-center">Sanjay & Venkat</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav class="h-14 bg-white border-t border-stone-100 flex items-center justify-around shrink-0">
+          <div class="flex flex-col items-center gap-0.5 text-sky-600"><span class="text-lg">🏸</span><span class="text-[10px] font-semibold">Session</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">👥</span><span class="text-[10px]">Players</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">🏆</span><span class="text-[10px]">Leaderboard</span></div>
+        </nav>
+      </div>
+
+      <!-- Step 3: Group standings -->
+      <div class="step">
+        <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🏸</span>
+            <div class="leading-tight">
+              <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+              <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+            <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-3">
+            <h2 class="text-base font-bold text-stone-900 mb-3">Group A — Standings</h2>
+
+            <div class="bg-white border border-stone-100 rounded-xl shadow-sm overflow-hidden mb-4">
+              <table class="w-full text-xs">
+                <thead>
+                  <tr class="border-b border-stone-100 bg-stone-50">
+                    <th class="text-left py-2 px-3 text-stone-500 font-medium w-6">#</th>
+                    <th class="text-left py-2 px-3 text-stone-500 font-medium">Pair</th>
+                    <th class="text-center py-2 px-2 text-stone-500 font-medium">W</th>
+                    <th class="text-center py-2 px-2 text-stone-500 font-medium">L</th>
+                    <th class="text-center py-2 px-2 text-stone-500 font-medium">Pts</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-stone-50 bg-green-50">
+                    <td class="py-2.5 px-3 font-bold text-green-700">1</td>
+                    <td class="py-2.5 px-3 font-bold text-stone-900">Ajay & Deepa</td>
+                    <td class="py-2.5 px-2 text-center font-bold text-green-700">4</td>
+                    <td class="py-2.5 px-2 text-center text-orange-600">0</td>
+                    <td class="py-2.5 px-2 text-center font-bold">8</td>
+                  </tr>
+                  <tr class="border-b border-stone-50 bg-green-50/50">
+                    <td class="py-2.5 px-3 font-bold text-green-700">2</td>
+                    <td class="py-2.5 px-3 font-bold text-stone-900">Karthik & Mani</td>
+                    <td class="py-2.5 px-2 text-center font-bold text-green-700">3</td>
+                    <td class="py-2.5 px-2 text-center text-orange-600">1</td>
+                    <td class="py-2.5 px-2 text-center font-bold">6</td>
+                  </tr>
+                  <tr class="border-b border-stone-50">
+                    <td class="py-2.5 px-3 text-stone-400">3</td>
+                    <td class="py-2.5 px-3 font-medium text-stone-900">Priya & Ravi</td>
+                    <td class="py-2.5 px-2 text-center text-green-700">2</td>
+                    <td class="py-2.5 px-2 text-center text-orange-600">2</td>
+                    <td class="py-2.5 px-2 text-center">4</td>
+                  </tr>
+                  <tr class="border-b border-stone-50">
+                    <td class="py-2.5 px-3 text-stone-400">4</td>
+                    <td class="py-2.5 px-3 font-medium text-stone-900">Arjun & Gautham</td>
+                    <td class="py-2.5 px-2 text-center text-green-700">1</td>
+                    <td class="py-2.5 px-2 text-center text-orange-600">3</td>
+                    <td class="py-2.5 px-2 text-center">2</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 text-stone-400">5</td>
+                    <td class="py-2.5 px-3 font-medium text-stone-900">Sanjay & Venkat</td>
+                    <td class="py-2.5 px-2 text-center text-green-700">0</td>
+                    <td class="py-2.5 px-2 text-center text-orange-600">4</td>
+                    <td class="py-2.5 px-2 text-center">0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+              <p class="text-xs text-green-700 font-medium">Top 2 advance to Playoffs</p>
+            </div>
+          </div>
+        </div>
+
+        <nav class="h-14 bg-white border-t border-stone-100 flex items-center justify-around shrink-0">
+          <div class="flex flex-col items-center gap-0.5 text-sky-600"><span class="text-lg">🏸</span><span class="text-[10px] font-semibold">Session</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">👥</span><span class="text-[10px]">Players</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">🏆</span><span class="text-[10px]">Leaderboard</span></div>
+        </nav>
+      </div>
+
+      <!-- Step 4: Rotating partners (Playoffs) -->
+      <div class="step">
+        <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🏸</span>
+            <div class="leading-tight">
+              <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+              <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+            <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-3">
+            <div class="flex items-center justify-between mb-1">
+              <h2 class="text-base font-bold text-stone-900">Playoffs — Rotating</h2>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-100 text-sky-700">Day 2</span>
+            </div>
+            <p class="text-xs text-stone-500 mb-3">Partners rotate each round</p>
+
+            <!-- Round 1 -->
+            <h3 class="text-xs font-semibold text-stone-900 mb-2 uppercase tracking-wide">Round 1</h3>
+            <div class="space-y-2 mb-4">
+              <div class="bg-white border border-green-200 rounded-xl shadow-sm p-3">
+                <div class="flex items-center justify-between">
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-bold text-green-700">Ajay & Mani</p>
+                    <p class="text-lg font-bold text-green-700">21</p>
+                  </div>
+                  <span class="text-xs text-stone-300 px-2">vs</span>
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-medium text-stone-500">Rahul & Nandini</p>
+                    <p class="text-lg font-bold text-stone-400">17</p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white border border-green-200 rounded-xl shadow-sm p-3">
+                <div class="flex items-center justify-between">
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-medium text-stone-500">Deepa & Kiran</p>
+                    <p class="text-lg font-bold text-stone-400">14</p>
+                  </div>
+                  <span class="text-xs text-stone-300 px-2">vs</span>
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-bold text-green-700">Karthik & Priya</p>
+                    <p class="text-lg font-bold text-green-700">21</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Round 2 -->
+            <h3 class="text-xs font-semibold text-stone-900 mb-2 uppercase tracking-wide">Round 2</h3>
+            <div class="space-y-2 mb-4">
+              <div class="bg-white border-2 border-sky-300 rounded-xl shadow-sm p-3">
+                <div class="flex items-center justify-between">
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-semibold text-stone-900">Ajay & Karthik</p>
+                    <input type="number" placeholder="—" class="w-12 text-center text-lg font-bold border border-stone-200 rounded-lg py-1 mx-auto mt-1 block">
+                  </div>
+                  <span class="text-xs text-stone-300 px-2">vs</span>
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-semibold text-stone-900">Mani & Rahul</p>
+                    <input type="number" placeholder="—" class="w-12 text-center text-lg font-bold border border-stone-200 rounded-lg py-1 mx-auto mt-1 block">
+                  </div>
+                </div>
+                <button class="w-full mt-2 py-2 bg-sky-600 text-white text-xs font-semibold rounded-lg">Record</button>
+              </div>
+            </div>
+
+            <!-- Round 3 -->
+            <h3 class="text-xs font-semibold text-stone-900 mb-2 uppercase tracking-wide">Round 3</h3>
+            <div class="bg-white border border-stone-100 rounded-xl shadow-sm p-3 opacity-60">
+              <p class="text-xs text-stone-400 text-center">Pairs TBD based on Round 2 results</p>
+            </div>
+          </div>
+        </div>
+
+        <nav class="h-14 bg-white border-t border-stone-100 flex items-center justify-around shrink-0">
+          <div class="flex flex-col items-center gap-0.5 text-sky-600"><span class="text-lg">🏸</span><span class="text-[10px] font-semibold">Session</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">👥</span><span class="text-[10px]">Players</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">🏆</span><span class="text-[10px]">Leaderboard</span></div>
+        </nav>
+      </div>
+
+      <!-- Step 5: Individual standings -->
+      <div class="step">
+        <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🏸</span>
+            <div class="leading-tight">
+              <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+              <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+            <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-3">
+            <h2 class="text-base font-bold text-stone-900 mb-3">Playoffs — Individual Standings</h2>
+
+            <div class="bg-white border border-stone-100 rounded-xl shadow-sm overflow-hidden mb-4">
+              <table class="w-full text-xs">
+                <thead>
+                  <tr class="border-b border-stone-100 bg-stone-50">
+                    <th class="text-left py-2 px-3 text-stone-500 font-medium w-6">#</th>
+                    <th class="text-left py-2 px-3 text-stone-500 font-medium">Player</th>
+                    <th class="text-center py-2 px-2 text-stone-500 font-medium">W</th>
+                    <th class="text-center py-2 px-2 text-stone-500 font-medium">L</th>
+                    <th class="text-center py-2 px-2 text-stone-500 font-medium">Pts</th>
+                    <th class="text-center py-2 px-2 text-stone-500 font-medium"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-stone-50 bg-green-50">
+                    <td class="py-2.5 px-3 font-bold text-green-700">1</td>
+                    <td class="py-2.5 px-3 font-bold text-stone-900">Mani</td>
+                    <td class="py-2.5 px-2 text-center font-bold text-green-700">5</td>
+                    <td class="py-2.5 px-2 text-center text-orange-600">1</td>
+                    <td class="py-2.5 px-2 text-center font-bold">10</td>
+                    <td class="py-2.5 px-2 text-center"><span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-green-100 text-green-700">Advance</span></td>
+                  </tr>
+                  <tr class="border-b border-stone-50 bg-green-50">
+                    <td class="py-2.5 px-3 font-bold text-green-700">2</td>
+                    <td class="py-2.5 px-3 font-bold text-stone-900">Ajay</td>
+                    <td class="py-2.5 px-2 text-center font-bold text-green-700">4</td>
+                    <td class="py-2.5 px-2 text-center text-orange-600">2</td>
+                    <td class="py-2.5 px-2 text-center font-bold">8</td>
+                    <td class="py-2.5 px-2 text-center"><span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-green-100 text-green-700">Advance</span></td>
+                  </tr>
+                  <tr class="border-b border-stone-50 bg-green-50/50">
+                    <td class="py-2.5 px-3 font-bold text-green-700">3</td>
+                    <td class="py-2.5 px-3 font-bold text-stone-900">Karthik</td>
+                    <td class="py-2.5 px-2 text-center font-bold text-green-700">4</td>
+                    <td class="py-2.5 px-2 text-center text-orange-600">2</td>
+                    <td class="py-2.5 px-2 text-center font-bold">8</td>
+                    <td class="py-2.5 px-2 text-center"><span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-green-100 text-green-700">Advance</span></td>
+                  </tr>
+                  <tr class="border-b border-stone-50 bg-green-50/50">
+                    <td class="py-2.5 px-3 font-bold text-green-700">4</td>
+                    <td class="py-2.5 px-3 font-bold text-stone-900">Rahul</td>
+                    <td class="py-2.5 px-2 text-center font-bold text-green-700">3</td>
+                    <td class="py-2.5 px-2 text-center text-orange-600">3</td>
+                    <td class="py-2.5 px-2 text-center font-bold">6</td>
+                    <td class="py-2.5 px-2 text-center"><span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-green-100 text-green-700">Advance</span></td>
+                  </tr>
+                  <tr class="border-b border-stone-50">
+                    <td class="py-2.5 px-3 text-stone-400">5</td>
+                    <td class="py-2.5 px-3 font-medium text-stone-500">Deepa</td>
+                    <td class="py-2.5 px-2 text-center text-green-700">2</td>
+                    <td class="py-2.5 px-2 text-center text-orange-600">4</td>
+                    <td class="py-2.5 px-2 text-center">4</td>
+                    <td class="py-2.5 px-2"></td>
+                  </tr>
+                  <tr class="border-b border-stone-50">
+                    <td class="py-2.5 px-3 text-stone-400">6</td>
+                    <td class="py-2.5 px-3 font-medium text-stone-500">Priya</td>
+                    <td class="py-2.5 px-2 text-center text-green-700">1</td>
+                    <td class="py-2.5 px-2 text-center text-orange-600">5</td>
+                    <td class="py-2.5 px-2 text-center">2</td>
+                    <td class="py-2.5 px-2"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="bg-sky-50 border border-sky-200 rounded-xl p-3 text-center">
+              <p class="text-xs text-sky-700 font-medium">Top 4 advance to Best-of-3 Finals</p>
+            </div>
+          </div>
+        </div>
+
+        <nav class="h-14 bg-white border-t border-stone-100 flex items-center justify-around shrink-0">
+          <div class="flex flex-col items-center gap-0.5 text-sky-600"><span class="text-lg">🏸</span><span class="text-[10px] font-semibold">Session</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">👥</span><span class="text-[10px]">Players</span></div>
+          <div class="flex flex-col items-center gap-0.5 text-stone-400"><span class="text-lg">🏆</span><span class="text-[10px]">Leaderboard</span></div>
+        </nav>
+      </div>
+
+      <!-- Step 6: Best-of-3 Finals -->
+      <div class="step">
+        <header class="h-14 bg-white border-b border-stone-100 flex items-center justify-between px-4 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🏸</span>
+            <div class="leading-tight">
+              <span class="font-bold text-stone-900 text-sm">Serve Snoqualmie</span>
+              <span class="block text-[10px] uppercase tracking-wide text-stone-500 -mt-0.5">Badminton</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-600 cursor-pointer">Logout</span>
+            <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">KR</div>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-4 py-3">
+            <h2 class="text-base font-bold text-stone-900 mb-1">Best-of-3 Finals</h2>
+            <p class="text-xs text-stone-500 mb-4">Mani & Ajay vs Karthik & Rahul</p>
+
+            <!-- Series timeline -->
+            <div class="space-y-3 mb-6">
+              <!-- Game 1 -->
+              <div class="bg-white border border-green-200 rounded-xl shadow-sm p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-semibold text-stone-900">Game 1</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-teal-50 text-teal-600">Done</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-bold text-green-700">Mani & Ajay</p>
+                    <p class="text-2xl font-bold text-green-700">21</p>
+                  </div>
+                  <span class="text-sm text-stone-300 px-3">—</span>
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-medium text-stone-500">Karthik & Rahul</p>
+                    <p class="text-2xl font-bold text-stone-400">18</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Game 2 -->
+              <div class="bg-white border border-green-200 rounded-xl shadow-sm p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-semibold text-stone-900">Game 2</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-teal-50 text-teal-600">Done</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-medium text-stone-500">Mani & Ajay</p>
+                    <p class="text-2xl font-bold text-stone-400">15</p>
+                  </div>
+                  <span class="text-sm text-stone-300 px-3">—</span>
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-bold text-green-700">Karthik & Rahul</p>
+                    <p class="text-2xl font-bold text-green-700">21</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Game 3 -->
+              <div class="bg-white border border-green-200 rounded-xl shadow-sm p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-semibold text-stone-900">Game 3 (Decider)</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-teal-50 text-teal-600">Done</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-bold text-green-700">Mani & Ajay</p>
+                    <p class="text-2xl font-bold text-green-700">21</p>
+                  </div>
+                  <span class="text-sm text-stone-300 px-3">—</span>
+                  <div class="text-center flex-1">
+                    <p class="text-xs font-medium text-stone-500">Karthik & Rahul</p>
+                    <p class="text-2xl font-bold text-stone-400">16</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Winner celebration -->
+            <div class="bg-gradient-to-b from-amber-50 to-amber-100 border-2 border-amber-300 rounded-2xl p-6 text-center">
+              <span class="text-4xl">🏆</span>
+              <h3 class="text-lg font-bold text-stone-900 mt-2">Champions!</h3>
+              <p class="text-xl font-bold text-amber-800 mt-1">Mani & Ajay</p>
+              <p class="text-xs text-amber-700 mt-1">Series: 2-1</p>
+              <div class="flex justify-center gap-1 mt-3">
+                <span class="text-lg">🎉</span>
+                <span class="text-lg">🏸</span>
+                <span class="text-lg">🎉</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 flex justify-between items-center border-t border-stone-100">
+          <button onclick="goTo(4)" class="text-xs text-stone-400 font-medium">← Back</button>
+          <a href="index.html" class="text-xs text-sky-600 font-medium">All Mockups →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let current = 0;
+    const steps = document.querySelectorAll('.step');
+    const btns = document.querySelectorAll('[id^="btn-"]');
+    function goTo(n) {
+      steps.forEach(s => s.classList.remove('active'));
+      btns.forEach(b => { b.className = b.className.replace(/bg-stone-900 text-white/, 'bg-white text-stone-700 border border-stone-300'); });
+      steps[n].classList.add('active');
+      btns[n].className = btns[n].className.replace(/bg-white text-stone-700 border border-stone-300/, 'bg-stone-900 text-white');
+      current = n;
+    }
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' && current < steps.length - 1) goTo(current + 1);
+      if (e.key === 'ArrowLeft' && current > 0) goTo(current - 1);
+    });
+  </script>
+</body>
+</html>

@@ -1,186 +1,309 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Auth Flow — Snobaddy Mockup</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auth Flow — Snobaddy Mockups</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    input::placeholder { color: #a8a29e; }
+    .step { display: none; }
+    .step.active { display: flex; flex-direction: column; height: 100%; }
   </style>
 </head>
-<body class="bg-stone-200 min-h-screen">
+<body class="bg-stone-100 min-h-screen">
 
-<!-- Sidebar TOC -->
-<div class="fixed left-0 top-0 bottom-0 w-48 bg-white border-r border-stone-200 py-6 px-3 flex flex-col gap-1 overflow-y-auto z-50">
-  <a href="index.html" class="text-xs font-bold text-stone-900 px-2 py-1.5 mb-2">🏸 Snobaddy Mockups</a>
-  <a href="auth-flow.html" class="bg-sky-50 text-sky-700 font-semibold text-xs px-2 py-1.5 rounded-lg">🔐 Auth Flow</a>
-  <a href="account-linking.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🔗 Account Linking</a>
-  <a href="sessions.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🏸 Sessions</a>
-  <a href="players-leaderboard.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">👥 Players & Leaderboard</a>
-  <a href="finals-setup.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">🏆 Finals Setup</a>
-  <a href="finals-matchday.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Fixed Partner)</a>
-  <a href="finals-matchday-playoffs.html" class="text-stone-600 hover:bg-stone-50 hover:text-stone-900 text-xs px-2 py-1.5 rounded-lg">⚔️ Finals Match Day (Playoffs)</a>
-</div>
-
-<div class="ml-48 flex flex-col items-center py-8">
-
-  <!-- Title bar -->
-  <div class="mb-6 text-center">
-    <h1 class="text-2xl font-bold text-stone-800 mb-3">Auth Flow</h1>
-    <div class="flex gap-2 flex-wrap justify-center">
-      <button onclick="goTo(0)" id="btn-0" class="px-3 py-1.5 text-sm rounded-lg bg-stone-900 text-white font-medium">0 Login</button>
-      <button onclick="goTo(1)" id="btn-1" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">1 Sign Up</button>
-      <button onclick="goTo(2)" id="btn-2" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">2 Check Email</button>
-      <button onclick="goTo(3)" id="btn-3" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">3 Reset PW</button>
-      <button onclick="goTo(4)" id="btn-4" class="px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300">4 Reset Sent</button>
-    </div>
+  <!-- Sidebar -->
+  <div class="fixed left-0 top-0 bottom-0 w-48 bg-white border-r border-stone-200 py-6 px-3 flex flex-col gap-1 overflow-y-auto z-50">
+    <a href="index.html" class="text-xs font-bold text-stone-900 px-2 py-1.5 mb-2">🏸 Snobaddy Mockups</a>
+    <a href="auth-flow.html" class="text-xs px-2 py-1.5 rounded-lg bg-sky-50 text-sky-700 font-semibold">🔐 Auth Flow</a>
+    <a href="account-linking.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">🔗 Account Linking</a>
+    <a href="sessions.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">🏸 Sessions</a>
+    <a href="players-leaderboard.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">👥 Players & Leaderboard</a>
+    <a href="finals-setup.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">🏆 Finals Setup</a>
+    <a href="finals-matchday.html" class="text-xs px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-600">⚔️ Finals Match Day</a>
   </div>
 
-  <!-- Phone frame -->
-  <div class="w-[390px] min-h-[700px] bg-stone-50 rounded-3xl border-4 border-stone-400 shadow-2xl overflow-hidden relative">
+  <!-- Main content -->
+  <div class="ml-48 flex flex-col items-center py-8">
+    <h1 class="text-xl font-bold text-stone-900 mb-1">Auth Flow</h1>
+    <p class="text-sm text-stone-500 mb-4">Login, registration, password reset, onboarding</p>
 
-    <!-- Step 0: Login -->
-    <div id="step-0" class="absolute inset-0 p-8 flex flex-col">
-      <!-- Logo -->
-      <div class="text-center mt-12 mb-8">
-        <div class="text-5xl mb-3">&#127992;</div>
-        <div class="text-2xl font-bold text-stone-900">Serve Snoqualmie</div>
-        <div class="text-sm uppercase tracking-widest text-stone-500 mt-1">Badminton</div>
-        <div class="text-sm text-stone-400 mt-3">Track sessions, matches &amp; stats</div>
-      </div>
-
-      <!-- Google button -->
-      <button class="w-full flex items-center justify-center gap-3 bg-white border border-stone-200 rounded-xl py-3 px-4 font-medium text-stone-700 shadow-sm hover:shadow-md transition mb-5">
-        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.01 24.01 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-        Continue with Google
-      </button>
-
-      <!-- Divider -->
-      <div class="flex items-center gap-3 mb-5">
-        <div class="flex-1 h-px bg-stone-200"></div>
-        <span class="text-sm text-stone-400">or</span>
-        <div class="flex-1 h-px bg-stone-200"></div>
-      </div>
-
-      <!-- Email / Password -->
-      <input type="email" value="sahit@gmail.com" class="w-full border border-stone-200 rounded-xl px-4 py-3 text-stone-800 mb-3 bg-white focus:outline-none focus:ring-2 focus:ring-stone-300" />
-      <input type="password" placeholder="Password" class="w-full border border-stone-200 rounded-xl px-4 py-3 text-stone-800 mb-4 bg-white focus:outline-none focus:ring-2 focus:ring-stone-300" />
-
-      <button class="w-full bg-stone-900 text-white rounded-xl py-3 font-medium hover:bg-stone-800 transition mb-4">Sign in</button>
-
-      <div class="text-center">
-        <a href="#" onclick="goTo(3); return false;" class="text-sm text-sky-600 hover:underline">Forgot password?</a>
-      </div>
-
-      <div class="mt-auto text-center pb-4">
-        <span class="text-sm text-stone-400">Don't have an account? </span>
-        <a href="#" onclick="goTo(1); return false;" class="text-sm text-sky-600 hover:underline font-medium">Sign up</a>
-      </div>
+    <!-- Step buttons -->
+    <div class="flex gap-2 mb-6 flex-wrap justify-center">
+      <button id="btn-0" onclick="goTo(0)" class="px-3 py-1.5 text-xs rounded-full bg-stone-900 text-white">1. Sign In</button>
+      <button id="btn-1" onclick="goTo(1)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">2. Create Account</button>
+      <button id="btn-2" onclick="goTo(2)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">3. Reset Password</button>
+      <button id="btn-3" onclick="goTo(3)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">4. Onboarding</button>
+      <button id="btn-4" onclick="goTo(4)" class="px-3 py-1.5 text-xs rounded-full bg-white text-stone-700 border border-stone-300">5. Redirect</button>
     </div>
 
-    <!-- Step 1: Email Sign-Up -->
-    <div id="step-1" class="absolute inset-0 p-8 flex flex-col hidden">
-      <!-- Logo -->
-      <div class="text-center mt-12 mb-8">
-        <div class="text-5xl mb-3">&#127992;</div>
-        <div class="text-2xl font-bold text-stone-900">Serve Snoqualmie</div>
-        <div class="text-sm uppercase tracking-widest text-stone-500 mt-1">Badminton</div>
+    <!-- Phone frame -->
+    <div class="w-[390px] h-[844px] rounded-3xl border-4 border-stone-400 shadow-2xl bg-stone-50 overflow-hidden flex flex-col">
+
+      <!-- Step 1: Sign In -->
+      <div class="step active">
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-6 pt-16 pb-8">
+            <div class="text-center mb-8">
+              <span class="text-4xl">🏸</span>
+              <h1 class="text-xl font-bold text-stone-900 mt-2">Serve Snoqualmie</h1>
+              <p class="text-xs uppercase tracking-wide text-stone-500 mt-0.5">Badminton</p>
+            </div>
+
+            <!-- Mode toggle -->
+            <div class="bg-stone-100 rounded-xl p-1 flex mb-8">
+              <button class="flex-1 py-2 text-sm font-semibold bg-white rounded-lg shadow-sm text-stone-900">Sign in</button>
+              <button class="flex-1 py-2 text-sm text-stone-500">Create account</button>
+            </div>
+
+            <!-- Google SSO -->
+            <button class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-stone-300 rounded-xl shadow-sm hover:bg-stone-50">
+              <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              <span class="text-sm font-medium text-stone-700">Continue with Google</span>
+            </button>
+
+            <!-- Divider -->
+            <div class="flex items-center gap-4 my-6">
+              <div class="flex-1 h-px bg-stone-200"></div>
+              <span class="text-xs text-stone-400">or</span>
+              <div class="flex-1 h-px bg-stone-200"></div>
+            </div>
+
+            <!-- Email/Password -->
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs font-medium text-stone-700 mb-1 block">Email</label>
+                <input type="email" placeholder="you@example.com" class="w-full px-3 py-2.5 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white">
+              </div>
+              <div>
+                <label class="text-xs font-medium text-stone-700 mb-1 block">Password</label>
+                <input type="password" placeholder="••••••••" class="w-full px-3 py-2.5 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white">
+              </div>
+            </div>
+
+            <button class="w-full mt-6 py-3 bg-stone-900 text-white text-sm font-semibold rounded-xl">Sign in</button>
+
+            <div class="text-center mt-4">
+              <a href="#" class="text-xs text-stone-400 hover:text-stone-600">Forgot password?</a>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 flex justify-end">
+          <button onclick="goTo(1)" class="text-xs text-sky-600 font-medium">Next →</button>
+        </div>
       </div>
 
-      <input type="text" value="Sahit Reddy" class="w-full border border-stone-200 rounded-xl px-4 py-3 text-stone-800 mb-3 bg-white focus:outline-none focus:ring-2 focus:ring-stone-300" />
-      <input type="email" value="sahit@gmail.com" class="w-full border border-stone-200 rounded-xl px-4 py-3 text-stone-800 mb-3 bg-white focus:outline-none focus:ring-2 focus:ring-stone-300" />
-      <input type="password" placeholder="Password" class="w-full border border-stone-200 rounded-xl px-4 py-3 text-stone-800 mb-4 bg-white focus:outline-none focus:ring-2 focus:ring-stone-300" />
+      <!-- Step 2: Create Account -->
+      <div class="step">
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-6 pt-16 pb-8">
+            <div class="text-center mb-8">
+              <span class="text-4xl">🏸</span>
+              <h1 class="text-xl font-bold text-stone-900 mt-2">Serve Snoqualmie</h1>
+              <p class="text-xs uppercase tracking-wide text-stone-500 mt-0.5">Badminton</p>
+            </div>
 
-      <button onclick="goTo(2)" class="w-full bg-stone-900 text-white rounded-xl py-3 font-medium hover:bg-stone-800 transition mb-4">Create account</button>
+            <div class="bg-stone-100 rounded-xl p-1 flex mb-8">
+              <button class="flex-1 py-2 text-sm text-stone-500">Sign in</button>
+              <button class="flex-1 py-2 text-sm font-semibold bg-white rounded-lg shadow-sm text-stone-900">Create account</button>
+            </div>
 
-      <div class="mt-auto text-center pb-4">
-        <span class="text-sm text-stone-400">Already have an account? </span>
-        <a href="#" onclick="goTo(0); return false;" class="text-sm text-sky-600 hover:underline font-medium">Sign in</a>
+            <button class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-stone-300 rounded-xl shadow-sm">
+              <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              <span class="text-sm font-medium text-stone-700">Continue with Google</span>
+            </button>
+
+            <div class="flex items-center gap-4 my-6">
+              <div class="flex-1 h-px bg-stone-200"></div>
+              <span class="text-xs text-stone-400">or</span>
+              <div class="flex-1 h-px bg-stone-200"></div>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs font-medium text-stone-700 mb-1 block">Display name</label>
+                <input type="text" placeholder="Karthik R" class="w-full px-3 py-2.5 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white">
+              </div>
+              <div>
+                <label class="text-xs font-medium text-stone-700 mb-1 block">Email</label>
+                <input type="email" placeholder="you@example.com" class="w-full px-3 py-2.5 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white">
+              </div>
+              <div>
+                <label class="text-xs font-medium text-stone-700 mb-1 block">Password</label>
+                <input type="password" placeholder="••••••••" class="w-full px-3 py-2.5 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white">
+              </div>
+            </div>
+
+            <button class="w-full mt-6 py-3 bg-stone-900 text-white text-sm font-semibold rounded-xl">Create account</button>
+          </div>
+        </div>
+        <div class="p-4 flex justify-between">
+          <button onclick="goTo(0)" class="text-xs text-stone-400 font-medium">← Back</button>
+          <button onclick="goTo(2)" class="text-xs text-sky-600 font-medium">Next →</button>
+        </div>
       </div>
-    </div>
 
-    <!-- Step 2: Check Email -->
-    <div id="step-2" class="absolute inset-0 p-8 flex flex-col items-center justify-center hidden">
-      <div class="text-6xl mb-6">&#128231;</div>
-      <h2 class="text-2xl font-bold text-stone-900 mb-3">Check your email</h2>
-      <p class="text-stone-500 text-center text-sm leading-relaxed mb-8">We sent a confirmation link to<br /><span class="font-medium text-stone-700">sahit@gmail.com</span></p>
-      <a href="#" onclick="goTo(0); return false;" class="text-sm text-sky-600 hover:underline font-medium">Back to sign in</a>
-    </div>
+      <!-- Step 3: Password Reset -->
+      <div class="step">
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-6 pt-16 pb-8">
+            <div class="text-center mb-8">
+              <span class="text-4xl">🔑</span>
+              <h1 class="text-xl font-bold text-stone-900 mt-2">Reset Password</h1>
+              <p class="text-sm text-stone-500 mt-1">Enter your email to receive a reset link</p>
+            </div>
 
-    <!-- Step 3: Password Reset -->
-    <div id="step-3" class="absolute inset-0 p-8 flex flex-col hidden">
-      <!-- Logo -->
-      <div class="text-center mt-12 mb-8">
-        <div class="text-5xl mb-3">&#127992;</div>
-        <div class="text-2xl font-bold text-stone-900">Serve Snoqualmie</div>
-        <div class="text-sm uppercase tracking-widest text-stone-500 mt-1">Badminton</div>
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs font-medium text-stone-700 mb-1 block">Email</label>
+                <input type="email" value="karthik@example.com" class="w-full px-3 py-2.5 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white">
+              </div>
+            </div>
+
+            <button class="w-full mt-6 py-3 bg-stone-900 text-white text-sm font-semibold rounded-xl">Send reset link</button>
+
+            <!-- Success message -->
+            <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+              <div class="flex items-start gap-2">
+                <span class="text-green-600 text-sm mt-0.5">&#10003;</span>
+                <div>
+                  <p class="text-sm font-medium text-green-800">Reset link sent!</p>
+                  <p class="text-xs text-green-600 mt-1">Check your inbox at karthik@example.com for a link to reset your password.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-center mt-6">
+              <a href="#" class="text-xs text-sky-600 hover:text-sky-700">← Back to sign in</a>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 flex justify-between">
+          <button onclick="goTo(1)" class="text-xs text-stone-400 font-medium">← Back</button>
+          <button onclick="goTo(3)" class="text-xs text-sky-600 font-medium">Next →</button>
+        </div>
       </div>
 
-      <h2 class="text-xl font-bold text-stone-900 mb-5">Reset your password</h2>
+      <!-- Step 4: Onboarding -->
+      <div class="step">
+        <div class="flex-1 overflow-y-auto">
+          <div class="px-6 pt-12 pb-8">
+            <div class="text-center mb-8">
+              <span class="text-4xl">👋</span>
+              <h1 class="text-xl font-bold text-stone-900 mt-2">Welcome, Karthik!</h1>
+              <p class="text-sm text-stone-500 mt-1">Pick your skill level</p>
+            </div>
 
-      <input type="email" value="sahit@gmail.com" class="w-full border border-stone-200 rounded-xl px-4 py-3 text-stone-800 mb-4 bg-white focus:outline-none focus:ring-2 focus:ring-stone-300" />
+            <div class="space-y-3">
+              <label class="flex items-center gap-3 p-4 bg-white border border-stone-200 rounded-xl cursor-pointer hover:border-sky-300">
+                <input type="radio" name="skill" class="accent-sky-600">
+                <div class="flex-1 flex items-center justify-between">
+                  <span class="text-stone-900 font-medium text-sm">Beginner</span>
+                  <div class="flex gap-0.5">
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-200"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-200"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-200"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-200"></span>
+                  </div>
+                </div>
+              </label>
+              <label class="flex items-center gap-3 p-4 bg-white border border-stone-200 rounded-xl cursor-pointer hover:border-sky-300">
+                <input type="radio" name="skill" class="accent-sky-600">
+                <div class="flex-1 flex items-center justify-between">
+                  <span class="text-stone-900 font-medium text-sm">Novice</span>
+                  <div class="flex gap-0.5">
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-200"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-200"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-200"></span>
+                  </div>
+                </div>
+              </label>
+              <label class="flex items-center gap-3 p-4 bg-white border border-sky-400 rounded-xl cursor-pointer ring-2 ring-sky-100">
+                <input type="radio" name="skill" class="accent-sky-600" checked>
+                <div class="flex-1 flex items-center justify-between">
+                  <span class="text-stone-900 font-medium text-sm">Intermediate</span>
+                  <div class="flex gap-0.5">
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-200"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-200"></span>
+                  </div>
+                </div>
+              </label>
+              <label class="flex items-center gap-3 p-4 bg-white border border-stone-200 rounded-xl cursor-pointer hover:border-sky-300">
+                <input type="radio" name="skill" class="accent-sky-600">
+                <div class="flex-1 flex items-center justify-between">
+                  <span class="text-stone-900 font-medium text-sm">Advanced</span>
+                  <div class="flex gap-0.5">
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-200"></span>
+                  </div>
+                </div>
+              </label>
+              <label class="flex items-center gap-3 p-4 bg-white border border-stone-200 rounded-xl cursor-pointer hover:border-sky-300">
+                <input type="radio" name="skill" class="accent-sky-600">
+                <div class="flex-1 flex items-center justify-between">
+                  <span class="text-stone-900 font-medium text-sm">Expert</span>
+                  <div class="flex gap-0.5">
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                    <span class="w-2 h-2 rounded-full bg-stone-900"></span>
+                  </div>
+                </div>
+              </label>
+            </div>
 
-      <button onclick="goTo(4)" class="w-full bg-stone-900 text-white rounded-xl py-3 font-medium hover:bg-stone-800 transition mb-6">Send reset link</button>
+            <button class="w-full mt-8 py-3 bg-stone-900 text-white text-sm font-semibold rounded-xl">Start Playing</button>
+          </div>
+        </div>
+        <div class="p-4 flex justify-between">
+          <button onclick="goTo(2)" class="text-xs text-stone-400 font-medium">← Back</button>
+          <button onclick="goTo(4)" class="text-xs text-sky-600 font-medium">Next →</button>
+        </div>
+      </div>
 
-      <a href="#" onclick="goTo(0); return false;" class="text-sm text-stone-400 hover:text-stone-600">&lt; Back to sign in</a>
+      <!-- Step 5: Redirect -->
+      <div class="step">
+        <div class="flex-1 overflow-y-auto flex items-center justify-center">
+          <div class="text-center px-6">
+            <div class="w-12 h-12 border-4 border-stone-200 border-t-sky-600 rounded-full animate-spin mx-auto"></div>
+            <p class="text-sm font-medium text-stone-700 mt-6">Setting up your profile...</p>
+            <p class="text-xs text-stone-400 mt-2">You'll be redirected in a moment</p>
+          </div>
+        </div>
+        <div class="p-4 flex justify-between items-center">
+          <button onclick="goTo(3)" class="text-xs text-stone-400 font-medium">← Back</button>
+          <a href="index.html" class="text-xs text-sky-600 font-medium">All Mockups →</a>
+        </div>
+      </div>
+
     </div>
-
-    <!-- Step 4: Reset Link Sent -->
-    <div id="step-4" class="absolute inset-0 p-8 flex flex-col items-center justify-center hidden">
-      <div class="text-6xl mb-6">&#9993;&#65039;</div>
-      <h2 class="text-2xl font-bold text-stone-900 mb-3">Reset link sent</h2>
-      <p class="text-stone-500 text-center text-sm leading-relaxed mb-8">Check your email for a password reset link.</p>
-      <a href="#" onclick="goTo(0); return false;" class="text-sm text-sky-600 hover:underline font-medium">Back to sign in</a>
-    </div>
-
-    <div id="step-nav"></div>
   </div>
 
   <script>
-    const totalSteps = 5;
-    let currentStep = 0;
-
-    function goTo(step) {
-      if (step < 0 || step >= totalSteps) return;
-      currentStep = step;
-      for (let i = 0; i < totalSteps; i++) {
-        document.getElementById('step-' + i).classList.toggle('hidden', i !== step);
-        const btn = document.getElementById('btn-' + i);
-        if (i === step) {
-          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-stone-900 text-white font-medium';
-        } else {
-          btn.className = 'px-3 py-1.5 text-sm rounded-lg bg-white text-stone-700 font-medium border border-stone-300';
-        }
-      }
-      updateNav();
+    let current = 0;
+    const steps = document.querySelectorAll('.step');
+    const btns = document.querySelectorAll('[id^="btn-"]');
+    function goTo(n) {
+      steps.forEach(s => s.classList.remove('active'));
+      btns.forEach(b => { b.className = b.className.replace(/bg-stone-900 text-white/, 'bg-white text-stone-700 border border-stone-300'); });
+      steps[n].classList.add('active');
+      btns[n].className = btns[n].className.replace(/bg-white text-stone-700 border border-stone-300/, 'bg-stone-900 text-white');
+      current = n;
     }
-
-    function updateNav() {
-      const nav = document.getElementById('step-nav');
-      if (!nav) return;
-      const isFirst = currentStep === 0;
-      const isLast = currentStep === totalSteps - 1;
-      nav.innerHTML = `
-        <div class="flex items-center justify-between px-4 py-3 border-t border-stone-100 bg-white">
-          ${isFirst ? '<div></div>' : '<button onclick="goTo(currentStep-1)" class="text-sm text-stone-500 hover:text-stone-700">&lt; Back</button>'}
-          ${isLast
-            ? '<a href="index.html" class="text-sm text-sky-500 hover:text-sky-700">\u2190 All Mockups</a>'
-            : '<button onclick="goTo(currentStep+1)" class="text-sm font-semibold text-sky-600 hover:text-sky-800">Next &gt;</button>'
-          }
-        </div>
-      `;
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') goTo(currentStep + 1);
-      if (e.key === 'ArrowLeft') goTo(currentStep - 1);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' && current < steps.length - 1) goTo(current + 1);
+      if (e.key === 'ArrowLeft' && current > 0) goTo(current - 1);
     });
-
-    goTo(0);
   </script>
-
-</div><!-- end ml-48 wrapper -->
-
 </body>
 </html>
