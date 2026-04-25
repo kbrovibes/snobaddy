@@ -407,7 +407,7 @@ export default async function SessionDetailPage({
       {/* Completed session */}
       {isCompleted && (
         <>
-          {!isFinalsSession && highlights && highlights.totalMatches >= 3 && (
+          {!isFinalsSession && (tallyRows as unknown[]).length === 0 && highlights && highlights.totalMatches >= 3 && (
             <SessionHighlights highlights={highlights} nameMap={nameMap} />
           )}
           <div className="bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 flex items-center justify-between">

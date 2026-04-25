@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.1] - 2026-04-24
+
+### Fixed
+- **Tally session awards** — Tally/whiteboard sessions now only show the 3 relevant award cards (Slayer, Unstoppable, Untouchable) instead of also showing the 5-card match-based awards.
+
+---
+
 ## [0.30.0] - 2026-04-22
 
 ### Added
