@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import NavLink from "@/components/NavLink";
 import type { SessionRow } from "@/lib/db/sessions";
+
+const VISIBLE_PAST = 6;
 
 const LS_KEY = "snobaddy:show-test-sessions";
 
@@ -25,6 +27,7 @@ export default function SessionListClient({
   isAdmin: boolean;
 }) {
   const [showTest, setShowTest] = useState(false);
+  const [showAllPast, setShowAllPast] = useState(false);
 
   useEffect(() => {
     try { setShowTest(localStorage.getItem(LS_KEY) === "true"); } catch {}
@@ -106,8 +109,16 @@ export default function SessionListClient({
             <div>
               <SectionLabel label="Past Sessions" />
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                {past.map((s) => <SessionRow key={s.id} s={s} />)}
+                {(past.length > VISIBLE_PAST && !showAllPast ? past.slice(0, VISIBLE_PAST) : past).map((s) => <SessionRow key={s.id} s={s} />)}
               </div>
+              {past.length > VISIBLE_PAST && (
+                <button
+                  onClick={() => setShowAllPast(!showAllPast)}
+                  className="w-full text-center text-sm text-sky-600 hover:text-sky-800 font-medium py-2 mt-1"
+                >
+                  {showAllPast ? "Show less" : `Show ${past.length - VISIBLE_PAST} older sessions`}
+                </button>
+              )}
             </div>
           )}
 

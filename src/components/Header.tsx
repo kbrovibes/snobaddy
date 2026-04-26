@@ -34,9 +34,9 @@ export default function Header({ userName, playerId, isAdmin, isGodMode }: Heade
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 h-14 bg-white border-b border-stone-100">
       <NavLink href="/" className="flex items-center gap-2">
-        <span className="text-2xl">🏸</span>
+        <span className="text-xl">🏸</span>
         <div className="flex flex-col leading-tight">
-          <span className="font-bold text-stone-900 text-2xl">Serve Snoqualmie</span>
+          <span className="font-bold text-stone-900 text-xl">Serve Sports</span>
           <span className="font-black text-stone-900 text-xs tracking-[0.2em] uppercase">Badminton</span>
         </div>
       </NavLink>

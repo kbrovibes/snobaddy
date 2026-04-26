@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ### Improved
 - **Visual hierarchy** — Title bar logo is slightly bigger and page headings (e.g. "Spring 2026") are slightly smaller, so they no longer look like the same size text.
 - **Session page header** — Removed the Serve Sports logo, split season name and date back to separate lines, replaced prev/next session links with a simple "All Sessions" link.
+- **Title bar** — Renamed "Serve Snoqualmie" to "Serve Sports", adjusted text size.
+- **Session list** — Past sessions collapse after 6 entries with a "Show older sessions" toggle.
 
 ---
 
