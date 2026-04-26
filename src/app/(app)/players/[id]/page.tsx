@@ -8,6 +8,7 @@ import BackButton from "@/components/BackButton";
 import IncludeTestToggle from "@/components/IncludeTestToggle";
 import EditPlayerForm from "@/components/EditPlayerForm";
 import RegeneratePoemButton from "@/components/RegeneratePoemButton";
+import ThemeToggle from "@/components/ThemeToggle";
 import { buildNameMap, shortName } from "@/lib/display-name";
 
 export const dynamic = "force-dynamic";
@@ -122,6 +123,16 @@ export default async function PlayerProfilePage({
           </div>
         )}
       </div>
+
+      {/* Theme toggle — own profile only */}
+      {player.user_id === user!.id && (
+        <div className="bg-surface rounded-xl shadow-sm px-4 py-3">
+          <h2 className="text-sm font-semibold text-muted uppercase tracking-wide mb-3">
+            Appearance
+          </h2>
+          <ThemeToggle />
+        </div>
+      )}
 
       {/* Stats chart */}
       <div className="bg-white rounded-xl shadow-sm px-4 py-3">

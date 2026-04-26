@@ -1,13 +1,50 @@
 @import "tailwindcss";
 
+/* ── Light palette (default) ── */
 :root {
-  --background: #FAFAF9;
-  --foreground: #1C1917;
+  --background: #FAFAF9;       /* stone-50 */
+  --foreground: #1C1917;       /* stone-900 */
+  --surface: #FFFFFF;          /* white */
+  --surface-alt: #F5F5F4;     /* stone-100 */
+  --border: #E7E5E4;          /* stone-200 */
+  --border-light: #F5F5F4;    /* stone-100 */
+  --muted: #78716C;           /* stone-500 */
+  --muted-light: #A8A29E;     /* stone-400 */
+  --muted-lighter: #D6D3D1;   /* stone-300 */
+  --heading: #1C1917;         /* stone-900 */
+  --text: #44403C;            /* stone-700 */
+  --text-light: #78716C;      /* stone-500 */
+}
+
+/* ── Dark palette ── */
+.dark {
+  --background: #1C1917;       /* stone-900 */
+  --foreground: #FAFAF9;       /* stone-50 */
+  --surface: #292524;          /* stone-800 */
+  --surface-alt: #1C1917;     /* stone-900 */
+  --border: #44403C;          /* stone-700 */
+  --border-light: #292524;    /* stone-800 */
+  --muted: #A8A29E;           /* stone-400 */
+  --muted-light: #78716C;     /* stone-500 */
+  --muted-lighter: #57534E;   /* stone-600 */
+  --heading: #FAFAF9;         /* stone-50 */
+  --text: #D6D3D1;            /* stone-300 */
+  --text-light: #A8A29E;      /* stone-400 */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+  --color-muted: var(--muted);
+  --color-muted-light: var(--muted-light);
+  --color-muted-lighter: var(--muted-lighter);
+  --color-heading: var(--heading);
+  --color-text: var(--text);
+  --color-text-light: var(--text-light);
   --font-sans: var(--font-jakarta);
   --font-mono: var(--font-geist-mono);
 }

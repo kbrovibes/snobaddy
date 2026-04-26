@@ -180,11 +180,11 @@ export async function getOnlinePlayerIds(playerIds: string[]): Promise<Set<strin
   return new Set((data ?? []).map((r) => r.id));
 }
 
-export async function getPlayerById(id: string): Promise<{ id: string; name: string; skill_level: number } | null> {
+export async function getPlayerById(id: string): Promise<{ id: string; name: string; skill_level: number; user_id: string | null } | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("players")
-    .select("id, name, skill_level")
+    .select("id, name, skill_level, user_id")
     .eq("id", id)
     .maybeSingle();
   return data ?? null;
