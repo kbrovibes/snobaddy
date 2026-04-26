@@ -61,17 +61,15 @@ export default function SessionListClient({
         className="flex items-center justify-between px-4 py-3 border-b border-border-light last:border-0 hover:bg-surface-alt active:bg-sky-500/10 transition-colors"
       >
         <div className="flex flex-col gap-0.5">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-text">{formatDate(s.date)}</span>
-            {isAdmin && s.is_test_session && (
-              <span className="text-xs font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">TEST</span>
-            )}
-          </div>
+          <span className="text-sm text-text">{formatDate(s.date)}</span>
           {s.status === "pending" && (
             <span className="text-xs text-muted-light">Opens at 6pm</span>
           )}
         </div>
         <div className="flex items-center gap-2">
+          {isAdmin && s.is_test_session && (
+            <span className="text-xs font-bold text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded">TEST</span>
+          )}
           {s.status === "active" ? (
             <span className="flex items-center gap-1 text-xs font-semibold text-white bg-sky-700 px-2 py-0.5 rounded-full">
               <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-pulse" />
