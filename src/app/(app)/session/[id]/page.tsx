@@ -4,7 +4,6 @@ import {
   getSessionById,
   getCheckedInPlayers,
   getPastSessionsThisSeason,
-  getAdjacentNonTestSessions,
 } from "@/lib/db/sessions";
 import { getSessionMatches, getSessionScoreboard, getSessionHighlights } from "@/lib/db/matches";
 import { getProposedMatches } from "@/lib/db/proposed";
@@ -92,10 +91,7 @@ export default async function SessionDetailPage({
 
   const isCheckedIn = checkedInPlayers.some((p) => p.player_id === playerId);
 
-  const [pastSessions, adjacentSessions] = await Promise.all([
-    getPastSessionsThisSeason(session.season.id, session.date),
-    getAdjacentNonTestSessions(session.date),
-  ]);
+  const pastSessions = await getPastSessionsThisSeason(session.season.id, session.date);
 
   const isFinalsSession = session.session_type === "finals";
   const isPending = session.status === "pending";
@@ -222,11 +218,13 @@ export default async function SessionDetailPage({
           <div>
             <h1 className="text-base font-bold text-stone-900 leading-tight">
               {isFinalsSession ? "🏆 Season Finals" : (session.season?.name ?? "Tonight")}
-              <span className="font-normal text-stone-500"> · {formatDate(session.date)}</span>
-              {isAdmin && session.is_test_session && (
-                <span className="text-xs font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded ml-2 align-middle">TEST</span>
-              )}
             </h1>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-stone-500">{formatDate(session.date)}</p>
+              {isAdmin && session.is_test_session && (
+                <span className="text-xs font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">TEST</span>
+              )}
+            </div>
           </div>
           <div className="ml-auto shrink-0">
             {isActive && (
@@ -247,33 +245,13 @@ export default async function SessionDetailPage({
             )}
           </div>
         </div>
-        {/* Session nav */}
-        <div className="flex items-center justify-between text-sm">
-          <div>
-            {isFinalsSession && session.finals_event_id ? (
-              <NavLink href={`/finals/${session.finals_event_id}`} className="text-sky-600 hover:text-sky-800">
-                ‹ Finals Event
-              </NavLink>
-            ) : adjacentSessions.newer ? (
-              <NavLink href={`/session/${adjacentSessions.newer.id}`} className="text-sky-600 hover:underline">
-                ‹ {new Date(adjacentSessions.newer.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "2-digit" })} Session
-              </NavLink>
-            ) : (
-              <BackToSessionsLink />
-            )}
-          </div>
-          {!isFinalsSession && (
-          <div>
-            {adjacentSessions.older ? (
-              <NavLink href={`/session/${adjacentSessions.older.id}`} className="text-sky-600 hover:underline">
-                {new Date(adjacentSessions.older.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "2-digit" })} Session ›
-              </NavLink>
-            ) : (
-              <span className="text-stone-300">Session ›</span>
-            )}
-          </div>
-          )}
-        </div>
+        {isFinalsSession && session.finals_event_id ? (
+          <NavLink href={`/finals/${session.finals_event_id}`} className="text-sky-600 hover:text-sky-800 text-sm">
+            ‹ Finals Event
+          </NavLink>
+        ) : (
+          <BackToSessionsLink />
+        )}
         {/* Admin toggles — own row, right-aligned */}
         {isAdmin && (
           <div className="flex items-center justify-end gap-3">
