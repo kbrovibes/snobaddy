@@ -1,4 +1,3 @@
-import Image from "next/image";
 import NavLink from "@/components/NavLink";
 import { redirect } from "next/navigation";
 import {
@@ -217,53 +216,17 @@ export default async function SessionDetailPage({
 
       <OnlinePing />
 
-      {/* Session nav */}
-      <div className="flex flex-col gap-0.5 -mb-2">
-        {isFinalsSession && session.finals_event_id ? (
-          <NavLink href={`/finals/${session.finals_event_id}`} className="text-sky-600 hover:text-sky-800 text-sm">
-            ‹ Finals Event
-          </NavLink>
-        ) : (
-          <BackToSessionsLink />
-        )}
-        {!isFinalsSession && (
-        <div className="flex items-center justify-between text-sm">
-          <div>
-            {adjacentSessions.newer ? (
-              <NavLink href={`/session/${adjacentSessions.newer.id}`} className="text-sky-600 hover:underline">
-                ‹ {new Date(adjacentSessions.newer.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "2-digit" })} Session
-              </NavLink>
-            ) : (
-              <span className="text-stone-300">‹ Session</span>
-            )}
-          </div>
-          <div>
-            {adjacentSessions.older ? (
-              <NavLink href={`/session/${adjacentSessions.older.id}`} className="text-sky-600 hover:underline">
-                {new Date(adjacentSessions.older.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "2-digit" })} Session ›
-              </NavLink>
-            ) : (
-              <span className="text-stone-300">Session ›</span>
-            )}
-          </div>
-        </div>
-        )}
-      </div>
-
-      {/* Season header */}
+      {/* Session header */}
       <div className="flex flex-col gap-1.5">
-        <div className="flex items-center gap-3">
-          <Image src="/serve-logo.jpg" alt="Serve Sports" width={52} height={52} className="rounded-xl shrink-0" />
+        <div className="flex items-center gap-2">
           <div>
             <h1 className="text-base font-bold text-stone-900 leading-tight">
               {isFinalsSession ? "🏆 Season Finals" : (session.season?.name ?? "Tonight")}
-            </h1>
-            <div className="flex items-center gap-2">
-              <p className="text-sm text-stone-500">{formatDate(session.date)}</p>
+              <span className="font-normal text-stone-500"> · {formatDate(session.date)}</span>
               {isAdmin && session.is_test_session && (
-                <span className="text-xs font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">TEST</span>
+                <span className="text-xs font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded ml-2 align-middle">TEST</span>
               )}
-            </div>
+            </h1>
           </div>
           <div className="ml-auto shrink-0">
             {isActive && (
@@ -283,6 +246,33 @@ export default async function SessionDetailPage({
               </span>
             )}
           </div>
+        </div>
+        {/* Session nav */}
+        <div className="flex items-center justify-between text-sm">
+          <div>
+            {isFinalsSession && session.finals_event_id ? (
+              <NavLink href={`/finals/${session.finals_event_id}`} className="text-sky-600 hover:text-sky-800">
+                ‹ Finals Event
+              </NavLink>
+            ) : adjacentSessions.newer ? (
+              <NavLink href={`/session/${adjacentSessions.newer.id}`} className="text-sky-600 hover:underline">
+                ‹ {new Date(adjacentSessions.newer.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "2-digit" })} Session
+              </NavLink>
+            ) : (
+              <BackToSessionsLink />
+            )}
+          </div>
+          {!isFinalsSession && (
+          <div>
+            {adjacentSessions.older ? (
+              <NavLink href={`/session/${adjacentSessions.older.id}`} className="text-sky-600 hover:underline">
+                {new Date(adjacentSessions.older.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "2-digit" })} Session ›
+              </NavLink>
+            ) : (
+              <span className="text-stone-300">Session ›</span>
+            )}
+          </div>
+          )}
         </div>
         {/* Admin toggles — own row, right-aligned */}
         {isAdmin && (
