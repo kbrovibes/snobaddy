@@ -15,7 +15,7 @@ function formatDate(dateStr: string) {
 
 function SectionLabel({ label }: { label: string }) {
   return (
-    <p className="text-xs font-semibold uppercase tracking-wide text-stone-400 px-1 mb-1">{label}</p>
+    <p className="text-xs font-semibold uppercase tracking-wide text-muted-light px-1 mb-1">{label}</p>
   );
 }
 
@@ -58,17 +58,17 @@ export default function SessionListClient({
     return (
       <NavLink
         href={`/session/${s.id}`}
-        className="flex items-center justify-between px-4 py-3 border-b border-stone-100 last:border-0 hover:bg-stone-50 active:bg-sky-50 transition-colors"
+        className="flex items-center justify-between px-4 py-3 border-b border-border-light last:border-0 hover:bg-surface-alt active:bg-sky-500/10 transition-colors"
       >
         <div className="flex flex-col gap-0.5">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-stone-700">{formatDate(s.date)}</span>
+            <span className="text-sm text-text">{formatDate(s.date)}</span>
             {isAdmin && s.is_test_session && (
               <span className="text-xs font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">TEST</span>
             )}
           </div>
           {s.status === "pending" && (
-            <span className="text-xs text-stone-400">Opens at 6pm</span>
+            <span className="text-xs text-muted-light">Opens at 6pm</span>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -78,13 +78,13 @@ export default function SessionListClient({
               In Progress
             </span>
           ) : s.status === "pending" ? (
-            <span className="text-xs font-semibold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full">Upcoming</span>
+            <span className="text-xs font-semibold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-full">Upcoming</span>
           ) : s.match_count === 0 && s.tally_count === 0 ? (
-            <span className="text-xs font-semibold text-red-400 bg-red-50 px-2 py-0.5 rounded-full">No Data</span>
+            <span className="text-xs font-semibold text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full">No Data</span>
           ) : (
-            <span className="text-xs font-semibold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full">Finalized</span>
+            <span className="text-xs font-semibold text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full">Finalized</span>
           )}
-          <span className="text-stone-300 text-sm">→</span>
+          <span className="text-muted-lighter text-sm">→</span>
         </div>
       </NavLink>
     );
@@ -93,13 +93,13 @@ export default function SessionListClient({
   return (
     <>
       {upcoming.length === 0 && past.length === 0 && (!isAdmin || tests.length === 0) ? (
-        <p className="text-sm text-stone-400 text-center py-8">No sessions yet.</p>
+        <p className="text-sm text-muted-light text-center py-8">No sessions yet.</p>
       ) : (
         <div className="flex flex-col gap-4">
           {upcoming.length > 0 && (
             <div>
               <SectionLabel label="Upcoming" />
-              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="bg-surface rounded-xl shadow-sm overflow-hidden">
                 {upcoming.map((s) => <SessionRow key={s.id} s={s} />)}
               </div>
             </div>
@@ -108,13 +108,13 @@ export default function SessionListClient({
           {past.length > 0 && (
             <div>
               <SectionLabel label="Past Sessions" />
-              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="bg-surface rounded-xl shadow-sm overflow-hidden">
                 {(past.length > VISIBLE_PAST && !showAllPast ? past.slice(0, VISIBLE_PAST) : past).map((s) => <SessionRow key={s.id} s={s} />)}
               </div>
               {past.length > VISIBLE_PAST && (
                 <button
                   onClick={() => setShowAllPast(!showAllPast)}
-                  className="w-full text-center text-sm text-sky-600 hover:text-sky-800 font-medium py-2 mt-1"
+                  className="w-full text-center text-sm text-sky-500 hover:text-sky-400 font-medium py-2 mt-1"
                 >
                   {showAllPast ? "Show less" : `Show ${past.length - VISIBLE_PAST} older sessions`}
                 </button>
@@ -125,17 +125,17 @@ export default function SessionListClient({
           {isAdmin && tests.length > 0 && (
             <div>
               <div className="flex items-center justify-between px-1 mb-1">
-                <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">Test Sessions</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-light">Test Sessions</p>
                 <button
                   onClick={toggleShowTest}
                   className="relative inline-flex w-9 h-5 rounded-full transition-colors duration-200 focus:outline-none"
-                  style={{ background: showTest ? "#f97316" : "#e5e7eb" }}
+                  style={{ background: showTest ? "#f97316" : "var(--muted-lighter)" }}
                 >
                   <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showTest ? "translate-x-4" : "translate-x-0"}`} />
                 </button>
               </div>
               {showTest && (
-                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div className="bg-surface rounded-xl shadow-sm overflow-hidden">
                   {tests.map((s) => <SessionRow key={s.id} s={s} />)}
                 </div>
               )}
