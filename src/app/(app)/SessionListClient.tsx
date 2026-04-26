@@ -58,7 +58,7 @@ export default function SessionListClient({
     return (
       <NavLink
         href={`/session/${s.id}`}
-        className="flex items-center justify-between px-4 py-3 border-b border-border-light last:border-0 hover:bg-surface-alt active:bg-sky-500/10 transition-colors"
+        className="flex items-center justify-between px-4 py-3 border-b border-border-light last:border-0 hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 transition-colors"
       >
         <div className="flex flex-col gap-0.5">
           <span className="text-sm text-text">{formatDate(s.date)}</span>
@@ -76,11 +76,11 @@ export default function SessionListClient({
               In Progress
             </span>
           ) : s.status === "pending" ? (
-            <span className="text-xs font-semibold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-full">Upcoming</span>
+            <span className="text-xs font-semibold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 px-2 py-0.5 rounded-full">Upcoming</span>
           ) : s.match_count === 0 && s.tally_count === 0 ? (
-            <span className="text-xs font-semibold text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full">No Data</span>
+            <span className="text-xs font-semibold text-red-400 bg-red-50 dark:bg-red-500/10 px-2 py-0.5 rounded-full">No Data</span>
           ) : (
-            <span className="text-xs font-semibold text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full">Finalized</span>
+            <span className="text-xs font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 px-2 py-0.5 rounded-full">Finalized</span>
           )}
           <span className="text-muted-lighter text-sm">→</span>
         </div>
@@ -112,7 +112,7 @@ export default function SessionListClient({
               {past.length > VISIBLE_PAST && (
                 <button
                   onClick={() => setShowAllPast(!showAllPast)}
-                  className="w-full text-center text-sm text-sky-500 hover:text-sky-400 font-medium py-2 mt-1"
+                  className="w-full text-center text-sm text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 font-medium py-2 mt-1"
                 >
                   {showAllPast ? "Show less" : `Show ${past.length - VISIBLE_PAST} older sessions`}
                 </button>

@@ -4,19 +4,19 @@ import CreateFinalsButton from "./CreateFinalsButton";
 
 function statusLabel(status: FinalsEvent["status"]) {
   switch (status) {
-    case "draft":             return { text: "Draft",             cls: "text-muted bg-muted-lighter/30" };
-    case "breakdown_generated": return { text: "Groups Ready",   cls: "text-amber-500 bg-amber-500/10" };
-    case "sessions_created":  return { text: "Sessions Set",      cls: "text-sky-400 bg-sky-500/10" };
-    case "active":            return { text: "In Progress",       cls: "text-green-400 bg-green-500/10" };
-    case "completed":         return { text: "Completed",         cls: "text-teal-400 bg-teal-500/10" };
+    case "draft":             return { text: "Draft",             cls: "text-stone-500 dark:text-muted bg-stone-100 dark:bg-muted-lighter/30" };
+    case "breakdown_generated": return { text: "Groups Ready",   cls: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10" };
+    case "sessions_created":  return { text: "Sessions Set",      cls: "text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10" };
+    case "active":            return { text: "In Progress",       cls: "text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-500/10" };
+    case "completed":         return { text: "Completed",         cls: "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10" };
   }
 }
 
 function SessionCard({ label, session }: { label: string; session: FinalsSessionInfo }) {
   const statusInfo = {
-    pending:   { text: "Starting soon", cls: "text-orange-400 bg-orange-500/10" },
+    pending:   { text: "Starting soon", cls: "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10" },
     active:    { text: "In Progress",   cls: "text-white bg-sky-700" },
-    completed: { text: "Completed",     cls: "text-teal-400 bg-teal-500/10" },
+    completed: { text: "Completed",     cls: "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10" },
   }[session.status];
 
   const date = new Date(session.date + "T12:00:00").toLocaleDateString("en-US", {
@@ -26,7 +26,7 @@ function SessionCard({ label, session }: { label: string; session: FinalsSession
   return (
     <NavLink
       href={`/session/${session.id}`}
-      className="flex items-center justify-between px-4 py-2 hover:bg-surface-alt active:bg-amber-500/10 transition-colors border-t border-border-light"
+      className="flex items-center justify-between px-4 py-2 hover:bg-surface-alt active:bg-amber-50 dark:active:bg-amber-500/10 transition-colors border-t border-border-light"
     >
       <div className="flex items-center gap-2">
         <span className="text-xs text-muted-lighter">└</span>
@@ -81,7 +81,7 @@ export default function FinalsSection({
           <>
             <NavLink
               href={`/finals/${event.id}`}
-              className="flex items-center justify-between px-4 py-3 hover:bg-surface-alt active:bg-amber-500/10 transition-colors"
+              className="flex items-center justify-between px-4 py-3 hover:bg-surface-alt active:bg-amber-50 dark:active:bg-amber-500/10 transition-colors"
             >
               <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-semibold text-heading">{event.name}</span>
@@ -130,7 +130,7 @@ export default function FinalsSection({
               <NavLink
                 key={e.id}
                 href={`/finals/${e.id}`}
-                className="flex items-center justify-between px-4 py-2.5 hover:bg-surface-alt active:bg-amber-500/10 transition-colors border-b border-border-light last:border-0"
+                className="flex items-center justify-between px-4 py-2.5 hover:bg-surface-alt active:bg-amber-50 dark:active:bg-amber-500/10 transition-colors border-b border-border-light last:border-0"
               >
                 <div>
                   <span className="text-sm text-text">{e.name}</span>
