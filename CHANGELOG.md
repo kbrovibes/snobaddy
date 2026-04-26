@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.2] - 2026-04-26
+
+### Improved
+- **Visual hierarchy** — Title bar logo is slightly bigger and page headings (e.g. "Spring 2026") are slightly smaller, so they no longer look like the same size text.
+
+---
+
 ## [0.30.1] - 2026-04-24
 
 ### Fixed

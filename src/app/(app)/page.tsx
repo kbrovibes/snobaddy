@@ -49,7 +49,7 @@ export default async function SessionListPage({
       <div className="flex items-center gap-3">
         <Image src="/serve-logo.jpg" alt="Serve Sports" width={52} height={52} className="rounded-xl shrink-0" />
         <div>
-          <h1 className="text-lg font-bold text-stone-900 leading-tight">{seasonName}</h1>
+          <h1 className="text-base font-bold text-stone-900 leading-tight">{seasonName}</h1>
           <p className="text-sm text-stone-500">No active session</p>
         </div>
       </div>
