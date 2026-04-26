@@ -45,8 +45,8 @@ export default function NavigationLoader({ children }: { children: React.ReactNo
     <NavigationLoaderContext.Provider value={{ startLoading, stopLoading }}>
       {children}
       {loading && (
-        <div className="fixed inset-0 z-40 bg-stone-50/60 flex items-center justify-center pointer-events-auto">
-          <div className="w-8 h-8 border-3 border-stone-300 border-t-stone-700 rounded-full animate-spin" />
+        <div className="fixed inset-0 z-40 bg-overlay flex items-center justify-center pointer-events-auto">
+          <div className="w-8 h-8 border-3 border-stone-300 dark:border-neutral-600 border-t-stone-700 dark:border-t-white rounded-full animate-spin" />
         </div>
       )}
     </NavigationLoaderContext.Provider>

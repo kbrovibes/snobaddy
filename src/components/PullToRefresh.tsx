@@ -84,11 +84,11 @@ export default function PullToRefresh() {
       style={{ height: refreshing ? 40 : pull > 0 ? pull : 0, transition: pull === 0 ? "height 0.2s ease" : "none" }}
     >
       <div
-        className="flex items-center justify-center w-8 h-8 rounded-full bg-white shadow-md"
+        className="flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-surface shadow-md dark:shadow-none dark:ring-1 dark:ring-border"
         style={{ opacity: refreshing ? 1 : progress, transform: `scale(${0.5 + progress * 0.5})` }}
       >
         <svg
-          className={`w-4 h-4 ${refreshing ? "animate-spin text-sky-500" : triggered ? "text-sky-500" : "text-stone-400"}`}
+          className={`w-4 h-4 ${refreshing ? "animate-spin text-sky-500" : triggered ? "text-sky-500" : "text-stone-400 dark:text-muted"}`}
           viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}
         >
           {refreshing ? (
