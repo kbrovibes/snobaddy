@@ -126,8 +126,8 @@ export default function LeaderboardTable({
   }
 
   function getRankColor(playerId: string) {
-    if (playerId === nutCracker?.id) return "bg-yellow-50 dark:bg-yellow-500/10 border-yellow-100 dark:border-yellow-500/20";
-    return "border-border-light";
+    if (playerId === nutCracker?.id) return "bg-yellow-50 dark:bg-yellow-500/10";
+    return "";
   }
 
   function getRankBadge(index: number, playerId: string) {
