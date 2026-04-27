@@ -32,7 +32,7 @@ export default function Header({ userName, playerId, isAdmin, isGodMode }: Heade
     .toUpperCase();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 h-14 bg-surface border-b border-border-light">
+    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 h-14 bg-surface dark:bg-background border-b border-border-light dark:border-border">
       <NavLink href="/" className="flex items-center gap-2">
         <span className="text-xl">🏸</span>
         <div className="flex flex-col leading-tight">
