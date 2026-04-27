@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Geist_Mono, Space_Grotesk } from "next/font/google";
+import { Plus_Jakarta_Sans, Geist_Mono, Exo_2 } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
@@ -12,10 +12,10 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700", "800"],
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const exo2 = Exo_2({
+  variable: "--font-exo2",
   subsets: ["latin"],
-  weight: "700",
+  weight: "800",
 });
 
 const geistMono = Geist_Mono({
@@ -49,7 +49,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${plusJakartaSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`${plusJakartaSans.variable} ${geistMono.variable} ${exo2.variable} h-full antialiased`}
     >
       <head>
         <script
