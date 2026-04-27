@@ -92,8 +92,8 @@ export default function AdminPageContent({
               onClick={() => setGodModeActive((v) => !v)}
               className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full border transition-colors ${
                 godModeActive
-                  ? "bg-amber-50 border-amber-300 text-amber-700"
-                  : "bg-stone-50 border-stone-200 text-stone-400 hover:border-stone-300"
+                  ? "bg-amber-50 dark:bg-amber-500/10 border-amber-300 text-amber-700"
+                  : "bg-background border-border text-muted-light hover:border-stone-300 dark:hover:border-border dark:border-border"
               }`}
               title={godModeActive ? "God Mode on" : "God Mode off"}
             >
@@ -131,7 +131,7 @@ export default function AdminPageContent({
       )}
 
       {players.length === 0 ? (
-        <p className="text-center text-stone-400 text-sm py-12">No players yet.</p>
+        <p className="text-center text-muted-light text-sm py-12">No players yet.</p>
       ) : (
         <div className="grid grid-cols-3 gap-2 px-2.5">
           {players.map((player) => {
@@ -164,7 +164,7 @@ export default function AdminPageContent({
 
       {isGodMode && godModeActive && deletedPlayers.length > 0 && (
         <details className="mt-8 px-4">
-          <summary className="text-sm font-semibold text-stone-400 cursor-pointer select-none py-2 list-none flex items-center gap-1">
+          <summary className="text-sm font-semibold text-muted-light cursor-pointer select-none py-2 list-none flex items-center gap-1">
             <span>▶</span>
             <span>Removed players ({deletedPlayers.length})</span>
           </summary>
@@ -172,16 +172,16 @@ export default function AdminPageContent({
             {deletedPlayers.map((player) => (
               <div
                 key={player.id}
-                className="flex items-center justify-between px-3 py-2 rounded-xl border border-stone-100 bg-stone-50 opacity-60"
+                className="flex items-center justify-between px-3 py-2 rounded-xl border border-border-light bg-background opacity-60"
               >
                 <div>
-                  <span className="text-sm text-stone-500 font-medium">{player.name}</span>
+                  <span className="text-sm text-text-light font-medium">{player.name}</span>
                   <div className="flex gap-0.5 mt-0.5">
                     {[1, 2, 3, 4, 5].map((level) => (
                       <span
                         key={level}
                         className={`text-sm leading-none ${
-                          level <= player.skill_level ? "text-stone-400" : "text-stone-200"
+                          level <= player.skill_level ? "text-muted-light" : "text-stone-200 dark:text-neutral-700"
                         }`}
                       >
                         ●

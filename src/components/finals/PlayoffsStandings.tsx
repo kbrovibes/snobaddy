@@ -211,25 +211,25 @@ export default function PlayoffsStandings({
 
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="text-xs font-semibold text-stone-500 uppercase tracking-wide">
+      <h3 className="text-xs font-semibold text-text-light uppercase tracking-wide">
         Standings
       </h3>
 
       {/* Progress */}
       <div className="flex items-center gap-2">
-        <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
+        <div className="flex-1 h-1.5 bg-surface-alt rounded-full overflow-hidden">
           <div
             className="h-full bg-sky-600 rounded-full transition-all"
             style={{ width: `${totalMatches > 0 ? (playedMatches / totalMatches) * 100 : 0}%` }}
           />
         </div>
-        <span className="text-xs text-stone-400">{playedMatches}/{totalMatches}</span>
+        <span className="text-xs text-muted-light">{playedMatches}/{totalMatches}</span>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-stone-100 bg-stone-50 text-[11px] text-stone-400 uppercase">
+            <tr className="border-b border-border-light bg-background text-[11px] text-muted-light uppercase">
               <th className="text-left px-3 py-1.5 font-medium w-8">#</th>
               <th className="text-left px-2 py-1.5 font-medium">Player</th>
               <th className="text-center px-2 py-1.5 font-medium w-12">M</th>
@@ -250,22 +250,22 @@ export default function PlayoffsStandings({
               return (
                 <tr
                   key={s.playerId}
-                  className={`border-b border-stone-100 last:border-0 ${rowClass}`}
+                  className={`border-b border-border-light last:border-0 ${rowClass}`}
                 >
-                  <td className="px-3 py-1.5 text-xs text-stone-400">{s.rank}</td>
+                  <td className="px-3 py-1.5 text-xs text-muted-light">{s.rank}</td>
                   <td className="px-2 py-1.5">
-                    <span className="text-stone-800">{s.name}</span>
+                    <span className="text-heading">{s.name}</span>
                     {advancing && (
-                      <span className="ml-1 text-[10px] text-green-600 font-semibold">🏁 Top 4</span>
+                      <span className="ml-1 text-[10px] text-green-600 dark:text-green-400 font-semibold">🏁 Top 4</span>
                     )}
                     {inBoundary && !advancing && (
-                      <span className="ml-1 text-[10px] text-amber-600 font-semibold">Tied</span>
+                      <span className="ml-1 text-[10px] text-amber-600 dark:text-amber-400 font-semibold">Tied</span>
                     )}
                   </td>
-                  <td className="text-center px-2 py-1.5 text-xs text-stone-400">{s.played}/{s.total}</td>
-                  <td className="text-center px-2 py-1.5 font-semibold text-green-600">{s.wins}</td>
+                  <td className="text-center px-2 py-1.5 text-xs text-muted-light">{s.played}/{s.total}</td>
+                  <td className="text-center px-2 py-1.5 font-semibold text-green-600 dark:text-green-400">{s.wins}</td>
                   <td className="text-center px-2 py-1.5 font-semibold text-red-400">{s.losses}</td>
-                  <td className="text-center px-2 py-1.5 font-bold text-stone-700">{s.pts}</td>
+                  <td className="text-center px-2 py-1.5 font-bold text-text">{s.pts}</td>
                 </tr>
               );
             })}
@@ -275,7 +275,7 @@ export default function PlayoffsStandings({
 
       {/* Tie-breaker picker — boundary tie at the Top-4 cutoff */}
       {allPlayed && hasBoundaryTie && top4Result.top4 === null && isGodMode && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm">
+        <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 rounded-xl px-4 py-3 text-sm">
           <p className="font-semibold text-amber-800 mb-1">
             {top4Result.boundaryBand!.length}-way tie for{" "}
             {top4Result.spotsToFill === 1
@@ -293,7 +293,7 @@ export default function PlayoffsStandings({
               return (
                 <label
                   key={p.playerId}
-                  className={`flex items-center gap-2 text-sm py-1 px-2 rounded-lg bg-white border border-amber-100 ${atCap ? "opacity-40" : "cursor-pointer hover:bg-amber-50"}`}
+                  className={`flex items-center gap-2 text-sm py-1 px-2 rounded-lg bg-surface border border-amber-100 ${atCap ? "opacity-40" : "cursor-pointer hover:bg-amber-50"}`}
                 >
                   <input
                     type="checkbox"
@@ -302,8 +302,8 @@ export default function PlayoffsStandings({
                     onChange={() => togglePick(p.playerId)}
                     className="accent-amber-600"
                   />
-                  <span className="text-stone-800 font-medium">{p.name}</span>
-                  <span className="ml-auto text-[11px] text-stone-400">
+                  <span className="text-heading font-medium">{p.name}</span>
+                  <span className="ml-auto text-[11px] text-muted-light">
                     {p.wins}W · {p.pts} Pts
                   </span>
                 </label>
@@ -318,7 +318,7 @@ export default function PlayoffsStandings({
 
       {/* Non-god-mode view of an unresolved tie */}
       {allPlayed && hasBoundaryTie && top4Result.top4 === null && !isGodMode && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm">
+        <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 rounded-xl px-4 py-3 text-sm">
           <p className="text-amber-800">
             Tie at the Top&nbsp;4 boundary — waiting for an admin to decide who advances.
           </p>
@@ -326,7 +326,7 @@ export default function PlayoffsStandings({
       )}
 
       {error && (
-        <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+        <p className="text-xs text-red-500 bg-red-50 dark:bg-red-500/10 px-3 py-2 rounded-lg">{error}</p>
       )}
 
       {allPlayed && formatStatus === "matches_generated" && isGodMode && (
@@ -344,7 +344,7 @@ export default function PlayoffsStandings({
       )}
 
       {allPlayed && formatStatus === "matches_generated" && !isGodMode && top4Result.top4 !== null && (
-        <p className="text-xs text-stone-400 text-center">
+        <p className="text-xs text-muted-light text-center">
           All group matches complete. Admin will set up the finals.
         </p>
       )}

@@ -117,7 +117,7 @@ export default async function FinalsEventPage({
     <div className="flex flex-col px-4 py-4 gap-4">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <NavLink href="/?list=1" className="text-sky-600 hover:text-sky-800 text-sm">
+        <NavLink href="/?list=1" className="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 text-sm">
           ‹ Sessions
         </NavLink>
       </div>
@@ -126,14 +126,14 @@ export default async function FinalsEventPage({
         <div>
           <div className="flex items-center gap-2">
             <span className="text-xl">🏆</span>
-            <h1 className="text-xl font-bold text-stone-900">{event.name}</h1>
+            <h1 className="text-xl font-bold text-heading">{event.name}</h1>
           </div>
           {event.season && (
-            <p className="text-sm text-stone-400 mt-0.5 ml-8">{event.season.name}</p>
+            <p className="text-sm text-muted-light mt-0.5 ml-8">{event.season.name}</p>
           )}
         </div>
         {isCompleted && (
-          <span className="text-xs font-semibold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full">
+          <span className="text-xs font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 px-2.5 py-1 rounded-full">
             Finalized
           </span>
         )}
@@ -195,27 +195,27 @@ function FinalsEventCompletedWrapper({
     >
       {/* Session links */}
       {(sessionPair.day1 || sessionPair.day2) && (
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
-          <div className="bg-stone-50 px-4 py-2 border-b border-stone-100">
-            <h3 className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide">
+        <div className="bg-surface rounded-xl shadow-sm border border-border-light overflow-hidden">
+          <div className="bg-background px-4 py-2 border-b border-border-light">
+            <h3 className="text-[11px] font-semibold text-muted-light uppercase tracking-wide">
               Sessions
             </h3>
           </div>
           {sessionPair.day1 && (
             <NavLink
               href={`/session/${sessionPair.day1.id}`}
-              className="flex items-center justify-between px-4 py-2.5 hover:bg-stone-50 active:bg-sky-50 transition-colors border-b border-stone-100 last:border-0"
+              className="flex items-center justify-between px-4 py-2.5 hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 dark:bg-sky-500/10 transition-colors border-b border-border-light last:border-0"
             >
-              <span className="text-sm text-stone-700">Day 1 — Groups A & B</span>
+              <span className="text-sm text-text">Day 1 — Groups A & B</span>
               <span className="text-xs text-sky-600">View →</span>
             </NavLink>
           )}
           {sessionPair.day2 && (
             <NavLink
               href={`/session/${sessionPair.day2.id}`}
-              className="flex items-center justify-between px-4 py-2.5 hover:bg-stone-50 active:bg-sky-50 transition-colors"
+              className="flex items-center justify-between px-4 py-2.5 hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 dark:bg-sky-500/10 transition-colors"
             >
-              <span className="text-sm text-stone-700">Day 2 — Group C</span>
+              <span className="text-sm text-text">Day 2 — Group C</span>
               <span className="text-xs text-sky-600">View →</span>
             </NavLink>
           )}
@@ -224,7 +224,7 @@ function FinalsEventCompletedWrapper({
 
       {/* Setup details toggle — between winner cards and group details */}
       <details className="group">
-        <summary className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-stone-400 hover:text-stone-600 cursor-pointer transition-colors">
+        <summary className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium text-muted-light hover:text-text cursor-pointer transition-colors">
           <span>View Setup Details</span>
           <span className="group-open:rotate-180 transition-transform text-xs">▼</span>
         </summary>

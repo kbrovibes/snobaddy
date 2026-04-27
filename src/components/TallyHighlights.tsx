@@ -73,7 +73,7 @@ export default function TallyHighlights({
 
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
+      <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide">
         Session Awards
       </h2>
       <div className="grid grid-cols-6 gap-3">

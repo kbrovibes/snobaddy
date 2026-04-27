@@ -35,9 +35,9 @@ export default function TestSessionToggle({
       className="flex items-center gap-2 disabled:opacity-50"
       title="Toggle test session"
     >
-      <span className="text-xs text-stone-500">Testing Only</span>
-      <span className={`relative inline-flex w-9 h-5 rounded-full transition-colors duration-200 ${value ? "bg-orange-400" : "bg-stone-200"}`}>
-        <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${value ? "translate-x-4" : "translate-x-0"}`} />
+      <span className="text-xs text-text-light">Testing Only</span>
+      <span className={`relative inline-flex w-9 h-5 rounded-full transition-colors duration-200 ${value ? "bg-orange-400" : "bg-stone-200 dark:bg-border"}`}>
+        <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-surface rounded-full shadow transition-transform duration-200 ${value ? "translate-x-4" : "translate-x-0"}`} />
       </span>
     </button>
   );

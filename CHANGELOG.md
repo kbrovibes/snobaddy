@@ -13,7 +13,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Session page header** — Removed the Serve Sports logo, split season name and date back to separate lines, replaced prev/next session links with a simple "All Sessions" link.
 - **Title bar** — Renamed "Serve Snoqualmie" to "Serve Sports", adjusted text size.
 - **Session list** — Past sessions collapse after 6 entries with a "Show older sessions" toggle.
-- **Dark mode (Phase 1)** — App now defaults to dark mode. Toggle between Light / Dark / Auto from your player profile page. App shell (header, bottom nav, backgrounds) and session list page fully themed; remaining pages will be migrated in follow-up phases.
+- **Dark mode** — Full dark mode support across all pages. Toggle between Light / Dark / Auto from your player profile page. Near-black WhatsApp-style palette. Loading overlays and pull-to-refresh adapted for dark mode. Light mode unchanged.
 
 ---
 

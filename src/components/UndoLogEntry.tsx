@@ -19,13 +19,13 @@ export default function UndoLogEntry({ sessionId, logId }: { sessionId: string; 
     setUndoing(false);
   }
 
-  if (done) return <span className="text-[10px] text-stone-400">undone</span>;
+  if (done) return <span className="text-[10px] text-muted-light">undone</span>;
 
   return (
     <button
       onClick={undo}
       disabled={undoing}
-      className="text-[10px] text-stone-400 hover:text-red-500 active:text-red-600 transition-colors disabled:opacity-50 shrink-0"
+      className="text-[10px] text-muted-light hover:text-red-500 active:text-red-600 dark:text-red-400 transition-colors disabled:opacity-50 shrink-0"
     >
       {undoing ? "..." : "undo"}
     </button>

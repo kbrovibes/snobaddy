@@ -216,13 +216,13 @@ export default async function SessionDetailPage({
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-2">
           <div>
-            <h1 className="text-base font-bold text-stone-900 leading-tight">
+            <h1 className="text-base font-bold text-heading leading-tight">
               {isFinalsSession ? "🏆 Season Finals" : (session.season?.name ?? "Tonight")}
             </h1>
             <div className="flex items-center gap-2">
-              <p className="text-sm text-stone-500">{formatDate(session.date)}</p>
+              <p className="text-sm text-text-light">{formatDate(session.date)}</p>
               {isAdmin && session.is_test_session && (
-                <span className="text-xs font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">TEST</span>
+                <span className="text-xs font-bold text-orange-500 bg-orange-50 dark:bg-orange-500/10 dark:bg-orange-500/10 px-1.5 py-0.5 rounded">TEST</span>
               )}
             </div>
           </div>
@@ -234,19 +234,19 @@ export default async function SessionDetailPage({
               </span>
             )}
             {isPending && (
-              <span className="text-xs font-semibold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full">
+              <span className="text-xs font-semibold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 px-2.5 py-1 rounded-full">
                 Starting soon
               </span>
             )}
             {isCompleted && (
-              <span className="text-xs font-semibold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full">
+              <span className="text-xs font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 px-2.5 py-1 rounded-full">
                 Finalized
               </span>
             )}
           </div>
         </div>
         {isFinalsSession && session.finals_event_id ? (
-          <NavLink href={`/finals/${session.finals_event_id}`} className="text-sky-600 hover:text-sky-800 text-sm">
+          <NavLink href={`/finals/${session.finals_event_id}`} className="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 text-sm">
             ‹ Finals Event
           </NavLink>
         ) : (
@@ -263,7 +263,7 @@ export default async function SessionDetailPage({
 
       {/* Finals session info banner */}
       {isFinalsSession && isPending && !isAdmin && (
-        <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 text-sm text-amber-700 text-center">
+        <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-100 rounded-xl px-4 py-3 text-sm text-amber-700 text-center">
           Season Finals — this session hasn't started yet.
         </div>
       )}
@@ -275,7 +275,7 @@ export default async function SessionDetailPage({
 
       {/* Finals: Group A / Group B tabs with format, pairs, matches, standings */}
       {isFinalsSession && (isPending || isActive) && Object.keys(finalsGroups).length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm px-4 py-3">
+        <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
           <FinalsSessionTabs
             sessionId={session.id}
             formats={finalsFormatsClient}
@@ -301,7 +301,7 @@ export default async function SessionDetailPage({
 
       {/* Non-admin pending (regular sessions only) */}
       {isPending && !isAdmin && !isFinalsSession && (
-        <div className="bg-orange-50 border border-orange-100 rounded-xl px-4 py-3 text-sm text-orange-700 text-center">
+        <div className="bg-orange-50 dark:bg-orange-500/10 border border-orange-100 rounded-xl px-4 py-3 text-sm text-orange-700 text-center">
           Tonight's session hasn't started yet. Check back soon!
         </div>
       )}
@@ -324,8 +324,8 @@ export default async function SessionDetailPage({
 
           {/* Who's here — not shown for Finals sessions */}
           {!isFinalsSession && (
-            <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-              <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
+            <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
+              <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide mb-3">
                 Who's Here · {checkedInPlayers.length}
               </h2>
               <WhoIsHere players={checkedInPlayers} onlinePlayerIds={onlinePlayerIds as Set<string>} isAdmin={isAdmin} sessionId={session.id} />
@@ -378,8 +378,8 @@ export default async function SessionDetailPage({
           {!isFinalsSession && (tallyRows as unknown[]).length === 0 && highlights && highlights.totalMatches >= 3 && (
             <SessionHighlights highlights={highlights} nameMap={nameMap} />
           )}
-          <div className="bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 flex items-center justify-between">
-            <p className="text-sm text-stone-500">Session closed. No new matches can be recorded.</p>
+          <div className="bg-background border border-border rounded-xl px-4 py-3 flex items-center justify-between">
+            <p className="text-sm text-text-light">Session closed. No new matches can be recorded.</p>
             {isAdmin && <ReopenSessionButton sessionId={session.id} />}
           </div>
           {/* Tally entry: shown when no matches recorded yet */}
@@ -429,8 +429,8 @@ export default async function SessionDetailPage({
 
       {/* Match history + whiteboard edits — not shown for Finals sessions */}
       {!isFinalsSession && (isActive || isCompleted) && (recentMatches.length > 0 || whiteboardLog.length > 0) && (
-        <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-          <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
+        <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
+          <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide mb-3">
             {isActive && session.whiteboard_mode ? "Activity" : `Matches · ${recentMatches.length}`}
           </h2>
           <div className="flex flex-col gap-3">
@@ -452,15 +452,15 @@ export default async function SessionDetailPage({
                   return (
                     <div key={m.id} className="text-sm">
                       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                        <span className={`font-semibold truncate text-left ${m.winning_team === 1 ? "text-green-600" : "text-stone-400"}`}>
+                        <span className={`font-semibold truncate text-left ${m.winning_team === 1 ? "text-green-600 dark:text-green-400" : "text-muted-light"}`}>
                           {team1Names.join(" & ")}
                         </span>
-                        <span className="text-stone-300 text-center w-6">vs</span>
-                        <span className={`font-semibold truncate text-left ${m.winning_team === 2 ? "text-green-600" : "text-stone-400"}`}>
+                        <span className="text-muted-lighter text-center w-6">vs</span>
+                        <span className={`font-semibold truncate text-left ${m.winning_team === 2 ? "text-green-600 dark:text-green-400" : "text-muted-light"}`}>
                           {team2Names.join(" & ")}
                         </span>
                       </div>
-                      <div className="text-xs text-stone-400 mt-0.5">
+                      <div className="text-xs text-muted-light mt-0.5">
                         {m.team1_score} – {m.team2_score} · {winnerNames.join(" & ")} won
                       </div>
                       {isAdmin && isActive && (
@@ -479,10 +479,10 @@ export default async function SessionDetailPage({
                 const e = item.data;
                 const isWin = e.field === "wins";
                 return (
-                  <div key={e.id} className="flex items-center gap-2 text-xs text-stone-500">
+                  <div key={e.id} className="flex items-center gap-2 text-xs text-text-light">
                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isWin ? "bg-green-400" : "bg-orange-400"}`} />
-                    <span className="font-medium text-stone-700 flex-1">{e.player_name.split(" ")[0]}</span>
-                    <span className={isWin ? "text-green-600" : "text-orange-500"}>
+                    <span className="font-medium text-text flex-1">{e.player_name.split(" ")[0]}</span>
+                    <span className={isWin ? "text-green-600 dark:text-green-400" : "text-orange-500"}>
                       {e.delta > 0 ? "+" : "−"}1 {isWin ? "W" : "L"}
                     </span>
                     {isActive && (
@@ -504,15 +504,15 @@ export default async function SessionDetailPage({
 
       {/* Past sessions this season (hidden for finals) */}
       {pastSessions.length > 0 && !isFinalsSession && (
-        <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-          <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
+        <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
+          <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide mb-3">
             Past Sessions
           </h2>
           <div className="flex flex-col gap-2">
             {pastSessions.map((s) => (
-              <NavLink key={s.id} href={`/session/${s.id}`} className="flex items-center justify-between text-sm hover:bg-stone-50 active:bg-sky-50 -mx-1 px-1 rounded-lg transition-colors">
+              <NavLink key={s.id} href={`/session/${s.id}`} className="flex items-center justify-between text-sm hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 dark:bg-sky-500/10 -mx-1 px-1 rounded-lg transition-colors">
                 <span className="text-sky-600">{formatDate(s.date)}</span>
-                <span className="text-stone-400 capitalize">{s.status}</span>
+                <span className="text-muted-light capitalize">{s.status}</span>
               </NavLink>
             ))}
           </div>

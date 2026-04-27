@@ -16,7 +16,7 @@ export default function CloseSessionButton({ sessionId }: { sessionId: string })
 
   if (confirming) {
     return (
-      <div className="bg-sky-50 border border-sky-100 rounded-xl px-4 py-3 flex flex-col gap-3">
+      <div className="bg-sky-50 dark:bg-sky-500/10 border border-sky-100 rounded-xl px-4 py-3 flex flex-col gap-3">
         <p className="text-sm text-sky-800 font-medium">
           Finalize scores and close tonight's session?
         </p>
@@ -26,14 +26,14 @@ export default function CloseSessionButton({ sessionId }: { sessionId: string })
         <div className="flex gap-2">
           <button
             onClick={() => setConfirming(false)}
-            className="flex-1 py-2 text-sm font-medium text-stone-600 bg-white border border-stone-200 rounded-lg"
+            className="flex-1 py-2 text-sm font-medium text-text bg-surface border border-border rounded-lg"
           >
             Cancel
           </button>
           <button
             onClick={handleClose}
             disabled={loading}
-            className="flex-1 py-2 text-sm font-semibold text-white bg-stone-900 rounded-lg disabled:opacity-50"
+            className="flex-1 py-2 text-sm font-semibold text-white bg-stone-900 dark:bg-sky-600 rounded-lg disabled:opacity-50"
           >
             {loading ? "Closing…" : "Yes, finalize it"}
           </button>
@@ -45,7 +45,7 @@ export default function CloseSessionButton({ sessionId }: { sessionId: string })
   return (
     <button
       onClick={() => setConfirming(true)}
-      className="w-full py-2.5 text-sm font-semibold text-white bg-stone-900 rounded-xl hover:bg-stone-800 transition-colors"
+      className="w-full py-2.5 text-sm font-semibold text-white bg-stone-900 dark:bg-sky-600 rounded-xl hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors"
     >
       Finalize Scores &amp; Close
     </button>

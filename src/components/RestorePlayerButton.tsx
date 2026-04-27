@@ -18,7 +18,7 @@ export default function RestorePlayerButton({ playerId }: { playerId: string }) 
     <button
       onClick={handleRestore}
       disabled={loading}
-      className="text-xs px-3 py-1 rounded-lg bg-sky-50 text-sky-600 border border-sky-100 hover:bg-sky-100 transition-colors disabled:opacity-40 whitespace-nowrap"
+      className="text-xs px-3 py-1 rounded-lg bg-sky-50 dark:bg-sky-500/10 text-sky-600 border border-sky-100 hover:bg-sky-100 dark:bg-sky-500/15 transition-colors disabled:opacity-40 whitespace-nowrap"
     >
       {loading ? "…" : "Restore"}
     </button>

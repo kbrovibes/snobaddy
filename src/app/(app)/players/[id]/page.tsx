@@ -90,9 +90,9 @@ export default async function PlayerProfilePage({
       </div>
 
       {/* Player header */}
-      <div className="bg-white rounded-xl shadow-sm px-4 py-4">
+      <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-sky-100 flex items-center justify-center text-sky-700 text-xl font-bold shrink-0">
+          <div className="w-12 h-12 rounded-full bg-sky-100 dark:bg-sky-500/15 flex items-center justify-center text-sky-700 text-xl font-bold shrink-0">
             {player.name.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
@@ -104,17 +104,17 @@ export default async function PlayerProfilePage({
             />
           </div>
           <div className="text-right shrink-0">
-            <p className="text-2xl font-bold text-stone-900">{overallPct}%</p>
-            <p className="text-xs text-stone-400">{totalWins}W {totalLosses}L</p>
+            <p className="text-2xl font-bold text-heading">{overallPct}%</p>
+            <p className="text-xs text-muted-light">{totalWins}W {totalLosses}L</p>
           </div>
         </div>
         {poem && (
-          <div className="mt-3 border-t border-stone-100 pt-3">
-            <p className="text-sm italic text-stone-500 leading-relaxed">{poem}</p>
+          <div className="mt-3 border-t border-border-light pt-3">
+            <p className="text-sm italic text-text-light leading-relaxed">{poem}</p>
             <div className="mt-2">
-              <p className="text-[10px] italic text-stone-300">— Written by an AI that has never touched a shuttlecock</p>
+              <p className="text-[10px] italic text-muted-lighter">— Written by an AI that has never touched a shuttlecock</p>
               <div className="flex items-center justify-between gap-2">
-                <p className="text-[10px] italic text-stone-300">
+                <p className="text-[10px] italic text-muted-lighter">
                   &nbsp;&nbsp;{poemCreatedAt ? new Date(poemCreatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "unknown date"}
                 </p>
                 {isGodMode && <RegeneratePoemButton playerId={id} />}
@@ -126,7 +126,7 @@ export default async function PlayerProfilePage({
 
       {/* Theme toggle — own profile only */}
       {player.user_id === user!.id && (
-        <div className="bg-surface rounded-xl shadow-sm px-4 py-3">
+        <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
           <h2 className="text-sm font-semibold text-muted uppercase tracking-wide mb-3">
             Appearance
           </h2>
@@ -135,9 +135,9 @@ export default async function PlayerProfilePage({
       )}
 
       {/* Stats chart */}
-      <div className="bg-white rounded-xl shadow-sm px-4 py-3">
+      <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
+          <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide">
             Stats by Session
           </h2>
           {isAdmin && <IncludeTestToggle enabled={includeTestSessions} />}
@@ -146,44 +146,44 @@ export default async function PlayerProfilePage({
       </div>
 
       {/* Match history */}
-      <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-        <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
+      <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
+        <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide mb-3">
           Match History
         </h2>
 
         {matchesBySession.length === 0 ? (
-          <p className="text-sm text-stone-400">No matches yet.</p>
+          <p className="text-sm text-muted-light">No matches yet.</p>
         ) : (
           <div className="flex flex-col gap-4">
             {matchesBySession.map((group) => (
               <div key={group.session_id}>
-                <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${group.absent ? "text-stone-300" : group.isOpen ? "text-sky-400" : "text-stone-400"}`}>
+                <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${group.absent ? "text-muted-lighter" : group.isOpen ? "text-sky-400" : "text-muted-light"}`}>
                   {formatDate(group.date)}{group.isOpen ? "*" : ""}
                 </p>
                 {group.absent ? (
-                  <p className="text-sm text-stone-300">Did not play</p>
+                  <p className="text-sm text-muted-lighter">Did not play</p>
                 ) : group.isTally ? (
-                  <p className="text-sm text-stone-500">
-                    <span className="font-semibold text-green-700">{group.tallyWins}W</span>
+                  <p className="text-sm text-text-light">
+                    <span className="font-semibold text-green-700 dark:text-green-400">{group.tallyWins}W</span>
                     {" "}<span className="font-semibold text-red-500">{group.tallyLosses}L</span>
-                    <span className="text-stone-400 ml-1 text-xs">(tally)</span>
+                    <span className="text-muted-light ml-1 text-xs">(tally)</span>
                   </p>
                 ) : (
-                  <div className="flex flex-col divide-y divide-stone-100">
+                  <div className="flex flex-col divide-y divide-border-light">
                     {group.matches.map((m) => (
                       <div key={m.id} className="py-2.5">
                         <div className="flex items-center gap-2">
                           <span className={`text-xs font-bold px-1.5 py-0.5 rounded shrink-0 ${
-                            m.won ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
+                            m.won ? "bg-green-100 dark:bg-green-500/15 text-green-700 dark:text-green-400" : "bg-red-100 dark:bg-red-500/15 text-red-600 dark:text-red-400"
                           }`}>
                             {m.won ? "W" : "L"}
                           </span>
-                          <span className="text-sm text-stone-700 truncate flex-1">
+                          <span className="text-sm text-text truncate flex-1">
                             w/ {shortName(m.partner, nameMap)}
-                            <span className="text-stone-400"> vs </span>
+                            <span className="text-muted-light"> vs </span>
                             {m.opponents.map((n) => shortName(n, nameMap)).join(" & ")}
                           </span>
-                          <span className={`text-sm font-semibold tabular-nums shrink-0 ${m.won ? "text-green-600" : "text-red-400"}`}>
+                          <span className={`text-sm font-semibold tabular-nums shrink-0 ${m.won ? "text-green-600 dark:text-green-400" : "text-red-400"}`}>
                             {m.my_score}–{m.opp_score}
                           </span>
                         </div>

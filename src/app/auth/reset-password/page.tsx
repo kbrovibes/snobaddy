@@ -29,10 +29,10 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-8 bg-stone-50">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-8 bg-background">
       <div className="flex flex-col items-center gap-2">
         <span className="text-5xl">🏸</span>
-        <h1 className="text-xl font-bold text-stone-900">Set new password</h1>
+        <h1 className="text-xl font-bold text-heading">Set new password</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full max-w-xs">
@@ -43,13 +43,13 @@ export default function ResetPasswordPage() {
           onChange={(e) => setPassword(e.target.value)}
           required
           minLength={6}
-          className="w-full px-4 py-3 border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white"
+          className="w-full px-4 py-3 border border-stone-300 dark:border-border rounded-lg text-heading placeholder-stone-400 dark:placeholder-muted-light focus:outline-none focus:ring-2 focus:ring-sky-500 bg-surface"
         />
         {error && <p className="text-sm text-red-500">{error}</p>}
         <button
           type="submit"
           disabled={loading || !password}
-          className="w-full py-3 bg-stone-900 text-white font-semibold rounded-lg disabled:opacity-40 hover:bg-stone-800 transition-colors"
+          className="w-full py-3 bg-stone-900 text-white font-semibold rounded-lg disabled:opacity-40 hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors"
         >
           {loading ? "Updating…" : "Update password"}
         </button>

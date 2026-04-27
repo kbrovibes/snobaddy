@@ -163,14 +163,14 @@ function GroupDetailSection({
   return (
     <div className="flex flex-col gap-3">
       {/* Group heading */}
-      <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
+      <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide">
         Group {group} — Details
       </h2>
 
       {/* Series timeline — if best-of-3 happened */}
       {series && seriesMatches.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 px-4 py-3">
-          <h3 className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide mb-2">
+        <div className="bg-surface rounded-xl shadow-sm border border-border-light px-4 py-3">
+          <h3 className="text-[11px] font-semibold text-muted-light uppercase tracking-wide mb-2">
             Best-of-3 Final
           </h3>
           <div className="flex items-center gap-1.5">
@@ -180,11 +180,11 @@ function GroupDetailSection({
               const winLabel = m.winning_team === 1 ? t1 : t2;
               return (
                 <React.Fragment key={m.id}>
-                  {i > 0 && <span className="text-stone-300 text-xs">→</span>}
-                  <div className="flex-1 bg-stone-50 rounded-lg px-2.5 py-2 text-center">
-                    <p className="text-[10px] text-stone-400 font-medium">Game {i + 1}</p>
-                    <p className="text-sm font-bold text-stone-800">{m.team1_score}–{m.team2_score}</p>
-                    <p className="text-[10px] text-green-600 font-semibold">{winLabel}</p>
+                  {i > 0 && <span className="text-muted-lighter text-xs">→</span>}
+                  <div className="flex-1 bg-background rounded-lg px-2.5 py-2 text-center">
+                    <p className="text-[10px] text-muted-light font-medium">Game {i + 1}</p>
+                    <p className="text-sm font-bold text-heading">{m.team1_score}–{m.team2_score}</p>
+                    <p className="text-[10px] text-green-600 dark:text-green-400 font-semibold">{winLabel}</p>
                   </div>
                 </React.Fragment>
               );
@@ -194,9 +194,9 @@ function GroupDetailSection({
       )}
 
       {/* Standings table */}
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
-        <div className="bg-stone-50 px-4 py-2 border-b border-stone-100">
-          <h3 className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide">
+      <div className="bg-surface rounded-xl shadow-sm border border-border-light overflow-hidden">
+        <div className="bg-background px-4 py-2 border-b border-border-light">
+          <h3 className="text-[11px] font-semibold text-muted-light uppercase tracking-wide">
             {isFixedPartner ? "Pair Standings" : "Player Standings"}
           </h3>
         </div>
@@ -209,32 +209,32 @@ function GroupDetailSection({
 
       {/* Collapsible match history */}
       {groupStageMatches.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+        <div className="bg-surface rounded-xl shadow-sm border border-border-light overflow-hidden">
           <button
             onClick={() => setShowMatches(!showMatches)}
-            className="w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-stone-50 transition-colors"
+            className="w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-surface-alt transition-colors"
           >
-            <span className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide">
+            <span className="text-[11px] font-semibold text-muted-light uppercase tracking-wide">
               All Matches · {groupStageMatches.filter((m) => m.winning_team != null).length}
             </span>
-            <span className="text-xs text-stone-400">{showMatches ? "▲" : "▼"}</span>
+            <span className="text-xs text-muted-light">{showMatches ? "▲" : "▼"}</span>
           </button>
           {showMatches && (
-            <div className="border-t border-stone-100 px-4 py-2 flex flex-col gap-2">
+            <div className="border-t border-border-light px-4 py-2 flex flex-col gap-2">
               {groupStageMatches.filter((m) => m.winning_team != null).map((m) => {
                 const { t1, t2 } = matchLabel(m);
                 return (
                   <div key={m.id} className="text-sm">
                     <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                      <span className={`font-semibold truncate text-left ${m.winning_team === 1 ? "text-green-600" : "text-stone-400"}`}>
+                      <span className={`font-semibold truncate text-left ${m.winning_team === 1 ? "text-green-600 dark:text-green-400" : "text-muted-light"}`}>
                         {t1}
                       </span>
-                      <span className="text-stone-300 text-center w-6">vs</span>
-                      <span className={`font-semibold truncate text-left ${m.winning_team === 2 ? "text-green-600" : "text-stone-400"}`}>
+                      <span className="text-muted-lighter text-center w-6">vs</span>
+                      <span className={`font-semibold truncate text-left ${m.winning_team === 2 ? "text-green-600 dark:text-green-400" : "text-muted-light"}`}>
                         {t2}
                       </span>
                     </div>
-                    <p className="text-xs text-stone-400 mt-0.5">
+                    <p className="text-xs text-muted-light mt-0.5">
                       {m.team1_score}–{m.team2_score} · {m.winning_team === 1 ? t1 : t2} won
                     </p>
                   </div>
@@ -265,7 +265,7 @@ function FixedPartnerTable({
   return (
     <table className="w-full text-sm">
       <thead>
-        <tr className="border-b border-stone-100 text-[11px] text-stone-400 uppercase">
+        <tr className="border-b border-border-light text-[11px] text-muted-light uppercase">
           <th className="text-left px-4 py-1.5 font-medium w-8">#</th>
           <th className="text-left px-2 py-1.5 font-medium">Team</th>
           <th className="text-center px-2 py-1.5 font-medium w-10">W</th>
@@ -275,15 +275,15 @@ function FixedPartnerTable({
       </thead>
       <tbody>
         {stats.map((s, i) => (
-          <tr key={s.label} className={`border-b border-stone-100 last:border-0 ${i === 0 ? "bg-green-50/50" : ""}`}>
-            <td className="px-4 py-1.5 text-xs text-stone-400">{i + 1}</td>
-            <td className="px-2 py-1.5 text-stone-800">
+          <tr key={s.label} className={`border-b border-border-light last:border-0 ${i === 0 ? "bg-green-50/50" : ""}`}>
+            <td className="px-4 py-1.5 text-xs text-muted-light">{i + 1}</td>
+            <td className="px-2 py-1.5 text-heading">
               {s.label}
               {i === 0 && " 🏆"}
             </td>
-            <td className="text-center px-2 py-1.5 font-semibold text-green-600">{s.wins}</td>
+            <td className="text-center px-2 py-1.5 font-semibold text-green-600 dark:text-green-400">{s.wins}</td>
             <td className="text-center px-2 py-1.5 font-semibold text-red-400">{s.losses}</td>
-            <td className="text-center px-2 py-1.5 font-bold text-stone-700">{s.pts}</td>
+            <td className="text-center px-2 py-1.5 font-bold text-text">{s.pts}</td>
           </tr>
         ))}
       </tbody>
@@ -305,7 +305,7 @@ function PlayoffsTable({
   return (
     <table className="w-full text-sm">
       <thead>
-        <tr className="border-b border-stone-100 text-[11px] text-stone-400 uppercase">
+        <tr className="border-b border-border-light text-[11px] text-muted-light uppercase">
           <th className="text-left px-4 py-1.5 font-medium w-8">#</th>
           <th className="text-left px-2 py-1.5 font-medium">Player</th>
           <th className="text-center px-2 py-1.5 font-medium w-10">W</th>
@@ -315,12 +315,12 @@ function PlayoffsTable({
       </thead>
       <tbody>
         {stats.map((s, i) => (
-          <tr key={s.playerId} className={`border-b border-stone-100 last:border-0 ${i < 4 ? "bg-green-50/50" : ""}`}>
-            <td className="px-4 py-1.5 text-xs text-stone-400">{i + 1}</td>
-            <td className="px-2 py-1.5 text-stone-800">{s.name}</td>
-            <td className="text-center px-2 py-1.5 font-semibold text-green-600">{s.wins}</td>
+          <tr key={s.playerId} className={`border-b border-border-light last:border-0 ${i < 4 ? "bg-green-50/50" : ""}`}>
+            <td className="px-4 py-1.5 text-xs text-muted-light">{i + 1}</td>
+            <td className="px-2 py-1.5 text-heading">{s.name}</td>
+            <td className="text-center px-2 py-1.5 font-semibold text-green-600 dark:text-green-400">{s.wins}</td>
             <td className="text-center px-2 py-1.5 font-semibold text-red-400">{s.losses}</td>
-            <td className="text-center px-2 py-1.5 font-bold text-stone-700">{s.pts}</td>
+            <td className="text-center px-2 py-1.5 font-bold text-text">{s.pts}</td>
           </tr>
         ))}
       </tbody>
@@ -430,27 +430,27 @@ export default function FinalsCompletedView({
       {/* All group winner/runner-up cards at the top */}
       {groupResults.map((r) => (
         <div key={r.group} className="flex flex-col gap-2">
-          <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
+          <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide">
             Group {r.group}
           </h2>
           <div className="grid grid-cols-2 gap-2">
             {r.winner && (
-              <div className="bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-3 flex flex-col items-center gap-1 text-center">
+              <div className="bg-surface rounded-xl shadow-sm border border-border-light px-3 py-3 flex flex-col items-center gap-1 text-center">
                 <span className="text-2xl">🏆</span>
-                <span className="text-xs font-semibold text-stone-700">Winner</span>
-                <span className="text-sm font-bold text-stone-900">{r.winner}</span>
+                <span className="text-xs font-semibold text-text">Winner</span>
+                <span className="text-sm font-bold text-heading">{r.winner}</span>
               </div>
             )}
             {r.runnerUp && (
-              <div className="bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-3 flex flex-col items-center gap-1 text-center">
+              <div className="bg-surface rounded-xl shadow-sm border border-border-light px-3 py-3 flex flex-col items-center gap-1 text-center">
                 <span className="text-2xl">🥈</span>
-                <span className="text-xs font-semibold text-stone-700">Runner-up</span>
-                <span className="text-sm font-bold text-stone-900">{r.runnerUp}</span>
+                <span className="text-xs font-semibold text-text">Runner-up</span>
+                <span className="text-sm font-bold text-heading">{r.runnerUp}</span>
               </div>
             )}
           </div>
           {!r.winner && !r.runnerUp && (
-            <p className="text-xs text-stone-400 text-center py-2">No results recorded</p>
+            <p className="text-xs text-muted-light text-center py-2">No results recorded</p>
           )}
         </div>
       ))}
@@ -476,15 +476,15 @@ export default function FinalsCompletedView({
 
       {/* Overall rankings */}
       {!hideOverallRankings && allRankings.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
-          <div className="bg-stone-50 px-4 py-2 border-b border-stone-100">
-            <h3 className="text-xs font-semibold text-stone-500 uppercase tracking-wide">
+        <div className="bg-surface rounded-xl shadow-sm border border-border-light overflow-hidden">
+          <div className="bg-background px-4 py-2 border-b border-border-light">
+            <h3 className="text-xs font-semibold text-text-light uppercase tracking-wide">
               Overall Rankings
             </h3>
           </div>
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-stone-100 text-[11px] text-stone-400 uppercase">
+              <tr className="border-b border-border-light text-[11px] text-muted-light uppercase">
                 <th className="text-left px-4 py-1.5 font-medium w-8">#</th>
                 <th className="text-left px-2 py-1.5 font-medium">Player</th>
                 <th className="text-center px-2 py-1.5 font-medium w-10">Grp</th>
@@ -495,13 +495,13 @@ export default function FinalsCompletedView({
             </thead>
             <tbody>
               {allRankings.map((r, i) => (
-                <tr key={`${r.name}-${r.group}`} className="border-b border-stone-100 last:border-0">
-                  <td className="px-4 py-1.5 text-xs text-stone-400">{i + 1}</td>
-                  <td className="px-2 py-1.5 text-stone-800">{r.name}</td>
-                  <td className="text-center px-2 py-1.5 text-xs text-stone-400">{r.group}</td>
-                  <td className="text-center px-2 py-1.5 font-semibold text-green-600">{r.wins}</td>
+                <tr key={`${r.name}-${r.group}`} className="border-b border-border-light last:border-0">
+                  <td className="px-4 py-1.5 text-xs text-muted-light">{i + 1}</td>
+                  <td className="px-2 py-1.5 text-heading">{r.name}</td>
+                  <td className="text-center px-2 py-1.5 text-xs text-muted-light">{r.group}</td>
+                  <td className="text-center px-2 py-1.5 font-semibold text-green-600 dark:text-green-400">{r.wins}</td>
                   <td className="text-center px-2 py-1.5 font-semibold text-red-400">{r.losses}</td>
-                  <td className="text-center px-2 py-1.5 font-bold text-stone-700">{r.pts}</td>
+                  <td className="text-center px-2 py-1.5 font-bold text-text">{r.pts}</td>
                 </tr>
               ))}
             </tbody>

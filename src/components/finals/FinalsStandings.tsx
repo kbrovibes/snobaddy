@@ -141,21 +141,21 @@ export default function FinalsStandings({
 
   return (
     <div className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
+      <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide">
         Standings
       </h2>
 
       {/* Group tabs */}
       {groups.length > 1 && (
-        <div className="flex gap-1 bg-stone-100 rounded-lg p-0.5">
+        <div className="flex gap-1 bg-surface-alt rounded-lg p-0.5">
           {groups.map((g) => (
             <button
               key={g}
               onClick={() => { setActiveGroup(g); setTiebreakWinner(null); }}
               className={`flex-1 text-sm font-semibold py-1.5 rounded-md transition-colors ${
                 activeGroup === g
-                  ? "bg-white text-stone-900 shadow-sm"
-                  : "text-stone-500 hover:text-stone-700"
+                  ? "bg-surface text-heading shadow-sm"
+                  : "text-text-light hover:text-text"
               }`}
             >
               Group {g}
@@ -168,7 +168,7 @@ export default function FinalsStandings({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-xs text-stone-400 uppercase">
+            <tr className="text-xs text-muted-light uppercase">
               <th className="text-left py-1.5 pr-2">#</th>
               <th className="text-left py-1.5">Team</th>
               <th className="text-center py-1.5 px-1.5">W</th>
@@ -184,21 +184,21 @@ export default function FinalsStandings({
                 <tr
                   key={s.pairIndex}
                   className={[
-                    "border-t border-stone-100",
+                    "border-t border-border-light",
                     isWinner ? "bg-green-50" : "",
                     isTied ? "bg-amber-50" : "",
                   ].join(" ")}
                 >
-                  <td className="py-2 pr-2 text-stone-400 font-mono text-xs">{idx + 1}</td>
+                  <td className="py-2 pr-2 text-muted-light font-mono text-xs">{idx + 1}</td>
                   <td className="py-2">
-                    <span className="font-semibold text-stone-800">
+                    <span className="font-semibold text-heading">
                       {s.label}
                       {isWinner && " 🏆"}
                     </span>
                   </td>
-                  <td className="text-center font-semibold text-green-600">{s.wins}</td>
+                  <td className="text-center font-semibold text-green-600 dark:text-green-400">{s.wins}</td>
                   <td className="text-center font-semibold text-red-400">{s.losses}</td>
-                  <td className="text-center font-bold text-stone-700">{s.pf + s.wins * 2}</td>
+                  <td className="text-center font-bold text-text">{s.pf + s.wins * 2}</td>
                 </tr>
               );
             })}
@@ -208,7 +208,7 @@ export default function FinalsStandings({
 
       {/* Tie resolution */}
       {allPlayed && tie.type === "2-way" && isGodMode && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm">
+        <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 rounded-xl px-4 py-3 text-sm">
           <p className="font-semibold text-amber-800 mb-1">
             2-way tie in Group {activeGroup}!
           </p>
@@ -219,7 +219,7 @@ export default function FinalsStandings({
       )}
 
       {allPlayed && tie.type === "3-way" && isGodMode && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm">
+        <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 rounded-xl px-4 py-3 text-sm">
           <p className="font-semibold text-amber-800 mb-1">
             {tie.tiedPairs.length}-way tie in Group {activeGroup}!
           </p>
@@ -230,7 +230,7 @@ export default function FinalsStandings({
             <select
               value={tiebreakWinner ?? ""}
               onChange={(e) => setTiebreakWinner(e.target.value || null)}
-              className="flex-1 text-sm border border-amber-200 rounded-lg px-2 py-1.5 bg-white"
+              className="flex-1 text-sm border border-amber-200 rounded-lg px-2 py-1.5 bg-surface"
             >
               <option value="">Select winner…</option>
               {tie.tiedPairs.map((t) => (

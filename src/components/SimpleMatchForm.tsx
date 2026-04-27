@@ -98,8 +98,8 @@ export default function SimpleMatchForm({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full border rounded-lg px-2 py-2 text-sm bg-white font-medium ${
-          value ? "border-sky-400 text-stone-900" : "border-stone-200 text-stone-400"
+        className={`w-full border rounded-lg px-2 py-2 text-sm bg-surface font-medium ${
+          value ? "border-sky-400 text-heading" : "border-border text-muted-light"
         }`}
       >
         <option value="" disabled>Pick…</option>
@@ -111,20 +111,20 @@ export default function SimpleMatchForm({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm px-4 py-3 flex flex-col gap-3">
+    <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3 flex flex-col gap-3">
 
       {/* Header */}
-      <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
+      <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide">
         {simpleMode ? "Record Win/Loss" : "Record a Match"}
       </h2>
 
       {/* 3-col layout: winners | vs | losers */}
       <div className="grid grid-cols-[1fr_2rem_1fr] items-start gap-2">
         <div className={`flex flex-col gap-1.5 border rounded-xl px-2.5 py-2 ${
-          simpleMode ? "border-green-200 bg-green-50/40" : "border-stone-200 bg-stone-50/40"
+          simpleMode ? "border-green-200 bg-green-50/40" : "border-border bg-background/40"
         }`}>
           <span className={`text-xs font-bold uppercase tracking-wide ${
-            simpleMode ? "text-green-600" : "text-sky-600"
+            simpleMode ? "text-green-600 dark:text-green-400" : "text-sky-600"
           }`}>
             {simpleMode ? "Winning Team" : "Team 1"}
           </span>
@@ -133,11 +133,11 @@ export default function SimpleMatchForm({
         </div>
 
         <div className="flex items-center justify-center h-full pt-5">
-          <span className="text-xs font-bold text-stone-300">vs</span>
+          <span className="text-xs font-bold text-muted-lighter">vs</span>
         </div>
 
-        <div className="flex flex-col gap-1.5 border border-stone-200 bg-stone-50/40 rounded-xl px-2.5 py-2">
-          <span className="text-xs font-bold text-stone-400 uppercase tracking-wide select-none">
+        <div className="flex flex-col gap-1.5 border border-border bg-background/40 rounded-xl px-2.5 py-2">
+          <span className="text-xs font-bold text-muted-light uppercase tracking-wide select-none">
             {simpleMode ? <>&nbsp;</> : "Team 2"}
           </span>
           <PlayerSelect value={l1} onChange={setL1} exclude={[w1, w2, l2]} />
@@ -153,33 +153,33 @@ export default function SimpleMatchForm({
             value={score1}
             onChange={(e) => setScore1(e.target.value)}
             placeholder="21"
-            className="flex-1 text-center text-xl font-bold text-stone-900 border-2 border-stone-200 rounded-xl py-2.5 focus:border-sky-400 outline-none"
+            className="flex-1 text-center text-xl font-bold text-heading border-2 border-border rounded-xl py-2.5 focus:border-sky-400 outline-none"
           />
-          <span className="text-lg font-bold text-stone-300">–</span>
+          <span className="text-lg font-bold text-muted-lighter">–</span>
           <input
             type="number" min="0" max="99"
             value={score2}
             onChange={(e) => setScore2(e.target.value)}
             placeholder="15"
-            className="flex-1 text-center text-xl font-bold text-stone-900 border-2 border-stone-200 rounded-xl py-2.5 focus:border-sky-400 outline-none"
+            className="flex-1 text-center text-xl font-bold text-heading border-2 border-border rounded-xl py-2.5 focus:border-sky-400 outline-none"
           />
         </div>
       )}
 
       {error && <p className="text-sm text-red-500 text-center">{error}</p>}
-      {saved && <p className="text-sm text-green-600 font-medium text-center">Score saved!</p>}
+      {saved && <p className="text-sm text-green-600 dark:text-green-400 font-medium text-center">Score saved!</p>}
 
       <div className="flex gap-2">
         <button
           onClick={save}
           disabled={!canSave || saving || saved}
-          className="flex-1 py-2 bg-stone-900 text-white font-semibold rounded-xl text-sm hover:bg-stone-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex-1 py-2 bg-stone-900 text-white font-semibold rounded-xl text-sm hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {saving ? "Saving…" : "Save"}
         </button>
         <button
           onClick={clear}
-          className="px-4 py-2 bg-stone-100 text-stone-600 font-semibold rounded-xl text-sm hover:bg-stone-200 transition-colors"
+          className="px-4 py-2 bg-surface-alt text-text font-semibold rounded-xl text-sm hover:bg-stone-200 dark:hover:bg-surface-alt transition-colors"
         >
           Clear
         </button>

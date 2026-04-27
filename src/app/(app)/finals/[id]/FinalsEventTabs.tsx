@@ -23,9 +23,9 @@ import type { FinalsEvent, FinalsParticipant, FinalsSessionPair, FinalsSessionIn
 import type { PlayerStats } from "@/lib/db/players";
 
 const GROUP_COLORS: Record<string, string> = {
-  A: "bg-sky-100 text-sky-700 border-sky-200",
+  A: "bg-sky-100 dark:bg-sky-500/15 text-sky-700 border-sky-200",
   B: "bg-amber-100 text-amber-700 border-amber-200",
-  C: "bg-stone-100 text-stone-600 border-stone-200",
+  C: "bg-surface-alt text-text border-border",
 };
 
 type Tab = "players" | "groups" | "sessions";
@@ -37,7 +37,7 @@ function SkillDots({ level }: { level: number }) {
       {[1, 2, 3, 4, 5].map((i) => (
         <span
           key={i}
-          className={`w-1.5 h-1.5 rounded-full ${i <= level ? "bg-stone-700" : "bg-stone-200"}`}
+          className={`w-1.5 h-1.5 rounded-full ${i <= level ? "bg-stone-700 dark:bg-neutral-300" : "bg-stone-200 dark:bg-border"}`}
         />
       ))}
     </span>
@@ -82,19 +82,19 @@ function WorkflowSteps({
         const textCls = isActive || isDoneBefore
           ? "text-white"
           : isDoneAfter
-          ? "text-emerald-600"
+          ? "text-emerald-600 dark:text-emerald-400"
           : s.locked
-          ? "text-stone-400"
-          : "text-stone-600";
+          ? "text-muted-light"
+          : "text-text";
         const badgeCls = isActive
           ? "bg-white/20 text-white"
           : isDoneBefore
           ? "bg-white/25 text-white"
           : isDoneAfter
-          ? "bg-emerald-100 text-emerald-600"
+          ? "bg-emerald-100 text-emerald-600 dark:text-emerald-400"
           : s.locked
-          ? "bg-stone-200 text-stone-400"
-          : "bg-stone-200 text-stone-500";
+          ? "bg-stone-200 dark:bg-neutral-700 text-muted-light"
+          : "bg-stone-200 dark:bg-neutral-700 text-text-light";
 
         // SVG arrow path
         // Flat left for first, notched for others. Arrow point on right for all.
@@ -235,14 +235,14 @@ function PlayersTab({
     <div className="flex flex-col gap-3">
       {/* Header row */}
       <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold text-stone-700">
+        <p className="text-sm font-semibold text-text">
           {localIds.size} player{localIds.size !== 1 ? "s" : ""} in pool
           {hasChanges && editing && <span className="text-amber-500 ml-1 text-xs font-normal">(unsaved)</span>}
         </p>
         {canEditPlayers && !editing && (
           <button
             onClick={() => setEditing(true)}
-            className="text-xs font-semibold text-sky-600 hover:text-sky-800 px-3 py-1 border border-sky-200 rounded-lg hover:bg-sky-50 transition-colors"
+            className="text-xs font-semibold text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 px-3 py-1 border border-sky-200 rounded-lg hover:bg-sky-50 dark:bg-sky-500/10 transition-colors"
           >
             Edit
           </button>
@@ -250,17 +250,17 @@ function PlayersTab({
       </div>
 
       {error && (
-        <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+        <p className="text-xs text-red-500 bg-red-50 dark:bg-red-500/10 px-3 py-2 rounded-lg">{error}</p>
       )}
 
       {/* Status banner */}
       {isBreakdown && editing && (
-        <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg">
+        <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 rounded-lg">
           Groups have been generated. After saving changes, re-run the breakdown on the Groups tab.
         </p>
       )}
       {!canEditPlayers && (
-        <p className="text-xs text-stone-400 bg-stone-50 px-3 py-2 rounded-lg">
+        <p className="text-xs text-muted-light bg-background px-3 py-2 rounded-lg">
           Player list is locked — groups have been confirmed and sessions created. To make changes, delete the finals sessions first.
         </p>
       )}
@@ -274,20 +274,20 @@ function PlayersTab({
               placeholder="Search player to add…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+              className="w-full px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-300 dark:focus:ring-border bg-surface"
             />
             {search.length > 0 && (
-              <div className="bg-white border border-stone-200 rounded-lg shadow-sm overflow-hidden max-h-48 overflow-y-auto">
+              <div className="bg-surface border border-border rounded-lg shadow-sm dark:shadow-none dark:ring-1 dark:ring-border overflow-hidden max-h-48 overflow-y-auto">
                 {available.length === 0 ? (
-                  <p className="px-3 py-2 text-xs text-stone-400">No players found</p>
+                  <p className="px-3 py-2 text-xs text-muted-light">No players found</p>
                 ) : (
                   available.slice(0, 10).map((p) => (
                     <button
                       key={p.id}
                       onClick={() => addPlayer(p.id)}
-                      className="w-full flex items-center px-3 py-2 hover:bg-stone-50 active:bg-sky-50 transition-colors border-b border-stone-100 last:border-0"
+                      className="w-full flex items-center px-3 py-2 hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 dark:bg-sky-500/10 transition-colors border-b border-border-light last:border-0"
                     >
-                      <span className="text-sm text-stone-800">{p.name}</span>
+                      <span className="text-sm text-heading">{p.name}</span>
                     </button>
                   ))
                 )}
@@ -297,7 +297,7 @@ function PlayersTab({
           {seasonPlayerIds.some((id) => !localIds.has(id)) && (
             <button
               onClick={addAllSeason}
-              className="text-xs font-medium text-sky-600 hover:text-sky-800 self-start"
+              className="text-xs font-medium text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 self-start"
             >
               + Add all season players
             </button>
@@ -307,22 +307,22 @@ function PlayersTab({
 
       {/* Player pills */}
       {localPlayers.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-stone-200 px-4 py-8 text-center">
-          <p className="text-sm text-stone-400">No players added yet.</p>
-          <p className="text-xs text-stone-300 mt-1">Search above to add players</p>
+        <div className="rounded-lg border border-dashed border-border px-4 py-8 text-center">
+          <p className="text-sm text-muted-light">No players added yet.</p>
+          <p className="text-xs text-muted-lighter mt-1">Search above to add players</p>
         </div>
       ) : (
         <div className="flex flex-wrap gap-2">
           {localPlayers.map((p) => (
             <span
               key={p.id}
-              className="inline-flex items-center gap-1 bg-stone-100 text-stone-700 text-sm font-medium px-3 py-1 rounded-full"
+              className="inline-flex items-center gap-1 bg-surface-alt text-text text-sm font-medium px-3 py-1 rounded-full"
             >
               {p.name.split(" ")[0]}
               {editing && (
                 <button
                   onClick={() => removePlayer(p.id)}
-                  className="text-[10px] text-stone-400 hover:text-red-500 leading-none ml-0.5"
+                  className="text-[10px] text-muted-light hover:text-red-500 leading-none ml-0.5"
                   title="Remove"
                 >
                   ✕
@@ -347,7 +347,7 @@ function PlayersTab({
             <button
               onClick={cancelEdit}
               disabled={saving}
-              className="px-4 py-2.5 text-sm font-medium text-stone-500 border border-stone-200 rounded-xl hover:bg-stone-50 transition-colors"
+              className="px-4 py-2.5 text-sm font-medium text-text-light border border-border rounded-xl hover:bg-surface-alt transition-colors"
             >
               Cancel
             </button>
@@ -359,7 +359,7 @@ function PlayersTab({
       {!editing && savedIds.size > 0 && isDraft && onGoToGroups && (
         <button
           onClick={onGoToGroups}
-          className="w-full py-2.5 text-sm font-semibold text-sky-600 border border-sky-200 rounded-xl hover:bg-sky-50 transition-colors"
+          className="w-full py-2.5 text-sm font-semibold text-sky-600 border border-sky-200 rounded-xl hover:bg-sky-50 dark:bg-sky-500/10 transition-colors"
         >
           Next: Set Up Groups →
         </button>
@@ -372,7 +372,7 @@ function PlayersTab({
 function DragHandle({ listeners, attributes }: { listeners?: Record<string, Function>; attributes?: Record<string, any> }) {
   return (
     <button
-      className="touch-none flex flex-col items-center justify-center w-6 h-8 cursor-grab active:cursor-grabbing text-stone-300 hover:text-stone-500 -ml-1"
+      className="touch-none flex flex-col items-center justify-center w-6 h-8 cursor-grab active:cursor-grabbing text-muted-lighter hover:text-text-light -ml-1"
       {...attributes}
       {...listeners}
     >
@@ -423,15 +423,15 @@ function DraggablePlayerRow({
 
   return (
     <div ref={setNodeRef} style={style}>
-      <div className="flex items-center gap-0 border-b border-stone-100 last:border-0">
+      <div className="flex items-center gap-0 border-b border-border-light last:border-0">
         {canEdit && (
           <DragHandle listeners={listeners} attributes={attributes} />
         )}
         <div className={`flex-1 flex items-center gap-0 py-1.5 ${canEdit ? "pl-0" : "pl-3"}`}>
-          <span className="text-xs text-stone-400 w-6 text-center shrink-0">{rank}</span>
+          <span className="text-xs text-muted-light w-6 text-center shrink-0">{rank}</span>
           <div className="flex-1 min-w-0 px-1">
             <div className="flex items-center gap-1.5">
-              <NavLink href={`/players/${p.player_id}`} className="text-sm text-sky-600 hover:underline truncate">
+              <NavLink href={`/players/${p.player_id}`} className="text-sm text-sky-600 dark:text-sky-400 hover:underline truncate">
                 {p.name}
               </NavLink>
               {p.group_override && (
@@ -440,7 +440,7 @@ function DraggablePlayerRow({
             </div>
           </div>
           <div className="w-12 text-center shrink-0"><SkillDots level={p.skill_level} /></div>
-          <span className="w-10 text-center text-xs text-stone-500 shrink-0">{score}</span>
+          <span className="w-10 text-center text-xs text-text-light shrink-0">{score}</span>
           <div className="w-10 text-center shrink-0">
             {canEdit && group ? (
               <select
@@ -456,12 +456,12 @@ function DraggablePlayerRow({
             ) : group ? (
               <span className={`text-[11px] font-semibold px-1.5 rounded border ${GROUP_COLORS[group] ?? ""}`}>{group}</span>
             ) : (
-              <span className="text-xs text-stone-300">—</span>
+              <span className="text-xs text-muted-lighter">—</span>
             )}
           </div>
           <div className="w-6 text-center shrink-0">
             {p.score_explanation && (
-              <button onClick={() => setExpandedId(isExpanded ? null : p.id)} className="text-xs text-stone-400 hover:text-stone-600">
+              <button onClick={() => setExpandedId(isExpanded ? null : p.id)} className="text-xs text-muted-light hover:text-text">
                 {isExpanded ? "▾" : "▸"}
               </button>
             )}
@@ -470,7 +470,7 @@ function DraggablePlayerRow({
       </div>
       {isExpanded && p.score_explanation && (
         <div className="px-3 pb-1.5">
-          <p className="text-[11px] text-stone-500 bg-stone-50 rounded px-2 py-1.5 leading-relaxed">
+          <p className="text-[11px] text-text-light bg-background rounded px-2 py-1.5 leading-relaxed">
             {p.score_explanation}
           </p>
         </div>
@@ -510,19 +510,19 @@ function DroppableGroup({
   return (
     <div
       ref={setNodeRef}
-      className={`bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-150 ${isHighlighted ? "ring-2 ring-sky-400 shadow-md bg-sky-50/30" : ""}`}
+      className={`bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border overflow-hidden transition-all duration-150 ${isHighlighted ? "ring-2 ring-sky-400 shadow-md bg-sky-50/30" : ""}`}
     >
       {/* Group header */}
-      <div className="flex items-center justify-between px-3 py-1.5 bg-stone-50 border-b border-stone-100">
+      <div className="flex items-center justify-between px-3 py-1.5 bg-background border-b border-border-light">
         <span className={`text-xs font-bold px-2 py-0.5 rounded border ${GROUP_COLORS[groupLabel] ?? ""}`}>
           Group {groupLabel}
         </span>
-        <span className={`text-xs font-medium ${tooSmall ? "text-red-500" : "text-stone-400"}`}>
+        <span className={`text-xs font-medium ${tooSmall ? "text-red-500" : "text-muted-light"}`}>
           {count}{tooSmall ? " ⚠ min 4" : ""}
         </span>
       </div>
       {/* Column headers */}
-      <div className={`flex items-center gap-0 text-[11px] text-stone-400 uppercase border-b border-stone-100 ${canEdit ? "pl-6" : "pl-3"}`}>
+      <div className={`flex items-center gap-0 text-[11px] text-muted-light uppercase border-b border-border-light ${canEdit ? "pl-6" : "pl-3"}`}>
         <span className="w-6 text-center shrink-0">#</span>
         <span className="flex-1 px-1">Player</span>
         <span className="w-12 text-center shrink-0">Skill</span>
@@ -533,7 +533,7 @@ function DroppableGroup({
       {/* Player rows */}
       <SortableContext items={participants.map((p) => p.id)} strategy={verticalListSortingStrategy}>
         {participants.length === 0 ? (
-          <div className="px-3 py-4 text-center text-xs text-stone-300">
+          <div className="px-3 py-4 text-center text-xs text-muted-lighter">
             Drop players here
           </div>
         ) : (
@@ -561,8 +561,8 @@ function DroppableGroup({
 function DragOverlayRow({ participant: p }: { participant: FinalsParticipant }) {
   const group = p.group_label;
   return (
-    <div className="bg-white rounded-lg shadow-lg border border-stone-200 px-3 py-2 flex items-center gap-2 opacity-95">
-      <span className="text-sm font-medium text-stone-800">{p.name}</span>
+    <div className="bg-surface rounded-lg shadow-lg border border-border px-3 py-2 flex items-center gap-2 opacity-95">
+      <span className="text-sm font-medium text-heading">{p.name}</span>
       {group && (
         <span className={`text-[11px] font-semibold px-1.5 rounded border ${GROUP_COLORS[group] ?? ""}`}>{group}</span>
       )}
@@ -842,7 +842,7 @@ function GroupsTab({
         <button
           onClick={unlockGroups}
           disabled={unlocking || isPending}
-          className="w-full py-2.5 text-sm font-semibold text-amber-700 border border-amber-300 bg-amber-50 rounded-xl hover:bg-amber-100 disabled:opacity-50 transition-colors"
+          className="w-full py-2.5 text-sm font-semibold text-amber-700 border border-amber-300 bg-amber-50 dark:bg-amber-500/10 rounded-xl hover:bg-amber-100 disabled:opacity-50 transition-colors"
         >
           {unlocking ? "Unlocking…" : "Edit Groups"}
         </button>
@@ -854,7 +854,7 @@ function GroupsTab({
           <button
             onClick={generateBreakdown}
             disabled={generating || isPending}
-            className="flex-1 py-2.5 text-sm font-semibold bg-stone-900 text-white rounded-xl hover:bg-stone-700 disabled:opacity-50 transition-colors"
+            className="flex-1 py-2.5 text-sm font-semibold bg-stone-900 dark:bg-sky-600 text-white rounded-xl hover:bg-stone-700 dark:hover:bg-sky-500 disabled:opacity-50 transition-colors"
           >
             {generating
               ? "Generating…"
@@ -865,7 +865,7 @@ function GroupsTab({
           {isBreakdownGenerated && (
             <button
               onClick={onSwitchToPlayers}
-              className="px-4 py-2.5 text-sm font-medium text-stone-600 border border-stone-200 rounded-xl hover:bg-stone-50 transition-colors"
+              className="px-4 py-2.5 text-sm font-medium text-text border border-border rounded-xl hover:bg-surface-alt transition-colors"
             >
               Edit Players
             </button>
@@ -874,14 +874,14 @@ function GroupsTab({
       )}
 
       {error && (
-        <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+        <p className="text-xs text-red-500 bg-red-50 dark:bg-red-500/10 px-3 py-2 rounded-lg">{error}</p>
       )}
 
       {/* No breakdown yet */}
       {!hasBreakdown && (
-        <div className="rounded-lg border border-dashed border-stone-200 px-4 py-8 text-center">
-          <p className="text-sm text-stone-400">No breakdown generated yet.</p>
-          <p className="text-xs text-stone-300 mt-1">
+        <div className="rounded-lg border border-dashed border-border px-4 py-8 text-center">
+          <p className="text-sm text-muted-light">No breakdown generated yet.</p>
+          <p className="text-xs text-muted-lighter mt-1">
             Click "Generate Breakdown" to score and assign groups.
           </p>
         </div>
@@ -889,14 +889,14 @@ function GroupsTab({
 
       {/* Unscored players warning */}
       {hasBreakdown && sorted.some((p) => p.finals_score === null) && (
-        <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg">
+        <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 rounded-lg">
           {sorted.filter((p) => p.finals_score === null).length} new player{sorted.filter((p) => p.finals_score === null).length !== 1 ? "s have" : " has"} no score yet. Tap "Re-run Breakdown" above to score and assign groups.
         </p>
       )}
 
       {/* Score legend */}
       {hasBreakdown && (
-        <p className="text-[11px] text-stone-400 px-1">
+        <p className="text-[11px] text-muted-light px-1">
           Score = weighted blend of season win rate, match count, and skill level. Tap ▸ on a player to see their breakdown.
         </p>
       )}
@@ -935,8 +935,8 @@ function GroupsTab({
               </span>
             ))}
           </div>
-          <div className="bg-stone-50 rounded-lg px-3 py-2 flex flex-col gap-1">
-            <p className="text-[11px] font-semibold text-stone-500 uppercase">Supported Formats</p>
+          <div className="bg-background rounded-lg px-3 py-2 flex flex-col gap-1">
+            <p className="text-[11px] font-semibold text-text-light uppercase">Supported Formats</p>
             {["A", "B", "C"].filter((g) => groupCounts[g]).map((g) => {
               const c = groupCounts[g];
               const isGroupOf4 = c === 4;
@@ -945,8 +945,8 @@ function GroupsTab({
                 if ((m * c) % 4 === 0) validMpp.push(m);
               }
               return (
-                <p key={g} className="text-[11px] text-stone-500">
-                  <span className="font-medium text-stone-600">Group {g} ({c}p):</span>{" "}
+                <p key={g} className="text-[11px] text-text-light">
+                  <span className="font-medium text-text">Group {g} ({c}p):</span>{" "}
                   {isGroupOf4
                     ? "All-Play-All (3 matches each, perfect fairness) or Playoffs"
                     : `Playoffs — ${validMpp.join(", ")} matches/player`
@@ -960,7 +960,7 @@ function GroupsTab({
 
       {/* Small group warnings */}
       {smallGroups.length > 0 && (
-        <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">
+        <p className="text-xs text-red-500 bg-red-50 dark:bg-red-500/10 px-3 py-2 rounded-lg">
           Group{smallGroups.length > 1 ? "s" : ""} {smallGroups.join(", ")} need at least 4 players before you can confirm.
         </p>
       )}
@@ -969,7 +969,7 @@ function GroupsTab({
       {isBreakdownGenerated && (
         <div className="flex flex-col gap-1">
           {confirmError && (
-            <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{confirmError}</p>
+            <p className="text-xs text-red-500 bg-red-50 dark:bg-red-500/10 px-3 py-2 rounded-lg">{confirmError}</p>
           )}
           <button
             onClick={confirmBreakdown}
@@ -1002,9 +1002,9 @@ function SessionCard({
   if (!session) return null;
 
   const statusInfo = {
-    pending: { text: "Starting soon", cls: "text-orange-600 bg-orange-50" },
+    pending: { text: "Starting soon", cls: "text-orange-600 dark:text-orange-400 bg-orange-50" },
     active:  { text: "In Progress",   cls: "text-white bg-sky-700" },
-    completed: { text: "Completed",   cls: "text-teal-600 bg-teal-50" },
+    completed: { text: "Completed",   cls: "text-teal-600 dark:text-teal-400 bg-teal-50" },
   }[session.status];
 
   const formattedDate = new Date(session.date + "T12:00:00").toLocaleDateString("en-US", {
@@ -1014,17 +1014,17 @@ function SessionCard({
   return (
     <NavLink
       href={`/session/${session.id}`}
-      className="flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-sm hover:bg-stone-50 active:bg-amber-50 transition-colors"
+      className="flex items-center justify-between px-4 py-3 bg-surface rounded-xl shadow-sm hover:bg-surface-alt active:bg-amber-50 dark:bg-amber-500/10 transition-colors"
     >
       <div>
-        <p className="text-sm font-semibold text-stone-800">{label}</p>
-        <p className="text-xs text-stone-400">{subtitle} · {formattedDate}</p>
+        <p className="text-sm font-semibold text-heading">{label}</p>
+        <p className="text-xs text-muted-light">{subtitle} · {formattedDate}</p>
       </div>
       <div className="flex items-center gap-2">
         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${statusInfo.cls}`}>
           {statusInfo.text}
         </span>
-        <span className="text-stone-300 text-sm">→</span>
+        <span className="text-muted-lighter text-sm">→</span>
       </div>
     </NavLink>
   );
@@ -1083,48 +1083,48 @@ function SessionsTab({
             subtitle="Day 2"
             session={sessionPair.day2}
           />
-          <p className="text-xs text-stone-400 text-center mt-1">
+          <p className="text-xs text-muted-light text-center mt-1">
             Sessions are set. Open each session page to start play.
           </p>
         </>
       ) : (
         <>
-          <div className="bg-white rounded-xl shadow-sm p-4 flex flex-col gap-3">
-            <p className="text-sm font-semibold text-stone-700">Schedule Finals Days</p>
+          <div className="bg-surface rounded-xl shadow-sm p-4 flex flex-col gap-3">
+            <p className="text-sm font-semibold text-text">Schedule Finals Days</p>
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-stone-500">
+              <label className="text-xs font-medium text-text-light">
                 Day 1 — Groups A & B
               </label>
               <input
                 type="date"
                 value={day1Date}
                 onChange={(e) => setDay1Date(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+                className="w-full px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-300 dark:focus:ring-border bg-surface"
               />
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-stone-500">
+              <label className="text-xs font-medium text-text-light">
                 Day 2 — Group C
               </label>
               <input
                 type="date"
                 value={day2Date}
                 onChange={(e) => setDay2Date(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+                className="w-full px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-300 dark:focus:ring-border bg-surface"
               />
             </div>
           </div>
 
           {error && (
-            <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+            <p className="text-xs text-red-500 bg-red-50 dark:bg-red-500/10 px-3 py-2 rounded-lg">{error}</p>
           )}
 
           <button
             onClick={generateSessions}
             disabled={generating || isPending || !day1Date || !day2Date}
-            className="w-full py-2.5 text-sm font-semibold bg-stone-900 text-white rounded-xl hover:bg-stone-700 disabled:opacity-40 transition-colors"
+            className="w-full py-2.5 text-sm font-semibold bg-stone-900 dark:bg-sky-600 text-white rounded-xl hover:bg-stone-700 dark:hover:bg-sky-500 disabled:opacity-40 transition-colors"
           >
             {generating ? "Creating sessions…" : "Generate Finals Sessions"}
           </button>
@@ -1207,7 +1207,7 @@ export default function FinalsEventTabs({
     <div className="flex flex-col gap-4">
       {/* Live sessions banner */}
       {liveSessions.length > 0 && (
-        <div className={`rounded-xl px-4 py-3 flex flex-col gap-2 ${hasActiveSessions ? "bg-sky-50 border border-sky-200" : "bg-teal-50 border border-teal-200"}`}>
+        <div className={`rounded-xl px-4 py-3 flex flex-col gap-2 ${hasActiveSessions ? "bg-sky-50 dark:bg-sky-500/10 border border-sky-200" : "bg-teal-50 dark:bg-teal-500/10 border border-teal-200"}`}>
           <div className="flex items-center gap-2">
             {hasActiveSessions && <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />}
             <span className={`text-xs font-semibold uppercase tracking-wide ${hasActiveSessions ? "text-sky-700" : "text-teal-700"}`}>
@@ -1223,14 +1223,14 @@ export default function FinalsEventTabs({
               <NavLink
                 key={s.session.id}
                 href={`/session/${s.session.id}`}
-                className="flex items-center justify-between px-3 py-2 bg-white rounded-lg hover:bg-stone-50 active:bg-sky-50 transition-colors"
+                className="flex items-center justify-between px-3 py-2 bg-surface rounded-lg hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 dark:bg-sky-500/10 transition-colors"
               >
                 <div>
-                  <p className="text-sm font-semibold text-stone-800">{s.label}</p>
-                  <p className="text-xs text-stone-400">{formattedDate}</p>
+                  <p className="text-sm font-semibold text-heading">{s.label}</p>
+                  <p className="text-xs text-muted-light">{formattedDate}</p>
                 </div>
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                  isActive ? "text-white bg-sky-700" : "text-teal-600 bg-teal-100"
+                  isActive ? "text-white bg-sky-700" : "text-teal-600 dark:text-teal-400 bg-teal-100"
                 }`}>
                   {isActive ? "Live" : "Done"}
                 </span>
@@ -1293,15 +1293,15 @@ export default function FinalsEventTabs({
             </button>
             {showResetConfirm && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-                <div className="bg-white rounded-xl shadow-lg max-w-sm w-full p-5 flex flex-col gap-3">
-                  <p className="text-sm font-semibold text-stone-900">Reset to Draft</p>
-                  <p className="text-sm text-stone-600 leading-relaxed">
+                <div className="bg-surface rounded-xl shadow-lg max-w-sm w-full p-5 flex flex-col gap-3">
+                  <p className="text-sm font-semibold text-heading">Reset to Draft</p>
+                  <p className="text-sm text-text leading-relaxed">
                     This will clear all groups, sessions, and matches. Players will stay in the pool.
                   </p>
                   <div className="flex gap-2 mt-1">
                     <button
                       onClick={() => setShowResetConfirm(false)}
-                      className="flex-1 py-2 text-sm font-medium text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
+                      className="flex-1 py-2 text-sm font-medium text-text-light border border-border rounded-lg hover:bg-surface-alt transition-colors"
                     >
                       Cancel
                     </button>
@@ -1320,21 +1320,21 @@ export default function FinalsEventTabs({
         <button
           onClick={() => setShowDeleteConfirm(true)}
           disabled={deleting || resetting || isPending}
-          className="w-full py-2.5 text-sm font-medium text-red-400 hover:text-red-600 border border-red-100 hover:border-red-300 rounded-xl transition-colors disabled:opacity-50"
+          className="w-full py-2.5 text-sm font-medium text-red-400 hover:text-red-600 dark:text-red-400 border border-red-100 hover:border-red-300 rounded-xl transition-colors disabled:opacity-50"
         >
           {deleting ? "Deleting…" : "Delete Finals Event"}
         </button>
         {showDeleteConfirm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-            <div className="bg-white rounded-xl shadow-lg max-w-sm w-full p-5 flex flex-col gap-3">
-              <p className="text-sm font-semibold text-stone-900">Delete Finals Event</p>
-              <p className="text-sm text-stone-600 leading-relaxed">
+            <div className="bg-surface rounded-xl shadow-lg max-w-sm w-full p-5 flex flex-col gap-3">
+              <p className="text-sm font-semibold text-heading">Delete Finals Event</p>
+              <p className="text-sm text-text leading-relaxed">
                 This will permanently delete all groups, sessions, matches, and participant data. This cannot be undone.
               </p>
               <div className="flex gap-2 mt-1">
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="flex-1 py-2 text-sm font-medium text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
+                  className="flex-1 py-2 text-sm font-medium text-text-light border border-border rounded-lg hover:bg-surface-alt transition-colors"
                 >
                   Cancel
                 </button>

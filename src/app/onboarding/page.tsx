@@ -31,11 +31,11 @@ export default function OnboardingPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-6 bg-stone-50">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-6 bg-background">
       <div className="flex flex-col items-center gap-2 text-center">
         <span className="text-5xl">🏸</span>
-        <h1 className="text-2xl font-bold text-stone-900">Welcome to snobaddy!</h1>
-        <p className="text-stone-500 text-sm max-w-xs">
+        <h1 className="text-2xl font-bold text-heading">Welcome to snobaddy!</h1>
+        <p className="text-text-light text-sm max-w-xs">
           How would you rate your badminton skill? This helps us set up fair matches.
         </p>
       </div>
@@ -49,17 +49,17 @@ export default function OnboardingPage() {
             className={`flex items-center gap-4 px-4 py-3 rounded-xl border-2 transition-colors text-left ${
               selected === value
                 ? "border-sky-500 bg-sky-50"
-                : "border-stone-200 bg-white hover:border-stone-300"
+                : "border-border bg-surface hover:border-stone-300 dark:hover:border-border dark:border-border"
             }`}
           >
-            <span className="text-lg font-bold text-stone-400 w-4">{value}</span>
+            <span className="text-lg font-bold text-muted-light w-4">{value}</span>
             <div>
-              <div className="font-semibold text-stone-800">{label}</div>
-              <div className="text-sm text-stone-500">{description}</div>
+              <div className="font-semibold text-heading">{label}</div>
+              <div className="text-sm text-text-light">{description}</div>
             </div>
             <div className="ml-auto flex gap-0.5">
               {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} className={`text-xs ${i < value ? "text-sky-500" : "text-stone-200"}`}>●</span>
+                <span key={i} className={`text-xs ${i < value ? "text-sky-500" : "text-stone-200 dark:text-neutral-700"}`}>●</span>
               ))}
             </div>
           </button>
@@ -70,11 +70,11 @@ export default function OnboardingPage() {
         <button
           onClick={() => selected && save(selected)}
           disabled={!selected || saving}
-          className="w-full py-3 bg-stone-900 text-white font-semibold rounded-xl disabled:opacity-40 hover:bg-stone-800 transition-colors"
+          className="w-full py-3 bg-stone-900 text-white font-semibold rounded-xl disabled:opacity-40 hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors"
         >
           {saving ? "Saving…" : "Save & Continue"}
         </button>
-        <p className="text-center text-xs text-stone-400">
+        <p className="text-center text-xs text-muted-light">
           You can update this anytime from the Players page.
         </p>
       </div>

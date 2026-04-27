@@ -76,8 +76,8 @@ function PlayerPicker({
           "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
           "border",
           selected
-            ? "bg-white border-stone-200 text-stone-800"
-            : "bg-stone-100 border-dashed border-stone-300 text-stone-400",
+            ? "bg-surface border-border text-heading"
+            : "bg-surface-alt border-dashed border-stone-300 dark:border-border text-muted-light",
           disabled ? "opacity-50 cursor-not-allowed" : "hover:border-sky-300 active:border-sky-400",
           open ? "ring-2 ring-sky-200 border-sky-300" : "",
         ].join(" ")}
@@ -86,20 +86,20 @@ function PlayerPicker({
           {selected ? firstName(selected.name) : label}
         </span>
         {!disabled && (
-          <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-300 text-[10px]">
+          <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-lighter text-[10px]">
             ▼
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute z-30 mt-1 w-full bg-white rounded-xl shadow-lg border border-stone-200 py-1 max-h-52 overflow-y-auto">
+        <div className="absolute z-30 mt-1 w-full bg-surface rounded-xl shadow-lg border border-border py-1 max-h-52 overflow-y-auto">
           {/* Clear option */}
           {value && (
             <button
               type="button"
               onClick={() => { onChange(null); setOpen(false); }}
-              className="w-full text-left px-3 py-2 text-sm text-stone-400 hover:bg-stone-50 transition-colors"
+              className="w-full text-left px-3 py-2 text-sm text-muted-light hover:bg-surface-alt transition-colors"
             >
               Clear
             </button>
@@ -117,12 +117,12 @@ function PlayerPicker({
                 disabled={taken}
                 className={[
                   "w-full text-left px-3 py-2 text-sm transition-colors flex items-center justify-between",
-                  isSelected ? "bg-sky-50 text-sky-700 font-semibold" : "",
-                  taken ? "text-stone-300 cursor-not-allowed" : "hover:bg-stone-50 text-stone-800",
+                  isSelected ? "bg-sky-50 dark:bg-sky-500/10 text-sky-700 font-semibold" : "",
+                  taken ? "text-muted-lighter cursor-not-allowed" : "hover:bg-surface-alt text-heading",
                 ].join(" ")}
               >
                 <span className="truncate">{firstName(p.name)}</span>
-                <span className="text-[11px] text-stone-400 ml-2 shrink-0">
+                <span className="text-[11px] text-muted-light ml-2 shrink-0">
                   {p.finals_score != null ? p.finals_score.toFixed(1) : ""}
                   {isSelected && " ✓"}
                 </span>
@@ -216,23 +216,23 @@ export default function PairConfigurator({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-xs font-semibold text-stone-500 uppercase tracking-wide">
+        <h3 className="text-xs font-semibold text-text-light uppercase tracking-wide">
           Teams
         </h3>
         {!isLocked && (
           <button
             onClick={() => { setPairs(autoSuggestPairs(players)); setSuccess(false); }}
-            className="text-xs text-sky-600 hover:text-sky-800 font-medium"
+            className="text-xs text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 font-medium"
           >
             Auto-suggest
           </button>
         )}
       </div>
 
-      {error && <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+      {error && <p className="text-xs text-red-500 bg-red-50 dark:bg-red-500/10 px-3 py-2 rounded-lg">{error}</p>}
 
       {isOdd && (
-        <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">
+        <p className="text-xs text-red-500 bg-red-50 dark:bg-red-500/10 px-3 py-2 rounded-lg">
           Odd number of players ({players.length}). Adjust groups on the Finals Event page.
         </p>
       )}
@@ -246,14 +246,14 @@ export default function PairConfigurator({
         return (
           <div key={pairIdx} className={[
             "flex flex-col gap-1.5 rounded-xl px-3 py-2.5 border transition-colors",
-            isComplete ? "bg-white border-stone-200" : "bg-stone-50 border-dashed border-stone-200",
+            isComplete ? "bg-surface border-border" : "bg-background border-dashed border-border",
           ].join(" ")}>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-stone-500">
+              <span className="text-xs font-semibold text-text-light">
                 Team {pairIdx + 1}
               </span>
               {showScore && (
-                <span className="text-[11px] text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded-full">
+                <span className="text-[11px] text-muted-light bg-surface-alt px-1.5 py-0.5 rounded-full">
                   {teamScore.toFixed(1)} pts
                 </span>
               )}
@@ -264,7 +264,7 @@ export default function PairConfigurator({
                 currentSlotValue={pair[0]} onChange={(id) => updatePair(pairIdx, 0, id)}
                 disabled={isLocked || saving || isPending} label="Player 1"
               />
-              <span className="text-xs text-stone-300 font-medium">&</span>
+              <span className="text-xs text-muted-lighter font-medium">&</span>
               <PlayerPicker
                 players={players} value={pair[1]} assignedIds={assignedIds}
                 currentSlotValue={pair[1]} onChange={(id) => updatePair(pairIdx, 1, id)}
@@ -276,7 +276,7 @@ export default function PairConfigurator({
       })}
 
       {unassigned.length > 0 && !isOdd && (
-        <p className="text-xs text-amber-600">
+        <p className="text-xs text-amber-600 dark:text-amber-400">
           {unassigned.length} unassigned: {unassigned.map((p) => firstName(p.name)).join(", ")}
         </p>
       )}
@@ -285,14 +285,14 @@ export default function PairConfigurator({
         <button
           onClick={handleSave}
           disabled={!canSave || saving || isPending}
-          className="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-stone-900 hover:bg-stone-800 disabled:opacity-40 transition-colors"
+          className="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-stone-900 hover:bg-stone-800 dark:hover:bg-sky-500 disabled:opacity-40 transition-colors"
         >
           {saving ? "Saving & generating matches…" : success ? "Saved ✓" : "Confirm Teams & Generate Matches"}
         </button>
       )}
 
       {isLocked && (
-        <p className="text-xs text-stone-400 text-center">Teams locked — matches generated.</p>
+        <p className="text-xs text-muted-light text-center">Teams locked — matches generated.</p>
       )}
     </div>
   );

@@ -16,7 +16,7 @@ function winPct(p: PlayerStats) {
 }
 
 function formatPct(p: PlayerStats) {
-  if (p.matches_played === 0) return <span className="text-stone-300">—</span>;
+  if (p.matches_played === 0) return <span className="text-muted-lighter">—</span>;
   return `${Math.round((p.wins / p.matches_played) * 100)}%`;
 }
 
@@ -24,12 +24,12 @@ function AwardCard({ emoji, title, description, name, stat }: {
   emoji: string; title: string; description: string; name: string; stat: string;
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-2 flex flex-col items-center gap-0.5 text-center">
+    <div className="bg-surface rounded-xl shadow-sm border border-border-light px-3 py-2 flex flex-col items-center gap-0.5 text-center">
       <span className="text-xl">{emoji}</span>
-      <span className="text-xs font-semibold text-stone-700 leading-tight">{title}</span>
-      <span className="text-[11px] text-stone-400 leading-tight">{description}</span>
-      <span className="text-sm font-bold text-stone-900 leading-tight mt-0.5">{name}</span>
-      <span className="text-[11px] text-stone-400">{stat}</span>
+      <span className="text-xs font-semibold text-text leading-tight">{title}</span>
+      <span className="text-[11px] text-muted-light leading-tight">{description}</span>
+      <span className="text-sm font-bold text-heading leading-tight mt-0.5">{name}</span>
+      <span className="text-[11px] text-muted-light">{stat}</span>
     </div>
   );
 }
@@ -121,13 +121,13 @@ export default function LeaderboardTable({
   });
 
   function indicator(key: SortKey) {
-    if (key !== sortKey) return <span className="text-stone-300 ml-0.5">↕</span>;
+    if (key !== sortKey) return <span className="text-muted-lighter ml-0.5">↕</span>;
     return <span className="text-sky-500 ml-0.5">{sortDir === "asc" ? "↑" : "↓"}</span>;
   }
 
   function getRankColor(playerId: string) {
     if (playerId === nutCracker?.id) return "bg-yellow-50 border-yellow-100";
-    return "border-stone-50";
+    return "border-border-light";
   }
 
   function getRankBadge(index: number, playerId: string) {
@@ -140,16 +140,16 @@ export default function LeaderboardTable({
     <>
       {/* Header row: player count + admin toggle */}
       <div className="flex items-center justify-between mb-4">
-        <span className="text-sm text-stone-400">{activePlayers.length} active players</span>
+        <span className="text-sm text-muted-light">{activePlayers.length} active players</span>
         {isAdmin && (
           <div className="flex items-center gap-2">
-            <span className="text-xs text-stone-400">Include Test Sessions</span>
+            <span className="text-xs text-muted-light">Include Test Sessions</span>
             <button
               onClick={toggleShowTest}
               className="relative inline-flex w-9 h-5 rounded-full transition-colors duration-200 focus:outline-none"
-              style={{ background: showTest ? "#f97316" : "#e5e7eb" }}
+              style={{ background: showTest ? "#f97316" : "var(--muted-lighter)" }}
             >
-              <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showTest ? "translate-x-4" : "translate-x-0"}`} />
+              <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-surface rounded-full shadow transition-transform duration-200 ${showTest ? "translate-x-4" : "translate-x-0"}`} />
             </button>
           </div>
         )}
@@ -180,13 +180,13 @@ export default function LeaderboardTable({
       )}
 
       {activePlayers.length === 0 ? (
-        <p className="text-center text-stone-400 text-sm py-12">No active players yet.</p>
+        <p className="text-center text-muted-light text-sm py-12">No active players yet.</p>
       ) : (
         <div className="overflow-x-auto -mx-4">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-stone-100">
-                <th className="w-8 px-4 py-2 text-left text-xs font-medium text-stone-400">#</th>
+              <tr className="border-b border-border-light">
+                <th className="w-8 px-4 py-2 text-left text-xs font-medium text-muted-light">#</th>
                 {COLUMNS.map(({ key, label, title }) => (
                   <th
                     key={key}
@@ -194,7 +194,7 @@ export default function LeaderboardTable({
                     onClick={() => handleSort(key)}
                     className={`py-2 text-xs font-semibold uppercase tracking-wide cursor-pointer select-none whitespace-nowrap
                       ${key === "name" ? "px-2 text-left" : "px-3 text-right"}
-                      ${sortKey === key ? "text-sky-600" : "text-stone-400 hover:text-stone-700"}`}
+                      ${sortKey === key ? "text-sky-600" : "text-muted-light hover:text-text"}`}
                   >
                     {label}{indicator(key)}
                   </th>
@@ -205,24 +205,24 @@ export default function LeaderboardTable({
               {sorted.map((player, i) => (
                 <tr
                   key={player.id}
-                  className={`border-b hover:bg-stone-100/50 transition-colors ${getRankColor(player.id)}`}
+                  className={`border-b hover:bg-surface-alt/50 transition-colors ${getRankColor(player.id)}`}
                 >
-                  <td className={`px-4 py-1.5 text-xs font-bold text-right ${player.id === nutCracker?.id || player.id === badmintonNut?.id ? "text-stone-900" : "text-stone-300"}`}>
+                  <td className={`px-4 py-1.5 text-xs font-bold text-right ${player.id === nutCracker?.id || player.id === badmintonNut?.id ? "text-heading" : "text-muted-lighter"}`}>
                     {getRankBadge(i, player.id)}
                   </td>
-                  <td className="px-2 py-1.5 font-medium text-stone-900 max-w-[120px]">
+                  <td className="px-2 py-1.5 font-medium text-heading max-w-[120px]">
                     <span className="flex items-center gap-1 min-w-0">
-                      <NavLink href={`/players/${player.id}`} className="truncate text-sky-600 hover:underline active:opacity-60">
+                      <NavLink href={`/players/${player.id}`} className="truncate text-sky-600 dark:text-sky-400 hover:underline active:opacity-60">
                         {player.name}
                       </NavLink>
                       {player.user_id && <VerifiedBadge />}
                       {player.is_admin && <AdminBadge />}
                     </span>
                   </td>
-                  <td className="px-3 py-1.5 text-right tabular-nums text-stone-700">{player.matches_played}</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums text-stone-700">{player.wins}</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums text-stone-700">{player.losses}</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums font-bold text-stone-900">
+                  <td className="px-3 py-1.5 text-right tabular-nums text-text">{player.matches_played}</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums text-text">{player.wins}</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums text-text">{player.losses}</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums font-bold text-heading">
                     {formatPct(player)}
                   </td>
                 </tr>
@@ -232,9 +232,9 @@ export default function LeaderboardTable({
         </div>
       )}
 
-      <div className="mt-8 pt-8 border-t border-stone-100 text-center">
-        <div className="text-sm text-stone-400">Total matches recorded this season</div>
-        <div className="text-2xl font-bold text-stone-900 mt-1">{matchCount}</div>
+      <div className="mt-8 pt-8 border-t border-border-light text-center">
+        <div className="text-sm text-muted-light">Total matches recorded this season</div>
+        <div className="text-2xl font-bold text-heading mt-1">{matchCount}</div>
       </div>
     </>
   );

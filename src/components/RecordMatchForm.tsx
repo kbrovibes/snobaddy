@@ -114,14 +114,14 @@ export default function RecordMatchForm({
     label: string;
   }) => (
     <div className="flex-1">
-      <label className="text-xs text-stone-400 mb-1 block">{label}</label>
+      <label className="text-xs text-muted-light mb-1 block">{label}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full border rounded-lg px-3 py-2.5 text-sm bg-white font-medium ${
+        className={`w-full border rounded-lg px-3 py-2.5 text-sm bg-surface font-medium ${
           value
-            ? "border-sky-400 text-stone-900"
-            : "border-stone-200 text-stone-400"
+            ? "border-sky-400 text-heading"
+            : "border-border text-muted-light"
         }`}
       >
         <option value="" disabled>Pick player…</option>
@@ -145,19 +145,19 @@ export default function RecordMatchForm({
       <button
         onClick={() => setOpen(true)}
         className={variant === "primary"
-          ? "w-full py-3 bg-stone-900 text-white font-semibold rounded-xl hover:bg-stone-800 transition-colors"
-          : "w-full py-2 bg-sky-50 text-sky-600 text-xs font-bold rounded-lg hover:bg-sky-100 transition-colors"
+          ? "w-full py-3 bg-stone-900 text-white font-semibold rounded-xl hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors"
+          : "w-full py-2 bg-sky-50 dark:bg-sky-500/10 text-sky-600 text-xs font-bold rounded-lg hover:bg-sky-100 dark:bg-sky-500/15 transition-colors"
         }
       >
         {label}
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-white">
+        <div className="fixed inset-0 z-50 flex flex-col bg-surface">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 h-14 border-b border-stone-100 shrink-0">
+          <div className="flex items-center justify-between px-4 h-14 border-b border-border-light shrink-0">
             <button onClick={close} className="text-red-400 text-sm font-medium">Cancel</button>
-            <h2 className="font-bold text-stone-900">Record Match</h2>
+            <h2 className="font-bold text-heading">Record Match</h2>
             <button
               onClick={submit}
               disabled={saving}
@@ -187,9 +187,9 @@ export default function RecordMatchForm({
 
             {/* VS divider */}
             <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-stone-100" />
-              <span className="text-xs font-bold text-stone-300">VS</span>
-              <div className="flex-1 h-px bg-stone-100" />
+              <div className="flex-1 h-px bg-surface-alt" />
+              <span className="text-xs font-bold text-muted-lighter">VS</span>
+              <div className="flex-1 h-px bg-surface-alt" />
             </div>
 
             {/* Team 2 */}
@@ -209,7 +209,7 @@ export default function RecordMatchForm({
 
             {/* Score */}
             <div className="flex flex-col gap-2">
-              <span className="text-xs font-bold uppercase tracking-wide text-stone-400">Final Score</span>
+              <span className="text-xs font-bold uppercase tracking-wide text-muted-light">Final Score</span>
               <div className="flex items-center gap-3">
                 <div className="flex-1 flex flex-col items-center">
                   <span className="text-xs text-sky-500 font-medium mb-1">Team 1</span>
@@ -218,10 +218,10 @@ export default function RecordMatchForm({
                     value={score1}
                     onChange={(e) => setScore1(e.target.value)}
                     placeholder="21"
-                    className="w-full text-center text-2xl font-bold text-stone-900 border-2 border-stone-200 rounded-xl py-3 focus:border-sky-400 outline-none"
+                    className="w-full text-center text-2xl font-bold text-heading border-2 border-border rounded-xl py-3 focus:border-sky-400 outline-none"
                   />
                 </div>
-                <span className="text-xl font-bold text-stone-300 mt-4">–</span>
+                <span className="text-xl font-bold text-muted-lighter mt-4">–</span>
                 <div className="flex-1 flex flex-col items-center">
                   <span className="text-xs text-orange-500 font-medium mb-1">Team 2</span>
                   <input
@@ -229,12 +229,12 @@ export default function RecordMatchForm({
                     value={score2}
                     onChange={(e) => setScore2(e.target.value)}
                     placeholder="15"
-                    className="w-full text-center text-2xl font-bold text-stone-900 border-2 border-stone-200 rounded-xl py-3 focus:border-orange-400 outline-none"
+                    className="w-full text-center text-2xl font-bold text-heading border-2 border-border rounded-xl py-3 focus:border-orange-400 outline-none"
                   />
                 </div>
               </div>
               {winner && (
-                <p className="text-center text-sm font-semibold text-green-600">
+                <p className="text-center text-sm font-semibold text-green-600 dark:text-green-400">
                   🏆 {winner} wins
                 </p>
               )}

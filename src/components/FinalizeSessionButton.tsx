@@ -51,7 +51,7 @@ export default function FinalizeSessionButton({
 
   if (confirming) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 flex flex-col gap-2">
+      <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 rounded-xl px-4 py-3 flex flex-col gap-2">
         <p className="text-sm font-semibold text-red-700">Finalize this session?</p>
         <p className="text-xs text-red-500">All remaining players will be checked out. This cannot be undone.</p>
         <div className="flex gap-2 mt-1">
@@ -65,7 +65,7 @@ export default function FinalizeSessionButton({
           <button
             onClick={() => setConfirming(false)}
             disabled={loading}
-            className="flex-1 py-1.5 bg-white border border-stone-200 text-stone-500 text-xs font-bold rounded-lg hover:bg-stone-50 disabled:opacity-50 transition-colors"
+            className="flex-1 py-1.5 bg-surface border border-border text-text-light text-xs font-bold rounded-lg hover:bg-surface-alt disabled:opacity-50 transition-colors"
           >
             Cancel
           </button>
@@ -77,7 +77,7 @@ export default function FinalizeSessionButton({
   return (
     <button
       onClick={() => setConfirming(true)}
-      className="w-full py-2.5 bg-red-50 border border-red-200 text-red-600 text-sm font-semibold rounded-xl hover:bg-red-100 transition-colors"
+      className="w-full py-2.5 bg-red-50 dark:bg-red-500/10 border border-red-200 text-red-600 dark:text-red-400 text-sm font-semibold rounded-xl hover:bg-red-100 dark:bg-red-500/15 transition-colors"
     >
       Finalize Session?
     </button>

@@ -76,17 +76,17 @@ export default function TallyScoreboard({ entries, sessionId, isGodMode, hasPhot
   });
 
   function indicator(key: SortKey) {
-    if (key !== sortKey) return <span className="text-stone-300 ml-0.5">↕</span>;
+    if (key !== sortKey) return <span className="text-muted-lighter ml-0.5">↕</span>;
     return <span className="text-sky-500 ml-0.5">{sortDir === "asc" ? "↑" : "↓"}</span>;
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-      <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
+    <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
+      <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide mb-3">
         Final Scores · Tally-only
       </h2>
       {entries.length === 0 ? (
-        <p className="text-sm text-stone-400">No tally data.</p>
+        <p className="text-sm text-muted-light">No tally data.</p>
       ) : (
         <>
           {/* Header */}
@@ -97,7 +97,7 @@ export default function TallyScoreboard({ entries, sessionId, isGodMode, hasPhot
                 key={key}
                 onClick={() => handleSort(key)}
                 className={`${className} text-xs font-semibold uppercase tracking-wide cursor-pointer select-none whitespace-nowrap
-                  ${sortKey === key ? "text-sky-600" : "text-stone-400 hover:text-stone-700"}`}
+                  ${sortKey === key ? "text-sky-600" : "text-muted-light hover:text-text"}`}
               >
                 {label}{indicator(key)}
               </button>
@@ -111,18 +111,18 @@ export default function TallyScoreboard({ entries, sessionId, isGodMode, hasPhot
               const pct = total > 0 ? Math.round((e.wins / total) * 100) : 0;
               return (
                 <div key={e.player_id} className="flex items-center px-1">
-                  <span className="text-xs text-stone-300 w-5 shrink-0" />
+                  <span className="text-xs text-muted-lighter w-5 shrink-0" />
                   <NavLink
                     href={`/players/${e.player_id}`}
-                    className="flex-1 text-sm font-medium truncate text-sky-600 hover:underline active:opacity-60"
+                    className="flex-1 text-sm font-medium truncate text-sky-600 dark:text-sky-400 hover:underline active:opacity-60"
                   >
                     {e.player_name}
                   </NavLink>
-                  <span className="w-8 text-center text-sm tabular-nums text-stone-500">{total}</span>
-                  <span className="w-8 text-center text-sm font-bold text-green-600">{e.wins}</span>
+                  <span className="w-8 text-center text-sm tabular-nums text-text-light">{total}</span>
+                  <span className="w-8 text-center text-sm font-bold text-green-600 dark:text-green-400">{e.wins}</span>
                   <span className="w-8 text-center text-sm font-bold text-red-400">{e.losses}</span>
-                  <span className="w-12 text-right text-sm text-stone-500">
-                    {total > 0 ? `${pct}%` : <span className="text-stone-300">—</span>}
+                  <span className="w-12 text-right text-sm text-text-light">
+                    {total > 0 ? `${pct}%` : <span className="text-muted-lighter">—</span>}
                   </span>
                 </div>
               );

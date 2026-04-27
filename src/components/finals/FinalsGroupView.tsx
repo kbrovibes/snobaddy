@@ -128,16 +128,16 @@ export default function FinalsGroupView({
     <div className="flex flex-col gap-3">
       {/* Group winner banner — always at top */}
       {groupWinner && (
-        <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-center">
-          <p className="text-lg font-bold text-green-700">🏆 {groupWinner}</p>
+        <div className="bg-green-50 dark:bg-green-500/10 border border-green-200 rounded-xl px-4 py-3 text-center">
+          <p className="text-lg font-bold text-green-700 dark:text-green-400">🏆 {groupWinner}</p>
           <p className="text-xs text-green-500">Group {finalsGroup} Winners</p>
         </div>
       )}
 
       {/* Player list */}
       {players.length > 0 && (
-        <p className="text-xs text-stone-400">
-          <span className="font-medium text-stone-500">{players.length} players:</span>{" "}
+        <p className="text-xs text-muted-light">
+          <span className="font-medium text-text-light">{players.length} players:</span>{" "}
           {players.map((p) => p.name.split(" ")[0]).sort().join(", ")}
         </p>
       )}
@@ -153,7 +153,7 @@ export default function FinalsGroupView({
       )}
 
       {!format && (
-        <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg text-center">
+        <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 rounded-lg text-center">
           Select a format above to get started.
         </p>
       )}
@@ -177,7 +177,7 @@ export default function FinalsGroupView({
             setRegenerating(false);
           }}
           disabled={regenerating || isPending}
-          className="text-xs text-amber-600 hover:text-amber-800 font-medium disabled:opacity-40"
+          className="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-800 font-medium disabled:opacity-40"
         >
           {regenerating ? "Re-generating…" : "↻ Re-generate matches"}
         </button>
@@ -230,12 +230,12 @@ export default function FinalsGroupView({
       {/* Fun team names toggle — testing only */}
       {matchesGenerated && groupStageMatches.length > 0 && isGodMode && (
         <div className="flex items-center justify-end gap-2">
-          <span className="text-[11px] text-stone-400">Fun names</span>
+          <span className="text-[11px] text-muted-light">Fun names</span>
           <button
             onClick={() => setFunNames(!funNames)}
-            className={`relative w-9 h-5 rounded-full transition-colors ${funNames ? "bg-sky-500" : "bg-stone-300"}`}
+            className={`relative w-9 h-5 rounded-full transition-colors ${funNames ? "bg-sky-500" : "bg-stone-300 dark:bg-neutral-600"}`}
           >
-            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${funNames ? "translate-x-4" : ""}`} />
+            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-surface rounded-full shadow transition-transform ${funNames ? "translate-x-4" : ""}`} />
           </button>
         </div>
       )}

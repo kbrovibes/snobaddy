@@ -232,7 +232,7 @@ export default function TallyEntryForm({
       <div className="flex gap-2">
         <button
           onClick={() => setOpen(true)}
-          className="flex-1 py-3 rounded-xl text-sm font-semibold border-2 border-dashed border-stone-200 text-stone-500 hover:border-sky-300 hover:text-sky-600 transition-colors"
+          className="flex-1 py-3 rounded-xl text-sm font-semibold border-2 border-dashed border-border text-text-light hover:border-sky-300 hover:text-sky-600 transition-colors"
         >
           + Enter Final Scores
         </button>
@@ -271,11 +271,11 @@ export default function TallyEntryForm({
   // ── Open state ────────────────────────────────────────────────────────────
 
   return (
-    <div className="bg-white rounded-xl shadow-sm px-4 py-4 flex flex-col gap-3">
+    <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-4 flex flex-col gap-3">
 
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-stone-700">
+        <h3 className="text-sm font-semibold text-text">
           {isEdit ? "Edit Final Scores" : "Enter Final Scores"}
         </h3>
         <div className="flex items-center gap-3">
@@ -304,7 +304,7 @@ export default function TallyEntryForm({
               </div>
             </>
           )}
-          <button onClick={handleCancel} className="text-xs text-stone-400 hover:text-stone-600">
+          <button onClick={handleCancel} className="text-xs text-muted-light hover:text-text">
             Cancel
           </button>
         </div>
@@ -320,7 +320,7 @@ export default function TallyEntryForm({
       {/* Rows */}
       {!extracting && rows.length > 0 && (
         <div className="flex flex-col gap-2">
-          <div className="grid grid-cols-[1fr_4rem_4rem_2rem] gap-2 text-xs text-stone-400 uppercase font-medium px-1">
+          <div className="grid grid-cols-[1fr_4rem_4rem_2rem] gap-2 text-xs text-muted-light uppercase font-medium px-1">
             <span>Player</span>
             <span className="text-center">W</span>
             <span className="text-center">L</span>
@@ -331,14 +331,14 @@ export default function TallyEntryForm({
             <div
               key={`${row.player_id || "u"}-${i}`}
               className={`grid grid-cols-[1fr_4rem_4rem_2rem] gap-2 items-center rounded-lg px-1 py-0.5 ${
-                row.unmatched ? "bg-red-50 ring-1 ring-red-300" : ""
+                row.unmatched ? "bg-red-50 dark:bg-red-500/10 ring-1 ring-red-300" : ""
               }`}
             >
               {row.unmatched ? (
                 <select
                   value=""
                   onChange={(e) => resolveUnmatched(i, e.target.value)}
-                  className="border border-red-300 rounded-lg text-sm px-2 py-1 text-red-700 bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+                  className="border border-red-300 rounded-lg text-sm px-2 py-1 text-red-700 bg-surface focus:outline-none focus:ring-2 focus:ring-red-400"
                 >
                   <option value="" disabled>
                     ✕ "{row.raw_name ?? row.player_name}" — not in system
@@ -352,7 +352,7 @@ export default function TallyEntryForm({
                     ))}
                 </select>
               ) : (
-                <span className="text-sm text-stone-800 truncate px-1">{row.player_name}</span>
+                <span className="text-sm text-heading truncate px-1">{row.player_name}</span>
               )}
               <input
                 type="number"
@@ -360,7 +360,7 @@ export default function TallyEntryForm({
                 inputMode="numeric"
                 value={row.wins}
                 onChange={(e) => updateRow(i, "wins", e.target.value)}
-                className="border border-stone-200 rounded-lg text-center text-sm py-1.5 w-full text-stone-900 focus:outline-none focus:ring-2 focus:ring-sky-400"
+                className="border border-border rounded-lg text-center text-sm py-1.5 w-full text-heading focus:outline-none focus:ring-2 focus:ring-sky-400"
               />
               <input
                 type="number"
@@ -368,12 +368,12 @@ export default function TallyEntryForm({
                 inputMode="numeric"
                 value={row.losses}
                 onChange={(e) => updateRow(i, "losses", e.target.value)}
-                className="border border-stone-200 rounded-lg text-center text-sm py-1.5 w-full text-stone-900 focus:outline-none focus:ring-2 focus:ring-sky-400"
+                className="border border-border rounded-lg text-center text-sm py-1.5 w-full text-heading focus:outline-none focus:ring-2 focus:ring-sky-400"
               />
               <button
                 onClick={() => removeRow(i)}
                 aria-label={`Remove ${row.player_name}`}
-                className="text-stone-300 hover:text-red-400 text-base leading-none text-center"
+                className="text-muted-lighter hover:text-red-400 text-base leading-none text-center"
               >
                 ✕
               </button>
@@ -387,7 +387,7 @@ export default function TallyEntryForm({
         <select
           onChange={handleAddPlayer}
           defaultValue=""
-          className="border border-stone-200 rounded-lg text-sm px-3 py-2 text-stone-500 focus:outline-none focus:ring-2 focus:ring-sky-400 bg-white"
+          className="border border-border rounded-lg text-sm px-3 py-2 text-text-light focus:outline-none focus:ring-2 focus:ring-sky-400 bg-surface"
         >
           <option value="" disabled>+ Add player…</option>
           {availablePlayers.map((p) => (
@@ -397,12 +397,12 @@ export default function TallyEntryForm({
       )}
 
       {!extracting && rows.length === 0 && availablePlayers.length === 0 && (
-        <p className="text-sm text-stone-400 text-center py-2">No players available.</p>
+        <p className="text-sm text-muted-light text-center py-2">No players available.</p>
       )}
 
       {/* Validation banners */}
       {hasUnmatched && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
+        <div className="rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 px-3 py-2 text-xs text-red-700">
           <span className="font-semibold">Cannot save yet.</span> Resolve or delete red rows — these names were not found in the system.
         </div>
       )}
@@ -425,7 +425,7 @@ export default function TallyEntryForm({
       <button
         onClick={handleSave}
         disabled={!canSave || saving || extracting}
-        className="w-full py-2.5 rounded-xl text-sm font-semibold bg-stone-900 text-white hover:bg-stone-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="w-full py-2.5 rounded-xl text-sm font-semibold bg-stone-900 text-white hover:bg-stone-800 dark:hover:bg-sky-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         {saving ? "Saving…" : "Save Tallies"}
       </button>

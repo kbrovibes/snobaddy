@@ -47,7 +47,7 @@ export default function AdminPresenceToggle({
       <button
         onClick={checkOut}
         disabled={loading}
-        className="text-xs text-red-600 hover:text-red-800 transition-colors font-medium disabled:opacity-40"
+        className="text-xs text-red-600 dark:text-red-400 hover:text-red-800 transition-colors font-medium disabled:opacity-40"
       >
         {loading ? "…" : "Check Out"}
       </button>
@@ -58,7 +58,7 @@ export default function AdminPresenceToggle({
     <button
       onClick={checkIn}
       disabled={loading}
-      className="text-xs text-sky-600 hover:text-sky-800 transition-colors font-medium disabled:opacity-40"
+      className="text-xs text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 transition-colors font-medium disabled:opacity-40"
     >
       {loading ? "…" : "Check In"}
     </button>

@@ -169,20 +169,20 @@ export default function FormatPicker({
     return (
       <div className="flex flex-col gap-1">
         {error && (
-          <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+          <p className="text-xs text-red-500 bg-red-50 dark:bg-red-500/10 px-3 py-2 rounded-lg">{error}</p>
         )}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <span className="text-sm">{lockedFmt.icon}</span>
-            <span className="text-sm font-semibold text-stone-700">{lockedFmt.title}</span>
+            <span className="text-sm font-semibold text-text">{lockedFmt.title}</span>
             {displayType === "playoffs" && (
-              <span className="text-xs text-stone-400">· {matchesPerPlayer} per player · {totalMatches} matches</span>
+              <span className="text-xs text-muted-light">· {matchesPerPlayer} per player · {totalMatches} matches</span>
             )}
           </div>
           <button
             onClick={() => setShowResetConfirm(true)}
             disabled={selecting || isPending}
-            className="text-[11px] text-sky-600 hover:text-sky-800 disabled:opacity-40"
+            className="text-[11px] text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 disabled:opacity-40"
           >
             Change
           </button>
@@ -191,15 +191,15 @@ export default function FormatPicker({
         {/* Reset confirmation dialog */}
         {showResetConfirm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-            <div className="bg-white rounded-xl shadow-lg max-w-sm w-full p-5 flex flex-col gap-3">
-              <p className="text-sm font-semibold text-stone-900">Change Format</p>
-              <p className="text-sm text-stone-600 leading-relaxed">
+            <div className="bg-surface rounded-xl shadow-lg max-w-sm w-full p-5 flex flex-col gap-3">
+              <p className="text-sm font-semibold text-heading">Change Format</p>
+              <p className="text-sm text-text leading-relaxed">
                 This will delete all matches, scores, and series for this group. This cannot be undone.
               </p>
               <div className="flex gap-2 mt-1">
                 <button
                   onClick={() => setShowResetConfirm(false)}
-                  className="flex-1 py-2 text-sm font-medium text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
+                  className="flex-1 py-2 text-sm font-medium text-text-light border border-border rounded-lg hover:bg-surface-alt transition-colors"
                 >
                   Cancel
                 </button>
@@ -221,14 +221,14 @@ export default function FormatPicker({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-xs font-semibold text-stone-500 uppercase tracking-wide">
+        <h3 className="text-xs font-semibold text-text-light uppercase tracking-wide">
           Format
         </h3>
-        <span className="text-xs text-stone-400">{playerCount} players</span>
+        <span className="text-xs text-muted-light">{playerCount} players</span>
       </div>
 
       {error && (
-        <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+        <p className="text-xs text-red-500 bg-red-50 dark:bg-red-500/10 px-3 py-2 rounded-lg">{error}</p>
       )}
 
       {/* Radio options */}
@@ -244,36 +244,36 @@ export default function FormatPicker({
                 "rounded-xl border transition-all cursor-pointer",
                 isSelected
                   ? "border-sky-500 bg-sky-50"
-                  : "border-stone-200 bg-white hover:border-stone-300",
+                  : "border-border bg-surface hover:border-stone-300 dark:hover:border-border dark:border-border",
               ].join(" ")}
             >
               <div className="flex items-start gap-3 px-3 py-2.5">
                 <div className={[
                   "w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 shrink-0",
-                  isSelected ? "border-sky-500" : "border-stone-300",
+                  isSelected ? "border-sky-500" : "border-stone-300 dark:border-border",
                 ].join(" ")}>
                   {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-sky-500" />}
                 </div>
                 <div className="flex-1">
-                  <span className="text-sm font-semibold text-stone-800">{fmt.icon} {fmt.title}</span>
-                  <p className="text-xs text-stone-500 mt-0.5">{fmt.subtitle}</p>
+                  <span className="text-sm font-semibold text-heading">{fmt.icon} {fmt.title}</span>
+                  <p className="text-xs text-text-light mt-0.5">{fmt.subtitle}</p>
                 </div>
               </div>
 
               {showPlayoffsConfig && playerCount > 4 && (
                 <div className="border-t border-sky-200 px-3 py-2 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
-                  <span className="text-xs text-stone-600">Matches per player</span>
+                  <span className="text-xs text-text">Matches per player</span>
                   <div className="flex items-center gap-2">
                     <select
                       value={matchesPerPlayer}
                       onChange={(e) => setMatchesPerPlayer(Number(e.target.value))}
-                      className="text-sm border border-stone-200 rounded-lg px-2 py-0.5 bg-white focus:outline-none focus:ring-2 focus:ring-sky-300"
+                      className="text-sm border border-border rounded-lg px-2 py-0.5 bg-surface focus:outline-none focus:ring-2 focus:ring-sky-300"
                     >
                       {validValues.map((v) => (
                         <option key={v} value={v}>{v}</option>
                       ))}
                     </select>
-                    <span className="text-[11px] text-stone-400">{totalMatches} total</span>
+                    <span className="text-[11px] text-muted-light">{totalMatches} total</span>
                   </div>
                 </div>
               )}

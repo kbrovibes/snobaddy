@@ -59,7 +59,7 @@ export default function FinalsSessionTabs({
     <div className="flex flex-col gap-3">
       {/* Group tabs */}
       {groupLabels.length > 1 && (
-        <div className="flex gap-1 bg-stone-100 rounded-lg p-0.5">
+        <div className="flex gap-1 bg-surface-alt rounded-lg p-0.5">
           {groupLabels.map((g) => {
             const fmt = formats[g];
             const groupMatches = matches.filter((m) => m.finals_group === g);
@@ -77,13 +77,13 @@ export default function FinalsSessionTabs({
                 onClick={() => selectGroup(g)}
                 className={`flex-1 text-sm font-semibold py-2 rounded-lg transition-colors ${
                   activeGroup === g
-                    ? "bg-stone-900 text-white"
-                    : "text-stone-500 hover:text-stone-800"
+                    ? "bg-stone-900 dark:bg-sky-600 text-white dark:text-white"
+                    : "text-text-light hover:text-heading"
                 }`}
               >
                 Group {g}
                 {statusHint && (
-                  <span className={`ml-1 text-[10px] font-normal ${activeGroup === g ? "text-stone-400" : "text-stone-400"}`}>
+                  <span className={`ml-1 text-[10px] font-normal ${activeGroup === g ? "text-muted-light" : "text-muted-light"}`}>
                     · {statusHint}
                   </span>
                 )}

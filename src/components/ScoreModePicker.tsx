@@ -36,10 +36,10 @@ export default function ScoreModePicker({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm px-3 py-2.5">
+    <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-3 py-2.5">
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-xs font-semibold text-stone-400 uppercase tracking-wide">Score Entry</span>
-        {!isAdmin && <span className="text-xs text-stone-400">(admin only)</span>}
+        <span className="text-xs font-semibold text-muted-light uppercase tracking-wide">Score Entry</span>
+        {!isAdmin && <span className="text-xs text-muted-light">(admin only)</span>}
       </div>
       <div className={`flex gap-1.5 ${switching ? "opacity-50" : ""}`}>
         {MODES.map(({ value, label }) => (
@@ -49,19 +49,19 @@ export default function ScoreModePicker({
             disabled={!isAdmin || switching}
             className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-center transition-colors ${
               currentMode === value
-                ? "bg-sky-50 border border-sky-200"
-                : "border border-stone-100 hover:border-stone-200"
+                ? "bg-sky-50 dark:bg-sky-500/10 border border-sky-200"
+                : "border border-border-light hover:border-border"
             } ${!isAdmin ? "cursor-default" : ""}`}
           >
             <span className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-              currentMode === value ? "border-sky-500" : "border-stone-300"
+              currentMode === value ? "border-sky-500" : "border-stone-300 dark:border-border"
             }`}>
               {currentMode === value && (
                 <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
               )}
             </span>
             <span className={`text-xs font-medium ${
-              currentMode === value ? "text-sky-800" : "text-stone-600"
+              currentMode === value ? "text-sky-800" : "text-text"
             }`}>
               {label}
             </span>

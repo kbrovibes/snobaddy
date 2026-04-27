@@ -46,9 +46,9 @@ export default function AddPlayerForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white border border-stone-200 rounded-xl p-4 mb-4 shadow-sm"
+      className="bg-surface border border-border rounded-xl p-4 mb-4 shadow-sm"
     >
-      <h2 className="text-sm font-semibold text-stone-700 mb-3">Add Player</h2>
+      <h2 className="text-sm font-semibold text-text mb-3">Add Player</h2>
 
       <div className="mb-3">
         <input
@@ -56,13 +56,13 @@ export default function AddPlayerForm({
           placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-sky-200"
+          className="w-full border border-border rounded-lg px-3 py-2 text-sm text-heading placeholder:text-muted-light focus:outline-none focus:ring-2 focus:ring-sky-200"
           autoFocus
         />
       </div>
 
       <div className="mb-4 flex items-center gap-2">
-        <span className="text-xs text-stone-500">Skill</span>
+        <span className="text-xs text-text-light">Skill</span>
         <span className="flex gap-1">
           {[1, 2, 3, 4, 5].map((level) => (
             <button
@@ -70,7 +70,7 @@ export default function AddPlayerForm({
               type="button"
               onClick={() => setSkill(level)}
               className={`text-base leading-none transition-colors ${
-                level <= skill ? "text-sky-500" : "text-stone-200"
+                level <= skill ? "text-sky-500" : "text-stone-200 dark:text-neutral-700"
               }`}
             >
               ●
@@ -85,14 +85,14 @@ export default function AddPlayerForm({
         <button
           type="button"
           onClick={() => { setOpen(false); setError(null); onClose?.(); }}
-          className="flex-1 text-sm py-2 rounded-lg border border-stone-200 text-stone-500 hover:bg-stone-50 transition-colors"
+          className="flex-1 text-sm py-2 rounded-lg border border-border text-text-light hover:bg-surface-alt transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={!name.trim() || loading}
-          className="flex-1 text-sm py-2 rounded-lg bg-stone-900 text-white font-medium hover:bg-stone-800 transition-colors disabled:opacity-40"
+          className="flex-1 text-sm py-2 rounded-lg bg-stone-900 text-white font-medium hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors disabled:opacity-40"
         >
           {loading ? "Adding…" : "Add Player"}
         </button>

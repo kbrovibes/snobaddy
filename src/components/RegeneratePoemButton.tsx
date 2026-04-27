@@ -19,7 +19,7 @@ export default function RegeneratePoemButton({ playerId }: { playerId: string })
     <button
       onClick={handleClick}
       disabled={loading}
-      className="text-xs text-stone-400 hover:text-stone-600 transition-colors disabled:opacity-40"
+      className="text-xs text-muted-light hover:text-text transition-colors disabled:opacity-40"
     >
       {loading ? "writing…" : "↺ regenerate"}
     </button>

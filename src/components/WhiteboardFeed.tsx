@@ -57,8 +57,8 @@ export default function WhiteboardFeed({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm px-4 py-3">
-      <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
+    <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
+      <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide mb-3">
         Activity
       </h2>
       <div className="flex flex-col gap-1">
@@ -68,7 +68,7 @@ export default function WhiteboardFeed({
             const w = m.winning_team === 1 ? m.team1 : m.team2;
             const l = m.winning_team === 1 ? m.team2 : m.team1;
             return (
-              <div key={m.id} className="flex items-center gap-2 py-1.5 px-2 bg-sky-50 rounded-lg">
+              <div key={m.id} className="flex items-center gap-2 py-1.5 px-2 bg-sky-50 dark:bg-sky-500/10 rounded-lg">
                 <span className="text-xs">&#127992;</span>
                 <div className="flex-1 text-xs">
                   <span className="font-semibold text-sky-800">
@@ -92,14 +92,14 @@ export default function WhiteboardFeed({
               <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
                 isWin ? "bg-green-400" : "bg-orange-400"
               }`} />
-              <span className="flex-1 text-xs text-stone-600">
+              <span className="flex-1 text-xs text-text">
                 <span className="font-medium">{shortName(e.player_name)}</span>
                 {" "}
-                <span className={isWin ? "text-green-600" : "text-orange-500"}>
+                <span className={isWin ? "text-green-600 dark:text-green-400" : "text-orange-500"}>
                   {isPlus ? "+" : "−"}1 {isWin ? "W" : "L"}
                 </span>
               </span>
-              <span className="text-[10px] text-stone-400 shrink-0">{timeAgo(e.created_at)}</span>
+              <span className="text-[10px] text-muted-light shrink-0">{timeAgo(e.created_at)}</span>
             </div>
           );
         })}

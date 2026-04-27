@@ -38,11 +38,11 @@ export default function ResetSessionButton({ sessionId }: { sessionId: string })
 
       {confirming && counts && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-6">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 flex flex-col gap-4">
-            <h2 className="text-lg font-bold text-stone-900">Reset Session?</h2>
-            <div className="text-sm text-stone-600 flex flex-col gap-1">
+          <div className="bg-surface rounded-2xl shadow-xl w-full max-w-sm p-6 flex flex-col gap-4">
+            <h2 className="text-lg font-bold text-heading">Reset Session?</h2>
+            <div className="text-sm text-text flex flex-col gap-1">
               <p>This will permanently delete:</p>
-              <ul className="mt-1 ml-4 list-disc flex flex-col gap-0.5 text-stone-700">
+              <ul className="mt-1 ml-4 list-disc flex flex-col gap-0.5 text-text">
                 <li>{counts.matches} recorded match{counts.matches !== 1 ? "es" : ""}</li>
                 <li>{counts.proposed} proposed match{counts.proposed !== 1 ? "es" : ""}</li>
                 {counts.tally > 0 && (
@@ -51,11 +51,11 @@ export default function ResetSessionButton({ sessionId }: { sessionId: string })
                 <li>All check-ins</li>
               </ul>
             </div>
-            <p className="text-xs text-stone-400">Session will be restored to Upcoming. This cannot be undone.</p>
+            <p className="text-xs text-muted-light">Session will be restored to Upcoming. This cannot be undone.</p>
             <div className="flex gap-3 mt-1">
               <button
                 onClick={() => setConfirming(false)}
-                className="flex-1 py-2.5 rounded-xl border border-stone-200 text-sm font-semibold text-stone-600 hover:bg-stone-50 transition-colors"
+                className="flex-1 py-2.5 rounded-xl border border-border text-sm font-semibold text-text hover:bg-surface-alt transition-colors"
               >
                 Cancel
               </button>

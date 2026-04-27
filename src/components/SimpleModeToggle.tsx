@@ -31,8 +31,8 @@ export default function SimpleModeToggle({
       title={simpleMode ? "Switch to full score entry mode" : "Switch to simple win/loss mode"}
       className={`text-xs font-semibold px-2.5 py-1 rounded-full transition-colors disabled:opacity-50 ${
         simpleMode
-          ? "bg-sky-100 text-sky-700 hover:bg-sky-200"
-          : "bg-stone-100 text-stone-500 hover:bg-stone-200"
+          ? "bg-sky-100 dark:bg-sky-500/15 text-sky-700 hover:bg-sky-200"
+          : "bg-surface-alt text-text-light hover:bg-stone-200 dark:hover:bg-surface-alt dark:bg-border"
       }`}
     >
       {simpleMode ? "✓ Simplify Scores" : "Simplify Scores"}

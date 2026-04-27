@@ -121,7 +121,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
 
   function StatusIcon({ playerId }: { playerId: string }) {
     const status = saveStatus[playerId];
-    if (status === "saving") return <span className="w-3 h-3 shrink-0 rounded-full border-2 border-stone-300 border-t-stone-600 animate-spin" />;
+    if (status === "saving") return <span className="w-3 h-3 shrink-0 rounded-full border-2 border-stone-300 dark:border-border border-t-stone-600 animate-spin" />;
     if (status === "saved") return <span className="text-green-500 text-xs shrink-0">&#10003;</span>;
     if (status === "error") return <span className="text-red-500 text-xs shrink-0">&#10007;</span>;
     return null;
@@ -139,7 +139,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
         {/* Name + status */}
         <td className="py-1.5 pl-2 pr-0.5">
           <div className="flex items-center gap-1">
-            <span className={`text-xs font-medium truncate ${out ? "text-black" : "text-stone-800"}`}>
+            <span className={`text-xs font-medium truncate ${out ? "text-black" : "text-heading"}`}>
               {firstName(player.name)}
             </span>
             <StatusIcon playerId={player.player_id} />
@@ -149,7 +149,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
         <td className="py-1.5 px-0.5 text-center">
           <span className={`text-sm font-bold tabular-nums transition-transform duration-150 inline-block ${
             flash === "wins" ? "scale-125" : ""
-          } ${out ? "text-black" : "text-green-700"}`}>
+          } ${out ? "text-black" : "text-green-700 dark:text-green-400"}`}>
             {t.wins}
           </span>
         </td>
@@ -157,7 +157,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
         <td className="py-1.5 px-0.5 text-center">
           <span className={`text-sm font-bold tabular-nums transition-transform duration-150 inline-block ${
             flash === "losses" ? "scale-125" : ""
-          } ${out ? "text-black" : "text-orange-600"}`}>
+          } ${out ? "text-black" : "text-orange-600 dark:text-orange-400"}`}>
             {t.losses}
           </span>
         </td>
@@ -167,13 +167,13 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
             <div className="flex gap-0.5 justify-end">
               <button
                 onClick={() => handleTap(player.player_id, player.name, "wins")}
-                className="h-7 w-8 rounded-md bg-green-100 text-green-700 text-[10px] font-bold active:bg-green-300 transition-colors"
+                className="h-7 w-8 rounded-md bg-green-100 dark:bg-green-500/15 text-green-700 dark:text-green-400 text-[10px] font-bold active:bg-green-300 transition-colors"
               >
                 +W
               </button>
               <button
                 onClick={() => handleTap(player.player_id, player.name, "losses")}
-                className="h-7 w-8 rounded-md bg-orange-100 text-orange-600 text-[10px] font-bold active:bg-orange-300 transition-colors"
+                className="h-7 w-8 rounded-md bg-orange-100 text-orange-600 dark:text-orange-400 text-[10px] font-bold active:bg-orange-300 transition-colors"
               >
                 +L
               </button>
@@ -188,16 +188,16 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     return (
       <table className="w-full">
         {showHeader && (
-          <thead className="sticky top-0 bg-white z-10">
-            <tr className="border-b border-stone-200">
-              <th className="py-1.5 pl-2 pr-0.5 text-left text-[10px] font-semibold text-stone-400 uppercase">Player</th>
-              <th className="py-1.5 px-0.5 text-center text-[10px] font-semibold text-green-600 uppercase w-6">W</th>
+          <thead className="sticky top-0 bg-surface z-10">
+            <tr className="border-b border-border">
+              <th className="py-1.5 pl-2 pr-0.5 text-left text-[10px] font-semibold text-muted-light uppercase">Player</th>
+              <th className="py-1.5 px-0.5 text-center text-[10px] font-semibold text-green-600 dark:text-green-400 uppercase w-6">W</th>
               <th className="py-1.5 px-0.5 text-center text-[10px] font-semibold text-orange-500 uppercase w-6">L</th>
               <th className="py-1.5 pr-1 pl-0.5 w-[4.5rem]"></th>
             </tr>
           </thead>
         )}
-        <tbody className="divide-y divide-stone-100">
+        <tbody className="divide-y divide-border-light">
           {players.map((p) => (
             <PlayerTableRow key={p.player_id} player={p} />
           ))}
@@ -212,10 +212,10 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
   const rightOut = checkedOutPlayers.filter((_, i) => i % 2 === 1);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm flex flex-col">
+    <div className="bg-surface rounded-xl shadow-sm flex flex-col">
       {/* Match auto-saved flash */}
       {matchFlash && (
-        <div className="mx-3 mt-2 px-3 py-1.5 bg-sky-50 border border-sky-200 rounded-lg text-xs text-sky-700 font-medium">
+        <div className="mx-3 mt-2 px-3 py-1.5 bg-sky-50 dark:bg-sky-500/10 border border-sky-200 rounded-lg text-xs text-sky-700 font-medium">
           Match saved: {matchFlash}
         </div>
       )}
@@ -223,7 +223,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
       {/* 2-column tables */}
       <div className="grid grid-cols-[1fr_1px_1fr]">
         <HalfTable players={leftActive} showHeader={true} />
-        <div className="bg-stone-200 my-2" />
+        <div className="bg-stone-200 dark:bg-border my-2" />
         <HalfTable players={rightActive} showHeader={true} />
       </div>
 
@@ -231,13 +231,13 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
       {checkedOutPlayers.length > 0 && (
         <>
           <div className="flex items-center gap-2 px-3 py-1.5">
-            <div className="flex-1 h-px bg-stone-200" />
-            <span className="text-[10px] text-stone-400">checked out</span>
-            <div className="flex-1 h-px bg-stone-200" />
+            <div className="flex-1 h-px bg-stone-200 dark:bg-border dark:bg-border" />
+            <span className="text-[10px] text-muted-light">checked out</span>
+            <div className="flex-1 h-px bg-stone-200 dark:bg-border dark:bg-border" />
           </div>
           <div className="grid grid-cols-[1fr_1px_1fr]">
             <HalfTable players={leftOut} showHeader={false} />
-            <div className="bg-stone-200 my-1" />
+            <div className="bg-stone-200 dark:bg-border my-1" />
             <HalfTable players={rightOut} showHeader={false} />
           </div>
         </>

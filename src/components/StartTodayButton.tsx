@@ -27,11 +27,11 @@ export default function StartTodayButton() {
       <button
         onClick={handleStart}
         disabled={loading}
-        className="px-5 py-2.5 text-sm font-semibold text-white bg-stone-900 rounded-xl disabled:opacity-50 hover:bg-stone-800 transition-colors"
+        className="px-5 py-2.5 text-sm font-semibold text-white bg-stone-900 dark:bg-sky-600 rounded-xl disabled:opacity-50 hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors"
       >
         {loading ? "Starting…" : "Start session for today"}
       </button>
-      <p className="text-xs text-stone-300">Admin · for testing only</p>
+      <p className="text-xs text-muted-lighter">Admin · for testing only</p>
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );

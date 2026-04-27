@@ -22,7 +22,7 @@ function shortDate(dateStr: string) {
 
 export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
   if (data.length === 0) {
-    return <p className="text-sm text-stone-400">No match data yet.</p>;
+    return <p className="text-sm text-muted-light">No match data yet.</p>;
   }
 
   const hasOpenSession = data.some((s) => s.isOpen);
@@ -32,11 +32,11 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
   return (
     <div className="overflow-x-auto">
       <div className="flex gap-3 mb-2">
-        <span className="flex items-center gap-1 text-xs text-stone-500">
+        <span className="flex items-center gap-1 text-xs text-text-light">
           <span className="inline-block w-2.5 h-2.5 rounded-sm bg-green-400" />
           Wins
         </span>
-        <span className="flex items-center gap-1 text-xs text-stone-500">
+        <span className="flex items-center gap-1 text-xs text-text-light">
           <span className="inline-block w-2.5 h-2.5 rounded-sm bg-red-300" />
           Losses
         </span>
@@ -51,7 +51,7 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
         <line
           x1={0} y1={CHART_H / 2}
           x2={totalW} y2={CHART_H / 2}
-          stroke="#e5e7eb" strokeDasharray="3 2"
+          stroke="var(--muted-lighter)" strokeDasharray="3 2"
         />
 
         {data.map((s, i) => {
@@ -62,7 +62,7 @@ export default function SessionStatsChart({ data }: { data: SessionStat[] }) {
               <g key={s.date}>
                 <title>{shortDate(s.date)}: {s.isOpen ? "In progress" : "Did not play"}</title>
                 {/* Thin gray stub to mark the session */}
-                <rect x={x} y={CHART_H - 4} width={BAR_W} height={4} rx={1} fill={s.isOpen ? "#93c5fd" : "#e5e7eb"} />
+                <rect x={x} y={CHART_H - 4} width={BAR_W} height={4} rx={1} fill={s.isOpen ? "#93c5fd" : "var(--muted-lighter)"} />
                 <text x={x + BAR_W / 2} y={CHART_H + 14} textAnchor="middle" fontSize={9} fill={s.isOpen ? "#93c5fd" : "#d1d5db"}>
                   {shortDate(s.date)}{s.isOpen ? "*" : ""}
                 </text>

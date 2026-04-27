@@ -37,7 +37,7 @@ export default function GenerateMatchesButton({
   return (
     <div className="flex flex-col gap-2">
       {error && (
-        <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+        <p className="text-xs text-red-500 bg-red-50 dark:bg-red-500/10 px-3 py-2 rounded-lg">{error}</p>
       )}
       <button
         onClick={handleGenerate}
@@ -47,7 +47,7 @@ export default function GenerateMatchesButton({
         {generating ? "Generating…" : "Generate Matches"}
       </button>
       {!hasPairs && (
-        <p className="text-xs text-stone-400 text-center">Save pairs first.</p>
+        <p className="text-xs text-muted-light text-center">Save pairs first.</p>
       )}
     </div>
   );

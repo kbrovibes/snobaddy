@@ -91,18 +91,18 @@ function LoginContent() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 bg-stone-50">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 bg-background">
       {/* Logo */}
       <div className="flex flex-col leading-tight items-center">
-        <span className="font-bold text-stone-900 text-2xl">Serve Snoqualmie</span>
-        <span className="font-black text-stone-900 text-xs tracking-[0.2em] uppercase">Badminton</span>
+        <span className="font-bold text-heading text-2xl">Serve Snoqualmie</span>
+        <span className="font-black text-heading text-xs tracking-[0.2em] uppercase">Badminton</span>
       </div>
 
       <div className="flex flex-col gap-4 w-full max-w-xs">
         {/* Google button */}
         <button
           onClick={signInWithGoogle}
-          className="flex items-center justify-center gap-3 w-full px-6 py-3 bg-white border border-stone-300 rounded-lg shadow-sm text-stone-700 font-medium hover:bg-stone-50 active:bg-stone-100 transition-colors"
+          className="flex items-center justify-center gap-3 w-full px-6 py-3 bg-surface border border-stone-300 dark:border-border rounded-lg shadow-sm text-text font-medium hover:bg-surface-alt active:bg-surface-alt transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -115,18 +115,18 @@ function LoginContent() {
 
         {/* Divider */}
         <div className="flex items-center gap-3">
-          <div className="flex-1 h-px bg-stone-200" />
-          <span className="text-xs text-stone-400">or</span>
-          <div className="flex-1 h-px bg-stone-200" />
+          <div className="flex-1 h-px bg-stone-200 dark:bg-border dark:bg-border" />
+          <span className="text-xs text-muted-light">or</span>
+          <div className="flex-1 h-px bg-stone-200 dark:bg-border dark:bg-border" />
         </div>
 
         {/* Mode toggle (only shown for signin/signup) */}
         {mode !== "reset" && (
-          <div className="flex bg-stone-100 rounded-lg p-0.5">
+          <div className="flex bg-surface-alt rounded-lg p-0.5">
             <button
               onClick={() => switchMode("signin")}
               className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                mode === "signin" ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"
+                mode === "signin" ? "bg-surface text-heading shadow-sm" : "text-text-light hover:text-text"
               }`}
             >
               Sign in
@@ -134,7 +134,7 @@ function LoginContent() {
             <button
               onClick={() => switchMode("signup")}
               className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                mode === "signup" ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"
+                mode === "signup" ? "bg-surface text-heading shadow-sm" : "text-text-light hover:text-text"
               }`}
             >
               Create account
@@ -144,7 +144,7 @@ function LoginContent() {
 
         {/* Success message */}
         {successMsg && (
-          <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-sm text-green-700 text-center">
+          <div className="bg-green-50 dark:bg-green-500/10 border border-green-200 rounded-lg px-4 py-3 text-sm text-green-700 dark:text-green-400 text-center">
             {successMsg}
           </div>
         )}
@@ -163,7 +163,7 @@ function LoginContent() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white"
+              className="w-full px-4 py-3 border border-stone-300 dark:border-border rounded-lg text-heading placeholder-stone-400 dark:placeholder-muted-light focus:outline-none focus:ring-2 focus:ring-sky-500 bg-surface"
             />
             <input
               type="password"
@@ -171,19 +171,19 @@ function LoginContent() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white"
+              className="w-full px-4 py-3 border border-stone-300 dark:border-border rounded-lg text-heading placeholder-stone-400 dark:placeholder-muted-light focus:outline-none focus:ring-2 focus:ring-sky-500 bg-surface"
             />
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-stone-900 text-white font-semibold rounded-lg disabled:opacity-40 hover:bg-stone-800 transition-colors"
+              className="w-full py-3 bg-stone-900 text-white font-semibold rounded-lg disabled:opacity-40 hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors"
             >
               {loading ? "Signing in…" : "Sign in"}
             </button>
             <button
               type="button"
               onClick={() => switchMode("reset")}
-              className="text-sm text-stone-400 hover:text-stone-600 transition-colors text-center"
+              className="text-sm text-muted-light hover:text-text transition-colors text-center"
             >
               Forgot password?
             </button>
@@ -199,7 +199,7 @@ function LoginContent() {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white"
+              className="w-full px-4 py-3 border border-stone-300 dark:border-border rounded-lg text-heading placeholder-stone-400 dark:placeholder-muted-light focus:outline-none focus:ring-2 focus:ring-sky-500 bg-surface"
             />
             <input
               type="email"
@@ -207,7 +207,7 @@ function LoginContent() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white"
+              className="w-full px-4 py-3 border border-stone-300 dark:border-border rounded-lg text-heading placeholder-stone-400 dark:placeholder-muted-light focus:outline-none focus:ring-2 focus:ring-sky-500 bg-surface"
             />
             <input
               type="password"
@@ -216,12 +216,12 @@ function LoginContent() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full px-4 py-3 border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white"
+              className="w-full px-4 py-3 border border-stone-300 dark:border-border rounded-lg text-heading placeholder-stone-400 dark:placeholder-muted-light focus:outline-none focus:ring-2 focus:ring-sky-500 bg-surface"
             />
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-stone-900 text-white font-semibold rounded-lg disabled:opacity-40 hover:bg-stone-800 transition-colors"
+              className="w-full py-3 bg-stone-900 text-white font-semibold rounded-lg disabled:opacity-40 hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors"
             >
               {loading ? "Creating account…" : "Create account"}
             </button>
@@ -231,7 +231,7 @@ function LoginContent() {
         {/* Password reset form */}
         {mode === "reset" && !successMsg && (
           <form onSubmit={handleReset} className="flex flex-col gap-3">
-            <p className="text-sm text-stone-600 text-center">
+            <p className="text-sm text-text text-center">
               Enter your email and we&apos;ll send you a reset link.
             </p>
             <input
@@ -240,19 +240,19 @@ function LoginContent() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white"
+              className="w-full px-4 py-3 border border-stone-300 dark:border-border rounded-lg text-heading placeholder-stone-400 dark:placeholder-muted-light focus:outline-none focus:ring-2 focus:ring-sky-500 bg-surface"
             />
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-stone-900 text-white font-semibold rounded-lg disabled:opacity-40 hover:bg-stone-800 transition-colors"
+              className="w-full py-3 bg-stone-900 text-white font-semibold rounded-lg disabled:opacity-40 hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors"
             >
               {loading ? "Sending…" : "Send reset link"}
             </button>
             <button
               type="button"
               onClick={() => switchMode("signin")}
-              className="text-sm text-stone-400 hover:text-stone-600 transition-colors text-center"
+              className="text-sm text-muted-light hover:text-text transition-colors text-center"
             >
               {"<"} Back to sign in
             </button>

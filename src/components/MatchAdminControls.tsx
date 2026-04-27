@@ -50,15 +50,15 @@ export default function MatchAdminControls({ matchId, team1Names, team2Names, te
   if (mode === "confirming-delete") {
     return (
       <div className="flex items-center gap-3 mt-1.5">
-        <span className="text-xs text-red-600 font-medium">Delete this match?</span>
+        <span className="text-xs text-red-600 dark:text-red-400 font-medium">Delete this match?</span>
         <button
           onClick={handleDelete}
           disabled={loading}
-          className="text-xs text-red-600 font-semibold underline disabled:opacity-50"
+          className="text-xs text-red-600 dark:text-red-400 font-semibold underline disabled:opacity-50"
         >
           {loading ? "Deleting…" : "Yes, delete"}
         </button>
-        <button onClick={() => setMode("idle")} className="text-xs text-stone-400">
+        <button onClick={() => setMode("idle")} className="text-xs text-muted-light">
           Cancel
         </button>
       </div>
@@ -72,23 +72,23 @@ export default function MatchAdminControls({ matchId, team1Names, team2Names, te
 
     return (
       <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-        <span className="text-stone-500">{team1Names.join(" & ")}</span>
+        <span className="text-text-light">{team1Names.join(" & ")}</span>
         <input
           type="number"
           value={s1}
           onChange={(e) => setS1(e.target.value)}
-          className="w-10 border border-stone-300 rounded px-1.5 py-0.5 text-center text-stone-900 text-xs"
+          className="w-10 border border-stone-300 dark:border-border rounded px-1.5 py-0.5 text-center text-heading text-xs"
           min={0}
         />
-        <span className="text-stone-300">–</span>
+        <span className="text-muted-lighter">–</span>
         <input
           type="number"
           value={s2}
           onChange={(e) => setS2(e.target.value)}
-          className="w-10 border border-stone-300 rounded px-1.5 py-0.5 text-center text-stone-900 text-xs"
+          className="w-10 border border-stone-300 dark:border-border rounded px-1.5 py-0.5 text-center text-heading text-xs"
           min={0}
         />
-        <span className="text-stone-500">{team2Names.join(" & ")}</span>
+        <span className="text-text-light">{team2Names.join(" & ")}</span>
         <button
           onClick={handleSave}
           disabled={loading || !valid}
@@ -96,7 +96,7 @@ export default function MatchAdminControls({ matchId, team1Names, team2Names, te
         >
           {loading ? "Saving…" : "Save"}
         </button>
-        <button onClick={() => setMode("idle")} className="text-stone-400">
+        <button onClick={() => setMode("idle")} className="text-muted-light">
           Cancel
         </button>
       </div>

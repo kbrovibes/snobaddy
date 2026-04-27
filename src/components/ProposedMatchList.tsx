@@ -102,7 +102,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
     return (
       <button
         onClick={handleSuggest}
-        className="w-full py-3 bg-white border-2 border-dashed border-sky-200 text-sky-600 font-semibold rounded-xl hover:bg-sky-50 transition-colors flex items-center justify-center gap-2"
+        className="w-full py-3 bg-surface border-2 border-dashed border-sky-200 text-sky-600 font-semibold rounded-xl hover:bg-sky-50 dark:bg-sky-500/10 transition-colors flex items-center justify-center gap-2"
       >
         ✨ Generate Matches
       </button>
@@ -112,7 +112,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
+        <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide">
           Proposed Matches · {matches.length}
         </h2>
         <div className="flex items-center gap-3">
@@ -122,8 +122,8 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
               disabled={togglingAuto}
               className={`text-xs font-medium transition-colors ${
                 autoGenerate
-                  ? "text-sky-600 hover:text-sky-800"
-                  : "text-stone-400 hover:text-stone-600"
+                  ? "text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300"
+                  : "text-muted-light hover:text-text"
               }`}
               title={autoGenerate ? "Auto-generate is on — tap to disable" : "Auto-generate is off — tap to enable"}
             >
@@ -146,14 +146,14 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
         {matches.map((m) => {
           const isScoring = scoringId === m.id;
           return (
-            <div key={m.id} className="bg-white border border-sky-50 rounded-xl px-3 py-2 shadow-sm">
+            <div key={m.id} className="bg-surface border border-sky-50 rounded-xl px-3 py-2 shadow-sm">
               {/* Team names — inline, centred "vs" */}
               <div className="grid grid-cols-[1fr_2rem_1fr] items-center gap-1 mb-1.5">
-                <p className="text-xs font-semibold text-stone-800 text-right truncate">
+                <p className="text-xs font-semibold text-heading text-right truncate">
                   {m.team1_names?.map((n) => shortName(n, nameMap)).join(" & ")}
                 </p>
-                <p className="text-center text-stone-300 text-xs">vs</p>
-                <p className="text-xs font-semibold text-stone-800 text-left truncate">
+                <p className="text-center text-muted-lighter text-xs">vs</p>
+                <p className="text-xs font-semibold text-heading text-left truncate">
                   {m.team2_names?.map((n) => shortName(n, nameMap)).join(" & ")}
                 </p>
               </div>
@@ -169,9 +169,9 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
                       value={score1}
                       onChange={(e) => setScore1(e.target.value)}
                       placeholder="0"
-                      className="w-full text-center text-xl font-bold text-stone-900 border-2 border-stone-200 rounded-xl py-2 focus:border-sky-400 outline-none"
+                      className="w-full text-center text-xl font-bold text-heading border-2 border-border rounded-xl py-2 focus:border-sky-400 outline-none"
                     />
-                    <div className="text-center text-stone-300 text-xs">–</div>
+                    <div className="text-center text-muted-lighter text-xs">–</div>
                     <input
                       type="number"
                       inputMode="numeric"
@@ -179,7 +179,7 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
                       value={score2}
                       onChange={(e) => setScore2(e.target.value)}
                       placeholder="0"
-                      className="w-full text-center text-xl font-bold text-stone-900 border-2 border-stone-200 rounded-xl py-2 focus:border-sky-400 outline-none"
+                      className="w-full text-center text-xl font-bold text-heading border-2 border-border rounded-xl py-2 focus:border-sky-400 outline-none"
                     />
                   </div>
                   {error && (
@@ -195,14 +195,14 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
                     <button
                       onClick={() => handleSave(m)}
                       disabled={saving}
-                      className="flex-1 py-1 bg-stone-900 text-white text-xs font-bold rounded-lg hover:bg-stone-800 transition-colors disabled:opacity-50"
+                      className="flex-1 py-1 bg-stone-900 text-white text-xs font-bold rounded-lg hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors disabled:opacity-50"
                     >
                       {saving ? "Saving..." : "✅ Save"}
                     </button>
                     <button
                       onClick={cancelScoring}
                       disabled={saving}
-                      className="flex-1 py-1 bg-stone-50 text-stone-500 text-xs font-bold rounded-lg hover:bg-stone-100 transition-colors disabled:opacity-50"
+                      className="flex-1 py-1 bg-background text-text-light text-xs font-bold rounded-lg hover:bg-surface-alt transition-colors disabled:opacity-50"
                     >
                       ✕ Cancel
                     </button>
@@ -211,14 +211,14 @@ export default function ProposedMatchList({ sessionId, matches, checkedInPlayers
                   <>
                     <button
                       onClick={() => startScoring(m.id)}
-                      className="flex-1 py-1 bg-sky-50 text-sky-600 text-xs font-bold rounded-lg hover:bg-sky-100 transition-colors"
+                      className="flex-1 py-1 bg-sky-50 dark:bg-sky-500/10 text-sky-600 text-xs font-bold rounded-lg hover:bg-sky-100 dark:bg-sky-500/15 transition-colors"
                     >
                       🏸 Record Score
                     </button>
                     <button
                       onClick={() => handleDelete(m.id)}
                       disabled={deletingId === m.id}
-                      className="flex-1 py-1 bg-red-50 text-red-400 text-xs font-bold rounded-lg hover:bg-red-100 hover:text-red-500 transition-colors disabled:opacity-50"
+                      className="flex-1 py-1 bg-red-50 dark:bg-red-500/10 text-red-400 text-xs font-bold rounded-lg hover:bg-red-100 dark:bg-red-500/15 hover:text-red-500 transition-colors disabled:opacity-50"
                     >
                       {deletingId === m.id ? "Deleting..." : "🗑️ Delete"}
                     </button>

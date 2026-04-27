@@ -46,23 +46,23 @@ export default function SeriesCard({
 
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="text-xs font-semibold text-stone-500 uppercase tracking-wide">
+      <h3 className="text-xs font-semibold text-text-light uppercase tracking-wide">
         Best-of-3 Final
       </h3>
 
       {/* Teams + series score */}
-      <div className="bg-stone-50 rounded-xl px-4 py-3">
+      <div className="bg-background rounded-xl px-4 py-3">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <div className={`text-center ${series.winning_team === 1 ? "text-green-700" : "text-stone-700"}`}>
+          <div className={`text-center ${series.winning_team === 1 ? "text-green-700 dark:text-green-400" : "text-text"}`}>
             <p className="text-sm font-bold">{team1Label}</p>
-            {series.team1_seed && <p className="text-[10px] text-stone-400">{series.team1_seed}</p>}
+            {series.team1_seed && <p className="text-[10px] text-muted-light">{series.team1_seed}</p>}
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold text-stone-800">{series.team1_wins} – {series.team2_wins}</p>
+            <p className="text-lg font-bold text-heading">{series.team1_wins} – {series.team2_wins}</p>
           </div>
-          <div className={`text-center ${series.winning_team === 2 ? "text-green-700" : "text-stone-700"}`}>
+          <div className={`text-center ${series.winning_team === 2 ? "text-green-700 dark:text-green-400" : "text-text"}`}>
             <p className="text-sm font-bold">{team2Label}</p>
-            {series.team2_seed && <p className="text-[10px] text-stone-400">{series.team2_seed}</p>}
+            {series.team2_seed && <p className="text-[10px] text-muted-light">{series.team2_seed}</p>}
           </div>
         </div>
       </div>
@@ -150,28 +150,28 @@ function GameCard({
 
   if (isLocked) {
     return (
-      <div className="rounded-xl border border-dashed border-stone-200 px-3 py-2.5 bg-stone-50/50">
-        <span className="text-xs text-stone-400">Game {gameNum} — not needed</span>
+      <div className="rounded-xl border border-dashed border-border px-3 py-2.5 bg-background/50">
+        <span className="text-xs text-muted-light">Game {gameNum} — not needed</span>
       </div>
     );
   }
 
   return (
     <div className={`rounded-xl border px-3 py-2.5 transition-colors ${
-      isPlayed && !seriesDecided ? "bg-emerald-50/50 border-emerald-200" : "bg-white border-stone-200"
+      isPlayed && !seriesDecided ? "bg-emerald-50/50 border-emerald-200" : "bg-surface border-border"
     }`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-[10px] font-bold text-stone-400 uppercase">Game {gameNum}</span>
+        <span className="text-[10px] font-bold text-muted-light uppercase">Game {gameNum}</span>
         <div className="flex items-center gap-2">
           {isPlayed && !editing && isActive && (
             <button onClick={() => { setEditing(true); setScore1(String(match.team1_score)); setScore2(String(match.team2_score)); }}
-              className="text-[10px] text-sky-600 hover:text-sky-800">
+              className="text-[10px] text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300">
               Edit
             </button>
           )}
           {isPlayed && !editing && !seriesDecided && (
-            <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded-full">
+            <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-100 px-1.5 py-0.5 rounded-full">
               ✓
             </span>
           )}
@@ -181,18 +181,18 @@ function GameCard({
       {/* Teams — same 3-column layout */}
       <div className="text-sm">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-          <span className={`font-semibold truncate text-left ${isPlayed ? (match.winning_team === 1 ? "text-green-600" : "text-stone-400") : "text-stone-700"}`}>
+          <span className={`font-semibold truncate text-left ${isPlayed ? (match.winning_team === 1 ? "text-green-600 dark:text-green-400" : "text-muted-light") : "text-text"}`}>
             {team1Label}
           </span>
-          <span className="text-stone-300 text-center w-6">vs</span>
-          <span className={`font-semibold truncate text-left ${isPlayed ? (match.winning_team === 2 ? "text-green-600" : "text-stone-400") : "text-stone-700"}`}>
+          <span className="text-muted-lighter text-center w-6">vs</span>
+          <span className={`font-semibold truncate text-left ${isPlayed ? (match.winning_team === 2 ? "text-green-600 dark:text-green-400" : "text-muted-light") : "text-text"}`}>
             {team2Label}
           </span>
         </div>
 
         {/* Score + winner line */}
         {isPlayed && !editing && (
-          <div className="text-xs text-stone-400 mt-0.5">
+          <div className="text-xs text-muted-light mt-0.5">
             {match.team1_score} – {match.team2_score} · {winnerLabel} won
           </div>
         )}
@@ -204,20 +204,20 @@ function GameCard({
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
             <input type="text" inputMode="numeric" pattern="[0-9]*" value={score1}
               onChange={(e) => setScore1(e.target.value.replace(/\D/g, ""))}
-              className="w-full text-center border border-stone-200 rounded-lg py-1.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sky-300 bg-stone-50" placeholder="—" />
-            <span className="text-stone-300 text-center w-6">–</span>
+              className="w-full text-center border border-border rounded-lg py-1.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sky-300 bg-background" placeholder="—" />
+            <span className="text-muted-lighter text-center w-6">–</span>
             <input type="text" inputMode="numeric" pattern="[0-9]*" value={score2}
               onChange={(e) => setScore2(e.target.value.replace(/\D/g, ""))}
-              className="w-full text-center border border-stone-200 rounded-lg py-1.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sky-300 bg-stone-50" placeholder="—" />
+              className="w-full text-center border border-border rounded-lg py-1.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sky-300 bg-background" placeholder="—" />
           </div>
           <div className="flex justify-center gap-2">
             <button onClick={handleSave} disabled={saving || isPending}
-              className="px-5 text-xs font-semibold text-white bg-stone-900 hover:bg-stone-800 rounded-lg py-2 disabled:opacity-40 transition-colors">
+              className="px-5 text-xs font-semibold text-white bg-stone-900 hover:bg-stone-800 dark:hover:bg-sky-500 rounded-lg py-2 disabled:opacity-40 transition-colors">
               {saving ? "Saving…" : "Save"}
             </button>
             {editing && (
               <button onClick={() => setEditing(false)}
-                className="px-4 text-xs text-stone-400 hover:text-stone-600 border border-stone-200 rounded-lg py-2 transition-colors">
+                className="px-4 text-xs text-muted-light hover:text-text border border-border rounded-lg py-2 transition-colors">
                 Cancel
               </button>
             )}

@@ -9,7 +9,7 @@ export default function BackButton() {
   return (
     <button
       onClick={() => { startLoading(); router.back(); }}
-      className="text-sm text-sky-600 hover:text-sky-800 active:opacity-60 transition-opacity"
+      className="text-sm text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 active:opacity-60 transition-opacity"
     >
       ‹ Back
     </button>

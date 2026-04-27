@@ -29,21 +29,21 @@ export default function DeleteFinalsButton({ eventId }: { eventId: string }) {
       <button
         onClick={() => setShowConfirm(true)}
         disabled={deleting}
-        className="w-full py-2.5 text-sm font-medium text-red-400 hover:text-red-600 border border-red-100 hover:border-red-300 rounded-xl transition-colors disabled:opacity-50"
+        className="w-full py-2.5 text-sm font-medium text-red-400 hover:text-red-600 dark:text-red-400 border border-red-100 hover:border-red-300 rounded-xl transition-colors disabled:opacity-50"
       >
         {deleting ? "Deleting…" : "Delete Finals Event"}
       </button>
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="bg-white rounded-xl shadow-lg max-w-sm w-full p-5 flex flex-col gap-3">
-            <p className="text-sm font-semibold text-stone-900">Delete Finals Event</p>
-            <p className="text-sm text-stone-600 leading-relaxed">
+          <div className="bg-surface rounded-xl shadow-lg max-w-sm w-full p-5 flex flex-col gap-3">
+            <p className="text-sm font-semibold text-heading">Delete Finals Event</p>
+            <p className="text-sm text-text leading-relaxed">
               This will permanently delete all groups, sessions, matches, and participant data. This cannot be undone.
             </p>
             <div className="flex gap-2 mt-1">
               <button
                 onClick={() => setShowConfirm(false)}
-                className="flex-1 py-2 text-sm font-medium text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors"
+                className="flex-1 py-2 text-sm font-medium text-text-light border border-border rounded-lg hover:bg-surface-alt transition-colors"
               >
                 Cancel
               </button>

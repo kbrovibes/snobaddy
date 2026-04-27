@@ -42,16 +42,16 @@ export default function StartSessionButton({ sessionId, sessionDate }: { session
 
       {confirming && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-6">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 flex flex-col gap-4">
-            <h2 className="text-lg font-bold text-stone-900">Start a future session?</h2>
-            <p className="text-sm text-stone-600">
-              This session is scheduled for <span className="font-semibold text-stone-800">{formattedDate}</span>, which hasn&apos;t arrived yet.
+          <div className="bg-surface rounded-2xl shadow-xl w-full max-w-sm p-6 flex flex-col gap-4">
+            <h2 className="text-lg font-bold text-heading">Start a future session?</h2>
+            <p className="text-sm text-text">
+              This session is scheduled for <span className="font-semibold text-heading">{formattedDate}</span>, which hasn&apos;t arrived yet.
             </p>
-            <p className="text-xs text-stone-400">Are you sure you want to open it now?</p>
+            <p className="text-xs text-muted-light">Are you sure you want to open it now?</p>
             <div className="flex gap-3 mt-1">
               <button
                 onClick={() => setConfirming(false)}
-                className="flex-1 py-2.5 rounded-xl border border-stone-200 text-sm font-semibold text-stone-600 hover:bg-stone-50 transition-colors"
+                className="flex-1 py-2.5 rounded-xl border border-border text-sm font-semibold text-text hover:bg-surface-alt transition-colors"
               >
                 Cancel
               </button>

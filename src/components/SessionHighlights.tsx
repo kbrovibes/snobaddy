@@ -11,12 +11,12 @@ interface AwardCardProps {
 
 export function AwardCard({ emoji, title, description, name, stat, colSpan }: AwardCardProps & { colSpan?: string }) {
   return (
-    <div className={`bg-white rounded-xl shadow-sm border border-stone-100 px-3 py-2 flex flex-col items-center gap-0.5 text-center${colSpan ? ` ${colSpan}` : ""}`}>
+    <div className={`bg-surface rounded-xl shadow-sm border border-border-light px-3 py-2 flex flex-col items-center gap-0.5 text-center${colSpan ? ` ${colSpan}` : ""}`}>
       <span className="text-xl">{emoji}</span>
-      <span className="text-xs font-semibold text-stone-700 leading-tight min-h-[1.5rem] flex items-center justify-center">{title}</span>
-      <span className="text-xs text-stone-400 leading-tight min-h-[1.5rem] flex items-center justify-center">{description}</span>
-      <span className="text-sm font-bold text-stone-900 leading-tight">{name}</span>
-      <span className="text-xs text-stone-400">{stat}</span>
+      <span className="text-xs font-semibold text-text leading-tight min-h-[1.5rem] flex items-center justify-center">{title}</span>
+      <span className="text-xs text-muted-light leading-tight min-h-[1.5rem] flex items-center justify-center">{description}</span>
+      <span className="text-sm font-bold text-heading leading-tight">{name}</span>
+      <span className="text-xs text-muted-light">{stat}</span>
     </div>
   );
 }
@@ -80,7 +80,7 @@ export default function SessionHighlights({ highlights, nameMap }: { highlights:
 
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
+      <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide">
         Session Awards
       </h2>
       <div className="grid grid-cols-6 gap-2">
