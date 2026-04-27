@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import NavLink from "@/components/NavLink";
 import { createClient } from "@/lib/supabase-browser";
 import { useRouter } from "next/navigation";
@@ -15,13 +16,28 @@ interface HeaderProps {
 export default function Header({ userName, playerId, isAdmin, isGodMode }: HeaderProps) {
   const router = useRouter();
   const { startLoading } = useNavigationLoader();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   async function signOut() {
+    setMenuOpen(false);
     const supabase = createClient();
     await supabase.auth.signOut();
     startLoading();
     router.push("/login");
   }
+
+  // Close menu on outside click
+  useEffect(() => {
+    if (!menuOpen) return;
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [menuOpen]);
 
   const initials = userName
     .split(" ")
@@ -32,39 +48,52 @@ export default function Header({ userName, playerId, isAdmin, isGodMode }: Heade
     .toUpperCase();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 h-14 bg-surface dark:bg-background border-b border-border-light dark:border-border">
-      <NavLink href="/" className="flex items-center gap-2">
-        <div className="flex flex-col leading-tight">
-          <span className="font-bold text-heading text-lg">Serve Sports</span>
-          <span className="font-black text-heading text-sm tracking-[0.2em] uppercase">Badminton</span>
-        </div>
+    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-4 h-14 bg-surface dark:bg-background border-b border-border-light dark:border-border">
+      {/* Centered logo */}
+      <NavLink href="/" className="flex flex-col items-center leading-tight">
+        <span className="font-bold text-heading text-xl tracking-tight">Serve Sports</span>
+        <span className="font-black text-heading text-[11px] tracking-[0.25em] uppercase -mt-0.5">Badminton</span>
       </NavLink>
-      <div className="flex items-center gap-3">
+
+      {/* Avatar + dropdown — positioned absolute right */}
+      <div className="absolute right-4" ref={menuRef}>
         <button
-          onClick={signOut}
-          className="text-xs text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 transition-colors font-medium"
+          onClick={() => setMenuOpen((v) => !v)}
+          className={`flex items-center justify-center w-8 h-8 rounded-full ${isAdmin ? "bg-red-600" : "bg-sky-600"} text-white text-sm font-semibold`}
+          title={userName}
         >
-          Logout
+          {initials}
         </button>
-        {isGodMode && (
-          <NavLink href="/admin/control-panel" title="Control Panel" className="text-stone-400 dark:text-muted-light hover:text-stone-600 dark:hover:text-muted transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </NavLink>
-        )}
-        {playerId ? (
-          <NavLink
-            href={`/players/${playerId}`}
-            className={`flex items-center justify-center w-8 h-8 rounded-full ${isAdmin ? "bg-red-600" : "bg-sky-600"} text-white text-sm font-semibold`}
-            title={userName}
-          >
-            {initials}
-          </NavLink>
-        ) : (
-          <div className={`flex items-center justify-center w-8 h-8 rounded-full ${isAdmin ? "bg-red-600" : "bg-sky-600"} text-white text-sm font-semibold`}>
-            {initials}
+
+        {menuOpen && (
+          <div className="absolute right-0 mt-2 w-44 bg-surface dark:bg-[#1A1A1A] border border-border-light dark:border-border rounded-xl shadow-lg dark:shadow-none dark:ring-1 dark:ring-border overflow-hidden">
+            {playerId && (
+              <NavLink
+                href={`/players/${playerId}`}
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-2 px-4 py-2.5 text-sm text-text hover:bg-surface-alt transition-colors"
+              >
+                <span className="text-base">👤</span>
+                Profile
+              </NavLink>
+            )}
+            {isGodMode && (
+              <NavLink
+                href="/admin/control-panel"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-2 px-4 py-2.5 text-sm text-text hover:bg-surface-alt transition-colors"
+              >
+                <span className="text-base">⚙️</span>
+                Control Panel
+              </NavLink>
+            )}
+            <button
+              onClick={signOut}
+              className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-500 dark:text-red-400 hover:bg-surface-alt transition-colors border-t border-border-light dark:border-border"
+            >
+              <span className="text-base">🚪</span>
+              Logout
+            </button>
           </div>
         )}
       </div>

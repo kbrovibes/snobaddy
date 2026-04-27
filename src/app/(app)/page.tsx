@@ -45,10 +45,7 @@ export default async function SessionListPage({
   return (
     <div className="flex flex-col px-4 py-4 gap-4">
 
-      <div>
-        <h1 className="text-base font-bold text-heading leading-tight">{seasonName}</h1>
-        <p className="text-sm text-text-light">No active session</p>
-      </div>
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-light px-1">{seasonName}</p>
 
       {isAdmin && <FinalsSection event={finalsEvent} sessionPair={finalsSessionPair} pastEvents={pastFinalsEvents} />}
 
