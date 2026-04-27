@@ -205,7 +205,7 @@ export default function LeaderboardTable({
               {sorted.map((player, i) => (
                 <tr
                   key={player.id}
-                  className={`border-b hover:bg-surface-alt/50 transition-colors ${getRankColor(player.id)}`}
+                  className={`border-b border-border-light hover:bg-surface-alt/50 transition-colors ${getRankColor(player.id)}`}
                 >
                   <td className={`px-4 py-1.5 text-xs font-bold text-right ${player.id === nutCracker?.id || player.id === badmintonNut?.id ? "text-heading" : "text-muted-lighter"}`}>
                     {getRankBadge(i, player.id)}
