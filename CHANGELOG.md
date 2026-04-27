@@ -9,7 +9,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [0.30.3] - 2026-04-26
 
 ### Improved
-- **Header logo** — "Serve Sports" now uses Exo 2 800 for a geometric, athletic look.
+- **Header logo** — "Serve Sports" uses system-ui bold.
 
 ---
 

@@ -53,7 +53,7 @@ export default function Header({ userName, playerId, isAdmin, isGodMode }: Heade
     <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-4 h-14 bg-surface dark:bg-background">
       {/* Centered logo */}
       <NavLink href="/" className="flex flex-col items-center leading-tight">
-        <span className="text-heading text-2xl tracking-tight" style={{ fontFamily: "var(--font-exo2)" }}>Serve Sports</span>
+        <span className="font-bold text-heading text-2xl tracking-tight">Serve Sports</span>
         <span className="font-black text-heading text-[13px] tracking-[0.25em] uppercase -mt-0.5">Badminton</span>
       </NavLink>
 
