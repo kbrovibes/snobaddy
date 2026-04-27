@@ -72,14 +72,14 @@ export default function AdminPageContent({
           {isGodMode && (
             <button
               onClick={() => setGodModeActive((v) => !v)}
-              className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full border transition-colors ${
+              className={`text-[13px] font-semibold px-3 py-1.5 rounded-[10px] transition-colors ${
                 godModeActive
-                  ? "bg-amber-50 dark:bg-amber-500/10 border-amber-300 text-amber-700"
-                  : "bg-background border-border text-muted-light hover:border-stone-300 dark:hover:border-border dark:border-border"
+                  ? "bg-amber-500 text-white"
+                  : "bg-stone-900 dark:bg-sky-600 text-white"
               }`}
               title={godModeActive ? "God Mode on" : "God Mode off"}
             >
-              ⚡
+              {godModeActive ? "Done" : "Edit"}
             </button>
           )}
           {isAdmin && (
