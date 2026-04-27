@@ -48,7 +48,7 @@ export default function Header({ userName, playerId, isAdmin, isGodMode }: Heade
     .toUpperCase();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-4 h-14 bg-surface dark:bg-background border-b border-border-light dark:border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-4 h-14 bg-surface dark:bg-background">
       {/* Centered logo */}
       <NavLink href="/" className="flex flex-col items-center leading-tight">
         <span className="font-bold text-heading text-xl tracking-tight">Serve Sports</span>
