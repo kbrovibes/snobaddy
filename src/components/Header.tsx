@@ -73,7 +73,7 @@ export default function Header({ userName, playerId, isAdmin, isGodMode }: Heade
               <NavLink
                 href={`/players/${playerId}`}
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm text-text hover:bg-surface-alt transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-text hover:bg-surface-alt transition-colors"
               >
                 <span className="text-base">👤</span>
                 Profile
@@ -83,7 +83,7 @@ export default function Header({ userName, playerId, isAdmin, isGodMode }: Heade
               <NavLink
                 href="/admin/control-panel"
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm text-text hover:bg-surface-alt transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-text hover:bg-surface-alt transition-colors"
               >
                 <span className="text-base">⚙️</span>
                 Control Panel
@@ -94,14 +94,14 @@ export default function Header({ userName, playerId, isAdmin, isGodMode }: Heade
                 const next = theme === "dark" ? "light" : "dark";
                 setTheme(next);
               }}
-              className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-text hover:bg-surface-alt transition-colors border-t border-border-light dark:border-border"
+              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-text hover:bg-surface-alt transition-colors"
             >
               <span className="text-base">{theme === "dark" ? "☀️" : "🌙"}</span>
               {theme === "dark" ? "Light Mode" : "Dark Mode"}
             </button>
             <button
               onClick={signOut}
-              className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-500 dark:text-red-400 hover:bg-surface-alt transition-colors border-t border-border-light dark:border-border"
+              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-500 dark:text-red-400 hover:bg-surface-alt transition-colors"
             >
               <span className="text-base">🚪</span>
               Logout
