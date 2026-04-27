@@ -35,18 +35,18 @@ export default function TallyModelPicker({ current }: { current: string }) {
           disabled={saving}
           className={`flex items-center justify-between px-3 py-2.5 rounded-lg border text-left transition-colors ${
             selected === m.id
-              ? "border-purple-400 bg-purple-50"
+              ? "border-purple-400 dark:border-purple-500/50 bg-purple-50 dark:bg-purple-500/10"
               : "border-border hover:border-stone-300 dark:hover:border-border dark:border-border"
           }`}
         >
           <div>
-            <span className={`text-sm font-semibold ${selected === m.id ? "text-purple-700" : "text-heading"}`}>
+            <span className={`text-sm font-semibold ${selected === m.id ? "text-purple-700 dark:text-purple-400" : "text-heading"}`}>
               {m.label}
             </span>
             <span className="block text-xs text-muted-light">{m.sub}</span>
           </div>
           {selected === m.id && (
-            <span className="text-xs font-semibold text-purple-600">
+            <span className="text-xs font-semibold text-purple-600 dark:text-purple-400">
               {saving ? "Saving…" : saved ? "Saved ✓" : "Active"}
             </span>
           )}

@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Image from "next/image";
 import { getActiveSession, getAllSessions } from "@/lib/db/sessions";
 import { getActiveFinals, getAllFinals, getFinalsSessionPair } from "@/lib/db/finals";
 import { createClient } from "@/lib/supabase-server";
@@ -46,12 +45,9 @@ export default async function SessionListPage({
   return (
     <div className="flex flex-col px-4 py-4 gap-4">
 
-      <div className="flex items-center gap-3">
-        <Image src="/serve-logo.jpg" alt="Serve Sports" width={52} height={52} className="rounded-xl shrink-0" />
-        <div>
-          <h1 className="text-base font-bold text-heading leading-tight">{seasonName}</h1>
-          <p className="text-sm text-text-light">No active session</p>
-        </div>
+      <div>
+        <h1 className="text-base font-bold text-heading leading-tight">{seasonName}</h1>
+        <p className="text-sm text-text-light">No active session</p>
       </div>
 
       {isAdmin && <FinalsSection event={finalsEvent} sessionPair={finalsSessionPair} pastEvents={pastFinalsEvents} />}

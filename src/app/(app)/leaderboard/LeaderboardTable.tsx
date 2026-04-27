@@ -193,7 +193,7 @@ export default function LeaderboardTable({
                     title={title}
                     onClick={() => handleSort(key)}
                     className={`py-2 text-xs font-semibold uppercase tracking-wide cursor-pointer select-none whitespace-nowrap
-                      ${key === "name" ? "px-2 text-left" : "px-3 text-right"}
+                      ${key === "name" ? "px-2 text-left w-full" : "px-1.5 text-right"}
                       ${sortKey === key ? "text-sky-600" : "text-muted-light hover:text-text"}`}
                   >
                     {label}{indicator(key)}
@@ -210,7 +210,7 @@ export default function LeaderboardTable({
                   <td className={`px-4 py-1.5 text-xs font-bold text-right ${player.id === nutCracker?.id || player.id === badmintonNut?.id ? "text-heading" : "text-muted-lighter"}`}>
                     {getRankBadge(i, player.id)}
                   </td>
-                  <td className="px-2 py-1.5 font-medium text-heading max-w-[120px]">
+                  <td className="px-2 py-1.5 font-medium text-heading">
                     <span className="flex items-center gap-1 min-w-0">
                       <NavLink href={`/players/${player.id}`} className="truncate text-sky-600 dark:text-sky-400 hover:underline active:opacity-60">
                         {player.name}
@@ -219,10 +219,10 @@ export default function LeaderboardTable({
                       {player.is_admin && <AdminBadge />}
                     </span>
                   </td>
-                  <td className="px-3 py-1.5 text-right tabular-nums text-text">{player.matches_played}</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums text-text">{player.wins}</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums text-text">{player.losses}</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums font-bold text-heading">
+                  <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.matches_played}</td>
+                  <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.wins}</td>
+                  <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.losses}</td>
+                  <td className="px-1.5 py-1.5 text-right tabular-nums font-bold text-heading">
                     {formatPct(player)}
                   </td>
                 </tr>
