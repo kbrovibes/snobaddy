@@ -216,11 +216,11 @@ export default async function SessionDetailPage({
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-2">
           <div>
-            <h1 className="text-base font-bold text-heading leading-tight">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-light">
               {isFinalsSession ? "🏆 Season Finals" : (session.season?.name ?? "Tonight")}
-            </h1>
+            </p>
             <div className="flex items-center gap-2">
-              <p className="text-sm text-text-light">{formatDate(session.date)}</p>
+              <p className="text-sm text-heading font-semibold">{formatDate(session.date)}</p>
               {isAdmin && session.is_test_session && (
                 <span className="text-xs font-bold text-orange-500 bg-orange-50 dark:bg-orange-500/10 dark:bg-orange-500/10 px-1.5 py-0.5 rounded">TEST</span>
               )}
@@ -378,10 +378,7 @@ export default async function SessionDetailPage({
           {!isFinalsSession && (tallyRows as unknown[]).length === 0 && highlights && highlights.totalMatches >= 3 && (
             <SessionHighlights highlights={highlights} nameMap={nameMap} />
           )}
-          <div className="bg-background border border-border rounded-xl px-4 py-3 flex items-center justify-between">
-            <p className="text-sm text-text-light">Session closed. No new matches can be recorded.</p>
-            {isAdmin && <ReopenSessionButton sessionId={session.id} />}
-          </div>
+          <p className="text-sm text-muted-light text-center">Session closed. No new matches can be recorded.</p>
           {/* Tally entry: shown when no matches recorded yet */}
           {isAdmin && !isFinalsSession && (recentMatches as unknown[]).length === 0 && (tallyRows as TallyEntry[]).length === 0 && (
             <TallyEntryForm
@@ -496,8 +493,9 @@ export default async function SessionDetailPage({
         </div>
       )}
 
-      {/* Admin: finalize + God Mode: reset — grouped at bottom */}
+      {/* Admin: finalize, reopen, reset — grouped at bottom */}
       {isAdmin && isActive && <CloseSessionButton sessionId={session.id} />}
+      {isAdmin && isCompleted && <ReopenSessionButton sessionId={session.id} />}
       {isGodMode && (isActive || (isCompleted && (tallyRows as TallyEntry[]).length === 0)) && (
         <ResetSessionButton sessionId={session.id} />
       )}
