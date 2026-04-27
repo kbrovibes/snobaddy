@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.3] - 2026-04-26
+
+### Improved
+- **Header logo** — "Serve Sports" now uses the Righteous display font for a sportier look.
+
+---
+
 ## [0.30.2] - 2026-04-26
 
 ### Improved
