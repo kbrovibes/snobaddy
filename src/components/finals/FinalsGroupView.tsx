@@ -235,7 +235,7 @@ export default function FinalsGroupView({
             onClick={() => setFunNames(!funNames)}
             className={`relative w-9 h-5 rounded-full transition-colors ${funNames ? "bg-sky-500" : "bg-stone-300 dark:bg-neutral-600"}`}
           >
-            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-surface rounded-full shadow transition-transform ${funNames ? "translate-x-4" : ""}`} />
+            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${funNames ? "translate-x-4" : ""}`} />
           </button>
         </div>
       )}

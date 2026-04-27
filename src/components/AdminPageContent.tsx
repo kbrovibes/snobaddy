@@ -55,33 +55,15 @@ export default function AdminPageContent({
       {/* Compact header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-3">
         <div className="flex items-center gap-2 flex-wrap">
-          <h1 style={{ fontSize: 18, fontWeight: 700, color: '#1C1917' }}>Players</h1>
+          <h1 className="text-lg font-bold text-heading">Players</h1>
           <div className="flex items-center gap-1.5">
-            <span
-              style={{
-                background: '#FEF3C7', color: '#92400E',
-                fontSize: 11, fontWeight: 600,
-                borderRadius: 20, padding: '2px 8px',
-              }}
-            >
+            <span className="text-[11px] font-semibold rounded-full px-2 py-0.5 bg-amber-100 dark:bg-amber-500/15 text-amber-800 dark:text-amber-400">
               {players.length} total
             </span>
-            <span
-              style={{
-                background: '#D1FAE5', color: '#065F46',
-                fontSize: 11, fontWeight: 600,
-                borderRadius: 20, padding: '2px 8px',
-              }}
-            >
+            <span className="text-[11px] font-semibold rounded-full px-2 py-0.5 bg-emerald-100 dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-400">
               {presentCount} in
             </span>
-            <span
-              style={{
-                background: '#FEE2E2', color: '#991B1B',
-                fontSize: 11, fontWeight: 600,
-                borderRadius: 20, padding: '2px 8px',
-              }}
-            >
+            <span className="text-[11px] font-semibold rounded-full px-2 py-0.5 bg-red-100 dark:bg-red-500/15 text-red-800 dark:text-red-400">
               {outCount} out
             </span>
           </div>
@@ -103,14 +85,7 @@ export default function AdminPageContent({
           {isAdmin && (
             <button
               onClick={() => setAddPlayerOpen(true)}
-              style={{
-                background: '#1C1917',
-                color: 'white',
-                borderRadius: 10,
-                fontSize: 13,
-                fontWeight: 600,
-                padding: '6px 12px',
-              }}
+              className="bg-stone-900 dark:bg-sky-600 text-white rounded-[10px] text-[13px] font-semibold px-3 py-1.5"
             >
               + Add
             </button>
@@ -119,7 +94,7 @@ export default function AdminPageContent({
       </div>
 
       {sessionActive && sessionDate && (
-        <p className="px-4 mb-3" style={{ fontSize: 13, color: '#78716C' }}>
+        <p className="px-4 mb-3 text-[13px] text-text-light">
           Session: {formatSessionDate(sessionDate)}
         </p>
       )}

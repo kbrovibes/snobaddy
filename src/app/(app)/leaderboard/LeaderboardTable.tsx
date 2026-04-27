@@ -126,7 +126,7 @@ export default function LeaderboardTable({
   }
 
   function getRankColor(playerId: string) {
-    if (playerId === nutCracker?.id) return "bg-yellow-50 border-yellow-100";
+    if (playerId === nutCracker?.id) return "bg-yellow-50 dark:bg-yellow-500/10 border-yellow-100 dark:border-yellow-500/20";
     return "border-border-light";
   }
 
@@ -149,7 +149,7 @@ export default function LeaderboardTable({
               className="relative inline-flex w-9 h-5 rounded-full transition-colors duration-200 focus:outline-none"
               style={{ background: showTest ? "#f97316" : "var(--muted-lighter)" }}
             >
-              <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-surface rounded-full shadow transition-transform duration-200 ${showTest ? "translate-x-4" : "translate-x-0"}`} />
+              <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showTest ? "translate-x-4" : "translate-x-0"}`} />
             </button>
           </div>
         )}

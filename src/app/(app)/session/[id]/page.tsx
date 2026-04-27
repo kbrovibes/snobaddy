@@ -510,8 +510,8 @@ export default async function SessionDetailPage({
           </h2>
           <div className="flex flex-col gap-2">
             {pastSessions.map((s) => (
-              <NavLink key={s.id} href={`/session/${s.id}`} className="flex items-center justify-between text-sm hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 dark:bg-sky-500/10 -mx-1 px-1 rounded-lg transition-colors">
-                <span className="text-sky-600">{formatDate(s.date)}</span>
+              <NavLink key={s.id} href={`/session/${s.id}`} className="flex items-center justify-between text-sm hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 -mx-1 px-1 rounded-lg transition-colors">
+                <span className="text-sky-600 dark:text-sky-400">{formatDate(s.date)}</span>
                 <span className="text-muted-light capitalize">{s.status}</span>
               </NavLink>
             ))}

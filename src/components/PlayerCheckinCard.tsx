@@ -84,10 +84,10 @@ export default function PlayerCheckinCard({
       className="relative w-full overflow-hidden"
       style={{
         borderRadius: 12,
-        border: present ? '2px solid #34D399' : '1.5px solid #E7E5E4',
+        border: present ? '2px solid #34D399' : '1.5px solid var(--border)',
         boxShadow: present ? '0 2px 8px rgba(52,211,153,0.18)' : 'none',
         padding: 10,
-        background: '#FFFFFF',
+        background: 'var(--surface)',
       }}
     >
       {/* Corner ribbon when present */}
@@ -150,7 +150,7 @@ export default function PlayerCheckinCard({
         {/* Row 2: Player name */}
         <p
           className="truncate"
-          style={{ fontSize: 13, fontWeight: 600, color: '#1C1917', marginBottom: 2, lineHeight: 1.3 }}
+          style={{ fontSize: 13, fontWeight: 600, color: 'var(--heading)', marginBottom: 2, lineHeight: 1.3 }}
         >
           {name}
         </p>
@@ -160,7 +160,7 @@ export default function PlayerCheckinCard({
       {isAdmin && sessionId ? (
         <div style={{ fontSize: 11, lineHeight: 1, marginTop: 2 }}>
           {loading ? (
-            <span style={{ color: '#78716C' }}>…</span>
+            <span style={{ color: 'var(--muted)' }}>…</span>
           ) : present ? (
             <button
               onClick={checkOut}
@@ -180,7 +180,7 @@ export default function PlayerCheckinCard({
           )}
         </div>
       ) : (
-        <p style={{ fontSize: 11, color: present ? '#059669' : '#78716C', lineHeight: 1, marginTop: 2 }}>
+        <p style={{ fontSize: 11, color: present ? '#059669' : 'var(--muted)', lineHeight: 1, marginTop: 2 }}>
           {present ? '✓ Present' : status === 'checked-out' ? 'Checked out' : ''}
         </p>
       )}
