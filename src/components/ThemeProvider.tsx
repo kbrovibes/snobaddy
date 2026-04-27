@@ -10,7 +10,7 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: "dark",
+  theme: "system",
   setTheme: () => {},
 });
 
@@ -43,7 +43,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(LS_KEY) as Theme | null;
-      const t = stored && ["system", "light", "dark"].includes(stored) ? stored : "dark";
+      const t = stored && ["system", "light", "dark"].includes(stored) ? stored : "system";
       setThemeState(t);
       applyClass(resolve(t));
     } catch {}

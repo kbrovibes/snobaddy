@@ -55,7 +55,7 @@ export default function AdminPageContent({
       {/* Compact header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-3">
         <div className="flex items-center gap-2 flex-wrap">
-          <h1 className="text-lg font-bold text-heading">Players</h1>
+          <h1 className="text-xs font-semibold uppercase tracking-wide text-muted-light">Players</h1>
           <div className="flex items-center gap-1.5">
             <span className="text-[11px] font-semibold rounded-full px-2 py-0.5 bg-amber-100 dark:bg-amber-500/15 text-amber-800 dark:text-amber-400">
               {players.length} total

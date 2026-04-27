@@ -5,6 +5,7 @@ import NavLink from "@/components/NavLink";
 import { createClient } from "@/lib/supabase-browser";
 import { useRouter } from "next/navigation";
 import { useNavigationLoader } from "@/components/NavigationLoader";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface HeaderProps {
   userName: string;
@@ -16,6 +17,7 @@ interface HeaderProps {
 export default function Header({ userName, playerId, isAdmin, isGodMode }: HeaderProps) {
   const router = useRouter();
   const { startLoading } = useNavigationLoader();
+  const { theme, setTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -87,6 +89,16 @@ export default function Header({ userName, playerId, isAdmin, isGodMode }: Heade
                 Control Panel
               </NavLink>
             )}
+            <button
+              onClick={() => {
+                const next = theme === "dark" ? "light" : "dark";
+                setTheme(next);
+              }}
+              className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-text hover:bg-surface-alt transition-colors border-t border-border-light dark:border-border"
+            >
+              <span className="text-base">{theme === "dark" ? "☀️" : "🌙"}</span>
+              {theme === "dark" ? "Light Mode" : "Dark Mode"}
+            </button>
             <button
               onClick={signOut}
               className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-500 dark:text-red-400 hover:bg-surface-alt transition-colors border-t border-border-light dark:border-border"
