@@ -182,7 +182,7 @@ export default function LeaderboardTable({
       {activePlayers.length === 0 ? (
         <p className="text-center text-muted-light text-sm py-12">No active players yet.</p>
       ) : (
-        <div className="overflow-x-auto -mx-4">
+        <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border-light">
