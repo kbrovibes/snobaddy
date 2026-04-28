@@ -1,10 +1,475 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta http-equiv="refresh" content="0; url=mockups/">
-  <title>Redirecting...</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snobaddy — Serve Sports Badminton Tracker</title>
+  <link rel="icon" href="serve-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #FAFAF9;
+      --surface:  #FFFFFF;
+      --border:   #E7E5E4;
+      --text:     #44403C;
+      --heading:  #1C1917;
+      --muted:    #78716C;
+      --muted-lt: #A8A29E;
+      --sky:      #0ea5e9;
+      --sky-dk:   #0284c7;
+      --sky-lt:   #e0f2fe;
+      --orange:   #f97316;
+      --green:    #16a34a;
+      --green-lt: #dcfce7;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(250,250,249,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; flex-direction: column; line-height: 1;
+      text-decoration: none;
+    }
+    .nav-logo .brand { font-size: 1.05rem; font-weight: 800; color: var(--heading); letter-spacing: -0.02em; }
+    .nav-logo .sub   { font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-top: 1px; }
+    .nav-cta {
+      background: var(--heading); color: #fff;
+      font-size: 0.8rem; font-weight: 700;
+      padding: 0.45rem 1rem; border-radius: 999px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .nav-cta:hover { background: var(--sky-dk); }
+
+    /* ── SECTIONS ── */
+    section { padding: 5rem 1.5rem; max-width: 960px; margin: 0 auto; }
+    .full-bleed { max-width: none; }
+
+    /* ── HERO ── */
+    .hero {
+      padding-top: 5rem; padding-bottom: 4rem;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--sky-lt); color: var(--sky-dk);
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.3rem 0.85rem; border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 6vw, 3.6rem);
+      font-weight: 800; color: var(--heading);
+      letter-spacing: -0.03em; line-height: 1.1;
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 em { font-style: normal; color: var(--sky); }
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
+      color: var(--muted); max-width: 520px; margin: 0 auto 2.2rem;
+    }
+    .hero-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--heading); color: #fff;
+      font-size: 0.9rem; font-weight: 700;
+      padding: 0.75rem 1.75rem; border-radius: 999px;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--sky-dk); }
+    .btn-secondary {
+      background: var(--surface); color: var(--heading);
+      font-size: 0.9rem; font-weight: 600;
+      padding: 0.75rem 1.75rem; border-radius: 999px;
+      text-decoration: none; border: 1.5px solid var(--border);
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--sky); background: var(--sky-lt); }
+
+    /* ── STAT STRIP ── */
+    .stat-strip {
+      display: flex; gap: 0; justify-content: center;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 1.25rem; overflow: hidden;
+      max-width: 640px; margin: 3.5rem auto 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+    .stat-item {
+      flex: 1; padding: 1.25rem 1rem; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-size: 1.8rem; font-weight: 800; color: var(--heading); line-height: 1; }
+    .stat-lbl { font-size: 0.72rem; font-weight: 600; color: var(--muted); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    /* ── FEATURES ── */
+    .section-eyebrow {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--sky); margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; color: var(--heading);
+      letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 0.8rem;
+    }
+    .section-sub {
+      font-size: 1rem; color: var(--muted); max-width: 480px; margin-bottom: 3rem;
+    }
+
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+    .feature-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 1.25rem; padding: 1.5rem;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .feature-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 1rem;
+    }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; color: var(--heading); margin-bottom: 0.35rem; }
+    .feature-card p  { font-size: 0.875rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── PHONE MOCKUPS ── */
+    .screens-bg {
+      background: linear-gradient(180deg, #f0f9ff 0%, var(--bg) 100%);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 5rem 1.5rem;
+      overflow: hidden;
+    }
+    .screens-inner { max-width: 960px; margin: 0 auto; }
+    .screens-header { text-align: center; margin-bottom: 3rem; }
+
+    .phones-track {
+      display: flex; gap: 1.5rem;
+      overflow-x: auto; padding-bottom: 1rem;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .phones-track::-webkit-scrollbar { display: none; }
+
+    .phone {
+      scroll-snap-align: center;
+      flex: 0 0 auto;
+      width: 200px;
+      background: #1C1917;
+      border-radius: 28px;
+      padding: 6px;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.15),
+        0 20px 60px rgba(0,0,0,0.18),
+        inset 0 0 0 1px rgba(255,255,255,0.06);
+      position: relative;
+    }
+    .phone::before {
+      content: '';
+      position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+      width: 52px; height: 5px; background: #2d2d2d;
+      border-radius: 0 0 6px 6px; z-index: 2;
+    }
+    .phone-screen {
+      border-radius: 22px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .phone-screen img {
+      width: 100%; display: block;
+      border-radius: 22px;
+    }
+    .phone-label {
+      text-align: center;
+      font-size: 0.72rem; font-weight: 600; color: var(--muted-lt);
+      margin-top: 1rem; letter-spacing: 0.03em;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: grid; grid-template-columns: 48px 1fr;
+      gap: 1.25rem; align-items: flex-start;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--heading); color: #fff;
+      font-size: 1rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-body h3 { font-size: 1rem; font-weight: 700; color: var(--heading); margin-bottom: 0.25rem; }
+    .step-body p  { font-size: 0.875rem; color: var(--muted); }
+
+    /* ── CALLOUT ── */
+    .callout {
+      background: var(--heading); color: #fff;
+      border-radius: 1.75rem; padding: 3rem 2rem; text-align: center;
+      margin: 0 auto 5rem; max-width: 680px;
+    }
+    .callout h2 { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+    .callout p  { font-size: 0.95rem; color: rgba(255,255,255,0.65); margin-bottom: 1.75rem; }
+    .callout .btn-white {
+      display: inline-block;
+      background: #fff; color: var(--heading);
+      font-size: 0.9rem; font-weight: 700;
+      padding: 0.75rem 1.75rem; border-radius: 999px;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .callout .btn-white:hover { background: var(--sky-lt); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+      max-width: 960px; margin: 0 auto;
+    }
+    footer .brand { font-size: 0.85rem; font-weight: 700; color: var(--heading); }
+    footer p { font-size: 0.8rem; color: var(--muted-lt); }
+    footer a { color: var(--sky); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .stat-num { font-size: 1.4rem; }
+      .phones-track { padding: 0 1.5rem 1rem; margin: 0 -1.5rem; }
+    }
+  </style>
 </head>
 <body>
-  <p>Redirecting to <a href="mockups/">mockups</a>...</p>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <span class="brand">Serve Sports</span>
+    <span class="sub">Badminton</span>
+  </a>
+  <a class="nav-cta" href="https://snobaddy.vercel.app" target="_blank">Open App ↗</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🏸 Drop-in Badminton · Snoqualmie, WA</div>
+  <h1>Your club's<br/><em>digital scoreboard</em></h1>
+  <p>No more whiteboard math. Track who's here, record every rally, and crown the season's best — all from your phone courtside.</p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="https://snobaddy.vercel.app" target="_blank">Open the App</a>
+    <a class="btn-secondary" href="#screens">See It In Action</a>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-item">
+      <div class="stat-num">30–50</div>
+      <div class="stat-lbl">Players / Night</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">2</div>
+      <div class="stat-lbl">Courts</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">2×</div>
+      <div class="stat-lbl">Weekly (Mon + Thu)</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">0</div>
+      <div class="stat-lbl">Whiteboards Needed</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-eyebrow">What it does</div>
+  <h2 class="section-title">Everything the whiteboard did —<br/>and a whole lot more</h2>
+  <p class="section-sub">Built for the reality of drop-in play: no pre-registration, no fixed teams, just show up and play.</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#e0f2fe;">✅</div>
+      <h3>Check In From Your Phone</h3>
+      <p>Players tap once to mark themselves present. Admins can check in or out anyone in the room.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fef3c7;">⚔️</div>
+      <h3>Record Match Results</h3>
+      <p>Pick 4 players, enter the score. Win/loss totals update instantly on the live scoreboard.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#dcfce7;">🏆</div>
+      <h3>Season Leaderboard</h3>
+      <p>Win %, total matches, and rankings across every session — all season long. Bragging rights included.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fce7f3;">🤖</div>
+      <h3>AI Match Suggestions</h3>
+      <p>Let the app propose balanced doubles pairings based on skill levels. Fair fights, better games.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#f3e8ff;">📷</div>
+      <h3>Photo Score Import</h3>
+      <p>Snap a photo of the whiteboard tally — Claude AI reads the names and scores and fills the form for you.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#fff7ed;">🏅</div>
+      <h3>Session Awards</h3>
+      <p>The Slayer, The Untouchable, The Point Collector — end-of-night highlights for the night's best performances.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SCREENSHOTS -->
+<div class="screens-bg" id="screens">
+  <div class="screens-inner">
+    <div class="screens-header">
+      <div class="section-eyebrow">The App</div>
+      <h2 class="section-title">Built for the court, not a desk</h2>
+      <p style="color:var(--muted);font-size:1rem;max-width:460px;margin:0 auto;">Optimised for mobile — because that's where you actually are when you need it.</p>
+    </div>
+
+    <div class="phones-track">
+
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="phone">
+          <div class="phone-screen">
+            <img src="screenshots/snobaddy-screen-v2-1.png" alt="Session list" />
+          </div>
+        </div>
+        <div class="phone-label">Session List</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="phone">
+          <div class="phone-screen">
+            <img src="screenshots/snobaddy-screen-v2-3.png" alt="Active session" />
+          </div>
+        </div>
+        <div class="phone-label">Active Session</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="phone">
+          <div class="phone-screen">
+            <img src="screenshots/snobaddy-screen-v2-7.png" alt="Players checked in" />
+          </div>
+        </div>
+        <div class="phone-label">Who's Here Tonight</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="phone">
+          <div class="phone-screen">
+            <img src="screenshots/snobaddy-screen-v2-9.png" alt="Match scoreboard" />
+          </div>
+        </div>
+        <div class="phone-label">Tonight's Scores</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="phone">
+          <div class="phone-screen">
+            <img src="screenshots/snobaddy-screen-v2-11.png" alt="Full scoreboard" />
+          </div>
+        </div>
+        <div class="phone-label">Full Scoreboard</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="phone">
+          <div class="phone-screen">
+            <img src="screenshots/snobaddy-screen-v2-5.png" alt="Season leaderboard" />
+          </div>
+        </div>
+        <div class="phone-label">Season Leaderboard</div>
+      </div>
+
+    </div>
+    <p style="text-align:center;font-size:0.75rem;color:var(--muted-lt);margin-top:1.25rem;">← scroll to see more →</p>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-eyebrow">How It Works</div>
+  <h2 class="section-title">From front door<br/>to final score</h2>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Admin opens the session</h3>
+        <p>One tap before play starts. The session is live — players can now check in.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Players check themselves in</h3>
+        <p>Everyone opens the app and taps "I'm here." No paper list, no shouting across the room.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Record each match</h3>
+        <p>Pick 4 checked-in players, enter the score. The scoreboard updates live for everyone.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Close & celebrate</h3>
+        <p>Admin closes the session. Session awards are revealed — season stats updated automatically.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CALLOUT -->
+<div style="padding:0 1.5rem;">
+  <div class="callout">
+    <h2>Ditch the whiteboard. 🏸</h2>
+    <p>Free for the Serve Sports Snoqualmie badminton club. Google sign-in, no passwords.</p>
+    <a class="btn-white" href="https://snobaddy.vercel.app" target="_blank">Open the App →</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="brand">Serve Sports · Snobaddy</div>
+    <p style="margin-top:3px;">Drop-in badminton tracker · Snoqualmie, WA</p>
+  </div>
+  <div style="text-align:right;">
+    <p><a href="mockups/">View Mockups</a> · <a href="https://github.com/kbrovibes/snobaddy" target="_blank">GitHub</a></p>
+    <p style="margin-top:3px;">Built with Next.js · Supabase · Vercel</p>
+  </div>
+</footer>
+
 </body>
 </html>
