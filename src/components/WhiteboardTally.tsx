@@ -207,7 +207,7 @@ export default function WhiteboardTally({ sessionId, players, nameMap }: Props) 
         </td>
         {/* Action buttons */}
         <td className="py-1.5 pr-1 pl-0.5">
-          {!out && editingPlayer === player.player_id ? (
+          {editingPlayer === player.player_id ? (
             <div className="flex flex-col gap-0.5">
               <div className="flex items-center gap-0.5 justify-end">
                 <button
@@ -269,7 +269,16 @@ export default function WhiteboardTally({ sessionId, players, nameMap }: Props) 
                 ✎
               </button>
             </div>
-          ) : null}
+          ) : (
+            <div className="flex gap-0.5 justify-end">
+              <button
+                onClick={() => setEditingPlayer(player.player_id)}
+                className="h-7 w-7 rounded-md bg-stone-100 dark:bg-stone-700 text-stone-500 dark:text-stone-400 text-[9px] font-bold active:bg-stone-200 dark:active:bg-stone-600 transition-colors"
+              >
+                ✎
+              </button>
+            </div>
+          )}
         </td>
       </tr>
     );

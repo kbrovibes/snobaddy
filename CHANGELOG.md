@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.10] - 2026-04-27
+
+### Fixed
+- **Edit scores for checked-out players** — the pencil (✎) edit button now appears for checked-out players too, so you can adjust their W/L without reopening or re-checking them in.
+
+---
+
 ## [0.30.9] - 2026-04-27
 
 ### Fixed
