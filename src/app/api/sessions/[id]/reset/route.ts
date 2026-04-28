@@ -159,6 +159,7 @@ export async function POST(
     serviceClient.from("proposed_matches").delete({ count: "exact" }).eq("session_id", id),
     serviceClient.from("session_tally").delete({ count: "exact" }).eq("session_id", id),
     serviceClient.from("session_players").delete({ count: "exact" }).eq("session_id", id),
+    serviceClient.from("whiteboard_log").delete().eq("session_id", id),
   ]);
 
   // Restore session to pending (upcoming) state

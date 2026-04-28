@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.9] - 2026-04-27
+
+### Fixed
+- **Wipe & Reset** — now also clears the whiteboard activity log entries, not just matches and tallies.
+
+---
+
 ## [0.30.8] - 2026-04-27
 
 ### Fixed
