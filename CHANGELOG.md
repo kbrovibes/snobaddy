@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.7] - 2026-04-27
+
+### Fixed
+- **Logo link** — tapping "Serve Sports" in the header now always goes to the session list, not the open session.
+
+---
+
 ## [0.30.6] - 2026-04-27
 
 ### Changed
