@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.6] - 2026-04-27
+
+### Changed
+- **Activity log** — "undo" button on whiteboard log entries renamed to "delete".
+
+---
+
 ## [0.30.5] - 2026-04-27
 
 ### Fixed

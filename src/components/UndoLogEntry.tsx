@@ -19,7 +19,7 @@ export default function UndoLogEntry({ sessionId, logId }: { sessionId: string; 
     setUndoing(false);
   }
 
-  if (done) return <span className="text-[10px] text-muted-light">undone</span>;
+  if (done) return <span className="text-[10px] text-muted-light">deleted</span>;
 
   return (
     <button
@@ -27,7 +27,7 @@ export default function UndoLogEntry({ sessionId, logId }: { sessionId: string; 
       disabled={undoing}
       className="text-[10px] text-muted-light hover:text-red-500 active:text-red-600 dark:text-red-400 transition-colors disabled:opacity-50 shrink-0"
     >
-      {undoing ? "..." : "undo"}
+      {undoing ? "..." : "delete"}
     </button>
   );
 }
