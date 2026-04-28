@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.5] - 2026-04-27
+
+### Fixed
+- **Check In button** — now shows blue in dark mode by default, not just on hover.
+
+---
+
 ## [0.30.4] - 2026-04-27
 
 ### Improved

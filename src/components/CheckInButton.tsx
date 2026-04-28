@@ -51,7 +51,7 @@ export default function CheckInButton({
     <button
       onClick={checkIn}
       disabled={loading}
-      className="w-full py-3 bg-stone-900 text-white font-semibold rounded-xl disabled:opacity-50 hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors"
+      className="w-full py-3 bg-stone-900 dark:bg-sky-600 text-white font-semibold rounded-xl disabled:opacity-50 hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors"
     >
       {loading ? "Checking in…" : "✓ I'm here — Check In"}
     </button>
