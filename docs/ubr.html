@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snobaddy UBR — Rating Algorithm</title>
+  <link rel="icon" href="serve-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #FAFAF9;
+      --surface:  #FFFFFF;
+      --border:   #E7E5E4;
+      --text:     #44403C;
+      --heading:  #1C1917;
+      --muted:    #78716C;
+      --muted-lt: #A8A29E;
+      --sky:      #0ea5e9;
+      --sky-dk:   #0284c7;
+      --sky-lt:   #e0f2fe;
+      --orange:   #f97316;
+      --green:    #16a34a;
+      --green-lt: #dcfce7;
+      --red:      #ef4444;
+      --purple:   #8b5cf6;
+      --amber:    #f59e0b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      padding: 0 16px 80px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .hero {
+      text-align: center;
+      padding: 48px 0 32px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--heading);
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .hero .subtitle {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .hero .badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--sky-lt);
+      color: var(--sky-dk);
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 40px;
+    }
+    .section h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--heading);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--sky);
+      display: inline-block;
+    }
+    .section h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--heading);
+      margin: 20px 0 8px;
+    }
+    .section p, .section li {
+      font-size: 0.9375rem;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .section ul {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card.highlight {
+      border-left: 4px solid var(--sky);
+    }
+    .card.warn {
+      border-left: 4px solid var(--orange);
+      background: #fffbeb;
+    }
+
+    /* Tier badges */
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .tier-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .tier-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .tier-card .tier-label {
+      font-weight: 700;
+      font-size: 0.875rem;
+      color: var(--heading);
+    }
+    .tier-card .tier-range {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .tier-card .tier-desc {
+      font-size: 0.75rem;
+      color: var(--muted-lt);
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 20px;
+      font-size: 0.875rem;
+    }
+    th, td {
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      font-weight: 600;
+      color: var(--heading);
+      background: #f5f5f4;
+      font-size: 0.8125rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    td { color: var(--text); }
+    tr:last-child td { border-bottom: none; }
+
+    /* Code / formula blocks */
+    .formula {
+      background: #1C1917;
+      color: #e7e5e4;
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.8125rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      margin: 12px 0 20px;
+      white-space: pre;
+    }
+    .formula .comment { color: #78716C; }
+    .formula .highlight { color: #38bdf8; }
+    .formula .num { color: #f59e0b; }
+    .formula .str { color: #4ade80; }
+
+    /* Flow diagram */
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 16px 0;
+    }
+    .flow-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--heading);
+      white-space: nowrap;
+    }
+    .flow-step.active {
+      background: var(--sky-lt);
+      border-color: var(--sky);
+      color: var(--sky-dk);
+    }
+    .flow-arrow {
+      color: var(--muted-lt);
+      font-size: 1rem;
+    }
+
+    /* Example calc */
+    .example {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 16px 0;
+    }
+    .example-header {
+      background: #f5f5f4;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 0.875rem;
+      color: var(--heading);
+      border-bottom: 1px solid var(--border);
+    }
+    .example-body {
+      padding: 16px;
+    }
+    .example-body .player-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 0.875rem;
+    }
+    .player-row .name { font-weight: 600; min-width: 80px; }
+    .player-row .rating { color: var(--muted); min-width: 60px; }
+    .player-row .change { font-weight: 700; min-width: 50px; }
+    .player-row .change.up { color: var(--green); }
+    .player-row .change.down { color: var(--red); }
+
+    /* Mode comparison */
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+    @media (max-width: 600px) {
+      .mode-grid { grid-template-columns: 1fr; }
+      .tier-grid { grid-template-columns: 1fr; }
+    }
+    .mode-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .mode-card .mode-name {
+      font-weight: 700;
+      font-size: 0.875rem;
+      color: var(--heading);
+      margin-bottom: 4px;
+    }
+    .mode-card .mode-data {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .mode-card .mode-quality {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+    }
+    .quality-high { background: var(--green-lt); color: var(--green); }
+    .quality-med { background: #fef3c7; color: #b45309; }
+    .quality-low { background: #fee2e2; color: #dc2626; }
+
+    /* TOC */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+    }
+    .toc h3 {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .toc ol {
+      padding-left: 20px;
+      margin: 0;
+    }
+    .toc li {
+      margin-bottom: 4px;
+      font-size: 0.875rem;
+    }
+    .toc a {
+      color: var(--sky-dk);
+      text-decoration: none;
+    }
+    .toc a:hover { text-decoration: underline; }
+
+    /* Back link */
+    .back-link {
+      display: inline-block;
+      margin-top: 40px;
+      font-size: 0.875rem;
+      color: var(--sky-dk);
+      text-decoration: none;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      margin-left: 4px;
+    }
+    .tag-new { background: var(--green-lt); color: var(--green); }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>Snobaddy UBR</h1>
+    <p class="subtitle">Universal Badminton Rating algorithm for the Snoqualmie drop-in doubles club</p>
+    <span class="badge">v1.0 Draft &mdash; April 2026</span>
+  </div>
+
+  <!-- TOC -->
+  <nav class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li><a href="#philosophy">Philosophy</a></li>
+      <li><a href="#tiers">Rating Tiers</a></li>
+      <li><a href="#initial">Initial Rating</a></li>
+      <li><a href="#modes">Scoring Modes &amp; Data Quality</a></li>
+      <li><a href="#formula">Core Formula (Match-Based)</a></li>
+      <li><a href="#tally">Tally Sessions (Whiteboard)</a></li>
+      <li><a href="#confidence">Confidence &amp; Decay</a></li>
+      <li><a href="#flow">Processing Flow</a></li>
+      <li><a href="#examples">Example Calculations</a></li>
+      <li><a href="#constants">Constants Reference</a></li>
+      <li><a href="#edge-cases">Edge Cases</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1. Philosophy -->
+  <div class="section" id="philosophy">
+    <h2>1. Philosophy</h2>
+    <p>Snobaddy UBR is a <strong>modified Elo system</strong> tuned for recreational doubles badminton. It draws from the real UBR system, Glicko-1, and UTR (Universal Tennis Rating).</p>
+
+    <div class="card highlight">
+      <strong>Core principle:</strong> Your rating reflects <em>how you perform relative to expectations</em>, not just whether you win or lose. A close loss to a much stronger team can <em>raise</em> your rating. A narrow win over a much weaker team can <em>lower</em> it.
+    </div>
+
+    <h3>Design goals</h3>
+    <ul>
+      <li>Works across all 3 snobaddy scoring modes (full, simple, whiteboard)</li>
+      <li>Handles drop-in play &mdash; irregular attendance, varying opponents</li>
+      <li>Converges quickly for new players, stabilizes for veterans</li>
+      <li>Transparent &mdash; players can understand why their rating changed</li>
+    </ul>
+  </div>
+
+  <!-- 2. Tiers -->
+  <div class="section" id="tiers">
+    <h2>2. Rating Tiers</h2>
+    <div class="tier-grid">
+      <div class="tier-card">
+        <div class="tier-icon" style="background: #e7e5e4;">&#127992;</div>
+        <div>
+          <div class="tier-label">Shuttle</div>
+          <div class="tier-range">Below 2,500</div>
+          <div class="tier-desc">Beginner &mdash; learning the game</div>
+        </div>
+      </div>
+      <div class="tier-card">
+        <div class="tier-icon" style="background: #fde68a; color: #92400e;">&#129351;</div>
+        <div>
+          <div class="tier-label">Bronze</div>
+          <div class="tier-range">2,500 &ndash; 3,499</div>
+          <div class="tier-desc">Recreational &mdash; regular play</div>
+        </div>
+      </div>
+      <div class="tier-card">
+        <div class="tier-icon" style="background: #d1d5db; color: #374151;">&#129352;</div>
+        <div>
+          <div class="tier-label">Silver</div>
+          <div class="tier-range">3,500 &ndash; 4,499</div>
+          <div class="tier-desc">Intermediate &mdash; consistent rallies</div>
+        </div>
+      </div>
+      <div class="tier-card">
+        <div class="tier-icon" style="background: #fef3c7; color: #b45309;">&#129353;</div>
+        <div>
+          <div class="tier-label">Gold</div>
+          <div class="tier-range">4,500 &ndash; 5,499</div>
+          <div class="tier-desc">Advanced-Intermediate</div>
+        </div>
+      </div>
+      <div class="tier-card">
+        <div class="tier-icon" style="background: #ede9fe; color: #6d28d9;">&#128142;</div>
+        <div>
+          <div class="tier-label">Platinum</div>
+          <div class="tier-range">5,500 &ndash; 6,499</div>
+          <div class="tier-desc">Advanced &mdash; powerful play</div>
+        </div>
+      </div>
+      <div class="tier-card">
+        <div class="tier-icon" style="background: #dbeafe; color: #1d4ed8;">&#128161;</div>
+        <div>
+          <div class="tier-label">Diamond</div>
+          <div class="tier-range">6,500+</div>
+          <div class="tier-desc">Expert &mdash; elite club level</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Initial Rating -->
+  <div class="section" id="initial">
+    <h2>3. Initial Rating</h2>
+    <p>Seeded from the player's skill level (set at onboarding):</p>
+    <div class="formula"><span class="comment">// Skill level 1.0&ndash;5.0 maps to UBR 2500&ndash;6500</span>
+<span class="highlight">initial_ubr</span> = <span class="num">1500</span> + (skill_level &times; <span class="num">1000</span>)</div>
+
+    <table>
+      <thead>
+        <tr><th>Skill Level</th><th>Initial UBR</th><th>Starting Tier</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1.0</td><td>2,500</td><td>Bronze</td></tr>
+        <tr><td>2.0</td><td>3,500</td><td>Silver</td></tr>
+        <tr><td>3.0</td><td>4,500</td><td>Gold</td></tr>
+        <tr><td>4.0</td><td>5,500</td><td>Platinum</td></tr>
+        <tr><td>5.0</td><td>6,500</td><td>Diamond</td></tr>
+      </tbody>
+    </table>
+
+    <p>New players also start with <strong>Rating Deviation (RD) = 350</strong> &mdash; the system is very uncertain about their true strength until they play enough matches.</p>
+  </div>
+
+  <!-- 4. Modes -->
+  <div class="section" id="modes">
+    <h2>4. Scoring Modes &amp; Data Quality</h2>
+    <p>Snobaddy supports 3 scoring modes. Each provides different data, so the algorithm treats them differently:</p>
+
+    <div class="mode-grid">
+      <div class="mode-card">
+        <div class="mode-name">Full Mode</div>
+        <div class="mode-data">4 player IDs + exact scores</div>
+        <span class="mode-quality quality-high">High quality</span>
+        <p style="font-size: 0.75rem; color: var(--muted); margin-top: 8px;">Score margin adjusts impact. Best rating signal.</p>
+      </div>
+      <div class="mode-card">
+        <div class="mode-name">Simple Mode</div>
+        <div class="mode-data">4 player IDs + win/loss only</div>
+        <span class="mode-quality quality-med">Medium quality</span>
+        <p style="font-size: 0.75rem; color: var(--muted); margin-top: 8px;">No score margin. Uses neutral multiplier (0.5).</p>
+      </div>
+      <div class="mode-card">
+        <div class="mode-name">Whiteboard</div>
+        <div class="mode-data">Per-player W/L totals only</div>
+        <span class="mode-quality quality-low">Lower quality</span>
+        <p style="font-size: 0.75rem; color: var(--muted); margin-top: 8px;">No opponent info. 25% discount applied.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Formula -->
+  <div class="section" id="formula">
+    <h2>5. Core Formula (Match-Based)</h2>
+    <p>For sessions with explicit match records (full &amp; simple modes), we use <strong>doubles Elo</strong>.</p>
+
+    <h3>Step 1: Team Ratings</h3>
+    <div class="formula"><span class="highlight">R_team</span> = (<span class="highlight">R_player1</span> + <span class="highlight">R_player2</span>) / <span class="num">2</span></div>
+
+    <h3>Step 2: Expected Outcome</h3>
+    <div class="formula"><span class="comment">// Logistic curve &mdash; probability Team 1 wins</span>
+<span class="highlight">E</span> = <span class="num">1</span> / (<span class="num">1</span> + <span class="num">10</span> ^ ((<span class="highlight">R_opponent</span> - <span class="highlight">R_team</span>) / <span class="num">400</span>))</div>
+
+    <p>If teams are equally rated, E = 0.5 (50/50). A 400-point gap gives the stronger team ~91% expected win rate.</p>
+
+    <h3>Step 3: Score Margin (Full Mode Only)</h3>
+    <div class="formula"><span class="highlight">margin_mult</span> = log<sub>2</sub>(<span class="num">1</span> + score_diff) / log<sub>2</sub>(<span class="num">22</span>)</div>
+
+    <table>
+      <thead><tr><th>Score</th><th>Margin</th><th>Multiplier</th></tr></thead>
+      <tbody>
+        <tr><td>21&ndash;19</td><td>2</td><td>0.33 (close)</td></tr>
+        <tr><td>21&ndash;15</td><td>6</td><td>0.59 (normal)</td></tr>
+        <tr><td>21&ndash;10</td><td>11</td><td>0.75 (dominant)</td></tr>
+        <tr><td>21&ndash;0</td><td>21</td><td>0.96 (blowout)</td></tr>
+      </tbody>
+    </table>
+    <p>Simple mode uses a fixed <strong>0.5</strong> (neutral &mdash; roughly equivalent to 21&ndash;15).</p>
+
+    <h3>Step 4: K-Factor</h3>
+    <p>Controls how much one match can move a rating. Higher for new players, lower for veterans.</p>
+    <table>
+      <thead><tr><th>Match Count</th><th>K Base</th><th>Phase</th></tr></thead>
+      <tbody>
+        <tr><td>&lt; 15</td><td>48</td><td>Provisional (rating moves fast)</td></tr>
+        <tr><td>15 &ndash; 39</td><td>36</td><td>Establishing (settling in)</td></tr>
+        <tr><td>40+</td><td>24</td><td>Established (stable)</td></tr>
+      </tbody>
+    </table>
+    <p>K is further adjusted by Rating Deviation: <code>K = K_base &times; (1 + (RD - 50) / 600)</code></p>
+
+    <h3>Step 5: Rating Change</h3>
+    <div class="formula"><span class="comment">// S = 1.0 (win) or 0.0 (loss)</span>
+<span class="highlight">&Delta;R</span> = K &times; (S - E) &times; (<span class="num">0.5</span> + margin_mult)
+
+<span class="comment">// Final: floor at 1000</span>
+<span class="highlight">R_new</span> = max(<span class="num">1000</span>, R_old + &Delta;R)</div>
+
+    <div class="card highlight">
+      <strong>What this means:</strong>
+      <ul style="margin-top: 8px; margin-bottom: 0;">
+        <li><strong>Upset win</strong> (you beat a stronger team) &rarr; big gain</li>
+        <li><strong>Expected win</strong> (you beat a weaker team) &rarr; small gain</li>
+        <li><strong>Close loss to stronger team</strong> &rarr; minimal loss</li>
+        <li><strong>Blowout loss to weaker team</strong> &rarr; significant loss</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 6. Tally -->
+  <div class="section" id="tally">
+    <h2>6. Tally Sessions (Whiteboard)</h2>
+    <p>Whiteboard sessions only record per-player win/loss totals &mdash; no opponent info. We use the <strong>Session Pool Method</strong>.</p>
+
+    <div class="card warn">
+      <strong>Why discount tally data?</strong> Going 5&ndash;3 against top players is very different from 5&ndash;3 against beginners. Without opponent info, we apply a 25% quality discount and cap the effective match count.
+    </div>
+
+    <div class="formula"><span class="comment">// Pool = average rating of all session participants</span>
+<span class="highlight">R_pool</span> = average(all participant ratings)
+
+<span class="comment">// Expected win rate against the pool</span>
+<span class="highlight">E</span> = <span class="num">1</span> / (<span class="num">1</span> + <span class="num">10</span> ^ ((<span class="highlight">R_pool</span> - <span class="highlight">R_player</span>) / <span class="num">400</span>))
+
+<span class="comment">// Actual win rate</span>
+<span class="highlight">S</span> = wins / (wins + losses)
+
+<span class="comment">// Effective matches (capped at 8)</span>
+<span class="highlight">eff</span> = min(floor((wins + losses) / <span class="num">2</span>), <span class="num">8</span>)
+
+<span class="comment">// Rating change (with 0.75 tally discount)</span>
+<span class="highlight">&Delta;R</span> = K &times; <span class="num">0.75</span> &times; eff &times; (S - E)</div>
+  </div>
+
+  <!-- 7. Confidence -->
+  <div class="section" id="confidence">
+    <h2>7. Confidence &amp; Decay</h2>
+    <p><strong>Rating Deviation (RD)</strong> tracks how confident the system is in a player's rating. Borrowed from the Glicko system.</p>
+
+    <table>
+      <thead><tr><th>RD Range</th><th>Confidence</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>50 &ndash; 100</td><td style="color: var(--green); font-weight: 600;">High</td><td>Active player, rating is reliable</td></tr>
+        <tr><td>101 &ndash; 200</td><td style="color: var(--amber); font-weight: 600;">Medium</td><td>Semi-active, some uncertainty</td></tr>
+        <tr><td>201 &ndash; 350</td><td style="color: var(--red); font-weight: 600;">Low (Provisional)</td><td>New or inactive &mdash; rating will swing more</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Inactivity decay</h3>
+    <p>Each session a player misses, their RD grows slightly:</p>
+    <div class="formula"><span class="highlight">RD_new</span> = min(<span class="num">350</span>, sqrt(RD&sup2; + <span class="num">15</span>&sup2;))</div>
+    <p>This means an inactive player's next result will have more impact &mdash; the system acknowledges it doesn't know their current level.</p>
+
+    <h3>Active play</h3>
+    <p>Each match played <em>decreases</em> RD. Active players converge toward RD = 50 (high confidence).</p>
+  </div>
+
+  <!-- 8. Flow -->
+  <div class="section" id="flow">
+    <h2>8. Processing Flow</h2>
+    <p>UBR updates are triggered when a <strong>non-test session is finalized</strong>.</p>
+
+    <div class="flow">
+      <div class="flow-step active">Session finalized</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step">Skip if test session</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step">Decay RD for absent players</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step active">Process matches or tally</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step">Update RD for participants</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step active">Cache to ubr_ratings</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step">Write ubr_history</div>
+    </div>
+
+    <div class="card">
+      <strong>Full recalculation:</strong> Ratings can be rebuilt from scratch by replaying all finalized non-test sessions in date order. This ensures the system is always auditable and reproducible.
+    </div>
+  </div>
+
+  <!-- 9. Examples -->
+  <div class="section" id="examples">
+    <h2>9. Example Calculations</h2>
+
+    <div class="example">
+      <div class="example-header">Example 1: Full-Mode Upset Win (21&ndash;17)</div>
+      <div class="example-body">
+        <p style="font-size: 0.8125rem; color: var(--muted); margin-bottom: 12px;">
+          Team 1 (avg 4500) beats Team 2 (avg 4850). Expected win probability: 11.8%.
+        </p>
+        <div class="player-row">
+          <span class="name">Player A</span>
+          <span class="rating">4800</span>
+          <span class="change up">+34</span>
+          <span style="font-size: 0.75rem; color: var(--muted);">Big gain &mdash; upset win</span>
+        </div>
+        <div class="player-row">
+          <span class="name">Player B</span>
+          <span class="rating">4200</span>
+          <span class="change up">+40</span>
+          <span style="font-size: 0.75rem; color: var(--muted);">Even bigger &mdash; provisional K</span>
+        </div>
+        <div class="player-row">
+          <span class="name">Player C</span>
+          <span class="rating">5100</span>
+          <span class="change down">-22</span>
+          <span style="font-size: 0.75rem; color: var(--muted);">Moderate loss &mdash; established K</span>
+        </div>
+        <div class="player-row">
+          <span class="name">Player D</span>
+          <span class="rating">4600</span>
+          <span class="change down">-26</span>
+          <span style="font-size: 0.75rem; color: var(--muted);">Expected to win, didn't</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-header">Example 2: Whiteboard Session &mdash; 6W/2L but Pool is Weak</div>
+      <div class="example-body">
+        <p style="font-size: 0.8125rem; color: var(--muted); margin-bottom: 12px;">
+          Player X (4500) in a pool averaging 4200. Expected win rate: 84.9%. Actual: 75%.
+        </p>
+        <div class="player-row">
+          <span class="name">Player X</span>
+          <span class="rating">4500</span>
+          <span class="change down">-12</span>
+          <span style="font-size: 0.75rem; color: var(--muted);">Won 75% but expected 85% &mdash; slight dip</span>
+        </div>
+        <p style="font-size: 0.8125rem; color: var(--muted); margin-top: 8px;">
+          Despite a winning record, the rating drops because performance was <em>below expectation</em> given the pool strength.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Constants -->
+  <div class="section" id="constants">
+    <h2>10. Constants Reference</h2>
+    <table>
+      <thead><tr><th>Constant</th><th>Value</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>INITIAL_RD</code></td><td>350</td><td>Starting rating deviation</td></tr>
+        <tr><td><code>MIN_RD</code></td><td>50</td><td>Floor for RD</td></tr>
+        <tr><td><code>MAX_RD</code></td><td>350</td><td>Cap for RD</td></tr>
+        <tr><td><code>RD_DECAY_C</code></td><td>15</td><td>Inactivity RD growth per session</td></tr>
+        <tr><td><code>K_PROVISIONAL</code></td><td>48</td><td>K-factor for &lt; 15 matches</td></tr>
+        <tr><td><code>K_ESTABLISHING</code></td><td>36</td><td>K-factor for 15&ndash;39 matches</td></tr>
+        <tr><td><code>K_ESTABLISHED</code></td><td>24</td><td>K-factor for 40+ matches</td></tr>
+        <tr><td><code>ELO_DIVISOR</code></td><td>400</td><td>Standard Elo scaling</td></tr>
+        <tr><td><code>TALLY_DISCOUNT</code></td><td>0.75</td><td>Quality discount for tally data</td></tr>
+        <tr><td><code>TALLY_MAX_EFF</code></td><td>8</td><td>Max effective matches per tally session</td></tr>
+        <tr><td><code>RATING_FLOOR</code></td><td>1000</td><td>Minimum possible rating</td></tr>
+        <tr><td><code>SIMPLE_MARGIN</code></td><td>0.5</td><td>Default margin when no scores</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 11. Edge Cases -->
+  <div class="section" id="edge-cases">
+    <h2>11. Edge Cases</h2>
+    <table>
+      <thead><tr><th>Scenario</th><th>Handling</th></tr></thead>
+      <tbody>
+        <tr><td>No UBR record yet</td><td>Create from skill_level seed</td></tr>
+        <tr><td>Skill level changes later</td><td>Does NOT retroactively change UBR</td></tr>
+        <tr><td>Test session finalized</td><td>Skipped entirely &mdash; no UBR processing</td></tr>
+        <tr><td>0 matches and 0 tally</td><td>Skipped &mdash; no data to process</td></tr>
+        <tr><td>Player has 0W/0L in tally</td><td>Skipped &mdash; no rating signal</td></tr>
+        <tr><td>Rating would drop below 1000</td><td>Floored at 1000</td></tr>
+        <tr><td>Both matches and tally exist</td><td>Process matches only, ignore tally</td></tr>
+        <tr><td>Very lopsided teams (&gt;1500 gap)</td><td>Natural Elo scaling limits change</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <a href="index.html" class="back-link">&larr; Back to Snobaddy docs</a>
+
+  <p style="text-align: center; margin-top: 40px; font-size: 0.75rem; color: var(--muted-lt);">
+    Full algorithm source: <a href="https://github.com/kbrovibes/snobaddy/blob/main/docs/ubr-algorithm.md" style="color: var(--sky);">docs/ubr-algorithm.md</a>
+  </p>
+
+</body>
+</html>
