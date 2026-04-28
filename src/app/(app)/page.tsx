@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getActiveSession, getAllSessions } from "@/lib/db/sessions";
+import { getActiveSession, getAllSessions, getSeasonPlayerCount } from "@/lib/db/sessions";
 import { getActiveFinals, getAllFinals, getFinalsSessionPair } from "@/lib/db/finals";
 import { createClient } from "@/lib/supabase-server";
 import CreateSessionButton from "@/components/CreateSessionButton";
@@ -42,10 +42,34 @@ export default async function SessionListPage({
     : null;
   const seasonName = sessions[0]?.season?.name ?? "Sessions";
 
+  // Season stats — non-test completed sessions only
+  const realCompleted = sessions.filter((s) => !s.is_test_session && s.status === "completed");
+  const totalMatches = realCompleted.reduce((sum, s) => sum + s.match_count, 0);
+  const daysOfPlay = realCompleted.length;
+  const playerCount = await getSeasonPlayerCount(realCompleted.map((s) => s.id));
+
   return (
     <div className="flex flex-col px-4 py-4 gap-4">
 
       <p className="text-xs font-semibold uppercase tracking-wide text-muted-light px-1">{seasonName}</p>
+
+      {/* Season stat cards */}
+      {daysOfPlay > 0 && (
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { emoji: "🏸", label: "Players", value: playerCount, unit: "this season" },
+            { emoji: "🎯", label: "Matches", value: totalMatches, unit: "played" },
+            { emoji: "📅", label: "Days of Play", value: daysOfPlay, unit: "sessions" },
+          ].map(({ emoji, label, value, unit }) => (
+            <div key={label} className="bg-surface rounded-xl shadow-sm border border-border-light px-3 py-3 flex flex-col items-center gap-0.5 text-center">
+              <span className="text-xl">{emoji}</span>
+              <span className="text-2xl font-bold text-heading leading-none">{value}</span>
+              <span className="text-xs font-semibold text-text leading-tight">{label}</span>
+              <span className="text-[10px] text-muted-light leading-tight">{unit}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {isAdmin && <FinalsSection event={finalsEvent} sessionPair={finalsSessionPair} pastEvents={pastFinalsEvents} />}
 

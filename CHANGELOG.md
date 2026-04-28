@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.11] - 2026-04-27
+
+### Added
+- **Season snapshot** — home page now shows 3 stat cards: 🏸 Players this season, 🎯 Matches played, 📅 Days of play.
+
+---
+
 ## [0.30.10] - 2026-04-27
 
 ### Fixed

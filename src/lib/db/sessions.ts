@@ -218,6 +218,18 @@ export async function getCheckedInPlayers(sessionId: string): Promise<CheckedInP
     }));
 }
 
+// Count distinct players who checked into any of the given sessions
+export async function getSeasonPlayerCount(sessionIds: string[]): Promise<number> {
+  if (sessionIds.length === 0) return 0;
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("session_players")
+    .select("player_id")
+    .in("session_id", sessionIds);
+  const unique = new Set((data ?? []).map((r) => r.player_id));
+  return unique.size;
+}
+
 // All presence records for a session (for admin players view)
 export async function getSessionPresence(sessionId: string): Promise<SessionPresence[]> {
   const supabase = await createClient();
