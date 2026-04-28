@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.12] - 2026-04-28
+
+### Fixed
+- **Season stat cards** — Players now counts unique players who played ≥1 match (not just check-ins). Matches now correctly sums match records, with tally-only sessions approximated from win totals (sum of wins ÷ 2). Days of play already excluded test and finals sessions correctly.
+
+---
+
 ## [0.30.11] - 2026-04-27
 
 ### Added

@@ -218,16 +218,51 @@ export async function getCheckedInPlayers(sessionId: string): Promise<CheckedInP
     }));
 }
 
-// Count distinct players who checked into any of the given sessions
-export async function getSeasonPlayerCount(sessionIds: string[]): Promise<number> {
-  if (sessionIds.length === 0) return 0;
+// Season stats: unique players who played ≥1 match, and total match count.
+// For tally-only sessions (no match rows), approximates matches from session_tally wins
+// (sum of wins / 2 = matches, since each match produces 2 wins).
+export async function getSeasonStats(sessionIds: string[]): Promise<{ playerCount: number; matchCount: number }> {
+  if (sessionIds.length === 0) return { playerCount: 0, matchCount: 0 };
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("session_players")
-    .select("player_id")
+
+  // All match records for these sessions
+  const { data: matchRows } = await supabase
+    .from("matches")
+    .select("session_id, team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id")
     .in("session_id", sessionIds);
-  const unique = new Set((data ?? []).map((r) => r.player_id));
-  return unique.size;
+
+  const matches = matchRows ?? [];
+  const sessionsWithMatches = new Set(matches.map((m) => m.session_id));
+
+  // Unique players from match records
+  const playerIds = new Set<string>();
+  for (const m of matches) {
+    playerIds.add(m.team1_player1_id);
+    playerIds.add(m.team1_player2_id);
+    playerIds.add(m.team2_player1_id);
+    playerIds.add(m.team2_player2_id);
+  }
+
+  let matchCount = matches.length;
+
+  // Tally-only sessions: approximate matches and add players from session_tally
+  const tallyOnlyIds = sessionIds.filter((id) => !sessionsWithMatches.has(id));
+  if (tallyOnlyIds.length > 0) {
+    const { data: tallyRows } = await supabase
+      .from("session_tally")
+      .select("player_id, wins, losses")
+      .in("session_id", tallyOnlyIds);
+
+    let totalWins = 0;
+    for (const t of (tallyRows ?? [])) {
+      if ((t.wins ?? 0) + (t.losses ?? 0) > 0) playerIds.add(t.player_id);
+      totalWins += t.wins ?? 0;
+    }
+    // Each match generates 2 wins (one per winning-team player)
+    matchCount += Math.round(totalWins / 2);
+  }
+
+  return { playerCount: playerIds.size, matchCount };
 }
 
 // All presence records for a session (for admin players view)

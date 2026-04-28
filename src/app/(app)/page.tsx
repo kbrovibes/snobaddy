@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getActiveSession, getAllSessions, getSeasonPlayerCount } from "@/lib/db/sessions";
+import { getActiveSession, getAllSessions, getSeasonStats } from "@/lib/db/sessions";
 import { getActiveFinals, getAllFinals, getFinalsSessionPair } from "@/lib/db/finals";
 import { createClient } from "@/lib/supabase-server";
 import CreateSessionButton from "@/components/CreateSessionButton";
@@ -42,11 +42,10 @@ export default async function SessionListPage({
     : null;
   const seasonName = sessions[0]?.season?.name ?? "Sessions";
 
-  // Season stats — non-test completed sessions only
+  // Season stats — non-test completed sessions only (finals already excluded by getAllSessions)
   const realCompleted = sessions.filter((s) => !s.is_test_session && s.status === "completed");
-  const totalMatches = realCompleted.reduce((sum, s) => sum + s.match_count, 0);
   const daysOfPlay = realCompleted.length;
-  const playerCount = await getSeasonPlayerCount(realCompleted.map((s) => s.id));
+  const { playerCount, matchCount: totalMatches } = await getSeasonStats(realCompleted.map((s) => s.id));
 
   return (
     <div className="flex flex-col px-4 py-4 gap-4">
