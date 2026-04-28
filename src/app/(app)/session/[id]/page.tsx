@@ -384,7 +384,7 @@ export default async function SessionDetailPage({
             <TallyEntryForm
               sessionId={session.id}
               allPlayers={formPlayers as { id: string; name: string }[]}
-              isGodMode={isGodMode}
+              isGodMode={isAdmin}
               tallyModel={tallyModel ?? undefined}
             />
           )}
@@ -407,7 +407,7 @@ export default async function SessionDetailPage({
               allPlayers={formPlayers as { id: string; name: string }[]}
               initialEntries={tallyRows as TallyEntry[]}
               isEdit
-              isGodMode={isGodMode}
+              isGodMode={isAdmin}
               tallyModel={tallyModel ?? undefined}
             />
           )}

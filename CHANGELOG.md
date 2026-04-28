@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.4] - 2026-04-27
+
+### Improved
+- **Tally photo upload** — the 📷 "Import from photo" button is now available to all admins, not just God Mode.
+
+---
+
 ## [0.30.3] - 2026-04-26
 
 ### Improved
