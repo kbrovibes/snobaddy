@@ -6,6 +6,19 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.8] - 2026-04-27
+
+### Fixed
+- **Dark mode: checked-out players** — names and scores are now visible (light grey) instead of invisible black text.
+- **Undo sync** — undoing an activity log entry now immediately updates the whiteboard tally table.
+- **Display name conflicts** — when two players share a first name (e.g. Arjun Raman & Arjun Junior), the whiteboard table and activity log now show disambiguated names (Arjun-R, Arjun-J).
+
+### Added
+- **Activity "Show more"** — activity feed now shows 10 entries by default with a "Show more" button for the rest.
+- **Edit button** — pencil (✎) button next to +W/+L opens −/+ steppers to adjust a player's score in-place.
+
+---
+
 ## [0.30.7] - 2026-04-27
 
 ### Fixed

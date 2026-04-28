@@ -34,6 +34,7 @@ import TallyEntryForm from "@/components/TallyEntryForm";
 import TallyHighlights from "@/components/TallyHighlights";
 import ResetSessionButton from "@/components/ResetSessionButton";
 import AutoRefreshToggle from "@/components/AutoRefreshToggle";
+import ActivityShowMore from "@/components/ActivityShowMore";
 import FinalizeSessionButton from "@/components/FinalizeSessionButton";
 import FinalsSessionTabs from "@/components/finals/FinalsSessionTabs";
 import FinalsCompletedView from "@/components/finals/FinalsCompletedView";
@@ -200,10 +201,12 @@ export default async function SessionDetailPage({
     ? await getSessionHighlights(session.id)
     : null;
 
-  // Build display name map from all session players (scoreboard + tally entries)
+  // Build display name map from all session players (scoreboard + tally + whiteboard)
   const allSessionNames = [
     ...(scoreboard as { name: string }[]).map((p) => p.name),
     ...(tallyRows as TallyEntry[]).map((e) => e.player_name),
+    ...whiteboardPlayers.map((p) => p.name),
+    ...whiteboardLog.map((e) => e.player_name),
   ];
   const nameMap = buildNameMap(allSessionNames);
 
@@ -348,6 +351,7 @@ export default async function SessionDetailPage({
                   <WhiteboardTally
                     sessionId={session.id}
                     players={whiteboardPlayers}
+                    nameMap={Object.fromEntries(nameMap)}
                   />
                 )}
                 {scoreMode !== "whiteboard" && (
@@ -430,9 +434,7 @@ export default async function SessionDetailPage({
           <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide mb-3">
             {isActive && session.whiteboard_mode ? "Activity" : `Matches · ${recentMatches.length}`}
           </h2>
-          <div className="flex flex-col gap-3">
-            {/* Interleave matches and whiteboard log entries by time, newest first */}
-            {(() => {
+          {(() => {
               type FeedItem = { type: "match"; data: typeof recentMatches[0]; ts: number }
                 | { type: "log"; data: typeof whiteboardLog[0]; ts: number };
               const items: FeedItem[] = [
@@ -440,7 +442,7 @@ export default async function SessionDetailPage({
                 ...whiteboardLog.map((e) => ({ type: "log" as const, data: e, ts: new Date(e.created_at).getTime() })),
               ].sort((a, b) => b.ts - a.ts);
 
-              return items.map((item) => {
+              const renderedItems = items.map((item) => {
                 if (item.type === "match") {
                   const m = item.data;
                   const team1Names = m.team1.map((n: string) => shortName(n, nameMap));
@@ -478,7 +480,7 @@ export default async function SessionDetailPage({
                 return (
                   <div key={e.id} className="flex items-center gap-2 text-xs text-text-light">
                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isWin ? "bg-green-400" : "bg-orange-400"}`} />
-                    <span className="font-medium text-text flex-1">{e.player_name.split(" ")[0]}</span>
+                    <span className="font-medium text-text flex-1">{shortName(e.player_name, nameMap)}</span>
                     <span className={isWin ? "text-green-600 dark:text-green-400" : "text-orange-500"}>
                       {e.delta > 0 ? "+" : "−"}1 {isWin ? "W" : "L"}
                     </span>
@@ -488,8 +490,13 @@ export default async function SessionDetailPage({
                   </div>
                 );
               });
+
+              return (
+                <ActivityShowMore totalCount={renderedItems.length}>
+                  {renderedItems}
+                </ActivityShowMore>
+              );
             })()}
-          </div>
         </div>
       )}
 

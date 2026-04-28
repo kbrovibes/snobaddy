@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 interface WhiteboardPlayer {
   player_id: string;
@@ -14,6 +14,7 @@ interface WhiteboardPlayer {
 interface Props {
   sessionId: string;
   players: WhiteboardPlayer[];
+  nameMap?: Record<string, string>;
 }
 
 interface TallyChange {
@@ -23,14 +24,20 @@ interface TallyChange {
   timestamp: number;
 }
 
-export default function WhiteboardTally({ sessionId, players }: Props) {
+export default function WhiteboardTally({ sessionId, players, nameMap }: Props) {
   const router = useRouter();
   const [tallies, setTallies] = useState<Record<string, { wins: number; losses: number }>>(
     () => Object.fromEntries(players.map((p) => [p.player_id, { wins: p.wins, losses: p.losses }]))
   );
+
+  // Sync local tallies when server props change (e.g. after undo triggers router.refresh)
+  useEffect(() => {
+    setTallies(Object.fromEntries(players.map((p) => [p.player_id, { wins: p.wins, losses: p.losses }])));
+  }, [players]);
   const [matchFlash, setMatchFlash] = useState<string | null>(null);
   const [tapFlash, setTapFlash] = useState<Record<string, "wins" | "losses" | null>>({});
   const [saveStatus, setSaveStatus] = useState<Record<string, "saving" | "saved" | "error" | null>>({});
+  const [editingPlayer, setEditingPlayer] = useState<string | null>(null);
   const recentChangesRef = useRef<TallyChange[]>([]);
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -54,7 +61,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     if (wins.length !== 2 || losses.length !== 2) return;
     if (new Set(last4.map((c) => c.player_id)).size !== 4) return;
 
-    const label = `${wins.map((w) => firstName(w.name)).join(" & ")} beat ${losses.map((l) => firstName(l.name)).join(" & ")}`;
+    const label = `${wins.map((w) => displayName(w.name)).join(" & ")} beat ${losses.map((l) => displayName(l.name)).join(" & ")}`;
     try {
       await fetch("/api/matches", {
         method: "POST",
@@ -115,7 +122,44 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
     scheduleRefresh();
   }
 
-  function firstName(name: string) {
+  async function handleDecrement(playerId: string, field: "wins" | "losses") {
+    const current = tallies[playerId] ?? { wins: 0, losses: 0 };
+    if (current[field] <= 0) return;
+
+    if (navigator.vibrate) navigator.vibrate(15);
+
+    setTallies((prev) => ({
+      ...prev,
+      [playerId]: { ...prev[playerId], [field]: Math.max(0, (prev[playerId]?.[field] ?? 0) - 1) },
+    }));
+
+    setSaveStatus((prev) => ({ ...prev, [playerId]: "saving" }));
+    try {
+      const res = await fetch(`/api/sessions/${sessionId}/tally/increment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ player_id: playerId, field, delta: -1 }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setTallies((prev) => ({ ...prev, [playerId]: { wins: data.wins, losses: data.losses } }));
+        setSaveStatus((prev) => ({ ...prev, [playerId]: "saved" }));
+        setTimeout(() => setSaveStatus((prev) => ({ ...prev, [playerId]: null })), 1200);
+      } else {
+        setTallies((prev) => ({ ...prev, [playerId]: current }));
+        setSaveStatus((prev) => ({ ...prev, [playerId]: "error" }));
+        setTimeout(() => setSaveStatus((prev) => ({ ...prev, [playerId]: null })), 2000);
+      }
+    } catch {
+      setTallies((prev) => ({ ...prev, [playerId]: current }));
+      setSaveStatus((prev) => ({ ...prev, [playerId]: "error" }));
+      setTimeout(() => setSaveStatus((prev) => ({ ...prev, [playerId]: null })), 2000);
+    }
+    scheduleRefresh();
+  }
+
+  function displayName(name: string) {
+    if (nameMap?.[name]) return nameMap[name];
     return name.trim().split(/\s+/)[0];
   }
 
@@ -134,13 +178,13 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
 
     return (
       <tr className={`transition-colors duration-300 ${
-        flash === "wins" ? "bg-green-50" : flash === "losses" ? "bg-orange-50" : ""
+        flash === "wins" ? "bg-green-50 dark:bg-green-500/10" : flash === "losses" ? "bg-orange-50 dark:bg-orange-500/10" : ""
       }`}>
         {/* Name + status */}
         <td className="py-1.5 pl-2 pr-0.5">
           <div className="flex items-center gap-1">
-            <span className={`text-xs font-medium truncate ${out ? "text-black" : "text-heading"}`}>
-              {firstName(player.name)}
+            <span className={`text-xs font-medium truncate ${out ? "text-stone-400 dark:text-stone-500" : "text-heading"}`}>
+              {displayName(player.name)}
             </span>
             <StatusIcon playerId={player.player_id} />
           </div>
@@ -149,7 +193,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
         <td className="py-1.5 px-0.5 text-center">
           <span className={`text-sm font-bold tabular-nums transition-transform duration-150 inline-block ${
             flash === "wins" ? "scale-125" : ""
-          } ${out ? "text-black" : "text-green-700 dark:text-green-400"}`}>
+          } ${out ? "text-stone-400 dark:text-stone-500" : "text-green-700 dark:text-green-400"}`}>
             {t.wins}
           </span>
         </td>
@@ -157,13 +201,54 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
         <td className="py-1.5 px-0.5 text-center">
           <span className={`text-sm font-bold tabular-nums transition-transform duration-150 inline-block ${
             flash === "losses" ? "scale-125" : ""
-          } ${out ? "text-black" : "text-orange-600 dark:text-orange-400"}`}>
+          } ${out ? "text-stone-400 dark:text-stone-500" : "text-orange-600 dark:text-orange-400"}`}>
             {t.losses}
           </span>
         </td>
         {/* Action buttons */}
         <td className="py-1.5 pr-1 pl-0.5">
-          {!out && (
+          {!out && editingPlayer === player.player_id ? (
+            <div className="flex flex-col gap-0.5">
+              <div className="flex items-center gap-0.5 justify-end">
+                <button
+                  onClick={() => handleDecrement(player.player_id, "wins")}
+                  disabled={t.wins <= 0}
+                  className="h-6 w-6 rounded bg-stone-100 dark:bg-stone-700 text-stone-500 dark:text-stone-300 text-[10px] font-bold active:bg-stone-200 dark:active:bg-stone-600 transition-colors disabled:opacity-30"
+                >
+                  −
+                </button>
+                <span className="text-[10px] font-bold text-green-700 dark:text-green-400 w-4 text-center">W</span>
+                <button
+                  onClick={() => handleTap(player.player_id, player.name, "wins")}
+                  className="h-6 w-6 rounded bg-green-100 dark:bg-green-500/15 text-green-700 dark:text-green-400 text-[10px] font-bold active:bg-green-300 transition-colors"
+                >
+                  +
+                </button>
+              </div>
+              <div className="flex items-center gap-0.5 justify-end">
+                <button
+                  onClick={() => handleDecrement(player.player_id, "losses")}
+                  disabled={t.losses <= 0}
+                  className="h-6 w-6 rounded bg-stone-100 dark:bg-stone-700 text-stone-500 dark:text-stone-300 text-[10px] font-bold active:bg-stone-200 dark:active:bg-stone-600 transition-colors disabled:opacity-30"
+                >
+                  −
+                </button>
+                <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400 w-4 text-center">L</span>
+                <button
+                  onClick={() => handleTap(player.player_id, player.name, "losses")}
+                  className="h-6 w-6 rounded bg-orange-100 dark:bg-orange-500/15 text-orange-600 dark:text-orange-400 text-[10px] font-bold active:bg-orange-300 transition-colors"
+                >
+                  +
+                </button>
+              </div>
+              <button
+                onClick={() => setEditingPlayer(null)}
+                className="text-[9px] text-sky-600 dark:text-sky-400 font-medium mt-0.5"
+              >
+                done
+              </button>
+            </div>
+          ) : !out ? (
             <div className="flex gap-0.5 justify-end">
               <button
                 onClick={() => handleTap(player.player_id, player.name, "wins")}
@@ -173,12 +258,18 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
               </button>
               <button
                 onClick={() => handleTap(player.player_id, player.name, "losses")}
-                className="h-7 w-8 rounded-md bg-orange-100 text-orange-600 dark:text-orange-400 text-[10px] font-bold active:bg-orange-300 transition-colors"
+                className="h-7 w-8 rounded-md bg-orange-100 dark:bg-orange-500/15 text-orange-600 dark:text-orange-400 text-[10px] font-bold active:bg-orange-300 transition-colors"
               >
                 +L
               </button>
+              <button
+                onClick={() => setEditingPlayer(player.player_id)}
+                className="h-7 w-7 rounded-md bg-stone-100 dark:bg-stone-700 text-stone-500 dark:text-stone-400 text-[9px] font-bold active:bg-stone-200 dark:active:bg-stone-600 transition-colors"
+              >
+                ✎
+              </button>
             </div>
-          )}
+          ) : null}
         </td>
       </tr>
     );
@@ -193,7 +284,7 @@ export default function WhiteboardTally({ sessionId, players }: Props) {
               <th className="py-1.5 pl-2 pr-0.5 text-left text-[10px] font-semibold text-muted-light uppercase">Player</th>
               <th className="py-1.5 px-0.5 text-center text-[10px] font-semibold text-green-600 dark:text-green-400 uppercase w-6">W</th>
               <th className="py-1.5 px-0.5 text-center text-[10px] font-semibold text-orange-500 uppercase w-6">L</th>
-              <th className="py-1.5 pr-1 pl-0.5 w-[4.5rem]"></th>
+              <th className="py-1.5 pr-1 pl-0.5 w-[6rem]"></th>
             </tr>
           </thead>
         )}
