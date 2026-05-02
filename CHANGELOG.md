@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.32.2] - 2026-05-01
+
+### Added
+- **Edit season** — admins can rename a season and change its start/end dates from the Seasons page.
+
+---
+
 ## [0.32.1] - 2026-05-01
 
 ### Changed

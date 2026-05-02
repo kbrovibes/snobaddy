@@ -33,6 +33,10 @@ export default function SeasonCard(props: SeasonCardProps) {
   const [expanded, setExpanded] = useState(status !== "completed");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState(name);
+  const [editStart, setEditStart] = useState(start_date);
+  const [editEnd, setEditEnd] = useState(end_date);
 
   const config = STATUS_CONFIG[status];
 
@@ -64,6 +68,32 @@ export default function SeasonCard(props: SeasonCardProps) {
     }
   }
 
+  async function handleSaveEdit() {
+    if (!editName.trim()) { setError("Name is required"); return; }
+    if (editEnd <= editStart) { setError("End date must be after start date"); return; }
+
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/seasons/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: editName.trim(), start_date: editStart, end_date: editEnd }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error ?? "Failed to save");
+        return;
+      }
+      setEditing(false);
+      router.refresh();
+    } catch {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div
       className={`bg-surface border border-border-light rounded-xl overflow-hidden transition-all ${
@@ -87,9 +117,66 @@ export default function SeasonCard(props: SeasonCardProps) {
       {/* Expanded content */}
       {expanded && (
         <div className="px-4 pb-4 pt-0 space-y-3">
-          <p className="text-xs text-muted-light">
-            {formatDate(start_date)} – {formatDate(end_date)}
-          </p>
+          {editing ? (
+            <div className="space-y-2">
+              <div>
+                <label className="block text-[10px] font-medium text-muted-light mb-1">Name</label>
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full px-2 py-1.5 text-xs rounded-lg border border-border bg-background text-text focus:outline-none focus:ring-2 focus:ring-sky-500"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] font-medium text-muted-light mb-1">Start</label>
+                  <input
+                    type="date"
+                    value={editStart}
+                    onChange={(e) => setEditStart(e.target.value)}
+                    className="w-full px-2 py-1.5 text-xs rounded-lg border border-border bg-background text-text focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-medium text-muted-light mb-1">End</label>
+                  <input
+                    type="date"
+                    value={editEnd}
+                    onChange={(e) => setEditEnd(e.target.value)}
+                    className="w-full px-2 py-1.5 text-xs rounded-lg border border-border bg-background text-text focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSaveEdit}
+                  disabled={loading}
+                  className="flex-1 py-1.5 rounded-lg text-xs font-bold bg-sky-600 text-white hover:bg-sky-700 disabled:opacity-50 transition-colors"
+                >
+                  {loading ? "Saving..." : "Save"}
+                </button>
+                <button
+                  onClick={() => { setEditing(false); setEditName(name); setEditStart(start_date); setEditEnd(end_date); setError(null); }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-muted-light hover:text-text transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <p className="text-xs text-muted-light">
+                {formatDate(start_date)} – {formatDate(end_date)}
+              </p>
+              <button
+                onClick={() => setEditing(true)}
+                className="text-[10px] text-sky-600 dark:text-sky-400 hover:underline font-medium"
+              >
+                Edit
+              </button>
+            </div>
+          )}
 
           {/* Stats row */}
           {(status === "active" || status === "completed") && (session_count > 0 || match_count > 0) && (
