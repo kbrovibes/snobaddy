@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.32.8] - 2026-05-02
+
+### Fixed
+- **Player profile sticky header** — now anchors below the fixed nav bar (`top-14`) instead of `top-0`. Back button included in sticky area. No more overlap with the Serve Sports header.
+
+---
+
 ## [0.32.7] - 2026-05-01
 
 ### Fixed

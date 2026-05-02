@@ -176,9 +176,9 @@ export default async function PlayerProfilePage({
   return (
     <div className="flex flex-col gap-4 px-4 py-4">
 
-      {/* Player header — sticky, blends with nav */}
-      <div className="sticky top-0 z-20 -mx-4 -mt-4 px-4 pt-2 pb-2 bg-background border-b border-border-light dark:border-border">
-        <div className="flex items-center gap-1 mb-1.5">
+      {/* Player header — sticky below fixed nav (h-14 = 56px) */}
+      <div className="sticky top-14 z-20 -mx-4 -mt-4 px-4 pt-1.5 pb-2 bg-background border-b border-border-light dark:border-border">
+        <div className="mb-1">
           <BackButton />
         </div>
         <div className="flex items-center gap-3">
