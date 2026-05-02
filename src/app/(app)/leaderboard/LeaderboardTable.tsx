@@ -7,7 +7,7 @@ import { VerifiedBadge, AdminBadge } from "@/components/PlayerBadges";
 import { buildNameMap, shortName } from "@/lib/display-name";
 import type { UbrRating } from "@/lib/db/ubr";
 
-const LS_KEY = "snobaddy:leaderboard-show-test";
+// removed: test sessions toggle (LS_KEY)
 
 type SortKey = "name" | "matches_played" | "wins" | "losses" | "win_pct" | "ubr";
 type SortDir = "asc" | "desc";
@@ -49,37 +49,22 @@ const LS_UBR_KEY = "snobaddy:leaderboard-show-ubr";
 
 export default function LeaderboardTable({
   players,
-  playersWithTest,
   totalMatches,
-  totalMatchesWithTest,
   isAdmin,
   ubrRatings,
 }: {
   players: PlayerStats[];
-  playersWithTest: PlayerStats[];
   totalMatches: number;
-  totalMatchesWithTest: number;
   isAdmin: boolean;
   ubrRatings?: Record<string, UbrRating>;
 }) {
   const [sortKey, setSortKey] = useState<SortKey>("wins");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [showTest, setShowTest] = useState(false);
   const [showUbr, setShowUbr] = useState(false);
 
   useEffect(() => {
     try { setShowUbr(localStorage.getItem(LS_UBR_KEY) === "true"); } catch {}
   }, []);
-
-  useEffect(() => {
-    try { setShowTest(localStorage.getItem(LS_KEY) === "true"); } catch {}
-  }, []);
-
-  function toggleShowTest() {
-    const next = !showTest;
-    setShowTest(next);
-    try { localStorage.setItem(LS_KEY, String(next)); } catch {}
-  }
 
   function toggleShowUbr() {
     const next = !showUbr;
@@ -90,8 +75,8 @@ export default function LeaderboardTable({
   const hasUbr = !!ubrRatings && Object.keys(ubrRatings).length > 0;
   const ubrVisible = hasUbr && showUbr;
 
-  const activePlayers = showTest ? playersWithTest : players;
-  const matchCount = showTest ? totalMatchesWithTest : totalMatches;
+  const activePlayers = players;
+  const matchCount = totalMatches;
 
   // Award card computation — reactive to toggle
   const nameMap = buildNameMap(activePlayers.map(p => p.name));
@@ -175,18 +160,6 @@ export default function LeaderboardTable({
                 style={{ background: showUbr ? "#0ea5e9" : "var(--muted-lighter)" }}
               >
                 <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showUbr ? "translate-x-4" : "translate-x-0"}`} />
-              </button>
-            </div>
-          )}
-          {isAdmin && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-light">Test</span>
-              <button
-                onClick={toggleShowTest}
-                className="relative inline-flex w-9 h-5 rounded-full transition-colors duration-200 focus:outline-none"
-                style={{ background: showTest ? "#f97316" : "var(--muted-lighter)" }}
-              >
-                <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showTest ? "translate-x-4" : "translate-x-0"}`} />
               </button>
             </div>
           )}

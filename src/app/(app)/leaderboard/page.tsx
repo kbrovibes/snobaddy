@@ -22,11 +22,9 @@ export default async function LeaderboardPage() {
   const seasonId = activeSeason?.id;
 
   // Season-scoped: W/L stats are per-season. UBR ratings are all-time (cross-season).
-  const [allPlayers, allPlayersWithTest, totalMatches, totalMatchesWithTest, ubrMap, ubrEnabledSetting] = await Promise.all([
+  const [allPlayers, totalMatches, ubrMap, ubrEnabledSetting] = await Promise.all([
     getActivePlayers({ seasonId }),
-    getActivePlayers({ includeTestSessions: true, seasonId }),
     getSeasonMatchCount({ seasonId }),
-    getSeasonMatchCount({ includeTestSessions: true, seasonId }),
     getAllUbrRatings(),       // UBR is all-time — never season-scoped
     getAppSetting("ubr_enabled"),
   ]);
@@ -44,9 +42,7 @@ export default async function LeaderboardPage() {
 
       <LeaderboardTable
         players={allPlayers.filter(p => p.matches_played > 0)}
-        playersWithTest={allPlayersWithTest.filter(p => p.matches_played > 0)}
         totalMatches={totalMatches}
-        totalMatchesWithTest={totalMatchesWithTest}
         isAdmin={isAdmin}
         ubrRatings={ubrEnabled ? ubrRatings : undefined}
       />

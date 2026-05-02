@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.32.1] - 2026-05-01
+
+### Changed
+- **UBR chart** — interactive stock-ticker style: touch/hover shows rating + delta at any point. Shows all session dates on x-axis. Initial rating shown as hollow circle.
+- **Players page** — UBR rating + tier shown on each player card (admin only, when UBR enabled).
+- **Leaderboard** — removed "Include Test Sessions" toggle.
+- **PWA** — disabled pinch-to-zoom for native app feel.
+
+---
+
 ## [0.32.0] - 2026-05-01
 
 ### Added

@@ -1,6 +1,8 @@
 import { getActivePlayers, getDeletedPlayers } from "@/lib/db/players";
 import { createClient } from "@/lib/supabase-server";
 import { getActiveSession, getSessionPresence } from "@/lib/db/sessions";
+import { getAllUbrRatings, type UbrRating } from "@/lib/db/ubr";
+import { getAppSetting } from "@/lib/db/settings";
 import AdminPageContent from "@/components/AdminPageContent";
 
 export const dynamic = "force-dynamic";
@@ -14,11 +16,21 @@ export default async function PlayersPage() {
   const isAdmin = currentPlayer?.is_admin ?? false;
   const isGodMode = currentPlayer?.is_god_mode ?? false;
 
-  const [players, deletedPlayers, activeSession] = await Promise.all([
+  const [players, deletedPlayers, activeSession, ubrMap, ubrEnabledSetting] = await Promise.all([
     getActivePlayers(),
     isGodMode ? getDeletedPlayers() : Promise.resolve([]),
     getActiveSession(),
+    isAdmin ? getAllUbrRatings() : Promise.resolve(new Map<string, UbrRating>()),
+    isAdmin ? getAppSetting("ubr_enabled") : Promise.resolve(null),
   ]);
+
+  const ubrEnabled = ubrEnabledSetting === "true";
+  const ubrRatings: Record<string, UbrRating> = {};
+  if (ubrEnabled) {
+    for (const [k, v] of ubrMap) {
+      ubrRatings[k] = v;
+    }
+  }
 
   const presence = activeSession
     ? await getSessionPresence(activeSession.id)
@@ -34,6 +46,7 @@ export default async function PlayersPage() {
       sessionActive={!!activeSession}
       isAdmin={isAdmin}
       isGodMode={isGodMode}
+      ubrRatings={ubrEnabled ? ubrRatings : undefined}
     />
   );
 }

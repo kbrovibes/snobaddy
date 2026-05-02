@@ -7,6 +7,7 @@ import DeletePlayerButton from "@/components/DeletePlayerButton";
 import RestorePlayerButton from "@/components/RestorePlayerButton";
 import type { PlayerStats, DeletedPlayer } from "@/lib/db/players";
 import type { SessionPresence } from "@/lib/db/sessions";
+import type { UbrRating } from "@/lib/db/ubr";
 
 interface Props {
   players: PlayerStats[];
@@ -17,6 +18,7 @@ interface Props {
   sessionActive: boolean;
   isAdmin: boolean;
   isGodMode: boolean;
+  ubrRatings?: Record<string, UbrRating>;
 }
 
 function formatSessionDate(dateStr: string): string {
@@ -35,6 +37,7 @@ export default function AdminPageContent({
   sessionActive,
   isAdmin,
   isGodMode,
+  ubrRatings,
 }: Props) {
   const [godModeActive, setGodModeActive] = useState(false);
   const [addPlayerOpen, setAddPlayerOpen] = useState(false);
@@ -127,6 +130,8 @@ export default function AdminPageContent({
                   sessionId={sessionId}
                   initialStatus={initialStatus}
                   isAdmin={isAdmin}
+                  ubrRating={ubrRatings?.[player.id]?.rating}
+                  ubrTier={ubrRatings?.[player.id]?.tier}
                 />
                 {godModeActive && (
                   <DeletePlayerButton playerId={player.id} playerName={player.name} />

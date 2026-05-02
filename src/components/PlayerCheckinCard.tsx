@@ -33,6 +33,8 @@ interface Props {
   sessionId?: string;
   initialStatus?: Status;
   isAdmin?: boolean;
+  ubrRating?: number;
+  ubrTier?: string;
 }
 
 export default function PlayerCheckinCard({
@@ -43,6 +45,8 @@ export default function PlayerCheckinCard({
   sessionId,
   initialStatus = "absent",
   isAdmin = false,
+  ubrRating,
+  ubrTier,
 }: Props) {
   const [status, setStatus] = useState<Status>(initialStatus);
   const [loading, setLoading] = useState(false);
@@ -154,6 +158,13 @@ export default function PlayerCheckinCard({
         >
           {name}
         </p>
+
+        {/* UBR badge (admin only) */}
+        {ubrRating != null && (
+          <p style={{ fontSize: 10, fontWeight: 600, color: '#8b5cf6', lineHeight: 1, marginBottom: 2 }}>
+            {Math.round(ubrRating)} · {ubrTier}
+          </p>
+        )}
       </NavLink>
 
       {/* Row 3: Check-in action (admin) or status (everyone) */}
