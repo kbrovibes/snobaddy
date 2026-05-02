@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.32.5] - 2026-05-01
+
+### Changed
+- **Appearance toggle** — now displays inline (label left, toggle right) instead of stacked.
+
+---
+
 ## [0.32.4] - 2026-05-01
 
 ### Changed

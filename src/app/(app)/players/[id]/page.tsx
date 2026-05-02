@@ -226,8 +226,8 @@ export default async function PlayerProfilePage({
 
       {/* Theme toggle — own profile only */}
       {player.user_id === user!.id && (
-        <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
-          <h2 className="text-sm font-semibold text-muted uppercase tracking-wide mb-3">
+        <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">
             Appearance
           </h2>
           <ThemeToggle />
