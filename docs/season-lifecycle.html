@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snobaddy — Season Lifecycle Management</title>
+  <link rel="icon" href="serve-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #FAFAF9;
+      --surface:  #FFFFFF;
+      --border:   #E7E5E4;
+      --text:     #44403C;
+      --heading:  #1C1917;
+      --muted:    #78716C;
+      --muted-lt: #A8A29E;
+      --sky:      #0ea5e9;
+      --sky-dk:   #0284c7;
+      --sky-lt:   #e0f2fe;
+      --sky-xlt:  #f0f9ff;
+      --green:    #16a34a;
+      --green-lt: #dcfce7;
+      --orange:   #f97316;
+      --orange-lt:#fff7ed;
+      --red:      #ef4444;
+      --red-lt:   #fef2f2;
+      --purple:   #8b5cf6;
+      --purple-lt:#f5f3ff;
+      --amber:    #f59e0b;
+      --amber-lt: #fffbeb;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      padding: 0 16px 80px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 48px 0 32px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--heading);
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .hero .subtitle {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .hero .badge {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: var(--sky-lt);
+      color: var(--sky-dk);
+    }
+
+    /* Sections */
+    section { margin-bottom: 48px; }
+    section h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--heading);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--sky);
+      display: inline-block;
+    }
+    section h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--heading);
+      margin: 20px 0 10px;
+    }
+    p { margin-bottom: 12px; }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card-accent {
+      border-left: 4px solid var(--sky);
+    }
+    .card-green { border-left-color: var(--green); }
+    .card-orange { border-left-color: var(--orange); }
+    .card-purple { border-left-color: var(--purple); }
+    .card-red { border-left-color: var(--red); }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--heading);
+      margin-bottom: 8px;
+    }
+    .card-body {
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+
+    /* Status badges */
+    .status {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+    .status-active { background: var(--green-lt); color: var(--green); }
+    .status-upcoming { background: var(--orange-lt); color: var(--orange); }
+    .status-completed { background: var(--sky-lt); color: var(--sky-dk); }
+
+    /* State machine diagram */
+    .state-machine {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 24px 0;
+      flex-wrap: wrap;
+    }
+    .state-box {
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-align: center;
+      min-width: 120px;
+    }
+    .state-upcoming { background: var(--orange-lt); color: var(--orange); border: 2px solid var(--orange); }
+    .state-active { background: var(--green-lt); color: var(--green); border: 2px solid var(--green); }
+    .state-completed { background: var(--sky-lt); color: var(--sky-dk); border: 2px solid var(--sky); }
+    .state-arrow {
+      font-size: 1.4rem;
+      color: var(--muted-lt);
+      padding: 0 12px;
+      font-weight: 400;
+    }
+    .state-label {
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* Mockup phone frame */
+    .phone-frame {
+      max-width: 320px;
+      margin: 24px auto;
+      border: 2px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+    .phone-header {
+      background: var(--surface);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    .phone-body {
+      background: var(--bg);
+      padding: 12px;
+    }
+    .phone-nav {
+      display: flex;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 8px 0 12px;
+    }
+    .phone-nav-item {
+      flex: 1;
+      text-align: center;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: var(--muted-lt);
+    }
+    .phone-nav-item.active { color: var(--sky); }
+    .phone-nav-item .nav-icon { font-size: 1.1rem; display: block; margin-bottom: 2px; }
+
+    /* Mini season card inside phone */
+    .mini-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 0.75rem;
+    }
+    .mini-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .mini-card-title {
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--heading);
+    }
+    .mini-status {
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 0.55rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .mini-status-active { background: var(--green-lt); color: var(--green); }
+    .mini-status-upcoming { background: var(--orange-lt); color: var(--orange); }
+    .mini-status-completed { background: var(--sky-lt); color: var(--sky-dk); }
+    .mini-stats {
+      display: flex;
+      gap: 12px;
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .mini-stat-val { font-weight: 700; color: var(--heading); }
+    .mini-btn {
+      display: block;
+      width: 100%;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-align: center;
+      cursor: default;
+    }
+    .mini-btn-danger {
+      background: var(--red-lt);
+      color: var(--red);
+      border-color: #fecaca;
+    }
+    .mini-btn-primary {
+      background: var(--sky-lt);
+      color: var(--sky-dk);
+      border-color: #bae6fd;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin: 12px 0;
+    }
+    th {
+      text-align: left;
+      font-weight: 700;
+      color: var(--heading);
+      padding: 8px 12px;
+      border-bottom: 2px solid var(--border);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+
+    /* Lists */
+    ul, ol {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+    li {
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    /* Code */
+    code {
+      background: #f5f5f4;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+    pre {
+      background: #1C1917;
+      color: #e7e5e4;
+      padding: 16px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      margin: 12px 0;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+      color: inherit;
+    }
+
+    /* Checklist */
+    .checklist {
+      list-style: none;
+      padding-left: 0;
+    }
+    .checklist li {
+      padding: 6px 0;
+      padding-left: 28px;
+      position: relative;
+      font-size: 0.88rem;
+    }
+    .checklist li::before {
+      content: "☐";
+      position: absolute;
+      left: 4px;
+      color: var(--muted-lt);
+      font-size: 1rem;
+    }
+
+    /* Phase timeline */
+    .phase {
+      position: relative;
+      padding-left: 28px;
+      padding-bottom: 24px;
+      border-left: 2px solid var(--border);
+      margin-left: 12px;
+    }
+    .phase:last-child { border-left-color: transparent; }
+    .phase::before {
+      content: attr(data-num);
+      position: absolute;
+      left: -13px;
+      top: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--sky);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .phase-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--heading);
+      margin-bottom: 6px;
+    }
+    .phase-body {
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+    .phase-body ul { margin-top: 6px; }
+    .phase-body li { font-size: 0.82rem; margin-bottom: 4px; }
+
+    /* Impact grid */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+    @media (max-width: 600px) {
+      .impact-grid { grid-template-columns: 1fr; }
+    }
+    .impact-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .impact-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .impact-text {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+    .impact-change {
+      font-size: 0.75rem;
+      color: var(--green);
+      margin-top: 4px;
+    }
+    .impact-nochange {
+      font-size: 0.75rem;
+      color: var(--muted-lt);
+      margin-top: 4px;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted-lt);
+    }
+    footer a {
+      color: var(--sky);
+      text-decoration: none;
+    }
+    footer a:hover { text-decoration: underline; }
+
+    /* Separator */
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>Season Lifecycle Management</h1>
+    <p class="subtitle">Create, activate, close, and browse seasons in Snobaddy. God Mode only.</p>
+    <span class="badge">Spec 34</span>
+  </div>
+
+  <!-- Overview -->
+  <section>
+    <h2>Overview</h2>
+    <p>
+      Snobaddy runs in <strong>seasons</strong> — Spring, Summer, Fall, Winter — each spanning roughly 3 months.
+      Today, the season is a static DB row. This spec adds a full lifecycle: create upcoming seasons, activate them,
+      close completed ones, and reopen if needed.
+    </p>
+
+    <div class="card card-accent">
+      <div class="card-title">Key Principle</div>
+      <div class="card-body">
+        At most <strong>one season can be active</strong> at a time. Sessions, finals, and the leaderboard
+        all scope to the active season. When a season closes, a new one can begin.
+      </div>
+    </div>
+
+    <div class="card card-purple">
+      <div class="card-title">UBR Ratings Are Cross-Season</div>
+      <div class="card-body">
+        The UBR (Universal Badminton Rating) system does <strong>not</strong> reset per season.
+        Ratings accumulate across all time. Only the leaderboard (W/L stats) resets with each season.
+      </div>
+    </div>
+  </section>
+
+  <!-- State Machine -->
+  <section>
+    <h2>Season States</h2>
+    <p>Each season moves through three states:</p>
+
+    <div class="state-machine">
+      <div>
+        <div class="state-box state-upcoming">Upcoming</div>
+        <span class="state-label">Created, waiting</span>
+      </div>
+      <span class="state-arrow">&rarr;</span>
+      <div>
+        <div class="state-box state-active">Active</div>
+        <span class="state-label">Sessions run here</span>
+      </div>
+      <span class="state-arrow">&rarr;</span>
+      <div>
+        <div class="state-box state-completed">Completed</div>
+        <span class="state-label">Read-only archive</span>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Transition</th><th>Guard</th><th>What Happens</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Create</strong></td>
+          <td>None</td>
+          <td>New season saved as <code>upcoming</code> (or <code>active</code> if none exists)</td>
+        </tr>
+        <tr>
+          <td><strong>Start</strong></td>
+          <td>No other active season</td>
+          <td>Status flips to <code>active</code>; sessions can now be created under it</td>
+        </tr>
+        <tr>
+          <td><strong>Close</strong></td>
+          <td>No active sessions</td>
+          <td>Status set to <code>completed</code>; stats frozen; leaderboard archived</td>
+        </tr>
+        <tr>
+          <td><strong>Reopen</strong></td>
+          <td>No other active season</td>
+          <td>Status reverts to <code>active</code>; sessions and leaderboard resume</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- UI Mockup -->
+  <section>
+    <h2>Seasons Page Mockup</h2>
+    <p>The Seasons page is accessible via a new bottom nav tab (god mode only). It shows all seasons as expandable cards.</p>
+
+    <div class="phone-frame">
+      <div class="phone-header">Seasons</div>
+      <div class="phone-body">
+
+        <!-- Active season card -->
+        <div class="mini-card">
+          <div class="mini-card-header">
+            <span class="mini-card-title">Spring 2026</span>
+            <span class="mini-status mini-status-active">Active</span>
+          </div>
+          <div style="font-size:0.65rem;color:var(--muted);margin-bottom:6px;">Mar 3 &ndash; Jun 5</div>
+          <div class="mini-stats">
+            <span><span class="mini-stat-val">42</span> players</span>
+            <span><span class="mini-stat-val">156</span> matches</span>
+            <span><span class="mini-stat-val">18</span> sessions</span>
+          </div>
+          <div class="mini-stats" style="margin-bottom:8px;">
+            <span>Finals: <span class="mini-stat-val" style="color:var(--green);">completed</span></span>
+          </div>
+          <div class="mini-btn mini-btn-danger">Close Season</div>
+        </div>
+
+        <!-- Upcoming season card -->
+        <div class="mini-card">
+          <div class="mini-card-header">
+            <span class="mini-card-title">Summer 2026</span>
+            <span class="mini-status mini-status-upcoming">Upcoming</span>
+          </div>
+          <div style="font-size:0.65rem;color:var(--muted);margin-bottom:8px;">Jun 9 &ndash; Sep 4</div>
+          <div class="mini-btn mini-btn-primary">Start Season</div>
+        </div>
+
+        <!-- Completed season card (collapsed) -->
+        <div class="mini-card" style="opacity:0.7;">
+          <div class="mini-card-header">
+            <span class="mini-card-title">Winter 2025</span>
+            <span class="mini-status mini-status-completed">Completed</span>
+          </div>
+          <div style="font-size:0.6rem;color:var(--muted-lt);">Dec 1 &ndash; Feb 27 &middot; tap to expand</div>
+        </div>
+
+        <!-- Create button -->
+        <div class="mini-btn" style="margin-top:4px;border-style:dashed;color:var(--sky);border-color:var(--sky);">
+          + Create New Season
+        </div>
+
+      </div>
+      <div class="phone-nav">
+        <div class="phone-nav-item"><span class="nav-icon">🏸</span> Session</div>
+        <div class="phone-nav-item"><span class="nav-icon">👥</span> Players</div>
+        <div class="phone-nav-item"><span class="nav-icon">🏆</span> Board</div>
+        <div class="phone-nav-item active"><span class="nav-icon">📅</span> Seasons</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DB Changes -->
+  <section>
+    <h2>Database Changes</h2>
+    <div class="card card-green">
+      <div class="card-title">Migration: Add <code>status</code> to <code>seasons</code></div>
+      <div class="card-body">
+        <pre><code>ALTER TABLE seasons
+  ADD COLUMN status TEXT NOT NULL DEFAULT 'active'
+  CHECK (status IN ('active', 'upcoming', 'completed'));
+
+-- Enforce at most one active season
+CREATE UNIQUE INDEX idx_seasons_one_active
+  ON seasons ((1)) WHERE status = 'active';</code></pre>
+        <p style="margin-top:8px;">The existing Spring 2026 row is set to <code>active</code>. The unique partial index guarantees only one season can be active at any time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact Analysis -->
+  <section>
+    <h2>What Changes Where</h2>
+    <p>This feature touches queries across the app. Here's the full impact map:</p>
+
+    <div class="impact-grid">
+      <div class="impact-item">
+        <div class="impact-label">Home Page (Session List)</div>
+        <div class="impact-text">Filter sessions by active season</div>
+        <div class="impact-change">+ seasonId param to getAllSessions()</div>
+      </div>
+      <div class="impact-item">
+        <div class="impact-label">Leaderboard</div>
+        <div class="impact-text">Stats scoped to active season</div>
+        <div class="impact-change">+ seasonId param to getActivePlayers() &amp; getSeasonMatchCount()</div>
+      </div>
+      <div class="impact-item">
+        <div class="impact-label">Session Creation</div>
+        <div class="impact-text">Link to active season (not most-recent)</div>
+        <div class="impact-change">Use status='active' query instead of ORDER BY start_date</div>
+      </div>
+      <div class="impact-item">
+        <div class="impact-label">Finals Creation</div>
+        <div class="impact-text">Link to active season</div>
+        <div class="impact-change">Same query change as session creation</div>
+      </div>
+      <div class="impact-item">
+        <div class="impact-label">Season Stats Cards</div>
+        <div class="impact-text">No change needed</div>
+        <div class="impact-nochange">Already computed from displayed sessions</div>
+      </div>
+      <div class="impact-item">
+        <div class="impact-label">Player Profile</div>
+        <div class="impact-text">Shows all-time history</div>
+        <div class="impact-nochange">No change &mdash; transcends seasons</div>
+      </div>
+      <div class="impact-item">
+        <div class="impact-label">UBR Ratings</div>
+        <div class="impact-text">Cross-season, never resets</div>
+        <div class="impact-nochange">No change &mdash; all-time by design</div>
+      </div>
+      <div class="impact-item">
+        <div class="impact-label">Bottom Nav</div>
+        <div class="impact-text">New "Seasons" tab for god mode</div>
+        <div class="impact-change">+ godModeOnly filter on nav items</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Files -->
+  <section>
+    <h2>Files to Create &amp; Modify</h2>
+
+    <h3>New Files</h3>
+    <table>
+      <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td><code>migrations/..._season_status.sql</code></td><td>Add status column + unique index</td></tr>
+        <tr><td><code>src/lib/db/seasons.ts</code></td><td>All season queries (CRUD + status)</td></tr>
+        <tr><td><code>src/app/api/seasons/route.ts</code></td><td>GET list + POST create</td></tr>
+        <tr><td><code>src/app/api/seasons/[id]/status/route.ts</code></td><td>PATCH status transitions</td></tr>
+        <tr><td><code>src/app/(app)/admin/seasons/page.tsx</code></td><td>Seasons management page</td></tr>
+        <tr><td><code>src/components/SeasonCard.tsx</code></td><td>Expandable season card component</td></tr>
+        <tr><td><code>src/components/CreateSeasonForm.tsx</code></td><td>Inline new season form</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Modified Files</h3>
+    <table>
+      <thead><tr><th>File</th><th>Change</th></tr></thead>
+      <tbody>
+        <tr><td><code>src/components/BottomNav.tsx</code></td><td>Add Seasons tab (godModeOnly)</td></tr>
+        <tr><td><code>src/app/(app)/page.tsx</code></td><td>Pass active seasonId to getAllSessions()</td></tr>
+        <tr><td><code>src/lib/db/sessions.ts</code></td><td>Add seasonId param + getActiveSeason()</td></tr>
+        <tr><td><code>src/lib/db/players.ts</code></td><td>Add seasonId param to getActivePlayers()</td></tr>
+        <tr><td><code>src/lib/db/matches.ts</code></td><td>Add seasonId param to getSeasonMatchCount()</td></tr>
+        <tr><td><code>src/app/api/sessions/create/route.ts</code></td><td>Use status='active' query</td></tr>
+        <tr><td><code>src/app/api/sessions/start-today/route.ts</code></td><td>Use status='active' query</td></tr>
+        <tr><td><code>src/app/api/finals/route.ts</code></td><td>Use status='active' query</td></tr>
+        <tr><td><code>src/app/(app)/leaderboard/page.tsx</code></td><td>Pass active seasonId to queries</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Implementation Phases -->
+  <section>
+    <h2>Implementation Phases</h2>
+
+    <div class="phase" data-num="1">
+      <div class="phase-title">Database + Foundation</div>
+      <div class="phase-body">
+        <ul>
+          <li>Write and run migration: <code>status</code> column + unique partial index</li>
+          <li>Create <code>src/lib/db/seasons.ts</code> with all season queries</li>
+          <li>Add <code>getActiveSeason()</code> helper</li>
+          <li>Update session &amp; finals creation routes to use <code>status = 'active'</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase" data-num="2">
+      <div class="phase-title">Seasons Management UI</div>
+      <div class="phase-body">
+        <ul>
+          <li>Create <code>/admin/seasons</code> page with SeasonCard and CreateSeasonForm</li>
+          <li>Create API routes: GET/POST <code>/api/seasons</code>, PATCH <code>/api/seasons/[id]/status</code></li>
+          <li>Add "Seasons" tab to BottomNav (god mode only)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase" data-num="3">
+      <div class="phase-title">Season-Scoped Queries</div>
+      <div class="phase-body">
+        <ul>
+          <li>Add <code>seasonId</code> param to <code>getAllSessions()</code></li>
+          <li>Add <code>seasonId</code> param to <code>getActivePlayers()</code></li>
+          <li>Add <code>seasonId</code> param to <code>getSeasonMatchCount()</code></li>
+          <li>Update home page and leaderboard to pass active season ID</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase" data-num="4">
+      <div class="phase-title">Polish + Edge Cases</div>
+      <div class="phase-body">
+        <ul>
+          <li>Empty state when no active season</li>
+          <li>Confirmation dialogs for close / start / reopen</li>
+          <li>Season name auto-suggestion (next in cycle)</li>
+          <li>Past season cards with read-only summary stats</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Edge Cases -->
+  <section>
+    <h2>Edge Cases</h2>
+    <table>
+      <thead><tr><th>Scenario</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>No active season, user hits <code>/</code></td>
+          <td>"No active season" message + link to Seasons page (god mode) or generic message (others)</td>
+        </tr>
+        <tr>
+          <td>Admin creates session with no active season</td>
+          <td>API returns 400: "No active season. Start a season first."</td>
+        </tr>
+        <tr>
+          <td>Admin tries to close season with active sessions</td>
+          <td>Blocked: "Close all active sessions first"</td>
+        </tr>
+        <tr>
+          <td>Admin tries to start season while another is active</td>
+          <td>Button disabled; tooltip: "Close the current season first"</td>
+        </tr>
+        <tr>
+          <td>Season with no sessions (freshly created)</td>
+          <td>Stats cards hidden (existing <code>daysOfPlay > 0</code> check)</td>
+        </tr>
+        <tr>
+          <td>Reopen a completed season</td>
+          <td>Allowed if no other season is active; reverts to <code>active</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Acceptance Criteria -->
+  <section>
+    <h2>Acceptance Criteria</h2>
+    <ul class="checklist">
+      <li><code>seasons</code> table has <code>status</code> column: active, upcoming, completed</li>
+      <li>At most one season can be active at any time (DB constraint)</li>
+      <li>God mode users see a "Seasons" tab in bottom nav</li>
+      <li>Seasons page lists all seasons with status badges and stats</li>
+      <li>Admin can create a new season with name + dates</li>
+      <li>Admin can close the active season (if no active sessions)</li>
+      <li>Admin can start an upcoming season (if no other is active)</li>
+      <li>Admin can reopen a completed season (if no other is active)</li>
+      <li>Home page only shows sessions from the active season</li>
+      <li>Leaderboard only shows stats from the active season</li>
+      <li>Session creation fails gracefully when no season is active</li>
+      <li>Finals creation uses the active season, not most-recent-by-date</li>
+      <li>UBR ratings remain unchanged (all-time, cross-season)</li>
+      <li>Regular (non-god-mode) users see no changes in their experience</li>
+    </ul>
+  </section>
+
+  <hr />
+
+  <footer>
+    <p>
+      <strong>Snobaddy</strong> &mdash; Serve Sports Badminton Tracker<br />
+      <a href="index.html">&larr; Back to landing page</a>
+      &nbsp;&middot;&nbsp;
+      <a href="ubr.html">UBR Rating System</a>
+    </p>
+  </footer>
+
+</body>
+</html>

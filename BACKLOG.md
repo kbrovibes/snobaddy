@@ -10,6 +10,8 @@ Single source of truth for all planned and completed work.
 
 - [x] **32 — Push Notifications** · [spec](specs/32-push-notifications.md) · Web Push notifications for session open/close (admins) and check-in/out (players); service worker + VAPID + `push_subscriptions` table
 
+- [ ] **34 — Season Lifecycle** · [spec](specs/34-season-lifecycle.md) · Full season lifecycle: create, activate, close, reopen seasons; god-mode Seasons page; season-scoped queries for home + leaderboard
+
 - [ ] **33 — Dark Mode** · [spec](specs/33-dark-mode.md) · System-default dark mode + user override (Light/Dark/System toggle); CSS token migration across ~30 files
 
 - [ ] **30 — On-Demand E2E Test Suite** · [spec](specs/30-on-demand-test-suite.md) · Playwright E2E tests (mobile viewport) covering all features; run on-demand via `npm run test`, not on every deploy; smoke + full + per-feature modes
