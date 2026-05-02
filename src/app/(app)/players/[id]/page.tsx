@@ -176,34 +176,31 @@ export default async function PlayerProfilePage({
   return (
     <div className="flex flex-col gap-4 px-4 py-4">
 
-      <div className="-mb-2">
-        <BackButton />
-      </div>
-
-      {/* Player header — sticky */}
-      <div className="sticky top-0 z-20 -mx-4 px-4 pt-1 pb-2 bg-bg">
-        <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-500/15 flex items-center justify-center text-sky-700 text-lg font-bold shrink-0">
-              {player.name.charAt(0).toUpperCase()}
-            </div>
-            <div className="flex-1 min-w-0">
-              <EditPlayerForm
-                playerId={id}
-                currentName={player.name}
-                currentSkillLevel={player.skill_level}
-                isGodMode={isGodMode}
-              />
-            </div>
-            <div className="text-right shrink-0">
-              <p className="text-2xl font-bold text-heading">{overallPct}%</p>
-              <p className="text-xs text-muted-light">{totalWins}W {totalLosses}L</p>
-              {ubrEnabled && ubrRating && (
-                <p className="text-xs font-bold text-purple-600 dark:text-purple-400 mt-0.5">
-                  UBR {Math.round(ubrRating.rating)} · {ubrRating.tier}
-                </p>
-              )}
-            </div>
+      {/* Player header — sticky, blends with nav */}
+      <div className="sticky top-0 z-20 -mx-4 -mt-4 px-4 pt-2 pb-2 bg-background border-b border-border-light dark:border-border">
+        <div className="flex items-center gap-1 mb-1.5">
+          <BackButton />
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-500/15 flex items-center justify-center text-sky-700 dark:text-sky-400 text-lg font-bold shrink-0">
+            {player.name.charAt(0).toUpperCase()}
+          </div>
+          <div className="flex-1 min-w-0">
+            <EditPlayerForm
+              playerId={id}
+              currentName={player.name}
+              currentSkillLevel={player.skill_level}
+              isGodMode={isGodMode}
+            />
+          </div>
+          <div className="text-right shrink-0">
+            <p className="text-2xl font-bold text-heading">{overallPct}%</p>
+            <p className="text-xs text-muted-light">{totalWins}W {totalLosses}L</p>
+            {ubrEnabled && ubrRating && (
+              <p className="text-xs font-bold text-purple-600 dark:text-purple-400 mt-0.5">
+                UBR {Math.round(ubrRating.rating)} · {ubrRating.tier}
+              </p>
+            )}
           </div>
         </div>
       </div>

@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.32.6] - 2026-05-01
+
+### Fixed
+- **Player profile sticky header** — now blends with the nav bar (uses page background instead of card surface). Back button moved inside the sticky area. No more floating grey card.
+
+---
+
 ## [0.32.5] - 2026-05-01
 
 ### Changed
