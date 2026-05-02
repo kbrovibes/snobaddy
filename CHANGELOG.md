@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.30.13] - 2026-05-01
+
+### Fixed
+- **Tally photo import** — Players extracted with 0 wins and 0 losses are now automatically excluded from the tally list.
+
+---
+
 ## [0.30.12] - 2026-04-28
 
 ### Fixed

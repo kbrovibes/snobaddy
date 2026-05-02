@@ -153,7 +153,9 @@ export default function TallyEntryForm({
         unmatched: boolean;
       };
 
-      const extracted: ExtractedEntry[] = data.entries ?? [];
+      const extracted: ExtractedEntry[] = (data.entries ?? []).filter(
+        (entry: ExtractedEntry) => entry.wins > 0 || entry.losses > 0
+      );
       setRows(
         extracted.map((entry) => ({
           player_id: entry.player_id ?? "",
