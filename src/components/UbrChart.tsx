@@ -107,9 +107,9 @@ export default function UbrChart({ history, currentRating }: { history: UbrHisto
           <g key={tick}>
             <line
               x1={PAD_L} y1={y(tick)} x2={CHART_W - PAD_R} y2={y(tick)}
-              stroke="var(--border)" strokeWidth={0.5} strokeDasharray="3,3"
+              className="stroke-stone-200 dark:stroke-stone-700" strokeWidth={0.5} strokeDasharray="3,3"
             />
-            <text x={PAD_L - 4} y={y(tick) + 3} textAnchor="end" fontSize={8} fill="var(--muted-lt)">
+            <text x={PAD_L - 4} y={y(tick) + 3} textAnchor="end" fontSize={8} className="fill-stone-400 dark:fill-stone-500">
               {tick}
             </text>
           </g>
@@ -132,7 +132,7 @@ export default function UbrChart({ history, currentRating }: { history: UbrHisto
 
         {/* X-axis labels */}
         {xLabels.map(({ i, label }) => (
-          <text key={i} x={x(i)} y={CHART_H - 4} textAnchor="middle" fontSize={7} fill="var(--muted-lt)">
+          <text key={i} x={x(i)} y={CHART_H - 4} textAnchor="middle" fontSize={7} className="fill-stone-400 dark:fill-stone-500">
             {label}
           </text>
         ))}

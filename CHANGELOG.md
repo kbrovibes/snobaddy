@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.31.1] - 2026-05-01
+
+### Fixed
+- **UBR chart dark mode** — axis labels and grid lines now visible in dark mode.
+
+---
+
 ## [0.31.0] - 2026-05-01
 
 ### Added
