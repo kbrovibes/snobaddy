@@ -4,14 +4,17 @@ import NavLink from "@/components/NavLink";
 import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Session", icon: "🏸", adminOnly: false },
-  { href: "/players", label: "Players", icon: "👥", adminOnly: false },
-  { href: "/leaderboard", label: "Leaderboard", icon: "🏆", adminOnly: true },
+  { href: "/", label: "Session", icon: "🏸", adminOnly: false, godModeOnly: false },
+  { href: "/players", label: "Players", icon: "👥", adminOnly: false, godModeOnly: false },
+  { href: "/leaderboard", label: "Leaderboard", icon: "🏆", adminOnly: true, godModeOnly: false },
+  { href: "/admin/seasons", label: "Seasons", icon: "📅", adminOnly: false, godModeOnly: true },
 ];
 
 export default function BottomNav({ isAdmin, isGodMode }: { isAdmin: boolean; isGodMode: boolean }) {
   const pathname = usePathname();
-  const visibleItems = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
+  const visibleItems = NAV_ITEMS.filter(
+    (item) => (!item.adminOnly || isAdmin) && (!item.godModeOnly || isGodMode)
+  );
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 flex bg-surface border-t border-border-light">

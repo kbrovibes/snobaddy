@@ -9,7 +9,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [0.32.0] - 2026-05-01
 
 ### Added
-- **Season Lifecycle Management** — Seasons now have status (active/upcoming/completed). At most one season can be active at a time. Session and finals creation automatically link to the active season. Foundation for full season management UI (Spec 34).
+- **Season Lifecycle Management** — Seasons now have status (active/upcoming/completed). At most one season can be active at a time. Session and finals creation automatically link to the active season. New Seasons management page (god mode only) with create/close/start/reopen. New 📅 Seasons tab in bottom nav for god mode users. (Spec 34)
 
 ---
 
