@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 
 interface UbrHistoryPoint {
   session_date: string;
@@ -106,23 +106,10 @@ export default function UbrChart({ history, currentRating }: { history: UbrHisto
   const lineColor = getTierColor(currentRating);
   const lastChange = history[history.length - 1]?.rating_change ?? 0;
 
-  // Touch/hover handling
-  function handleInteraction(clientX: number) {
-    if (!svgRef.current) return;
-    const rect = svgRef.current.getBoundingClientRect();
-    const relX = ((clientX - rect.left) / rect.width) * CHART_W;
-    // Find nearest point
-    let nearest = 0;
-    let nearestDist = Infinity;
-    for (let i = 0; i < points.length; i++) {
-      const dist = Math.abs(relX - xPos(i));
-      if (dist < nearestDist) {
-        nearestDist = dist;
-        nearest = i;
-      }
-    }
-    setActiveIdx(nearest);
-  }
+  // Tap on a dot to toggle its tooltip — no drag/swipe interference
+  const handleDotTap = useCallback((idx: number) => {
+    setActiveIdx((prev) => (prev === idx ? null : idx));
+  }, []);
 
   const active = activeIdx !== null ? points[activeIdx] : null;
 
@@ -162,16 +149,9 @@ export default function UbrChart({ history, currentRating }: { history: UbrHisto
       <svg
         ref={svgRef}
         viewBox={`0 0 ${CHART_W} ${CHART_H}`}
-        className="w-full touch-none"
+        className="w-full"
         style={{ maxHeight: 180 }}
         preserveAspectRatio="xMidYMid meet"
-        onMouseMove={(e) => handleInteraction(e.clientX)}
-        onMouseLeave={() => setActiveIdx(null)}
-        onTouchMove={(e) => {
-          e.preventDefault();
-          handleInteraction(e.touches[0].clientX);
-        }}
-        onTouchEnd={() => setActiveIdx(null)}
       >
         {/* Grid lines */}
         {yTicks.map((tick) => (
@@ -196,20 +176,25 @@ export default function UbrChart({ history, currentRating }: { history: UbrHisto
         {/* Line */}
         <path d={pathData} fill="none" stroke={lineColor} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
 
-        {/* Initial point marker (hollow circle) */}
-        <circle cx={xPos(0)} cy={yPos(points[0].rating)} r={4} fill="none" stroke={lineColor} strokeWidth={1.5} />
-        <circle cx={xPos(0)} cy={yPos(points[0].rating)} r={1.5} fill={lineColor} />
+        {/* Initial point marker (hollow circle) — tappable */}
+        <g onClick={() => handleDotTap(0)} className="cursor-pointer">
+          <circle cx={xPos(0)} cy={yPos(points[0].rating)} r={12} fill="transparent" />
+          <circle cx={xPos(0)} cy={yPos(points[0].rating)} r={activeIdx === 0 ? 5 : 4} fill="none" stroke={lineColor} strokeWidth={1.5} className="transition-[r] duration-100" />
+          <circle cx={xPos(0)} cy={yPos(points[0].rating)} r={1.5} fill={lineColor} />
+        </g>
 
-        {/* Session dots */}
+        {/* Session dots — tappable */}
         {points.slice(1).map((p, i) => (
-          <circle
-            key={i + 1}
-            cx={xPos(i + 1)}
-            cy={yPos(p.rating)}
-            r={activeIdx === i + 1 ? 4.5 : 2.5}
-            fill={lineColor}
-            className="transition-[r] duration-100"
-          />
+          <g key={i + 1} onClick={() => handleDotTap(i + 1)} className="cursor-pointer">
+            <circle cx={xPos(i + 1)} cy={yPos(p.rating)} r={12} fill="transparent" />
+            <circle
+              cx={xPos(i + 1)}
+              cy={yPos(p.rating)}
+              r={activeIdx === i + 1 ? 5 : 2.5}
+              fill={lineColor}
+              className="transition-[r] duration-100"
+            />
+          </g>
         ))}
 
         {/* Active crosshair */}

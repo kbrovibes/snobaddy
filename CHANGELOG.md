@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.32.7] - 2026-05-01
+
+### Fixed
+- **UBR chart interaction** — tooltip now only appears when tapping a specific dot (toggle on/off). No more accidental activation while scrolling.
+
+---
+
 ## [0.32.6] - 2026-05-01
 
 ### Fixed
