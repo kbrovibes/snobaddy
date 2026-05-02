@@ -277,9 +277,9 @@ The player profile page (`/players/[id]`) shows session history. This should con
 
 ### 7.7 UBR Ratings
 
-UBR ratings are **all-time** — they do not reset per season. The UBR algorithm (still in development) processes matches across all seasons.
+UBR ratings are **all-time** — they do not reset per season. The UBR algorithm processes matches across all seasons. The `getAllUbrRatings()` function is explicitly **not** passed a `seasonId` in the leaderboard page, ensuring ratings remain cross-season while W/L stats are season-scoped.
 
-**No change needed for UBR.**
+**No change needed for UBR.** This is enforced by keeping UBR queries separate from the season-scoped `getActivePlayers()` and `getSeasonMatchCount()` calls.
 
 ---
 

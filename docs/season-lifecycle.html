@@ -465,6 +465,49 @@
     <span class="badge">Spec 34</span>
   </div>
 
+  <!-- Implementation Progress -->
+  <section>
+    <h2>Implementation Progress</h2>
+
+    <div class="card card-green" style="margin-bottom:20px;">
+      <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>Status: Complete</span>
+        <span style="font-size:0.85rem;font-weight:800;color:var(--green);">11 / 11 tasks</span>
+      </div>
+      <div style="background:var(--border);border-radius:6px;height:10px;margin-top:8px;overflow:hidden;">
+        <div style="background:var(--green);height:100%;width:100%;border-radius:6px;transition:width 0.3s;"></div>
+      </div>
+    </div>
+
+    <table>
+      <thead><tr><th>#</th><th>Task</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>DB migration: add <code>status</code> column to seasons</td><td style="color:var(--green);font-weight:700;">Done</td></tr>
+        <tr><td>2</td><td>Create <code>src/lib/db/seasons.ts</code> — season queries</td><td style="color:var(--green);font-weight:700;">Done</td></tr>
+        <tr><td>3</td><td>Update session/finals creation to use <code>status='active'</code></td><td style="color:var(--green);font-weight:700;">Done</td></tr>
+        <tr><td>4</td><td>Create season API routes (GET/POST + PATCH status)</td><td style="color:var(--green);font-weight:700;">Done</td></tr>
+        <tr><td>5</td><td>Create SeasonCard + CreateSeasonForm components</td><td style="color:var(--green);font-weight:700;">Done</td></tr>
+        <tr><td>6</td><td>Create <code>/admin/seasons</code> page (god mode only)</td><td style="color:var(--green);font-weight:700;">Done</td></tr>
+        <tr><td>7</td><td>Add Seasons tab to BottomNav (god mode only)</td><td style="color:var(--green);font-weight:700;">Done</td></tr>
+        <tr><td>8</td><td>Add <code>seasonId</code> param to <code>getAllSessions()</code></td><td style="color:var(--green);font-weight:700;">Done</td></tr>
+        <tr><td>9</td><td>Scope leaderboard to active season (UBR stays all-time)</td><td style="color:var(--green);font-weight:700;">Done</td></tr>
+        <tr><td>10</td><td>Handle edge cases + empty states</td><td style="color:var(--green);font-weight:700;">Done</td></tr>
+        <tr><td>11</td><td>Update this page with live progress</td><td style="color:var(--green);font-weight:700;">Done</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card card-purple" style="margin-top:16px;">
+      <div class="card-title">UBR Rating — Cross-Season by Design</div>
+      <div class="card-body">
+        UBR ratings (from <code>src/lib/db/ubr.ts</code> and the <code>ubr_ratings</code> table) are explicitly <strong>not</strong> season-scoped.
+        The leaderboard's W/L stats reset per season, but <code>getAllUbrRatings()</code> always returns all-time ratings.
+        This is intentional — UBR represents a player's lifetime skill trajectory.
+      </div>
+    </div>
+  </section>
+
+  <hr />
+
   <!-- Overview -->
   <section>
     <h2>Overview</h2>

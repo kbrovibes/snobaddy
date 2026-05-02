@@ -32,8 +32,22 @@ export default async function SessionListPage({
   const isAdmin = currentPlayer?.is_admin ?? false;
 
   const activeSeason = await getActiveSeason();
+
+  // If no active season, show empty state (god mode can go create one)
+  if (!activeSeason) {
+    return (
+      <div className="flex flex-col items-center justify-center px-4 py-16 gap-4 text-center">
+        <span className="text-4xl">📅</span>
+        <h2 className="text-lg font-bold text-heading">No Active Season</h2>
+        <p className="text-sm text-muted-light max-w-xs">
+          There is no season currently running. {isAdmin ? "An admin with god mode can start one from the Seasons page." : "Check back soon!"}
+        </p>
+      </div>
+    );
+  }
+
   const [sessions, allFinalsEvents] = await Promise.all([
-    getAllSessions(activeSeason?.id),
+    getAllSessions(activeSeason.id),
     isAdmin ? getAllFinals() : Promise.resolve([]),
   ]);
   // Current = most recent non-completed, or most recent overall
