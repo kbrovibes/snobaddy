@@ -461,24 +461,33 @@ export async function getSessionHighlights(sessionId: string): Promise<SessionHi
   };
 }
 
-export async function getSeasonMatchCount(options?: { includeTestSessions?: boolean }): Promise<number> {
+export async function getSeasonMatchCount(options?: { includeTestSessions?: boolean; seasonId?: string }): Promise<number> {
   const supabase = await createClient();
   const includeTest = options?.includeTestSessions ?? false;
+  const seasonId = options?.seasonId;
 
-  const matchQuery = includeTest
-    ? supabase.from("matches").select("*", { count: "exact", head: true }).eq("match_type", "regular")
+  let matchQuery = includeTest
+    ? supabase.from("matches").select("*, sessions!inner(is_test_session, season_id)", { count: "exact", head: true }).eq("match_type", "regular")
     : supabase
         .from("matches")
-        .select("*, sessions!inner(is_test_session)", { count: "exact", head: true })
+        .select("*, sessions!inner(is_test_session, season_id)", { count: "exact", head: true })
         .eq("sessions.is_test_session", false)
         .eq("match_type", "regular");
 
-  const tallyQuery = includeTest
-    ? supabase.from("session_tally").select("wins")
+  if (seasonId) {
+    matchQuery = matchQuery.eq("sessions.season_id", seasonId);
+  }
+
+  let tallyQuery = includeTest
+    ? supabase.from("session_tally").select("wins, sessions!inner(is_test_session, season_id)")
     : supabase
         .from("session_tally")
-        .select("wins, sessions!inner(is_test_session)")
+        .select("wins, sessions!inner(is_test_session, season_id)")
         .eq("sessions.is_test_session", false);
+
+  if (seasonId) {
+    tallyQuery = tallyQuery.eq("sessions.season_id", seasonId);
+  }
 
   const [{ count: matchCount }, { data: tallyData }] = await Promise.all([matchQuery, tallyQuery]);
 

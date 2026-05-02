@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getActiveSession, getAllSessions, getSeasonStats } from "@/lib/db/sessions";
+import { getActiveSeason } from "@/lib/db/seasons";
 import { getActiveFinals, getAllFinals, getFinalsSessionPair } from "@/lib/db/finals";
 import { createClient } from "@/lib/supabase-server";
 import CreateSessionButton from "@/components/CreateSessionButton";
@@ -30,8 +31,9 @@ export default async function SessionListPage({
     .maybeSingle();
   const isAdmin = currentPlayer?.is_admin ?? false;
 
+  const activeSeason = await getActiveSeason();
   const [sessions, allFinalsEvents] = await Promise.all([
-    getAllSessions(),
+    getAllSessions(activeSeason?.id),
     isAdmin ? getAllFinals() : Promise.resolve([]),
   ]);
   // Current = most recent non-completed, or most recent overall

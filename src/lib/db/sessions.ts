@@ -87,13 +87,19 @@ export async function getActiveSession(): Promise<Session | null> {
   return { ...data, simple_score_tracking: true, tally_photo_path: null, whiteboard_mode: true, season: (data.seasons as unknown as Session["season"]) };
 }
 
-export async function getAllSessions(): Promise<SessionRow[]> {
+export async function getAllSessions(seasonId?: string): Promise<SessionRow[]> {
   const supabase = await createClient();
 
-  const { data } = await supabase
+  let query = supabase
     .from("sessions")
     .select("id, date, status, is_test_session, session_type, seasons(name), matches(count), session_tally(count)")
     .order("date", { ascending: false });
+
+  if (seasonId) {
+    query = query.eq("season_id", seasonId);
+  }
+
+  const { data } = await query;
   if (!data) return [];
   return data
     .filter((row) => (row as unknown as { session_type?: string }).session_type !== "finals")

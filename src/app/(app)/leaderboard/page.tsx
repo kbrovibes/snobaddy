@@ -4,6 +4,7 @@ import { getActivePlayers } from "@/lib/db/players";
 import { getSeasonMatchCount } from "@/lib/db/matches";
 import { getAllUbrRatings, type UbrRating } from "@/lib/db/ubr";
 import { getAppSetting } from "@/lib/db/settings";
+import { getActiveSeason } from "@/lib/db/seasons";
 import LeaderboardTable from "./LeaderboardTable";
 import { createClient } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
@@ -17,12 +18,16 @@ export default async function LeaderboardPage() {
 
   if (!isAdmin) redirect("/");
 
+  const activeSeason = await getActiveSeason();
+  const seasonId = activeSeason?.id;
+
+  // Season-scoped: W/L stats are per-season. UBR ratings are all-time (cross-season).
   const [allPlayers, allPlayersWithTest, totalMatches, totalMatchesWithTest, ubrMap, ubrEnabledSetting] = await Promise.all([
-    getActivePlayers(),
-    getActivePlayers({ includeTestSessions: true }),
-    getSeasonMatchCount(),
-    getSeasonMatchCount({ includeTestSessions: true }),
-    getAllUbrRatings(),
+    getActivePlayers({ seasonId }),
+    getActivePlayers({ includeTestSessions: true, seasonId }),
+    getSeasonMatchCount({ seasonId }),
+    getSeasonMatchCount({ includeTestSessions: true, seasonId }),
+    getAllUbrRatings(),       // UBR is all-time — never season-scoped
     getAppSetting("ubr_enabled"),
   ]);
 

@@ -15,28 +15,37 @@ export interface PlayerStats {
 
 
 export async function getActivePlayers(
-  options?: { includeTestSessions?: boolean }
+  options?: { includeTestSessions?: boolean; seasonId?: string }
 ): Promise<PlayerStats[]> {
   const supabase = await createClient();
   const includeTest = options?.includeTestSessions ?? false;
+  const seasonId = options?.seasonId;
 
-  const matchesQuery = includeTest
+  let matchesQuery = includeTest
     ? supabase
         .from("matches")
-        .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team")
+        .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team, sessions!inner(is_test_session, season_id)")
         .eq("match_type", "regular")
     : supabase
         .from("matches")
-        .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team, sessions!inner(is_test_session)")
+        .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team, sessions!inner(is_test_session, season_id)")
         .eq("sessions.is_test_session", false)
         .eq("match_type", "regular");
 
-  const talliesQuery = includeTest
-    ? supabase.from("session_tally").select("player_id, wins, losses")
+  if (seasonId) {
+    matchesQuery = matchesQuery.eq("sessions.season_id", seasonId);
+  }
+
+  let talliesQuery = includeTest
+    ? supabase.from("session_tally").select("player_id, wins, losses, sessions!inner(is_test_session, season_id)")
     : supabase
         .from("session_tally")
-        .select("player_id, wins, losses, sessions!inner(is_test_session)")
+        .select("player_id, wins, losses, sessions!inner(is_test_session, season_id)")
         .eq("sessions.is_test_session", false);
+
+  if (seasonId) {
+    talliesQuery = talliesQuery.eq("sessions.season_id", seasonId);
+  }
 
   const [
     { data: players, error },
