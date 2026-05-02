@@ -13,6 +13,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.32.8] - 2026-05-01
+
+### Changed
+- **Player list UBR** — removed tier label (Gold, Silver, etc.), now shows just "UBR 2650". Still admin-only.
+
+---
+
 ## [0.32.7] - 2026-05-01
 
 ### Fixed
