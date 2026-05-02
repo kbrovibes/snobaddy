@@ -180,45 +180,49 @@ export default async function PlayerProfilePage({
         <BackButton />
       </div>
 
-      {/* Player header */}
-      <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-4">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-sky-100 dark:bg-sky-500/15 flex items-center justify-center text-sky-700 text-xl font-bold shrink-0">
-            {player.name.charAt(0).toUpperCase()}
-          </div>
-          <div className="flex-1 min-w-0">
-            <EditPlayerForm
-              playerId={id}
-              currentName={player.name}
-              currentSkillLevel={player.skill_level}
-              isGodMode={isGodMode}
-            />
-          </div>
-          <div className="text-right shrink-0">
-            <p className="text-2xl font-bold text-heading">{overallPct}%</p>
-            <p className="text-xs text-muted-light">{totalWins}W {totalLosses}L</p>
-            {ubrEnabled && ubrRating && (
-              <p className="text-xs font-bold text-purple-600 dark:text-purple-400 mt-0.5">
-                UBR {Math.round(ubrRating.rating)} · {ubrRating.tier}
-              </p>
-            )}
-          </div>
-        </div>
-        {poem && (
-          <div className="mt-3 border-t border-border-light pt-3">
-            <p className="text-sm italic text-text-light leading-relaxed">{poem}</p>
-            <div className="mt-2">
-              <p className="text-[10px] italic text-muted-lighter">— Written by an AI that has never touched a shuttlecock</p>
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-[10px] italic text-muted-lighter">
-                  &nbsp;&nbsp;{poemCreatedAt ? new Date(poemCreatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "unknown date"}
+      {/* Player header — sticky */}
+      <div className="sticky top-0 z-20 -mx-4 px-4 pt-1 pb-2 bg-bg">
+        <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-500/15 flex items-center justify-center text-sky-700 text-lg font-bold shrink-0">
+              {player.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="flex-1 min-w-0">
+              <EditPlayerForm
+                playerId={id}
+                currentName={player.name}
+                currentSkillLevel={player.skill_level}
+                isGodMode={isGodMode}
+              />
+            </div>
+            <div className="text-right shrink-0">
+              <p className="text-2xl font-bold text-heading">{overallPct}%</p>
+              <p className="text-xs text-muted-light">{totalWins}W {totalLosses}L</p>
+              {ubrEnabled && ubrRating && (
+                <p className="text-xs font-bold text-purple-600 dark:text-purple-400 mt-0.5">
+                  UBR {Math.round(ubrRating.rating)} · {ubrRating.tier}
                 </p>
-                {isGodMode && <RegeneratePoemButton playerId={id} />}
-              </div>
+              )}
             </div>
           </div>
-        )}
+        </div>
       </div>
+
+      {/* Poem card */}
+      {poem && (
+        <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
+          <p className="text-sm italic text-text-light leading-relaxed">{poem}</p>
+          <div className="mt-2">
+            <p className="text-[10px] italic text-muted-lighter">— Written by an AI that has never touched a shuttlecock</p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-[10px] italic text-muted-lighter">
+                &nbsp;&nbsp;{poemCreatedAt ? new Date(poemCreatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "unknown date"}
+              </p>
+              {isGodMode && <RegeneratePoemButton playerId={id} />}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Theme toggle — own profile only */}
       {player.user_id === user!.id && (

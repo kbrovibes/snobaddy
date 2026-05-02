@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.32.4] - 2026-05-01
+
+### Changed
+- **Player profile** — header (name, win%, UBR) now stays sticky at the top while scrolling. Poem moved to its own card below.
+
+---
+
 ## [0.32.3] - 2026-05-01
 
 ### Added
