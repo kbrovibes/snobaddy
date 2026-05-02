@@ -36,20 +36,20 @@ export async function POST() {
     return NextResponse.json({ ok: true });
   }
 
-  // No session yet — link to the most recent season
+  // No session yet — link to the active season
   const { data: season } = await adminDb
     .from("seasons")
     .select("id")
-    .order("start_date", { ascending: false })
-    .limit(1)
+    .eq("status", "active")
     .maybeSingle();
+  if (!season) return NextResponse.json({ error: "No active season. Start a season first." }, { status: 400 });
 
   const { error } = await adminDb
     .from("sessions")
     .insert({
       date: today,
       status: "active",
-      season_id: season?.id ?? null,
+      season_id: season.id,
       started_by: player.id,
       started_at: now,
     });

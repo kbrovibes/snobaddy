@@ -16,12 +16,11 @@ export async function POST() {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // Get the most recent season
+  // Get the active season
   const { data: season } = await adminDb
     .from("seasons")
     .select("id, name")
-    .order("start_date", { ascending: false })
-    .limit(1)
+    .eq("status", "active")
     .maybeSingle();
 
   if (!season) {
