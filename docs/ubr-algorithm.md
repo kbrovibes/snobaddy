@@ -24,16 +24,15 @@ Snobaddy UBR is a **modified Elo rating system** designed for recreational doubl
 
 ## 2. Rating scale
 
-| Range | Tier | Description |
-|-------|------|-------------|
-| < 2500 | Shuttle | Beginner — learning the game |
-| 2500–3499 | Bronze | Recreational — enjoys regular play |
-| 3500–4499 | Silver | Intermediate — consistent rallies, developing strategy |
-| 4500–5499 | Gold | Advanced-Intermediate — strong court awareness |
-| 5500–6499 | Platinum | Advanced — powerful smashes, deceptive drops |
-| 6500+ | Diamond | Expert — elite club-level player |
+Ratings are numeric with no tier labels. Displayed as integers. Internal calculations use floating point.
 
-Ratings are displayed as integers. Internal calculations use floating point.
+| Range | Skill Level |
+|-------|-------------|
+| ~2500 | Beginner |
+| ~3500 | Intermediate |
+| ~4500 | Advanced-Intermediate |
+| ~5500 | Advanced |
+| ~6500+ | Expert |
 
 ---
 
@@ -45,17 +44,13 @@ A player's initial UBR is seeded from their `skill_level` (1.0–5.0 numeric, se
 initial_ubr = 1500 + (skill_level × 1000)
 ```
 
-| Skill Level | Initial UBR | Tier |
-|-------------|-------------|------|
-| 1.0 | 2500 | Bronze |
-| 1.5 | 3000 | Bronze |
-| 2.0 | 3500 | Silver |
-| 2.5 | 4000 | Silver |
-| 3.0 | 4500 | Gold |
-| 3.5 | 5000 | Gold |
-| 4.0 | 5500 | Platinum |
-| 4.5 | 6000 | Platinum |
-| 5.0 | 6500 | Diamond |
+| Skill Level | Initial UBR |
+|-------------|-------------|
+| 1.0 | 2500 |
+| 2.0 | 3500 |
+| 3.0 | 4500 |
+| 4.0 | 5500 |
+| 5.0 | 6500 |
 
 Players also start with:
 - **Rating Deviation (RD):** 350 (high uncertainty — "we don't know this player well yet")
@@ -312,7 +307,7 @@ This ensures ratings are always reproducible and auditable.
 | `rating` | numeric(8,2) | Current UBR rating |
 | `rating_deviation` | numeric(6,2) | Current RD (confidence) |
 | `match_count` | integer | Total rated matches processed |
-| `tier` | text | Computed tier label (Shuttle/Bronze/Silver/Gold/Platinum/Diamond) |
+| `tier` | text | Legacy field (not displayed in UI) |
 | `updated_at` | timestamptz | Last recalculation time |
 
 ### `ubr_history` (audit trail — one row per session per player)
@@ -433,8 +428,8 @@ Player X was expected to win 85% but only won 75% — slight rating drop despite
 
 ## 14. Display
 
-- **Leaderboard:** Show UBR rating, tier badge, and trend arrow (up/down/stable based on last 3 sessions)
-- **Player profile:** Show UBR rating, tier, RD (as "confidence: high/medium/low"), rating history sparkline
+- **Leaderboard:** Show UBR rating number and trend arrow (up/down/stable based on last 3 sessions)
+- **Player profile:** Show UBR rating number, rating history chart, confidence label
 - **Session results:** Show per-player rating change (+/- after each session)
 
 ### Confidence labels
