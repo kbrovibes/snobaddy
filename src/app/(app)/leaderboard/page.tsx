@@ -2,6 +2,8 @@ export const dynamic = "force-dynamic";
 
 import { getActivePlayers } from "@/lib/db/players";
 import { getSeasonMatchCount } from "@/lib/db/matches";
+import { getAllUbrRatings, type UbrRating } from "@/lib/db/ubr";
+import { getAppSetting } from "@/lib/db/settings";
 import LeaderboardTable from "./LeaderboardTable";
 import { createClient } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
@@ -15,12 +17,21 @@ export default async function LeaderboardPage() {
 
   if (!isAdmin) redirect("/");
 
-  const [allPlayers, allPlayersWithTest, totalMatches, totalMatchesWithTest] = await Promise.all([
+  const [allPlayers, allPlayersWithTest, totalMatches, totalMatchesWithTest, ubrMap, ubrEnabledSetting] = await Promise.all([
     getActivePlayers(),
     getActivePlayers({ includeTestSessions: true }),
     getSeasonMatchCount(),
     getSeasonMatchCount({ includeTestSessions: true }),
+    getAllUbrRatings(),
+    getAppSetting("ubr_enabled"),
   ]);
+
+  const ubrEnabled = ubrEnabledSetting === "true";
+  // Convert Map to plain object for client component serialization
+  const ubrRatings: Record<string, UbrRating> = {};
+  for (const [k, v] of ubrMap) {
+    ubrRatings[k] = v;
+  }
 
   return (
     <div className="px-4 py-4 pb-20">
@@ -32,6 +43,7 @@ export default async function LeaderboardPage() {
         totalMatches={totalMatches}
         totalMatchesWithTest={totalMatchesWithTest}
         isAdmin={isAdmin}
+        ubrRatings={ubrEnabled ? ubrRatings : undefined}
       />
     </div>
   );

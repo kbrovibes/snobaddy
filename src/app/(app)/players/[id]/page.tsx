@@ -2,8 +2,11 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase-server";
 import { getPlayerById, getPlayerPoem, getPlayerPoemContext, upsertPlayerPoem } from "@/lib/db/players";
 import { getPlayerSessionHistory, getPlayerMatchesBySession } from "@/lib/db/matches";
+import { getPlayerUbrRating, getPlayerUbrHistory, getTier } from "@/lib/db/ubr";
+import { getAppSetting } from "@/lib/db/settings";
 import { generatePlayerPoem } from "@/lib/ai/poem";
 import SessionStatsChart from "@/components/SessionStatsChart";
+import UbrChart from "@/components/UbrChart";
 import BackButton from "@/components/BackButton";
 import IncludeTestToggle from "@/components/IncludeTestToggle";
 import EditPlayerForm from "@/components/EditPlayerForm";
@@ -43,10 +46,15 @@ export default async function PlayerProfilePage({
   const player = await getPlayerById(id);
   if (!player) redirect("/");
 
-  const [sessionHistory, matchesBySession] = await Promise.all([
+  const [sessionHistory, matchesBySession, ubrRating, ubrHistory, ubrEnabledSetting] = await Promise.all([
     getPlayerSessionHistory(id, { includeTestSessions }),
     getPlayerMatchesBySession(id, { includeTestSessions }),
+    getPlayerUbrRating(id),
+    getPlayerUbrHistory(id),
+    getAppSetting("ubr_enabled"),
   ]);
+
+  const ubrEnabled = ubrEnabledSetting === "true";
 
   // Collect all names from match history to build disambiguation map
   const allMatchNames = matchesBySession.flatMap((g) =>
@@ -106,6 +114,11 @@ export default async function PlayerProfilePage({
           <div className="text-right shrink-0">
             <p className="text-2xl font-bold text-heading">{overallPct}%</p>
             <p className="text-xs text-muted-light">{totalWins}W {totalLosses}L</p>
+            {ubrEnabled && ubrRating && (
+              <p className="text-xs font-bold text-purple-600 dark:text-purple-400 mt-0.5">
+                UBR {Math.round(ubrRating.rating)} · {ubrRating.tier}
+              </p>
+            )}
           </div>
         </div>
         {poem && (
@@ -144,6 +157,24 @@ export default async function PlayerProfilePage({
         </div>
         <SessionStatsChart data={sessionHistory} />
       </div>
+
+      {/* UBR progression */}
+      {ubrEnabled && ubrRating && (
+        <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
+          <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide mb-3">
+            UBR Rating
+          </h2>
+          <UbrChart
+            history={ubrHistory.map((h) => ({
+              session_date: h.session_date,
+              rating_before: h.rating_before,
+              rating_after: h.rating_after,
+              rating_change: h.rating_change,
+            }))}
+            currentRating={ubrRating.rating}
+          />
+        </div>
+      )}
 
       {/* Match history */}
       <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">

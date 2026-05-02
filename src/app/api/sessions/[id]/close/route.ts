@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase-server";
 import { notifyAdmins } from "@/lib/push";
+import { processSessionUbr } from "@/lib/db/ubr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(
@@ -75,6 +76,16 @@ export async function POST(
     body: `Session for ${closeDateLabel} has been closed`,
     url: `/session/${id}`,
   }).catch(() => {});
+
+  // Recalculate UBR ratings (fire-and-forget, non-test sessions only)
+  const { data: sessCheck } = await supabase
+    .from("sessions")
+    .select("is_test_session")
+    .eq("id", id)
+    .maybeSingle();
+  if (sessCheck && !sessCheck.is_test_session) {
+    processSessionUbr(id).catch(() => {});
+  }
 
   return NextResponse.json({ ok: true });
 }

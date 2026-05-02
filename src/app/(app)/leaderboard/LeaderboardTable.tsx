@@ -5,10 +5,11 @@ import NavLink from "@/components/NavLink";
 import type { PlayerStats } from "@/lib/db/players";
 import { VerifiedBadge, AdminBadge } from "@/components/PlayerBadges";
 import { buildNameMap, shortName } from "@/lib/display-name";
+import type { UbrRating } from "@/lib/db/ubr";
 
 const LS_KEY = "snobaddy:leaderboard-show-test";
 
-type SortKey = "name" | "matches_played" | "wins" | "losses" | "win_pct";
+type SortKey = "name" | "matches_played" | "wins" | "losses" | "win_pct" | "ubr";
 type SortDir = "asc" | "desc";
 
 function winPct(p: PlayerStats) {
@@ -34,7 +35,7 @@ function AwardCard({ emoji, title, description, name, stat }: {
   );
 }
 
-const COLUMNS: { key: SortKey; label: string; title: string }[] = [
+const BASE_COLUMNS: { key: SortKey; label: string; title: string }[] = [
   { key: "name",          label: "Player",  title: "Player"         },
   { key: "matches_played",label: "M",       title: "Matches played" },
   { key: "wins",          label: "W",       title: "Wins"           },
@@ -42,22 +43,33 @@ const COLUMNS: { key: SortKey; label: string; title: string }[] = [
   { key: "win_pct",       label: "W%",      title: "Win percentage" },
 ];
 
+const UBR_COLUMN = { key: "ubr" as SortKey, label: "UBR", title: "Universal Badminton Rating" };
+
+const LS_UBR_KEY = "snobaddy:leaderboard-show-ubr";
+
 export default function LeaderboardTable({
   players,
   playersWithTest,
   totalMatches,
   totalMatchesWithTest,
   isAdmin,
+  ubrRatings,
 }: {
   players: PlayerStats[];
   playersWithTest: PlayerStats[];
   totalMatches: number;
   totalMatchesWithTest: number;
   isAdmin: boolean;
+  ubrRatings?: Record<string, UbrRating>;
 }) {
   const [sortKey, setSortKey] = useState<SortKey>("wins");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [showTest, setShowTest] = useState(false);
+  const [showUbr, setShowUbr] = useState(false);
+
+  useEffect(() => {
+    try { setShowUbr(localStorage.getItem(LS_UBR_KEY) === "true"); } catch {}
+  }, []);
 
   useEffect(() => {
     try { setShowTest(localStorage.getItem(LS_KEY) === "true"); } catch {}
@@ -68,6 +80,15 @@ export default function LeaderboardTable({
     setShowTest(next);
     try { localStorage.setItem(LS_KEY, String(next)); } catch {}
   }
+
+  function toggleShowUbr() {
+    const next = !showUbr;
+    setShowUbr(next);
+    try { localStorage.setItem(LS_UBR_KEY, String(next)); } catch {}
+  }
+
+  const hasUbr = !!ubrRatings && Object.keys(ubrRatings).length > 0;
+  const ubrVisible = hasUbr && showUbr;
 
   const activePlayers = showTest ? playersWithTest : players;
   const matchCount = showTest ? totalMatchesWithTest : totalMatches;
@@ -106,6 +127,9 @@ export default function LeaderboardTable({
       av = winPct(a); bv = winPct(b);
     } else if (sortKey === "name") {
       av = a.name.toLowerCase(); bv = b.name.toLowerCase();
+    } else if (sortKey === "ubr") {
+      av = ubrRatings?.[a.id]?.rating ?? 0;
+      bv = ubrRatings?.[b.id]?.rating ?? 0;
     } else {
       av = a[sortKey]; bv = b[sortKey];
     }
@@ -138,21 +162,35 @@ export default function LeaderboardTable({
 
   return (
     <>
-      {/* Header row: player count + admin toggle */}
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-sm text-muted-light">{activePlayers.length} active players</span>
-        {isAdmin && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-light">Include Test Sessions</span>
-            <button
-              onClick={toggleShowTest}
-              className="relative inline-flex w-9 h-5 rounded-full transition-colors duration-200 focus:outline-none"
-              style={{ background: showTest ? "#f97316" : "var(--muted-lighter)" }}
-            >
-              <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showTest ? "translate-x-4" : "translate-x-0"}`} />
-            </button>
-          </div>
-        )}
+      {/* Header row: player count + toggles */}
+      <div className="flex items-center justify-between mb-4 gap-3">
+        <span className="text-sm text-muted-light shrink-0">{activePlayers.length} players</span>
+        <div className="flex items-center gap-4">
+          {hasUbr && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-light">UBR</span>
+              <button
+                onClick={toggleShowUbr}
+                className="relative inline-flex w-9 h-5 rounded-full transition-colors duration-200 focus:outline-none"
+                style={{ background: showUbr ? "#0ea5e9" : "var(--muted-lighter)" }}
+              >
+                <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showUbr ? "translate-x-4" : "translate-x-0"}`} />
+              </button>
+            </div>
+          )}
+          {isAdmin && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-light">Test</span>
+              <button
+                onClick={toggleShowTest}
+                className="relative inline-flex w-9 h-5 rounded-full transition-colors duration-200 focus:outline-none"
+                style={{ background: showTest ? "#f97316" : "var(--muted-lighter)" }}
+              >
+                <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showTest ? "translate-x-4" : "translate-x-0"}`} />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Award cards */}
@@ -183,52 +221,68 @@ export default function LeaderboardTable({
         <p className="text-center text-muted-light text-sm py-12">No active players yet.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border-light">
-                <th className="w-8 px-4 py-2 text-left text-xs font-medium text-muted-light">#</th>
-                {COLUMNS.map(({ key, label, title }) => (
-                  <th
-                    key={key}
-                    title={title}
-                    onClick={() => handleSort(key)}
-                    className={`py-2 text-xs font-semibold uppercase tracking-wide cursor-pointer select-none whitespace-nowrap
-                      ${key === "name" ? "px-2 text-left w-full" : "px-1.5 text-right"}
-                      ${sortKey === key ? "text-sky-600" : "text-muted-light hover:text-text"}`}
-                  >
-                    {label}{indicator(key)}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {sorted.map((player, i) => (
-                <tr
-                  key={player.id}
-                  className={`border-b border-border-light hover:bg-surface-alt/50 transition-colors ${getRankColor(player.id)}`}
-                >
-                  <td className={`px-4 py-1.5 text-xs font-bold text-right ${player.id === nutCracker?.id || player.id === badmintonNut?.id ? "text-heading" : "text-muted-lighter"}`}>
-                    {getRankBadge(i, player.id)}
-                  </td>
-                  <td className="px-2 py-1.5 font-medium text-heading">
-                    <span className="flex items-center gap-1 min-w-0">
-                      <NavLink href={`/players/${player.id}`} className="truncate text-sky-600 dark:text-sky-400 hover:underline active:opacity-60">
-                        {player.name}
-                      </NavLink>
-                      {player.user_id && <VerifiedBadge />}
-                      {player.is_admin && <AdminBadge />}
-                    </span>
-                  </td>
-                  <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.matches_played}</td>
-                  <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.wins}</td>
-                  <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.losses}</td>
-                  <td className="px-1.5 py-1.5 text-right tabular-nums font-bold text-heading">
-                    {formatPct(player)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {(() => {
+            const columns = ubrVisible
+              ? [...BASE_COLUMNS, UBR_COLUMN]
+              : BASE_COLUMNS;
+            return (
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border-light">
+                    <th className="w-8 px-4 py-2 text-left text-xs font-medium text-muted-light">#</th>
+                    {columns.map(({ key, label, title }) => (
+                      <th
+                        key={key}
+                        title={title}
+                        onClick={() => handleSort(key)}
+                        className={`py-2 text-xs font-semibold uppercase tracking-wide cursor-pointer select-none whitespace-nowrap
+                          ${key === "name" ? "px-2 text-left w-full" : "px-1.5 text-right"}
+                          ${key === "ubr" ? "text-purple-600 dark:text-purple-400" : ""}
+                          ${sortKey === key ? "text-sky-600" : key === "ubr" ? "" : "text-muted-light hover:text-text"}`}
+                      >
+                        {label}{indicator(key)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.map((player, i) => {
+                    const ubr = ubrRatings?.[player.id];
+                    return (
+                      <tr
+                        key={player.id}
+                        className={`border-b border-border-light hover:bg-surface-alt/50 transition-colors ${getRankColor(player.id)}`}
+                      >
+                        <td className={`px-4 py-1.5 text-xs font-bold text-right ${player.id === nutCracker?.id || player.id === badmintonNut?.id ? "text-heading" : "text-muted-lighter"}`}>
+                          {getRankBadge(i, player.id)}
+                        </td>
+                        <td className="px-2 py-1.5 font-medium text-heading">
+                          <span className="flex items-center gap-1 min-w-0">
+                            <NavLink href={`/players/${player.id}`} className="truncate text-sky-600 dark:text-sky-400 hover:underline active:opacity-60">
+                              {ubrVisible ? shortName(player.name, nameMap) : player.name}
+                            </NavLink>
+                            {!ubrVisible && player.user_id && <VerifiedBadge />}
+                            {!ubrVisible && player.is_admin && <AdminBadge />}
+                          </span>
+                        </td>
+                        <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.matches_played}</td>
+                        <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.wins}</td>
+                        <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.losses}</td>
+                        <td className="px-1.5 py-1.5 text-right tabular-nums font-bold text-heading">
+                          {formatPct(player)}
+                        </td>
+                        {ubrVisible && (
+                          <td className="px-1.5 py-1.5 text-right tabular-nums font-bold text-purple-700 dark:text-purple-400">
+                            {ubr ? Math.round(ubr.rating) : <span className="text-muted-lighter">—</span>}
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            );
+          })()}
         </div>
       )}
 

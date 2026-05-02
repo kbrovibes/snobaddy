@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase-server";
 import { getAppSetting } from "@/lib/db/settings";
 import TallyModelPicker from "@/components/TallyModelPicker";
+import { UbrVisibilityToggle, UbrRecalculateButton } from "@/components/UbrToggle";
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
@@ -119,15 +120,17 @@ export default async function ControlPanelPage() {
 
   if (!currentPlayer?.is_god_mode) redirect("/");
 
-  const [sb, vercel, tallyModel] = await Promise.allSettled([
+  const [sb, vercel, tallyModel, ubrEnabled] = await Promise.allSettled([
     getSupabaseMetrics(),
     getVercelMetrics(),
     getAppSetting("tally_extraction_model"),
+    getAppSetting("ubr_enabled"),
   ]);
 
   const sbData      = sb.status       === "fulfilled" ? sb.value        : null;
   const vData       = vercel.status   === "fulfilled" ? vercel.value    : null;
   const currentModel = tallyModel.status === "fulfilled" ? (tallyModel.value ?? "claude-3-5-haiku-20241022") : "claude-3-5-haiku-20241022";
+  const isUbrEnabled = ubrEnabled.status === "fulfilled" && ubrEnabled.value === "true";
   const sbError     = sb.status       === "rejected"  ? String(sb.reason) : null;
 
   return (
@@ -140,6 +143,12 @@ export default async function ControlPanelPage() {
       {/* ── AI Settings ── */}
       <Card title="Tally — AI Model">
         <TallyModelPicker current={currentModel} />
+      </Card>
+
+      {/* ── UBR Ratings ── */}
+      <Card title="UBR — Ratings">
+        <UbrVisibilityToggle enabled={isUbrEnabled} />
+        <UbrRecalculateButton />
       </Card>
 
       {/* ── Supabase ── */}

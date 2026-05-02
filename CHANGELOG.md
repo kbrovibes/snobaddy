@@ -6,6 +6,22 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.31.0] - 2026-05-01
+
+### Added
+- **UBR (Universal Badminton Rating)** — Elo-based rating system for all players.
+  - Ratings computed from match results (full scores, simple W/L, and whiteboard tallies)
+  - Score margin awareness: blowouts move ratings more than close games
+  - Tally-only sessions use session pool method with a quality discount
+  - Automatically recalculated when a non-test session is finalized
+  - **Leaderboard** — toggle to show UBR column (uses display names when shown for space)
+  - **Player profile** — UBR rating + tier badge in header, progression chart showing rating over time
+  - **God mode** — global toggle to enable/disable UBR visibility, full recalculate button
+- Rating tiers: Shuttle / Bronze / Silver / Gold / Platinum / Diamond (1000-6500+)
+- Full algorithm documented at `docs/ubr-algorithm.md` and visual version at GitHub Pages `/ubr.html`
+
+---
+
 ## [0.30.13] - 2026-05-01
 
 ### Fixed
