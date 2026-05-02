@@ -195,7 +195,7 @@ export default async function PlayerProfilePage({
             <p className="text-xs text-muted-light">{totalWins}W {totalLosses}L</p>
             {ubrEnabled && ubrRating && (
               <p className="text-xs font-bold text-purple-600 dark:text-purple-400 mt-0.5">
-                UBR {Math.round(ubrRating.rating)} · {ubrRating.tier}
+                UBR {Math.round(ubrRating.rating)}
               </p>
             )}
           </div>

@@ -131,7 +131,6 @@ export default function AdminPageContent({
                   initialStatus={initialStatus}
                   isAdmin={isAdmin}
                   ubrRating={ubrRatings?.[player.id]?.rating}
-                  ubrTier={ubrRatings?.[player.id]?.tier}
                 />
                 {godModeActive && (
                   <DeletePlayerButton playerId={player.id} playerName={player.name} />

@@ -34,7 +34,6 @@ interface Props {
   initialStatus?: Status;
   isAdmin?: boolean;
   ubrRating?: number;
-  ubrTier?: string;
 }
 
 export default function PlayerCheckinCard({
@@ -46,7 +45,6 @@ export default function PlayerCheckinCard({
   initialStatus = "absent",
   isAdmin = false,
   ubrRating,
-  ubrTier,
 }: Props) {
   const [status, setStatus] = useState<Status>(initialStatus);
   const [loading, setLoading] = useState(false);

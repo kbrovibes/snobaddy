@@ -32,15 +32,6 @@ function getTierColor(rating: number): string {
   return "#3b82f6";                     // Diamond
 }
 
-function getTierName(rating: number): string {
-  if (rating < 2500) return "Shuttle";
-  if (rating < 3500) return "Bronze";
-  if (rating < 4500) return "Silver";
-  if (rating < 5500) return "Gold";
-  if (rating < 6500) return "Platinum";
-  return "Diamond";
-}
-
 export default function UbrChart({ history, currentRating }: { history: UbrHistoryPoint[]; currentRating: number }) {
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -51,7 +42,7 @@ export default function UbrChart({ history, currentRating }: { history: UbrHisto
         <p className="text-2xl font-bold tabular-nums" style={{ color: getTierColor(currentRating) }}>
           {Math.round(currentRating)}
         </p>
-        <p className="text-xs text-muted-light mt-1">{getTierName(currentRating)} — no sessions rated yet</p>
+        <p className="text-xs text-muted-light mt-1">No sessions rated yet</p>
       </div>
     );
   }

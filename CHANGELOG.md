@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.33.0] - 2026-05-02
+
+### Changed
+- **UBR tiers removed** — no more Shuttle/Bronze/Silver/Gold/Platinum/Diamond labels. UBR now displays as a number only throughout the app.
+
+---
+
 ## [0.32.8] - 2026-05-02
 
 ### Fixed
