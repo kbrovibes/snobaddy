@@ -13,10 +13,10 @@ export async function PATCH(
 
   const { data: player } = await supabase
     .from("players")
-    .select("is_god_mode")
+    .select("is_admin")
     .eq("user_id", user.id)
     .maybeSingle();
-  if (!player?.is_god_mode) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!player?.is_admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const body = await req.json();
   const { status } = body as { status: SeasonStatus };

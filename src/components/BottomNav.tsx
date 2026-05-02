@@ -7,7 +7,7 @@ const NAV_ITEMS = [
   { href: "/", label: "Session", icon: "🏸", adminOnly: false, godModeOnly: false },
   { href: "/players", label: "Players", icon: "👥", adminOnly: false, godModeOnly: false },
   { href: "/leaderboard", label: "Leaderboard", icon: "🏆", adminOnly: true, godModeOnly: false },
-  { href: "/admin/seasons", label: "Seasons", icon: "📅", adminOnly: false, godModeOnly: true },
+  { href: "/admin/seasons", label: "Seasons", icon: "📅", adminOnly: true, godModeOnly: false },
 ];
 
 export default function BottomNav({ isAdmin, isGodMode }: { isAdmin: boolean; isGodMode: boolean }) {
