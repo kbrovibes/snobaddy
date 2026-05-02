@@ -13,6 +13,8 @@ import EditPlayerForm from "@/components/EditPlayerForm";
 import RegeneratePoemButton from "@/components/RegeneratePoemButton";
 import ThemeToggle from "@/components/ThemeToggle";
 import { buildNameMap, shortName } from "@/lib/display-name";
+import { PartnerChemistry, StreaksCard, AttendanceHeatmap } from "@/components/PlayerInsights";
+import type { PartnerStat, StreakData, SessionDay } from "@/components/PlayerInsights";
 
 export const dynamic = "force-dynamic";
 
@@ -68,6 +70,87 @@ export default async function PlayerProfilePage({
   const overallPct = totalMatches > 0
     ? Math.round((totalWins / totalMatches) * 100)
     : 0;
+
+  // ── Compute Player Insights ──────────────────────────────────────────────
+
+  // Partner Chemistry
+  const partnerMap = new Map<string, { wins: number; losses: number }>();
+  for (const group of matchesBySession) {
+    for (const m of group.matches) {
+      const entry = partnerMap.get(m.partner) ?? { wins: 0, losses: 0 };
+      if (m.won) entry.wins++; else entry.losses++;
+      partnerMap.set(m.partner, entry);
+    }
+  }
+  const partnerStats: PartnerStat[] = Array.from(partnerMap.entries()).map(([name, s]) => ({
+    name, wins: s.wins, losses: s.losses,
+  }));
+
+  // Streaks
+  const allMatchResults: { won: boolean; date: string }[] = [];
+  for (const group of matchesBySession) {
+    if (group.absent) continue;
+    if (group.isTally) {
+      for (let i = 0; i < (group.tallyWins ?? 0); i++) allMatchResults.push({ won: true, date: group.date });
+      for (let i = 0; i < (group.tallyLosses ?? 0); i++) allMatchResults.push({ won: false, date: group.date });
+    } else {
+      for (const m of group.matches) allMatchResults.push({ won: m.won, date: group.date });
+    }
+  }
+
+  let currentWinStreak = 0;
+  let currentWinStreakStart: string | null = null;
+  for (let i = allMatchResults.length - 1; i >= 0; i--) {
+    if (allMatchResults[i].won) {
+      currentWinStreak++;
+      currentWinStreakStart = allMatchResults[i].date;
+    } else break;
+  }
+
+  let bestWinStreak = 0;
+  let bestStart: string | null = null;
+  let bestEnd: string | null = null;
+  let streakRun = 0;
+  let runStart: string | null = null;
+  for (const r of allMatchResults) {
+    if (r.won) {
+      if (streakRun === 0) runStart = r.date;
+      streakRun++;
+      if (streakRun > bestWinStreak) {
+        bestWinStreak = streakRun;
+        bestStart = runStart;
+        bestEnd = r.date;
+      }
+    } else {
+      streakRun = 0;
+    }
+  }
+
+  function fmtShort(d: string) {
+    return new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  }
+
+  const streakData: StreakData = {
+    currentWinStreak,
+    bestWinStreak,
+    currentWinStreakStart: currentWinStreak > 0 ? currentWinStreakStart : null,
+    bestWinStreakRange: bestStart && bestEnd && bestWinStreak > 1
+      ? `${fmtShort(bestStart)} – ${fmtShort(bestEnd)}`
+      : null,
+    sessionsAttended: matchesBySession.filter((g) => !g.absent).length,
+    totalSessions: matchesBySession.length,
+    careerMatches: totalMatches,
+    careerWins: totalWins,
+    careerLosses: totalLosses,
+  };
+
+  // Attendance Heatmap
+  const sessionDays: SessionDay[] = matchesBySession.map((g) => ({
+    date: g.date,
+    wins: g.isTally ? (g.tallyWins ?? 0) : g.matches.filter((m) => m.won).length,
+    losses: g.isTally ? (g.tallyLosses ?? 0) : g.matches.filter((m) => !m.won).length,
+    attended: !g.absent,
+  }));
 
   // Fetch or generate poem — regenerate when a new session has completed since last generation
   let poem: string | null = null;
@@ -175,6 +258,15 @@ export default async function PlayerProfilePage({
           />
         </div>
       )}
+
+      {/* Partner Chemistry */}
+      <PartnerChemistry partners={partnerStats} />
+
+      {/* Streaks & Milestones */}
+      <StreaksCard data={streakData} />
+
+      {/* Attendance Heatmap */}
+      <AttendanceHeatmap sessions={sessionDays} />
 
       {/* Match history */}
       <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">

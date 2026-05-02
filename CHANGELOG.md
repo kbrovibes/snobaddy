@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.32.3] - 2026-05-01
+
+### Added
+- **Partner Chemistry** — player profile widget showing top partners ranked by win rate with color-coded bars.
+- **Streaks & Milestones** — 4-card grid: current win streak, best win streak, sessions attended, career matches.
+- **Attendance Heatmap** — color-coded grid of all sessions (green = high win rate, red = below 50%, gray = absent) with attendance stats and streak counter.
+
+---
+
 ## [0.32.2] - 2026-05-01
 
 ### Added
