@@ -13,6 +13,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.32.9] - 2026-05-01
+
+### Changed
+- **Player profile** — removed back button from the sticky header.
+
+---
+
 ## [0.32.8] - 2026-05-01
 
 ### Changed

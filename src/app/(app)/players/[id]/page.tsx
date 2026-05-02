@@ -7,7 +7,7 @@ import { getAppSetting } from "@/lib/db/settings";
 import { generatePlayerPoem } from "@/lib/ai/poem";
 import SessionStatsChart from "@/components/SessionStatsChart";
 import UbrChart from "@/components/UbrChart";
-import BackButton from "@/components/BackButton";
+
 import IncludeTestToggle from "@/components/IncludeTestToggle";
 import EditPlayerForm from "@/components/EditPlayerForm";
 import RegeneratePoemButton from "@/components/RegeneratePoemButton";
@@ -177,10 +177,7 @@ export default async function PlayerProfilePage({
     <div className="flex flex-col gap-4 px-4 py-4">
 
       {/* Player header — sticky below fixed nav (h-14 = 56px) */}
-      <div className="sticky top-14 z-20 -mx-4 -mt-4 px-4 pt-1.5 pb-2 bg-background border-b border-border-light dark:border-border">
-        <div className="mb-1">
-          <BackButton />
-        </div>
+      <div className="sticky top-14 z-20 -mx-4 -mt-4 px-4 pt-2 pb-2 bg-background border-b border-border-light dark:border-border">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-500/15 flex items-center justify-center text-sky-700 dark:text-sky-400 text-lg font-bold shrink-0">
             {player.name.charAt(0).toUpperCase()}
