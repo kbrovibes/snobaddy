@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.33.1] - 2026-05-05
+
+### Improved
+- **Win-loss chart** — consecutive absent sessions are now compressed into a single `···×N` marker, reducing scroll length
+- **Win-loss chart** — chart auto-scrolls to the right on load so the most recent sessions are visible first
+
+---
+
 ## [0.33.0] - 2026-05-02
 
 ### Changed
