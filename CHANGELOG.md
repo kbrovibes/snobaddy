@@ -6,6 +6,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+<<<<<<< Updated upstream
 ## [0.36.0] - 2026-05-12
 
 ### Changed
@@ -22,6 +23,12 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Session lock date** — simplified to an always-visible date picker in the Seasons admin page; pick a date and it saves immediately, no more "set lock" button flow
 - **Session list** — locked sessions (lock date in the past) now show a subtle 🔒 badge next to the status pill
 - **Leaderboard** — already showed "N sessions excluded · stats locked" at the bottom (unchanged)
+=======
+## [0.35.1] - 2026-05-12
+
+### Fixed
+- **UBR tally algorithm** — rewrote the tally-session rating engine with a doubles-dampened expected win rate model; high-rated players who perform well (e.g. 9-2) now correctly see their UBR go UP instead of dropping due to unrealistic 1v1-style expectations. Added a performance bonus for standout sessions and increased tally match credit from 50% to 75%.
+>>>>>>> Stashed changes
 
 ---
 

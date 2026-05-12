@@ -191,72 +191,109 @@ Ratings are **floored at 1000** (no one goes below 1000).
 
 ## 6. Rating update — Tally-based (Whiteboard mode)
 
-Whiteboard/tally sessions record **per-player win/loss totals** without identifying specific opponents. This requires a different approach.
+Whiteboard/tally sessions record **per-player win/loss totals** without identifying specific opponents. This requires a different approach than match-based updates.
 
-### The Session Pool Method
+### The Doubles-Dampened Pool Method
 
-Since we don't know who played whom, we treat the session as a **round-robin pool** where each player competed against the average strength of the group.
+> **Version 2.0 — May 2026**: Replaced the original "Session Pool Method" which used raw Elo expected outcomes. The old method penalized high-rated players because it assumed 1v1 dynamics, ignoring that in doubles with random partners, individual rating advantage is heavily dampened.
+
+In drop-in doubles, partners are assigned semi-randomly. A 5500-rated player paired with a 2500-rated player faces two 4000-rated players — that's a coin flip. Individual rating translates far less directly to win rate in doubles than in 1v1. The algorithm accounts for this with **doubles damping**.
 
 ### Step 1: Session pool rating
 
 ```
-R_pool = average(R_i for all players i in the session)
+R_pool = average(R_i for all active players i in the session)
 ```
 
-Only players with at least 1 win or 1 loss are included (spectators excluded).
+Only players with at least 1 win or 1 loss are included.
 
-### Step 2: Expected win rate
-
-For each player with rating R_i:
+### Step 2: Session average win rate
 
 ```
-E_i = 1 / (1 + 10^((R_pool - R_i) / 400))
+sessionAvgWinRate = total_wins / total_games
 ```
 
-This is the expected fraction of matches this player should win against an average-rated opponent from the pool.
+In doubles, this is always ~0.5 (every win produces a corresponding loss).
 
-### Step 3: Actual win rate
+### Step 3: Doubles-dampened expected win rate
 
-```
-S_i = wins_i / (wins_i + losses_i)
-```
-
-### Step 4: Effective match count
-
-Each session's tally counts as a number of "virtual matches" for K-factor and RD purposes:
+Standard Elo expected win rate assumes 1v1. For doubles with random partners, we compress toward 0.5:
 
 ```
-effective_matches = min(floor((wins + losses) / 2), 8)
+E_elo = 1 / (1 + 10^((R_pool - R_i) / 400))
+E_doubles = clamp(0.5 + (E_elo - 0.5) × DOUBLES_DAMPING, 0.30, 0.70)
 ```
 
-Capped at 8 to prevent a single high-volume tally session from dominating the rating. Dividing by 2 because each real match involves 2 outcomes (a win for one side, a loss for the other).
+Where `DOUBLES_DAMPING = 0.25`. This means:
 
-### Step 5: K-factor
+| Player vs Pool | E_elo (1v1) | E_doubles |
+|----------------|-------------|-----------|
+| +1500 above    | 0.997       | 0.624     |
+| +750 above     | 0.947       | 0.612     |
+| Equal          | 0.500       | 0.500     |
+| −750 below     | 0.053       | 0.388     |
+| −1500 below    | 0.003       | 0.376     |
 
-Same base K as match-based (Section 5, Step 5), but applied per effective match:
+The floor of 0.30 and ceiling of 0.70 ensure no player is assumed to be a guaranteed winner or loser in a doubles session.
 
-```
-K_tally = K × 0.75
-```
+### Step 4: Performance bonus
 
-The 0.75 discount reflects the **lower information quality** of tally data (no opponent-specific info).
-
-### Step 6: Rating change
-
-```
-ΔR = K_tally × effective_matches × (S_i - E_i)
-```
-
-### Step 7: Apply
+Players who significantly outperform the session average get a small bonus, rewarding standout nights:
 
 ```
-R_new = R_old + ΔR
-R_new = max(1000, R_new)
+performanceBonus = max(0, (S_i - sessionAvgWinRate - 0.05) × 0.3)
 ```
 
-### Why discount tally data?
+This activates only when a player's win rate exceeds the session average by more than 5 percentage points. Example: 82% win rate in a 50% avg session → bonus of (0.82 - 0.50 - 0.05) × 0.3 = 0.081.
 
-Tally mode loses critical information: who played whom. A player who went 5-3 against top players is very different from 5-3 against beginners. The 0.75 discount and effective match cap prevent tally sessions from having outsized influence on ratings.
+### Step 5: Effective match count
+
+```
+effective_matches = min(ceil(total_games × 0.75), 10)
+```
+
+75% credit (up from 50% in v1) reflects that tally sessions are now the primary scoring mode. Capped at 10 to prevent single-session dominance.
+
+### Step 6: K-factor
+
+```
+K_tally = K × 0.85
+```
+
+The 0.85 discount (up from 0.75 in v1) reflects that tally data is less precise than match data, but is still the primary data source.
+
+### Step 7: Rating change
+
+```
+ΔR = K_tally × effective_matches × (S_i - E_doubles + performanceBonus)
+```
+
+### Step 8: Apply
+
+```
+R_new = max(1000, R_old + ΔR)
+```
+
+### Worked example: Top player goes 9-2
+
+- Player rating: 5500, Pool avg: 4000
+- E_elo = 0.9998, E_doubles = clamp(0.5 + 0.4998 × 0.25) = 0.625
+- Win rate: 9/11 = 0.818
+- Performance bonus: max(0, (0.818 - 0.5 - 0.05) × 0.3) = 0.080
+- effective_matches = min(ceil(11 × 0.75), 10) = 9
+- K_tally = 24 × 0.85 = 20.4 (established player)
+- ΔR = 20.4 × 9 × (0.818 − 0.625 + 0.080) = **+50.2** ✓ (rating goes UP)
+
+Under the old algorithm, this same performance produced ΔR ≈ −16 (rating went DOWN) because E_elo of 0.9998 made 82% look like underperformance.
+
+### Why doubles damping?
+
+In 1v1, a 1500-point rating gap means ~99.7% expected win rate. But in doubles with random partners:
+- Your partner may be much weaker, dragging down team average
+- Opponents may include players rated close to or above you
+- An 80%+ win rate in a mixed pool is exceptional regardless of individual rating
+
+The DOUBLES_DAMPING factor of 0.25 means only 25% of the Elo-predicted advantage translates to expected win rate, which aligns with empirical observations from drop-in club play.
 
 ---
 

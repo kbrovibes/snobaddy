@@ -14,8 +14,12 @@ const K_PROVISIONAL = 48;   // < 15 matches
 const K_ESTABLISHING = 36;  // 15–39 matches
 const K_ESTABLISHED = 24;   // 40+ matches
 const ELO_DIVISOR = 400;
-const TALLY_DISCOUNT = 0.75;
-const TALLY_MAX_EFFECTIVE = 8;
+const TALLY_K_WEIGHT = 0.85;
+const TALLY_MAX_EFFECTIVE = 10;
+const TALLY_MATCH_CREDIT = 0.75;
+const DOUBLES_DAMPING = 0.25;
+const PERFORMANCE_BONUS_THRESHOLD = 0.05;
+const PERFORMANCE_BONUS_SCALE = 0.3;
 const RATING_FLOOR = 1000;
 const MARGIN_LOG_BASE = Math.log2(22);
 const SIMPLE_MODE_MARGIN = 0.5;
@@ -137,6 +141,17 @@ function processMatch(
 }
 
 // ── Tally-based update (§6) ──────────────────────────────────────────────────
+//
+// Doubles-dampened expected win rate model:
+// In doubles with random partner assignments, individual rating advantage
+// translates far less directly to win rate than in 1v1. A player rated 1500
+// points above the pool average in 1v1 Elo expects ~97% wins; in doubles
+// with random partners they might realistically achieve ~62%. The DOUBLES_DAMPING
+// factor compresses the Elo-expected toward 0.5 to reflect this reality.
+//
+// Performance bonus:
+// Players who significantly outperform the session average get a small bonus,
+// rewarding standout nights regardless of rating.
 
 function processTallySession(
   states: Map<string, UbrState>,
@@ -145,10 +160,15 @@ function processTallySession(
   const active = tallyRows.filter((t) => t.wins + t.losses > 0);
   if (active.length === 0) return;
 
-  // Session pool rating
+  // Session pool rating (average of all active players)
   const poolRating =
     active.reduce((sum, t) => sum + (states.get(t.player_id)?.rating ?? 2500), 0) /
     active.length;
+
+  // Session average win rate (~0.5 in doubles: every win produces a loss)
+  const totalWins = active.reduce((sum, t) => sum + t.wins, 0);
+  const totalGames = active.reduce((sum, t) => sum + t.wins + t.losses, 0);
+  const sessionAvgWinRate = totalGames > 0 ? totalWins / totalGames : 0.5;
 
   for (const t of active) {
     const s = states.get(t.player_id);
@@ -156,12 +176,29 @@ function processTallySession(
 
     const total = t.wins + t.losses;
     const actualWinRate = t.wins / total;
-    const expectedWinRate = expectedOutcome(s.rating, poolRating);
-    const effectiveMatches = Math.min(Math.floor(total / 2), TALLY_MAX_EFFECTIVE);
+
+    // Doubles-dampened expected win rate
+    // Elo expected is accurate for 1v1 but wildly overestimates for doubles
+    // with random partners. Dampen toward 0.5, clamp to [0.3, 0.7].
+    const eloExpected = expectedOutcome(s.rating, poolRating);
+    const doublesExpected = Math.max(0.3, Math.min(0.7,
+      0.5 + (eloExpected - 0.5) * DOUBLES_DAMPING
+    ));
+
+    // Performance bonus: reward players who significantly outperform the session
+    const performanceBonus = Math.max(0,
+      (actualWinRate - sessionAvgWinRate - PERFORMANCE_BONUS_THRESHOLD) * PERFORMANCE_BONUS_SCALE
+    );
+
+    // Effective matches: 75% of games played, capped
+    const effectiveMatches = Math.min(
+      Math.ceil(total * TALLY_MATCH_CREDIT),
+      TALLY_MAX_EFFECTIVE
+    );
 
     const k = kFactor(s.matchCount, s.rd);
-    const kTally = k * TALLY_DISCOUNT;
-    const delta = kTally * effectiveMatches * (actualWinRate - expectedWinRate);
+    const kTally = k * TALLY_K_WEIGHT;
+    const delta = kTally * effectiveMatches * (actualWinRate - doublesExpected + performanceBonus);
 
     s.rating = Math.max(RATING_FLOOR, s.rating + delta);
     s.rd = reduceRd(s.rd);
