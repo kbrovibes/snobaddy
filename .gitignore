@@ -42,3 +42,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .claude/worktrees/
+
+# ruflo / ruvector artifacts
+ruvector.db
+agentdb.rvf
+agentdb.rvf.lock
+
+# supabase cli temp
+supabase/.temp/
