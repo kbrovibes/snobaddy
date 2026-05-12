@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { SeasonStatus, SeasonSession } from "@/lib/db/seasons";
 
@@ -29,27 +29,8 @@ function SessionLockRow({
   session: SeasonSession;
   onSave: (id: string, date: string | null) => Promise<void>;
 }) {
-  const [editing, setEditing] = useState(false);
   const [dateVal, setDateVal] = useState(session.stats_lock_date ?? "");
   const [saving, setSaving] = useState(false);
-
-  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
-  const isLocked = !!session.stats_lock_date && session.stats_lock_date < today;
-
-  async function handleSave() {
-    setSaving(true);
-    await onSave(session.id, dateVal || null);
-    setSaving(false);
-    setEditing(false);
-  }
-
-  async function handleClear() {
-    setSaving(true);
-    await onSave(session.id, null);
-    setDateVal("");
-    setSaving(false);
-    setEditing(false);
-  }
 
   const statusDot =
     session.status === "active"
@@ -57,6 +38,14 @@ function SessionLockRow({
       : session.status === "completed"
       ? "bg-sky-400"
       : "bg-stone-400";
+
+  async function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    const val = e.target.value;
+    setDateVal(val);
+    setSaving(true);
+    await onSave(session.id, val || null);
+    setSaving(false);
+  }
 
   return (
     <div className="flex items-center justify-between gap-2 py-1.5 border-b border-border-light/40 last:border-0 text-xs">
@@ -67,51 +56,13 @@ function SessionLockRow({
           <span className="text-muted-lighter">{session.match_count}m</span>
         )}
       </div>
-
-      {editing ? (
-        <div className="flex items-center gap-1 shrink-0">
-          <input
-            type="date"
-            value={dateVal}
-            onChange={(e) => setDateVal(e.target.value)}
-            className="px-1.5 py-0.5 text-xs rounded border border-border bg-background text-text focus:outline-none focus:ring-1 focus:ring-sky-500 w-32"
-          />
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="px-2 py-0.5 rounded bg-sky-600 text-white text-xs font-medium disabled:opacity-50"
-          >
-            {saving ? "…" : "Save"}
-          </button>
-          {session.stats_lock_date && (
-            <button
-              onClick={handleClear}
-              disabled={saving}
-              className="px-2 py-0.5 rounded bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300 text-xs"
-            >
-              Clear
-            </button>
-          )}
-          <button onClick={() => { setEditing(false); setDateVal(session.stats_lock_date ?? ""); }} className="text-muted-light hover:text-text px-1">
-            ✕
-          </button>
-        </div>
-      ) : session.stats_lock_date ? (
-        <button
-          onClick={() => setEditing(true)}
-          className={`text-[11px] font-medium shrink-0 ${isLocked ? "text-amber-600 dark:text-amber-400" : "text-sky-600 dark:text-sky-400"}`}
-          title={isLocked ? "Stats excluded from leaderboard" : "Stats will be locked after this date"}
-        >
-          🔒 {formatShortDate(session.stats_lock_date)}
-        </button>
-      ) : (
-        <button
-          onClick={() => setEditing(true)}
-          className="text-[11px] text-muted-lighter hover:text-muted-light shrink-0"
-        >
-          set lock
-        </button>
-      )}
+      <input
+        type="date"
+        value={dateVal}
+        onChange={handleChange}
+        disabled={saving}
+        className="px-1.5 py-0.5 text-xs rounded border border-border bg-background text-text focus:outline-none focus:ring-1 focus:ring-sky-500 disabled:opacity-50 w-32"
+      />
     </div>
   );
 }

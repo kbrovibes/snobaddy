@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.35.1] - 2026-05-12
+
+### Changed
+- **Session lock date** — simplified to an always-visible date picker in the Seasons admin page; pick a date and it saves immediately, no more "set lock" button flow
+- **Session list** — locked sessions (lock date in the past) now show a subtle 🔒 badge next to the status pill
+- **Leaderboard** — already showed "N sessions excluded · stats locked" at the bottom (unchanged)
+
+---
+
 ## [0.35.0] - 2026-05-12
 
 ### Added

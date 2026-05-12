@@ -82,6 +82,9 @@ export default function SessionListClient({
           ) : (
             <span className="text-xs font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 px-2 py-0.5 rounded-full">Finalized</span>
           )}
+          {s.stats_lock_date && s.stats_lock_date < todayStr && (
+            <span className="text-[10px] text-amber-500 dark:text-amber-400" title="Stats locked — excluded from leaderboard">🔒</span>
+          )}
           <span className="text-muted-lighter text-sm">→</span>
         </div>
       </NavLink>
