@@ -465,32 +465,29 @@ export async function getSeasonMatchCount(options?: { includeTestSessions?: bool
   const supabase = await createClient();
   const includeTest = options?.includeTestSessions ?? false;
   const seasonId = options?.seasonId;
-  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
 
   let matchQuery = includeTest
-    ? supabase.from("matches").select("*, sessions!inner(is_test_session, season_id, stats_lock_date)", { count: "exact", head: true }).eq("match_type", "regular")
+    ? supabase.from("matches").select("*, sessions!inner(is_test_session, season_id)", { count: "exact", head: true }).eq("match_type", "regular")
     : supabase
         .from("matches")
-        .select("*, sessions!inner(is_test_session, season_id, stats_lock_date)", { count: "exact", head: true })
+        .select("*, sessions!inner(is_test_session, season_id)", { count: "exact", head: true })
         .eq("sessions.is_test_session", false)
         .eq("match_type", "regular");
 
   if (seasonId) {
     matchQuery = matchQuery.eq("sessions.season_id", seasonId);
   }
-  matchQuery = matchQuery.or(`stats_lock_date.is.null,stats_lock_date.gte.${today}`, { foreignTable: "sessions" });
 
   let tallyQuery = includeTest
-    ? supabase.from("session_tally").select("wins, sessions!inner(is_test_session, season_id, stats_lock_date)")
+    ? supabase.from("session_tally").select("wins, sessions!inner(is_test_session, season_id)")
     : supabase
         .from("session_tally")
-        .select("wins, sessions!inner(is_test_session, season_id, stats_lock_date)")
+        .select("wins, sessions!inner(is_test_session, season_id)")
         .eq("sessions.is_test_session", false);
 
   if (seasonId) {
     tallyQuery = tallyQuery.eq("sessions.season_id", seasonId);
   }
-  tallyQuery = tallyQuery.or(`stats_lock_date.is.null,stats_lock_date.gte.${today}`, { foreignTable: "sessions" });
 
   const [{ count: matchCount }, { data: tallyData }] = await Promise.all([matchQuery, tallyQuery]);
 

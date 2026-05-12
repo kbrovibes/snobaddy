@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.34.3] - 2026-05-12
+
+### Fixed
+- **Session list page** — fixed blank session list caused by querying a column (`stats_lock_date`) before the DB migration was run
+
+---
+
 ## [0.34.2] - 2026-05-12
 
 ### Added

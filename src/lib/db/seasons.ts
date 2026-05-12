@@ -79,7 +79,7 @@ export async function getAllSeasons(): Promise<SeasonWithStats[]> {
         .maybeSingle(),
       supabase
         .from("sessions")
-        .select("id, date, status, stats_lock_date, matches(count)")
+        .select("id, date, status, matches(count)")
         .eq("season_id", s.id)
         .eq("is_test_session", false)
         .neq("session_type", "finals")

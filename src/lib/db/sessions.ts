@@ -94,7 +94,7 @@ export async function getAllSessions(seasonId?: string): Promise<SessionRow[]> {
 
   let query = supabase
     .from("sessions")
-    .select("id, date, status, is_test_session, session_type, stats_lock_date, seasons(name), matches(count), session_tally(count)")
+    .select("id, date, status, is_test_session, session_type, seasons(name), matches(count), session_tally(count)")
     .order("date", { ascending: false });
 
   if (seasonId) {
@@ -121,7 +121,7 @@ export async function getSessionById(id: string): Promise<Session | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("sessions")
-    .select("id, date, status, auto_generate_matches, simple_score_tracking, is_test_session, tally_photo_path, session_type, finals_event_id, whiteboard_mode, stats_lock_date, seasons(id, name)")
+    .select("id, date, status, auto_generate_matches, simple_score_tracking, is_test_session, tally_photo_path, session_type, finals_event_id, whiteboard_mode, seasons(id, name)")
     .eq("id", id)
     .maybeSingle();
 
