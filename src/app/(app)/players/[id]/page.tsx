@@ -11,6 +11,7 @@ import UbrChart from "@/components/UbrChart";
 import IncludeTestToggle from "@/components/IncludeTestToggle";
 import EditPlayerForm from "@/components/EditPlayerForm";
 import RegeneratePoemButton from "@/components/RegeneratePoemButton";
+import RegenerateUbrButton from "@/components/RegenerateUbrButton";
 import ThemeToggle from "@/components/ThemeToggle";
 import { buildNameMap, shortName } from "@/lib/display-name";
 import { PartnerChemistry, StreaksCard, AttendanceHeatmap } from "@/components/PlayerInsights";
@@ -242,9 +243,12 @@ export default async function PlayerProfilePage({
       {/* UBR progression */}
       {ubrEnabled && ubrRating && (
         <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-3">
-          <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide mb-3">
-            UBR Rating
-          </h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-text-light uppercase tracking-wide">
+              UBR Rating
+            </h2>
+            {isAdmin && <RegenerateUbrButton playerId={id} />}
+          </div>
           <UbrChart
             history={ubrHistory.map((h) => ({
               session_date: h.session_date,

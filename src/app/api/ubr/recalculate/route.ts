@@ -24,13 +24,20 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => ({}));
   const sessionId = body.session_id as string | undefined;
+  const playerId = body.player_id as string | undefined;
 
   if (sessionId) {
     await processSessionUbr(sessionId);
     return NextResponse.json({ ok: true, mode: "incremental" });
   }
 
-  // Full recalculation — god mode only
+  // Per-player recalculation — admin only (full recalc under the hood)
+  if (playerId) {
+    await recalculateAllUbr();
+    return NextResponse.json({ ok: true, mode: "full", triggered_by_player: playerId });
+  }
+
+  // Unscoped full recalculation — god mode only
   const isGodMode = (player as unknown as { is_god_mode?: boolean })?.is_god_mode ?? false;
   if (!isGodMode) {
     return NextResponse.json({ error: "Full recalculation requires god mode" }, { status: 403 });

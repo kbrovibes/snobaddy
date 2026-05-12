@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.34.0] - 2026-05-12
+
+### Added
+- **UBR regenerate button** — admins see a "↺ regenerate" button in the UBR Rating card on any player profile; clicking it recalculates all UBR ratings and refreshes the chart
+
+### Fixed
+- **UBR chart ordering** — chart data now orders by session date instead of insertion timestamp, preventing scrambled progressions after a full recalculation
+
+---
+
 ## [0.33.2] - 2026-05-11
 
 ### Added

@@ -538,17 +538,18 @@ export async function getPlayerUbrHistory(
   const { data } = await adminDb
     .from("ubr_history")
     .select("session_id, rating_before, rating_after, rating_change, created_at, sessions(date)")
-    .eq("player_id", playerId)
-    .order("created_at", { ascending: true });
+    .eq("player_id", playerId);
 
-  return (data ?? []).map((r) => ({
-    session_id: r.session_id,
-    rating_before: Number(r.rating_before),
-    rating_after: Number(r.rating_after),
-    rating_change: Number(r.rating_change),
-    created_at: r.created_at,
-    session_date: (r.sessions as unknown as { date: string }).date,
-  }));
+  return (data ?? [])
+    .map((r) => ({
+      session_id: r.session_id,
+      rating_before: Number(r.rating_before),
+      rating_after: Number(r.rating_after),
+      rating_change: Number(r.rating_change),
+      created_at: r.created_at,
+      session_date: (r.sessions as unknown as { date: string }).date,
+    }))
+    .sort((a, b) => a.session_date.localeCompare(b.session_date));
 }
 
 export async function getPlayerUbrRating(playerId: string): Promise<UbrRating | null> {
