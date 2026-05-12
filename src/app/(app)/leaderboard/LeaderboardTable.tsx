@@ -35,6 +35,27 @@ function AwardCard({ emoji, title, description, name, stat }: {
   );
 }
 
+const RUNNER_MEDALS = ["🥈", "🥉"];
+
+function RunnerUpCard({ title, runners }: {
+  title: string;
+  runners: Array<{ name: string; stat: string }>;
+}) {
+  if (runners.length === 0) return null;
+  return (
+    <div className="bg-surface rounded-xl shadow-sm border border-border-light px-3 py-2 flex flex-col gap-1.5">
+      <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-lighter leading-none">{title}</span>
+      {runners.map((r, i) => (
+        <div key={i} className="flex items-center gap-2">
+          <span className="text-base leading-none">{RUNNER_MEDALS[i]}</span>
+          <span className="text-sm font-bold text-heading flex-1 truncate">{r.name}</span>
+          <span className="text-[11px] text-muted-light tabular-nums">{r.stat}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const BASE_COLUMNS: { key: SortKey; label: string; title: string }[] = [
   { key: "name",          label: "Player",  title: "Player"         },
   { key: "matches_played",label: "M",       title: "Matches played" },
@@ -80,20 +101,33 @@ export default function LeaderboardTable({
 
   // Award card computation — reactive to toggle
   const nameMap = buildNameMap(activePlayers.map(p => p.name));
-  const badmintonNut = activePlayers.reduce<PlayerStats | null>(
-    (best, p) => !best || p.matches_played > best.matches_played ? p : best,
-    null
-  );
+
+  // Badminton Nut top 3: most matches played
+  const badmintonTop3 = [...activePlayers]
+    .sort((a, b) => b.matches_played - a.matches_played || a.name.localeCompare(b.name))
+    .slice(0, 3);
+  const badmintonNut = badmintonTop3[0] ?? null;
+  const badmintonRunners = badmintonTop3.slice(1).map(p => ({
+    name: shortName(p.name, nameMap),
+    stat: `${p.matches_played} matches`,
+  }));
+
+  // Nut Cracker top 3: best win rate (min half of top player's matches)
   const minMatches = badmintonNut ? Math.floor(badmintonNut.matches_played / 2) : 0;
-  const nutCracker = activePlayers
+  const nutTop3 = [...activePlayers]
     .filter(p => p.matches_played >= minMatches && p.matches_played > 0)
-    .reduce<PlayerStats | null>((best, p) => {
-      const pct = p.wins / p.matches_played;
-      const bestPct = best ? best.wins / best.matches_played : -1;
-      if (pct > bestPct) return p;
-      if (pct === bestPct && best && p.matches_played > best.matches_played) return p;
-      return best;
-    }, null);
+    .sort((a, b) => {
+      const pctA = a.wins / a.matches_played;
+      const pctB = b.wins / b.matches_played;
+      if (pctB !== pctA) return pctB - pctA;
+      return b.matches_played - a.matches_played;
+    })
+    .slice(0, 3);
+  const nutCracker = nutTop3[0] ?? null;
+  const nutRunners = nutTop3.slice(1).map(p => ({
+    name: shortName(p.name, nameMap),
+    stat: `${Math.round((p.wins / p.matches_played) * 100)}% win rate`,
+  }));
 
   function handleSort(key: SortKey) {
     if (key === sortKey) {
@@ -168,24 +202,32 @@ export default function LeaderboardTable({
 
       {/* Award cards */}
       {(badmintonNut || nutCracker) && (
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          {badmintonNut && (
-            <AwardCard
-              emoji="🏸"
-              title="Badminton Nut"
-              description="Most matches played"
-              name={shortName(badmintonNut.name, nameMap)}
-              stat={`${badmintonNut.matches_played} matches`}
-            />
-          )}
-          {nutCracker && (
-            <AwardCard
-              emoji="🎯"
-              title="Nut Cracker"
-              description={`Best win rate (min ${minMatches} matches)`}
-              name={shortName(nutCracker.name, nameMap)}
-              stat={`${Math.round((nutCracker.wins / nutCracker.matches_played) * 100)}% win rate`}
-            />
+        <div className="flex flex-col gap-2 mb-4">
+          <div className="grid grid-cols-2 gap-3">
+            {badmintonNut && (
+              <AwardCard
+                emoji="🏸"
+                title="Badminton Nut"
+                description="Most matches played"
+                name={shortName(badmintonNut.name, nameMap)}
+                stat={`${badmintonNut.matches_played} matches`}
+              />
+            )}
+            {nutCracker && (
+              <AwardCard
+                emoji="🎯"
+                title="Nut Cracker"
+                description={`Best win rate (min ${minMatches} matches)`}
+                name={shortName(nutCracker.name, nameMap)}
+                stat={`${Math.round((nutCracker.wins / nutCracker.matches_played) * 100)}% win rate`}
+              />
+            )}
+          </div>
+          {(badmintonRunners.length > 0 || nutRunners.length > 0) && (
+            <div className="grid grid-cols-2 gap-3">
+              <RunnerUpCard title="Badminton Nut" runners={badmintonRunners} />
+              <RunnerUpCard title="Nut Cracker" runners={nutRunners} />
+            </div>
           )}
         </div>
       )}

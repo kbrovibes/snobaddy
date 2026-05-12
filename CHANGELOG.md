@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.33.2] - 2026-05-11
+
+### Added
+- **Leaderboard runner-ups** — below the Badminton Nut and Nut Cracker winner cards, a second row now shows 🥈 and 🥉 runners-up for each award
+
+---
+
 ## [0.33.1] - 2026-05-05
 
 ### Improved
