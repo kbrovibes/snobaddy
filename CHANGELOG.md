@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.36.0] - 2026-05-12
+
+### Changed
+- **Season lock date** — rearchitected from per-session to per-season; set one date in the season edit form and all sessions after that date are excluded from the leaderboard
+- **Seasons page** — season edit form now has a "Lock date" field alongside Start/End; the lock date is shown subtly in the collapsed view (🔒 May 15)
+- **Session list** — locked sessions show 🔒 badge based on the season lock date
+- **Leaderboard** — locked session count uses the season's lock date
+
+---
+
 ## [0.35.1] - 2026-05-12
 
 ### Changed

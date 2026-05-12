@@ -15,13 +15,12 @@ export interface PlayerStats {
 
 
 export async function getActivePlayers(
-  options?: { includeTestSessions?: boolean; seasonId?: string }
+  options?: { includeTestSessions?: boolean; seasonId?: string; seasonLockDate?: string | null }
 ): Promise<PlayerStats[]> {
   const supabase = await createClient();
   const includeTest = options?.includeTestSessions ?? false;
   const seasonId = options?.seasonId;
-
-  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+  const seasonLockDate = options?.seasonLockDate ?? null;
 
   let matchesQuery = includeTest
     ? supabase
@@ -68,11 +67,9 @@ export async function getActivePlayers(
       .select("id")
       .not("deleted_at", "is", null),
     talliesQuery,
-    supabase
-      .from("sessions")
-      .select("id")
-      .not("stats_lock_date", "is", null)
-      .lt("stats_lock_date", today),
+    seasonId && seasonLockDate
+      ? supabase.from("sessions").select("id").eq("season_id", seasonId).gt("date", seasonLockDate)
+      : Promise.resolve({ data: [] as { id: string }[] }),
   ]);
 
   const lockedSessionIds = new Set((lockedSessionRows ?? []).map((s: { id: string }) => s.id));

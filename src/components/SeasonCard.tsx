@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, type ChangeEvent } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { SeasonStatus, SeasonSession } from "@/lib/db/seasons";
+import type { SeasonStatus } from "@/lib/db/seasons";
 
 interface SeasonCardProps {
   id: string;
@@ -10,62 +10,18 @@ interface SeasonCardProps {
   start_date: string;
   end_date: string;
   status: SeasonStatus;
+  stats_lock_date: string | null;
   session_count: number;
   player_count: number;
   match_count: number;
   finals_status: string | null;
   hasActiveSeason: boolean;
-  sessions: SeasonSession[];
 }
 
 function formatShortDate(dateStr: string) {
   return new Date(dateStr + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-function SessionLockRow({
-  session,
-  onSave,
-}: {
-  session: SeasonSession;
-  onSave: (id: string, date: string | null) => Promise<void>;
-}) {
-  const [dateVal, setDateVal] = useState(session.stats_lock_date ?? "");
-  const [saving, setSaving] = useState(false);
-
-  const statusDot =
-    session.status === "active"
-      ? "bg-green-500"
-      : session.status === "completed"
-      ? "bg-sky-400"
-      : "bg-stone-400";
-
-  async function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    const val = e.target.value;
-    setDateVal(val);
-    setSaving(true);
-    await onSave(session.id, val || null);
-    setSaving(false);
-  }
-
-  return (
-    <div className="flex items-center justify-between gap-2 py-1.5 border-b border-border-light/40 last:border-0 text-xs">
-      <div className="flex items-center gap-2 min-w-0 shrink-0">
-        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${statusDot}`} />
-        <span className="text-text font-medium tabular-nums">{formatShortDate(session.date)}</span>
-        {session.match_count > 0 && (
-          <span className="text-muted-lighter">{session.match_count}m</span>
-        )}
-      </div>
-      <input
-        type="date"
-        value={dateVal}
-        onChange={handleChange}
-        disabled={saving}
-        className="px-1.5 py-0.5 text-xs rounded border border-border bg-background text-text focus:outline-none focus:ring-1 focus:ring-sky-500 disabled:opacity-50 w-32"
-      />
-    </div>
-  );
-}
 
 const STATUS_CONFIG = {
   active: { label: "Active", emoji: "🟢", badgeClass: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400" },
@@ -78,7 +34,7 @@ function formatDate(dateStr: string) {
 }
 
 export default function SeasonCard(props: SeasonCardProps) {
-  const { id, name, start_date, end_date, status, session_count, player_count, match_count, finals_status, hasActiveSeason, sessions: propSessions } = props;
+  const { id, name, start_date, end_date, status, stats_lock_date, session_count, player_count, match_count, finals_status, hasActiveSeason } = props;
   const router = useRouter();
   const [expanded, setExpanded] = useState(status !== "completed");
   const [loading, setLoading] = useState(false);
@@ -87,27 +43,7 @@ export default function SeasonCard(props: SeasonCardProps) {
   const [editName, setEditName] = useState(name);
   const [editStart, setEditStart] = useState(start_date);
   const [editEnd, setEditEnd] = useState(end_date);
-  const [sessions, setSessions] = useState<SeasonSession[]>(propSessions);
-  const [lockError, setLockError] = useState<string | null>(null);
-
-  async function handleSetLockDate(sessionId: string, date: string | null) {
-    setLockError(null);
-    try {
-      const res = await fetch(`/api/sessions/${sessionId}/stats-lock-date`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stats_lock_date: date }),
-      });
-      if (!res.ok) {
-        const d = await res.json();
-        setLockError(d.error ?? "Failed to save lock date");
-        return;
-      }
-      setSessions((prev) => prev.map((s) => s.id === sessionId ? { ...s, stats_lock_date: date } : s));
-    } catch {
-      setLockError("Network error");
-    }
-  }
+  const [editLockDate, setEditLockDate] = useState(stats_lock_date ?? "");
 
   const config = STATUS_CONFIG[status];
 
@@ -149,7 +85,7 @@ export default function SeasonCard(props: SeasonCardProps) {
       const res = await fetch(`/api/seasons/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: editName.trim(), start_date: editStart, end_date: editEnd }),
+        body: JSON.stringify({ name: editName.trim(), start_date: editStart, end_date: editEnd, stats_lock_date: editLockDate || null }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -219,6 +155,15 @@ export default function SeasonCard(props: SeasonCardProps) {
                   />
                 </div>
               </div>
+              <div>
+                <label className="block text-[10px] font-medium text-muted-light mb-1">Lock date <span className="text-muted-lighter font-normal">(sessions after this date excluded from leaderboard)</span></label>
+                <input
+                  type="date"
+                  value={editLockDate}
+                  onChange={(e) => setEditLockDate(e.target.value)}
+                  className="w-full px-2 py-1.5 text-xs rounded-lg border border-border bg-background text-text focus:outline-none focus:ring-2 focus:ring-sky-500"
+                />
+              </div>
               <div className="flex gap-2">
                 <button
                   onClick={handleSaveEdit}
@@ -228,7 +173,7 @@ export default function SeasonCard(props: SeasonCardProps) {
                   {loading ? "Saving..." : "Save"}
                 </button>
                 <button
-                  onClick={() => { setEditing(false); setEditName(name); setEditStart(start_date); setEditEnd(end_date); setError(null); }}
+                  onClick={() => { setEditing(false); setEditName(name); setEditStart(start_date); setEditEnd(end_date); setEditLockDate(stats_lock_date ?? ""); setError(null); }}
                   className="px-3 py-1.5 rounded-lg text-xs font-medium text-muted-light hover:text-text transition-colors"
                 >
                   Cancel
@@ -239,6 +184,7 @@ export default function SeasonCard(props: SeasonCardProps) {
             <div className="flex items-center gap-2">
               <p className="text-xs text-muted-light">
                 {formatDate(start_date)} – {formatDate(end_date)}
+                {stats_lock_date && <span className="ml-1.5 text-amber-600 dark:text-amber-400">· 🔒 {formatDate(stats_lock_date)}</span>}
               </p>
               <button
                 onClick={() => setEditing(true)}
@@ -263,21 +209,6 @@ export default function SeasonCard(props: SeasonCardProps) {
               Finals: <span className={`font-bold ${finals_status === "completed" ? "text-green-600 dark:text-green-400" : "text-orange-600 dark:text-orange-400"}`}>
                 {finals_status}
               </span>
-            </div>
-          )}
-
-          {/* Sessions list with stats lock-in date editing */}
-          {sessions.length > 0 && (
-            <div className="mt-1">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-lighter mb-1">Sessions · Stats lock</p>
-              <div className="rounded-lg border border-border-light bg-background/50 px-3 py-1">
-                {sessions.map((s) => (
-                  <SessionLockRow key={s.id} session={s} onSave={handleSetLockDate} />
-                ))}
-              </div>
-              {lockError && (
-                <p className="text-xs text-red-600 dark:text-red-400 mt-1">{lockError}</p>
-              )}
             </div>
           )}
 

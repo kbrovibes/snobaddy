@@ -9,6 +9,7 @@ export interface Season {
   start_date: string;
   end_date: string;
   status: SeasonStatus;
+  stats_lock_date: string | null;
 }
 
 export interface SeasonSession {
@@ -24,7 +25,6 @@ export interface SeasonWithStats extends Season {
   player_count: number;
   match_count: number;
   finals_status: string | null;
-  sessions: SeasonSession[];
 }
 
 /** Returns all seasons ordered by start_date DESC. */
@@ -33,7 +33,7 @@ export async function getAllSeasons(): Promise<SeasonWithStats[]> {
 
   const { data: seasons } = await supabase
     .from("seasons")
-    .select("id, name, start_date, end_date, status")
+    .select("id, name, start_date, end_date, status, stats_lock_date")
     .order("start_date", { ascending: false });
 
   if (!seasons || seasons.length === 0) return [];
@@ -70,29 +70,11 @@ export async function getAllSeasons(): Promise<SeasonWithStats[]> {
     }
 
     // Check finals status
-    // Fetch sessions with stats_lock_date for this season (non-test, non-finals)
-    const [{ data: finals }, { data: sessionRows }] = await Promise.all([
-      supabase
-        .from("finals_events")
-        .select("status")
-        .eq("season_id", s.id)
-        .maybeSingle(),
-      supabase
-        .from("sessions")
-        .select("id, date, status, stats_lock_date, matches(count)")
-        .eq("season_id", s.id)
-        .eq("is_test_session", false)
-        .neq("session_type", "finals")
-        .order("date", { ascending: false }),
-    ]);
-
-    const sessions: SeasonSession[] = (sessionRows ?? []).map((row) => ({
-      id: row.id,
-      date: row.date,
-      status: row.status as SeasonSession["status"],
-      stats_lock_date: (row as unknown as { stats_lock_date?: string | null }).stats_lock_date ?? null,
-      match_count: (row.matches as unknown as { count: number }[])?.[0]?.count ?? 0,
-    }));
+    const { data: finals } = await supabase
+      .from("finals_events")
+      .select("status")
+      .eq("season_id", s.id)
+      .maybeSingle();
 
     result.push({
       id: s.id,
@@ -100,11 +82,11 @@ export async function getAllSeasons(): Promise<SeasonWithStats[]> {
       start_date: s.start_date,
       end_date: s.end_date,
       status: s.status as SeasonStatus,
+      stats_lock_date: (s as unknown as { stats_lock_date?: string | null }).stats_lock_date ?? null,
       session_count: sessionCount ?? 0,
       player_count: playerIds.size,
       match_count: matchCount ?? 0,
       finals_status: finals?.status ?? null,
-      sessions,
     });
   }
 
@@ -116,7 +98,7 @@ export async function getActiveSeason(): Promise<Season | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("seasons")
-    .select("id, name, start_date, end_date, status")
+    .select("id, name, start_date, end_date, status, stats_lock_date")
     .eq("status", "active")
     .maybeSingle();
   if (!data) return null;

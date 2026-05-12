@@ -19,12 +19,13 @@ export async function PATCH(
   if (!player?.is_admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const body = await req.json();
-  const { name, start_date, end_date } = body as { name?: string; start_date?: string; end_date?: string };
+  const { name, start_date, end_date, stats_lock_date } = body as { name?: string; start_date?: string; end_date?: string; stats_lock_date?: string | null };
 
-  const updates: Record<string, string> = {};
+  const updates: Record<string, string | null> = {};
   if (name) updates.name = name;
   if (start_date) updates.start_date = start_date;
   if (end_date) updates.end_date = end_date;
+  if ("stats_lock_date" in body) updates.stats_lock_date = stats_lock_date ?? null;
 
   if (Object.keys(updates).length === 0) {
     return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
