@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.34.1] - 2026-05-12
+
+### Fixed
+- **UBR chart missing recent sessions** — whiteboard-mode sessions (all sessions since 4/30) have no check-in rows, so the UBR engine was silently skipping them; participants are now derived from tally data when no check-in records exist
+
+---
+
 ## [0.34.0] - 2026-05-12
 
 ### Added

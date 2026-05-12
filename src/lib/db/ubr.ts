@@ -241,6 +241,14 @@ export async function recalculateAllUbr(): Promise<void> {
     tallyBySession.get(t.session_id)!.push(t);
   }
 
+  // Whiteboard sessions have no session_players rows — supplement participants from tally
+  for (const t of allTally ?? []) {
+    if (!sessionParticipants.has(t.session_id)) {
+      sessionParticipants.set(t.session_id, new Set());
+    }
+    sessionParticipants.get(t.session_id)!.add(t.player_id);
+  }
+
   // Clear existing history
   await adminDb.from("ubr_history").delete().neq("id", "00000000-0000-0000-0000-000000000000");
 
@@ -379,7 +387,6 @@ export async function processSessionUbr(sessionId: string): Promise<void> {
     .eq("session_id", sessionId);
 
   const participantIds = new Set((spRows ?? []).map((r) => r.player_id));
-  if (participantIds.size === 0) return;
 
   // Fetch matches for this session
   const { data: matches } = await adminDb
@@ -395,9 +402,12 @@ export async function processSessionUbr(sessionId: string): Promise<void> {
     .select("player_id, wins, losses")
     .eq("session_id", sessionId);
 
+  // Whiteboard sessions have no session_players rows — derive participants from tally
+  for (const t of tally ?? []) participantIds.add(t.player_id);
+
   const hasMatches = matches && matches.length > 0;
   const hasTally = tally && tally.length > 0;
-  if (!hasMatches && !hasTally) return;
+  if (participantIds.size === 0 || (!hasMatches && !hasTally)) return;
 
   // Collect all player IDs involved (participants + match players)
   const allPlayerIds = new Set(participantIds);
