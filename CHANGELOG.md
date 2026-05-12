@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.35.0] - 2026-05-12
+
+### Added
+- **Upload Scores & Finalize button** — admins see a new "📷 Upload Scores & Finalize" button on pending (unopened) sessions; clicking it finalizes the session immediately and opens the tally photo-upload widget so scores can be entered without ever opening the session for live play
+
+---
+
 ## [0.34.3] - 2026-05-12
 
 ### Fixed

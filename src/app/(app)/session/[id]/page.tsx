@@ -16,6 +16,7 @@ import { getAppSetting } from "@/lib/db/settings";
 import { createClient } from "@/lib/supabase-server";
 import { buildNameMap, shortName } from "@/lib/display-name";
 import StartSessionButton from "@/components/StartSessionButton";
+import UploadScoresButton from "@/components/UploadScoresButton";
 import CheckInButton from "@/components/CheckInButton";
 import CloseSessionButton from "@/components/CloseSessionButton";
 import RecordMatchForm from "@/components/RecordMatchForm";
@@ -282,6 +283,11 @@ export default async function SessionDetailPage({
         <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-100 rounded-xl px-4 py-3 text-sm text-amber-700 text-center">
           Season Finals — this session hasn't started yet.
         </div>
+      )}
+
+      {/* Admin: upload scores directly without opening session */}
+      {isPending && isAdmin && !isFinalsSession && (
+        <UploadScoresButton sessionId={session.id} />
       )}
 
       {/* Admin: start session */}

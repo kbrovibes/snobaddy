@@ -28,7 +28,7 @@ export async function POST(
     .from("sessions")
     .update({ status: "completed" })
     .eq("id", id)
-    .eq("status", "active");
+    .in("status", ["active", "pending"]);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
