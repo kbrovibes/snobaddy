@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { SeasonStatus } from "@/lib/db/seasons";
+import type { SeasonStatus, SeasonSession } from "@/lib/db/seasons";
 
 interface SeasonCardProps {
   id: string;
@@ -15,6 +15,105 @@ interface SeasonCardProps {
   match_count: number;
   finals_status: string | null;
   hasActiveSeason: boolean;
+  sessions: SeasonSession[];
+}
+
+function formatShortDate(dateStr: string) {
+  return new Date(dateStr + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function SessionLockRow({
+  session,
+  onSave,
+}: {
+  session: SeasonSession;
+  onSave: (id: string, date: string | null) => Promise<void>;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [dateVal, setDateVal] = useState(session.stats_lock_date ?? "");
+  const [saving, setSaving] = useState(false);
+
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+  const isLocked = !!session.stats_lock_date && session.stats_lock_date < today;
+
+  async function handleSave() {
+    setSaving(true);
+    await onSave(session.id, dateVal || null);
+    setSaving(false);
+    setEditing(false);
+  }
+
+  async function handleClear() {
+    setSaving(true);
+    await onSave(session.id, null);
+    setDateVal("");
+    setSaving(false);
+    setEditing(false);
+  }
+
+  const statusDot =
+    session.status === "active"
+      ? "bg-green-500"
+      : session.status === "completed"
+      ? "bg-sky-400"
+      : "bg-stone-400";
+
+  return (
+    <div className="flex items-center justify-between gap-2 py-1.5 border-b border-border-light/40 last:border-0 text-xs">
+      <div className="flex items-center gap-2 min-w-0 shrink-0">
+        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${statusDot}`} />
+        <span className="text-text font-medium tabular-nums">{formatShortDate(session.date)}</span>
+        {session.match_count > 0 && (
+          <span className="text-muted-lighter">{session.match_count}m</span>
+        )}
+      </div>
+
+      {editing ? (
+        <div className="flex items-center gap-1 shrink-0">
+          <input
+            type="date"
+            value={dateVal}
+            onChange={(e) => setDateVal(e.target.value)}
+            className="px-1.5 py-0.5 text-xs rounded border border-border bg-background text-text focus:outline-none focus:ring-1 focus:ring-sky-500 w-32"
+          />
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="px-2 py-0.5 rounded bg-sky-600 text-white text-xs font-medium disabled:opacity-50"
+          >
+            {saving ? "…" : "Save"}
+          </button>
+          {session.stats_lock_date && (
+            <button
+              onClick={handleClear}
+              disabled={saving}
+              className="px-2 py-0.5 rounded bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300 text-xs"
+            >
+              Clear
+            </button>
+          )}
+          <button onClick={() => { setEditing(false); setDateVal(session.stats_lock_date ?? ""); }} className="text-muted-light hover:text-text px-1">
+            ✕
+          </button>
+        </div>
+      ) : session.stats_lock_date ? (
+        <button
+          onClick={() => setEditing(true)}
+          className={`text-[11px] font-medium shrink-0 ${isLocked ? "text-amber-600 dark:text-amber-400" : "text-sky-600 dark:text-sky-400"}`}
+          title={isLocked ? "Stats excluded from leaderboard" : "Stats will be locked after this date"}
+        >
+          🔒 {formatShortDate(session.stats_lock_date)}
+        </button>
+      ) : (
+        <button
+          onClick={() => setEditing(true)}
+          className="text-[11px] text-muted-lighter hover:text-muted-light shrink-0"
+        >
+          set lock
+        </button>
+      )}
+    </div>
+  );
 }
 
 const STATUS_CONFIG = {
@@ -28,7 +127,7 @@ function formatDate(dateStr: string) {
 }
 
 export default function SeasonCard(props: SeasonCardProps) {
-  const { id, name, start_date, end_date, status, session_count, player_count, match_count, finals_status, hasActiveSeason } = props;
+  const { id, name, start_date, end_date, status, session_count, player_count, match_count, finals_status, hasActiveSeason, sessions: propSessions } = props;
   const router = useRouter();
   const [expanded, setExpanded] = useState(status !== "completed");
   const [loading, setLoading] = useState(false);
@@ -37,6 +136,27 @@ export default function SeasonCard(props: SeasonCardProps) {
   const [editName, setEditName] = useState(name);
   const [editStart, setEditStart] = useState(start_date);
   const [editEnd, setEditEnd] = useState(end_date);
+  const [sessions, setSessions] = useState<SeasonSession[]>(propSessions);
+  const [lockError, setLockError] = useState<string | null>(null);
+
+  async function handleSetLockDate(sessionId: string, date: string | null) {
+    setLockError(null);
+    try {
+      const res = await fetch(`/api/sessions/${sessionId}/stats-lock-date`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stats_lock_date: date }),
+      });
+      if (!res.ok) {
+        const d = await res.json();
+        setLockError(d.error ?? "Failed to save lock date");
+        return;
+      }
+      setSessions((prev) => prev.map((s) => s.id === sessionId ? { ...s, stats_lock_date: date } : s));
+    } catch {
+      setLockError("Network error");
+    }
+  }
 
   const config = STATUS_CONFIG[status];
 
@@ -192,6 +312,21 @@ export default function SeasonCard(props: SeasonCardProps) {
               Finals: <span className={`font-bold ${finals_status === "completed" ? "text-green-600 dark:text-green-400" : "text-orange-600 dark:text-orange-400"}`}>
                 {finals_status}
               </span>
+            </div>
+          )}
+
+          {/* Sessions list with stats lock-in date editing */}
+          {sessions.length > 0 && (
+            <div className="mt-1">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-lighter mb-1">Sessions · Stats lock</p>
+              <div className="rounded-lg border border-border-light bg-background/50 px-3 py-1">
+                {sessions.map((s) => (
+                  <SessionLockRow key={s.id} session={s} onSave={handleSetLockDate} />
+                ))}
+              </div>
+              {lockError && (
+                <p className="text-xs text-red-600 dark:text-red-400 mt-1">{lockError}</p>
+              )}
             </div>
           )}
 

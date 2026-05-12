@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.34.2] - 2026-05-12
+
+### Added
+- **Session stats lock-in date** — admins can set a lock date per session on the Seasons page; after that date the session's stats are excluded from the leaderboard
+- **Session detail page** — shows a subtle 🔒 indicator when a session has a lock date (upcoming or active)
+- **Leaderboard** — shows a subtle "N sessions excluded · stats locked" note at the bottom when locked sessions exist for the season
+
+---
+
 ## [0.34.1] - 2026-05-12
 
 ### Fixed

@@ -98,6 +98,9 @@ export default async function SessionDetailPage({
   const isPending = session.status === "pending";
   const isActive = session.status === "active";
   const isCompleted = session.status === "completed";
+  const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+  const statsLocked = !!session.stats_lock_date && session.stats_lock_date < todayStr;
+  const statsLockPending = !!session.stats_lock_date && session.stats_lock_date >= todayStr;
   const needsScoreboard = isActive || isCompleted;
 
   // Finals: formats (per group), participants, and matches
@@ -228,6 +231,16 @@ export default async function SessionDetailPage({
                 <span className="text-xs font-bold text-orange-500 bg-orange-50 dark:bg-orange-500/10 dark:bg-orange-500/10 px-1.5 py-0.5 rounded">TEST</span>
               )}
             </div>
+            {statsLocked && (
+              <p className="text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-0.5">
+                🔒 Stats excluded from leaderboard
+              </p>
+            )}
+            {statsLockPending && (
+              <p className="text-[11px] text-muted-light mt-0.5">
+                🔒 Stats lock after {new Date(session.stats_lock_date! + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              </p>
+            )}
           </div>
           <div className="ml-auto shrink-0">
             {isActive && (

@@ -20,14 +20,25 @@ export default async function LeaderboardPage() {
 
   const activeSeason = await getActiveSeason();
   const seasonId = activeSeason?.id;
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
 
   // Season-scoped: W/L stats are per-season. UBR ratings are all-time (cross-season).
-  const [allPlayers, totalMatches, ubrMap, ubrEnabledSetting] = await Promise.all([
+  const [allPlayers, totalMatches, ubrMap, ubrEnabledSetting, lockedSessionsResult] = await Promise.all([
     getActivePlayers({ seasonId }),
     getSeasonMatchCount({ seasonId }),
     getAllUbrRatings(),       // UBR is all-time — never season-scoped
     getAppSetting("ubr_enabled"),
+    seasonId
+      ? supabase
+          .from("sessions")
+          .select("id", { count: "exact", head: true })
+          .eq("season_id", seasonId)
+          .eq("is_test_session", false)
+          .not("stats_lock_date", "is", null)
+          .lt("stats_lock_date", today)
+      : Promise.resolve({ count: 0, data: null, error: null }),
   ]);
+  const lockedSessionCount = (lockedSessionsResult as { count: number | null }).count ?? 0;
 
   const ubrEnabled = ubrEnabledSetting === "true";
   // Convert Map to plain object for client component serialization
@@ -45,6 +56,7 @@ export default async function LeaderboardPage() {
         totalMatches={totalMatches}
         isAdmin={isAdmin}
         ubrRatings={ubrEnabled ? ubrRatings : undefined}
+        lockedSessionCount={lockedSessionCount}
       />
     </div>
   );

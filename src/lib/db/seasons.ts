@@ -11,11 +11,20 @@ export interface Season {
   status: SeasonStatus;
 }
 
+export interface SeasonSession {
+  id: string;
+  date: string;
+  status: "pending" | "active" | "completed";
+  stats_lock_date: string | null;
+  match_count: number;
+}
+
 export interface SeasonWithStats extends Season {
   session_count: number;
   player_count: number;
   match_count: number;
   finals_status: string | null;
+  sessions: SeasonSession[];
 }
 
 /** Returns all seasons ordered by start_date DESC. */
@@ -61,11 +70,29 @@ export async function getAllSeasons(): Promise<SeasonWithStats[]> {
     }
 
     // Check finals status
-    const { data: finals } = await supabase
-      .from("finals_events")
-      .select("status")
-      .eq("season_id", s.id)
-      .maybeSingle();
+    // Fetch sessions with stats_lock_date for this season (non-test, non-finals)
+    const [{ data: finals }, { data: sessionRows }] = await Promise.all([
+      supabase
+        .from("finals_events")
+        .select("status")
+        .eq("season_id", s.id)
+        .maybeSingle(),
+      supabase
+        .from("sessions")
+        .select("id, date, status, stats_lock_date, matches(count)")
+        .eq("season_id", s.id)
+        .eq("is_test_session", false)
+        .neq("session_type", "finals")
+        .order("date", { ascending: false }),
+    ]);
+
+    const sessions: SeasonSession[] = (sessionRows ?? []).map((row) => ({
+      id: row.id,
+      date: row.date,
+      status: row.status as SeasonSession["status"],
+      stats_lock_date: (row as unknown as { stats_lock_date?: string | null }).stats_lock_date ?? null,
+      match_count: (row.matches as unknown as { count: number }[])?.[0]?.count ?? 0,
+    }));
 
     result.push({
       id: s.id,
@@ -77,6 +104,7 @@ export async function getAllSeasons(): Promise<SeasonWithStats[]> {
       player_count: playerIds.size,
       match_count: matchCount ?? 0,
       finals_status: finals?.status ?? null,
+      sessions,
     });
   }
 

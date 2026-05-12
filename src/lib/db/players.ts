@@ -21,14 +21,16 @@ export async function getActivePlayers(
   const includeTest = options?.includeTestSessions ?? false;
   const seasonId = options?.seasonId;
 
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+
   let matchesQuery = includeTest
     ? supabase
         .from("matches")
-        .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team, sessions!inner(is_test_session, season_id)")
+        .select("session_id, team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team, sessions!inner(is_test_session, season_id)")
         .eq("match_type", "regular")
     : supabase
         .from("matches")
-        .select("team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team, sessions!inner(is_test_session, season_id)")
+        .select("session_id, team1_player1_id, team1_player2_id, team2_player1_id, team2_player2_id, winning_team, sessions!inner(is_test_session, season_id)")
         .eq("sessions.is_test_session", false)
         .eq("match_type", "regular");
 
@@ -37,10 +39,10 @@ export async function getActivePlayers(
   }
 
   let talliesQuery = includeTest
-    ? supabase.from("session_tally").select("player_id, wins, losses, sessions!inner(is_test_session, season_id)")
+    ? supabase.from("session_tally").select("session_id, player_id, wins, losses, sessions!inner(is_test_session, season_id)")
     : supabase
         .from("session_tally")
-        .select("player_id, wins, losses, sessions!inner(is_test_session, season_id)")
+        .select("session_id, player_id, wins, losses, sessions!inner(is_test_session, season_id)")
         .eq("sessions.is_test_session", false);
 
   if (seasonId) {
@@ -52,6 +54,7 @@ export async function getActivePlayers(
     { data: matches },
     { data: deletedData },
     { data: tallies },
+    { data: lockedSessionRows },
   ] = await Promise.all([
     supabase
       .from("players")
@@ -65,7 +68,14 @@ export async function getActivePlayers(
       .select("id")
       .not("deleted_at", "is", null),
     talliesQuery,
+    supabase
+      .from("sessions")
+      .select("id")
+      .not("stats_lock_date", "is", null)
+      .lt("stats_lock_date", today),
   ]);
+
+  const lockedSessionIds = new Set((lockedSessionRows ?? []).map((s: { id: string }) => s.id));
 
   if (error) throw new Error(error.message);
   if (!players) return [];
@@ -75,6 +85,8 @@ export async function getActivePlayers(
   const statsMap = new Map<string, { wins: number; losses: number; played: number }>();
 
   for (const m of matches ?? []) {
+    // Skip locked sessions
+    if (lockedSessionIds.has(m.session_id)) continue;
     // Skip any match involving a deleted player
     if (
       deletedIds.has(m.team1_player1_id) ||
@@ -104,6 +116,7 @@ export async function getActivePlayers(
 
   // Add tally-session stats (sessions where no individual matches were recorded)
   for (const t of tallies ?? []) {
+    if (lockedSessionIds.has(t.session_id)) continue;
     if (t.wins === 0 && t.losses === 0) continue;
     const s = statsMap.get(t.player_id) ?? { wins: 0, losses: 0, played: 0 };
     s.wins += t.wins;

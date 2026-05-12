@@ -73,11 +73,13 @@ export default function LeaderboardTable({
   totalMatches,
   isAdmin,
   ubrRatings,
+  lockedSessionCount = 0,
 }: {
   players: PlayerStats[];
   totalMatches: number;
   isAdmin: boolean;
   ubrRatings?: Record<string, UbrRating>;
+  lockedSessionCount?: number;
 }) {
   const [sortKey, setSortKey] = useState<SortKey>("wins");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -304,6 +306,11 @@ export default function LeaderboardTable({
       <div className="mt-8 pt-8 border-t border-border-light text-center">
         <div className="text-sm text-muted-light">Total matches recorded this season</div>
         <div className="text-2xl font-bold text-heading mt-1">{matchCount}</div>
+        {lockedSessionCount > 0 && (
+          <div className="mt-2 text-[11px] text-muted-lighter">
+            🔒 {lockedSessionCount} session{lockedSessionCount > 1 ? "s" : ""} excluded · stats locked
+          </div>
+        )}
       </div>
     </>
   );
