@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import NavLink from "@/components/NavLink";
 import type { SessionRow } from "@/lib/db/sessions";
 
@@ -13,25 +13,9 @@ function formatDate(dateStr: string) {
   return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 }
 
-function formatShortDate(dateStr: string) {
-  return new Date(dateStr + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
 function SectionLabel({ label }: { label: string }) {
   return (
     <p className="text-xs font-semibold uppercase tracking-wide text-muted-light px-1 mb-1">{label}</p>
-  );
-}
-
-function LockCutoffDivider({ lockDate }: { lockDate: string }) {
-  return (
-    <div className="flex items-center gap-3 px-4 py-2 bg-amber-50/60 dark:bg-amber-900/10 border-b border-border-light">
-      <div className="flex-1 h-px bg-amber-300/70 dark:bg-amber-700/50" />
-      <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 whitespace-nowrap">
-        🔒 leaderboard cutoff · {formatShortDate(lockDate)}
-      </span>
-      <div className="flex-1 h-px bg-amber-300/70 dark:bg-amber-700/50" />
-    </div>
   );
 }
 
@@ -70,7 +54,7 @@ export default function SessionListClient({
 
   const past = real.filter(s => s.status !== "pending" || s.date < todayStr);
 
-  function SessionRow({ s, isLocked = false }: { s: SessionRow; isLocked?: boolean }) {
+  function SessionRow({ s, isLocked = false, isCutoff = false }: { s: SessionRow; isLocked?: boolean; isCutoff?: boolean }) {
     return (
       <NavLink
         href={`/session/${s.id}`}
@@ -78,6 +62,9 @@ export default function SessionListClient({
       >
         <div className="flex flex-col gap-0.5">
           <span className="text-sm text-text">{formatDate(s.date)}</span>
+          {isCutoff && (
+            <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">🔒 last counted session</span>
+          )}
           {isAdmin && s.is_test_session && (
             <span className="text-[10px] font-bold text-orange-500 uppercase tracking-wide">Test Session</span>
           )}
@@ -104,23 +91,17 @@ export default function SessionListClient({
     );
   }
 
-  function PastSessionList({ items }: { items: SessionRow[] }) {
-    const cutoffIdx = lockActive
-      ? items.findIndex(s => s.date <= seasonLockDate!)
-      : -1;
-
-    return (
-      <>
-        {items.map((s, i) => (
-          <Fragment key={s.id}>
-            {cutoffIdx >= 0 && i === cutoffIdx && (
-              <LockCutoffDivider lockDate={seasonLockDate!} />
-            )}
-            <SessionRow s={s} isLocked={lockActive && s.date > (seasonLockDate ?? "")} />
-          </Fragment>
-        ))}
-      </>
-    );
+  function renderPast(items: SessionRow[]) {
+    // In date-desc order, first item with date <= lockDate is the most recent counted session
+    const cutoffIdx = lockActive ? items.findIndex(s => s.date <= seasonLockDate!) : -1;
+    return items.map((s, i) => (
+      <SessionRow
+        key={s.id}
+        s={s}
+        isLocked={lockActive && s.date > (seasonLockDate ?? "")}
+        isCutoff={i === cutoffIdx}
+      />
+    ));
   }
 
   return (
@@ -142,9 +123,7 @@ export default function SessionListClient({
             <div>
               <SectionLabel label="Past Sessions" />
               <div className="bg-surface rounded-xl shadow-sm overflow-hidden">
-                <PastSessionList
-                  items={past.length > VISIBLE_PAST && !showAllPast ? past.slice(0, VISIBLE_PAST) : past}
-                />
+                {renderPast(past.length > VISIBLE_PAST && !showAllPast ? past.slice(0, VISIBLE_PAST) : past)}
               </div>
               {past.length > VISIBLE_PAST && (
                 <button

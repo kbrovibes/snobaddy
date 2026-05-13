@@ -9,7 +9,11 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [0.36.3] - 2026-05-12
 
 ### Changed
+<<<<<<< Updated upstream
 - **Finalize & Upload Scores split** — the "Upload Scores & Finalize" button on pending sessions is now two separate actions: a "Finalize Session" button (with in-app confirmation instead of a browser popup) and an "Upload Scores" widget (tally entry with photo import) that works on both pending and finalized sessions
+=======
+- **Session list lock UX** — replaced the divider line with a "🔒 last counted session" sublabel on the most recent session that counts toward the leaderboard; sessions after the cutoff remain dimmed
+>>>>>>> Stashed changes
 
 ---
 
