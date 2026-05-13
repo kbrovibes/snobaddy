@@ -1,49 +1,42 @@
 export const dynamic = "force-dynamic";
 
-import { getActivePlayers } from "@/lib/db/players";
-import { getSeasonMatchCount } from "@/lib/db/matches";
-import { getAllUbrRatings, type UbrRating } from "@/lib/db/ubr";
-import { getAppSetting } from "@/lib/db/settings";
+import { Suspense } from "react";
 import { getActiveSeason } from "@/lib/db/seasons";
 import { getAuthPlayer } from "@/lib/auth";
-import { createClient } from "@/lib/supabase-server";
-import LeaderboardTable from "./LeaderboardTable";
+import LeaderboardData from "./LeaderboardData";
 import { redirect } from "next/navigation";
 
+function TableSkeleton() {
+  return (
+    <div className="bg-surface rounded-xl border border-border-light overflow-hidden animate-pulse">
+      <div className="flex gap-2 px-3 py-2 border-b border-border-light">
+        <div className="h-3 w-6 bg-border-light rounded" />
+        <div className="h-3 w-20 bg-border-light rounded flex-1" />
+        <div className="h-3 w-6 bg-border-light rounded" />
+        <div className="h-3 w-6 bg-border-light rounded" />
+        <div className="h-3 w-8 bg-border-light rounded" />
+      </div>
+      {Array.from({ length: 10 }, (_, i) => (
+        <div key={i} className="flex gap-2 px-3 py-2.5 border-b border-border-light last:border-0">
+          <div className="h-4 w-5 bg-border-light rounded" />
+          <div className="h-4 w-24 bg-border-light rounded flex-1" />
+          <div className="h-4 w-5 bg-border-light rounded" />
+          <div className="h-4 w-5 bg-border-light rounded" />
+          <div className="h-4 w-8 bg-border-light rounded" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default async function LeaderboardPage() {
-  const authPlayer = await getAuthPlayer();
+  const [authPlayer, activeSeason] = await Promise.all([
+    getAuthPlayer(),
+    getActiveSeason(),
+  ]);
   const isAdmin = authPlayer?.isAdmin ?? false;
 
   if (!isAdmin) redirect("/");
-
-  const activeSeason = await getActiveSeason();
-  const seasonId = activeSeason?.id;
-  const seasonLockDate = activeSeason?.stats_lock_date ?? null;
-
-  // Season-scoped: W/L stats are per-season. UBR ratings are all-time (cross-season).
-  const supabase = await createClient();
-  const [allPlayers, totalMatches, ubrMap, ubrEnabledSetting, lockedSessionsResult] = await Promise.all([
-    getActivePlayers({ seasonId, seasonLockDate }),
-    getSeasonMatchCount({ seasonId, seasonLockDate }),
-    getAllUbrRatings(),       // UBR is all-time — never season-scoped
-    getAppSetting("ubr_enabled"),
-    seasonId && seasonLockDate
-      ? supabase
-          .from("sessions")
-          .select("id", { count: "exact", head: true })
-          .eq("season_id", seasonId)
-          .eq("is_test_session", false)
-          .gt("date", seasonLockDate)
-      : Promise.resolve({ count: 0, data: null, error: null }),
-  ]);
-  const lockedSessionCount = (lockedSessionsResult as { count: number | null }).count ?? 0;
-
-  const ubrEnabled = ubrEnabledSetting === "true";
-  // Convert Map to plain object for client component serialization
-  const ubrRatings: Record<string, UbrRating> = {};
-  for (const [k, v] of ubrMap) {
-    ubrRatings[k] = v;
-  }
 
   return (
     <div className="px-4 py-4 pb-20">
@@ -54,13 +47,13 @@ export default async function LeaderboardPage() {
         )}
       </div>
 
-      <LeaderboardTable
-        players={allPlayers.filter(p => p.matches_played > 0)}
-        totalMatches={totalMatches}
-        isAdmin={isAdmin}
-        ubrRatings={ubrEnabled ? ubrRatings : undefined}
-        lockedSessionCount={lockedSessionCount}
-      />
+      <Suspense fallback={<TableSkeleton />}>
+        <LeaderboardData
+          seasonId={activeSeason?.id}
+          seasonLockDate={activeSeason?.stats_lock_date ?? null}
+          isAdmin={isAdmin}
+        />
+      </Suspense>
     </div>
   );
 }
