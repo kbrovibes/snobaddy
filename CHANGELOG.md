@@ -8,8 +8,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [0.36.1] - 2026-05-12
 
+<<<<<<< Updated upstream
 ### Fixed
 - **UBR tally algorithm** — rewrote the tally-session rating engine with a doubles-dampened expected win rate model; high-rated players who perform well (e.g. 9-2) now correctly see their UBR go UP instead of dropping due to unrealistic 1v1-style expectations. Added a performance bonus for standout sessions and increased tally match credit from 50% to 75%.
+=======
+### Changed
+- **Session list lock UX** — replaced the per-row 🔒 emoji with a full-width amber divider ("🔒 leaderboard cutoff · Apr 28") inserted between the last counted session and the first excluded one; sessions after the cutoff are dimmed to 50% opacity
+>>>>>>> Stashed changes
 
 ---
 
