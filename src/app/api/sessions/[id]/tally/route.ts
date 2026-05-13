@@ -44,12 +44,6 @@ export async function POST(
     }
   }
 
-  if (session.status !== "completed") {
-    return NextResponse.json(
-      { error: "Tally mode is only available for completed sessions" },
-      { status: 400 }
-    );
-  }
 
   const body = await request.json();
   const { entries } = body as {

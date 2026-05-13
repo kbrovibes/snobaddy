@@ -160,9 +160,6 @@ export async function POST(
     .maybeSingle();
 
   if (!session) return NextResponse.json({ error: "Session not found" }, { status: 404 });
-  if (session.status !== "completed") {
-    return NextResponse.json({ error: "Session is not completed" }, { status: 400 });
-  }
 
   // Parse multipart form
   const formData = await request.formData();
