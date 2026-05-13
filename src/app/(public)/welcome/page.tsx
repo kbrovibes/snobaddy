@@ -1,10 +1,9 @@
-import { createClient } from "@/lib/supabase-server";
 import { supabase as serviceClient } from "@/lib/supabase";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import AuthRedirect from "./AuthRedirect";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600; // Re-generate at most once per hour
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr + "T00:00:00");
@@ -12,12 +11,7 @@ function formatDate(dateStr: string): string {
 }
 
 export default async function WelcomePage() {
-  // If user is already authenticated, send them to the app
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) redirect("/");
-
-  // Fetch public season data (service role — no RLS)
+  // Fetch public season data (service role — no RLS, no cookies = ISR-compatible)
   const [{ data: activeSeason }, { data: sessions }] = await Promise.all([
     serviceClient
       .from("seasons")
@@ -81,6 +75,7 @@ export default async function WelcomePage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <AuthRedirect />
       {/* Top bar */}
       <header className="flex items-center justify-between px-5 py-3">
         <div className="flex items-center gap-2.5">
