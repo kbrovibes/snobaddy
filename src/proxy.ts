@@ -27,7 +27,9 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/auth") ||
     pathname === "/login" ||
     pathname === "/welcome" ||
-    pathname === "/explore"
+    pathname === "/explore" ||
+    pathname === "/manifest.webmanifest" ||
+    pathname.startsWith("/api/health")
   ) {
     return response;
   }
