@@ -356,22 +356,6 @@ export default function TallyEntryForm({
         </div>
       )}
 
-      {/* Name corrections from photo extraction */}
-      {nameCorrections.length > 0 && (
-        <div className="rounded-lg bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/20 px-3 py-2">
-          <p className="text-xs font-semibold text-purple-700 dark:text-purple-300 mb-1">
-            Name corrections applied:
-          </p>
-          <div className="flex flex-col gap-0.5">
-            {nameCorrections.map((c, i) => (
-              <p key={i} className="text-xs text-purple-600 dark:text-purple-400">
-                &ldquo;{c.raw_name}&rdquo; → {c.matched_name}
-              </p>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Rows */}
       {!extracting && rows.length > 0 && (
         <div className="flex flex-col gap-2">
