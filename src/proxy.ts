@@ -23,13 +23,18 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Public routes — always accessible
-  if (pathname.startsWith("/auth") || pathname === "/login") {
+  if (
+    pathname.startsWith("/auth") ||
+    pathname === "/login" ||
+    pathname === "/welcome" ||
+    pathname === "/explore"
+  ) {
     return response;
   }
 
   // All other routes require login
   if (!user) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/welcome", request.url));
   }
 
   return response;

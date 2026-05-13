@@ -26,7 +26,7 @@ export default function Header({ userName, playerId, isAdmin, isGodMode }: Heade
     const supabase = createClient();
     await supabase.auth.signOut();
     startLoading();
-    router.push("/login");
+    router.push("/welcome");
   }
 
   // Close menu on outside click
