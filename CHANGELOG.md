@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.36.7] - 2026-05-12
+
+### Fixed
+- **Tally player list empty** — player list for manual score entry was empty on pending and active sessions; now fetches all active players regardless of session state
+
+---
+
 ## [0.36.6] - 2026-05-12
 
 ### Changed

@@ -193,9 +193,9 @@ export default async function SessionDetailPage({
           getProposedMatches(session.id),
           getOnlinePlayerIds(checkedInPlayers.map((p) => p.player_id)),
           isCompleted ? getSessionTally(session.id) : Promise.resolve([] as TallyEntry[]),
-          (isCompleted || isPending) && isAdmin ? getActivePlayerList() : Promise.resolve([] as { id: string; name: string }[]),
+          isAdmin ? getActivePlayerList() : Promise.resolve([] as { id: string; name: string }[]),
         ])
-      : [[], [], [], new Set<string>(), [], []];
+      : [[], [], [], new Set<string>(), [], isPending && isAdmin ? await getActivePlayerList() : []];
 
   const highlights = isCompleted
     ? await getSessionHighlights(session.id)
