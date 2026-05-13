@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase-server";
+import { getAuthPlayer } from "@/lib/auth";
 import { getAllSeasons } from "@/lib/db/seasons";
 import SeasonCard from "@/components/SeasonCard";
 import CreateSeasonForm from "@/components/CreateSeasonForm";
@@ -13,15 +13,8 @@ function SectionLabel({ label }: { label: string }) {
 }
 
 export default async function SeasonsPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const { data: player } = await supabase
-    .from("players")
-    .select("is_admin")
-    .eq("user_id", user!.id)
-    .maybeSingle();
-
-  if (!player?.is_admin) redirect("/");
+  const authPlayer = await getAuthPlayer();
+  if (!authPlayer?.isAdmin) redirect("/");
 
   const seasons = await getAllSeasons();
   const hasActiveSeason = seasons.some((s) => s.status === "active");

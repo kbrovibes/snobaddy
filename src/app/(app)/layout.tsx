@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase-server";
 import { supabase as serviceClient } from "@/lib/supabase";
 import { redirect } from "next/navigation";
+import { getAuthPlayer } from "@/lib/auth";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import NavigationLoader from "@/components/NavigationLoader";
@@ -9,21 +10,15 @@ import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import PushNotificationBanner from "@/components/PushNotificationBanner";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let player = await getAuthPlayer();
 
-  if (!user) redirect("/login");
-
-  let { data: player } = await supabase
-    .from("players")
-    .select("id, name, onboarding_complete, is_admin, is_god_mode")
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  // No player record yet — create a stub and send to onboarding.
-  // This catches email users who logged in via signInWithPassword without
-  // going through /auth/confirm first.
   if (!player) {
+    // Check if user is authenticated but has no player record
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect("/login");
+
+    // No player record yet — create a stub and send to onboarding.
     const { data: newPlayer } = await serviceClient
       .from("players")
       .insert({
@@ -36,23 +31,33 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       })
       .select("id, name, onboarding_complete, is_admin, is_god_mode")
       .single();
-    player = newPlayer;
+    if (newPlayer) {
+      player = {
+        id: newPlayer.id,
+        name: newPlayer.name,
+        email: user.email!,
+        userId: user.id,
+        isAdmin: newPlayer.is_admin ?? false,
+        isGodMode: newPlayer.is_god_mode ?? false,
+        onboardingComplete: newPlayer.onboarding_complete ?? false,
+      };
+    }
   }
 
   // Hard gate: any user who hasn't completed onboarding gets redirected.
-  if (!player?.onboarding_complete) redirect("/onboarding");
+  if (!player?.onboardingComplete) redirect("/onboarding");
 
   return (
     <NavigationLoader>
       <div className="flex flex-col min-h-screen bg-background">
-        <Header userName={player.name ?? user.email ?? "Player"} playerId={player.id} isAdmin={player.is_admin ?? false} isGodMode={player.is_god_mode ?? false} />
+        <Header userName={player.name ?? "Player"} playerId={player.id} isAdmin={player.isAdmin} isGodMode={player.isGodMode} />
         {/* pt-14 clears the fixed header, pb-16 clears the fixed bottom nav */}
         <main className="flex-1 pt-14 pb-16">
           <PullToRefresh />
           <PushNotificationBanner vapidPublicKey={process.env.VAPID_PUBLIC_KEY ?? ""} />
           {children}
         </main>
-        <BottomNav isAdmin={player?.is_admin ?? false} isGodMode={player?.is_god_mode ?? false} />
+        <BottomNav isAdmin={player.isAdmin} isGodMode={player.isGodMode} />
         <ServiceWorkerRegistration />
       </div>
     </NavigationLoader>

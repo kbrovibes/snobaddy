@@ -1,20 +1,16 @@
 import { getActivePlayers, getDeletedPlayers } from "@/lib/db/players";
-import { createClient } from "@/lib/supabase-server";
 import { getActiveSession, getSessionPresence } from "@/lib/db/sessions";
 import { getAllUbrRatings, type UbrRating } from "@/lib/db/ubr";
 import { getAppSetting } from "@/lib/db/settings";
+import { getAuthPlayer } from "@/lib/auth";
 import AdminPageContent from "@/components/AdminPageContent";
 
 export const dynamic = "force-dynamic";
 
 export default async function PlayersPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const { data: currentPlayer } = await supabase
-    .from("players").select("is_admin, is_god_mode").eq("user_id", user!.id).single();
-
-  const isAdmin = currentPlayer?.is_admin ?? false;
-  const isGodMode = currentPlayer?.is_god_mode ?? false;
+  const authPlayer = await getAuthPlayer();
+  const isAdmin = authPlayer?.isAdmin ?? false;
+  const isGodMode = authPlayer?.isGodMode ?? false;
 
   const [players, deletedPlayers, activeSession, ubrMap, ubrEnabledSetting] = await Promise.all([
     getActivePlayers(),

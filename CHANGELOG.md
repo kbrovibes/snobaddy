@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.37.0] - 2026-05-12
+
+### Improved
+- **Faster tab switching** — parallelized DB queries on Session and Seasons pages, added skeleton loading states for all tabs, and deduplicated auth checks across pages
+- **Seasons page** — eliminated sequential N+1 query pattern (20+ serial DB calls → 4 parallel), loads dramatically faster
+- **All tabs** — skeleton loading animations appear instantly during navigation instead of a blank screen
+
+---
+
 ## [0.36.10] - 2026-05-12
 
 ### Changed

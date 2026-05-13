@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { getActiveSession, getAllSessions, getSeasonStats } from "@/lib/db/sessions";
 import { getActiveSeason } from "@/lib/db/seasons";
-import { getActiveFinals, getAllFinals, getFinalsSessionPair } from "@/lib/db/finals";
-import { createClient } from "@/lib/supabase-server";
+import { getAllFinals, getFinalsSessionPair } from "@/lib/db/finals";
+import { getAuthPlayer } from "@/lib/auth";
 import CreateSessionButton from "@/components/CreateSessionButton";
 import FinalsSection from "@/components/finals/FinalsSection";
 import SessionListClient from "./SessionListClient";
@@ -17,21 +17,16 @@ export default async function SessionListPage({
 }) {
   const { list } = await searchParams;
 
-  if (!list) {
-    const active = await getActiveSession();
-    if (active) redirect(`/session/${active.id}`);
-  }
+  // Parallelize all independent initial queries (auth is cached via React.cache)
+  const [activeSession, activeSeason, authPlayer] = await Promise.all([
+    list ? Promise.resolve(null) : getActiveSession(),
+    getActiveSeason(),
+    getAuthPlayer(),
+  ]);
 
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const { data: currentPlayer } = await supabase
-    .from("players")
-    .select("is_admin")
-    .eq("user_id", user!.id)
-    .maybeSingle();
-  const isAdmin = currentPlayer?.is_admin ?? false;
+  if (!list && activeSession) redirect(`/session/${activeSession.id}`);
 
-  const activeSeason = await getActiveSeason();
+  const isAdmin = authPlayer?.isAdmin ?? false;
 
   // If no active season, show empty state (god mode can go create one)
   if (!activeSeason) {
@@ -53,15 +48,17 @@ export default async function SessionListPage({
   // Current = most recent non-completed, or most recent overall
   const finalsEvent = allFinalsEvents.find((e) => e.status !== "completed") ?? allFinalsEvents[0] ?? null;
   const pastFinalsEvents = allFinalsEvents.filter((e) => e.id !== finalsEvent?.id);
-  const finalsSessionPair = finalsEvent
-    ? await getFinalsSessionPair(finalsEvent.finals1_session_id, finalsEvent.finals2_session_id)
-    : null;
   const seasonName = sessions[0]?.season?.name ?? "Sessions";
 
-  // Season stats — non-test completed sessions only (finals already excluded by getAllSessions)
+  // Season stats + finals session pair — independent, run in parallel
   const realCompleted = sessions.filter((s) => !s.is_test_session && s.status === "completed");
   const daysOfPlay = realCompleted.length;
-  const { playerCount, matchCount: totalMatches } = await getSeasonStats(realCompleted.map((s) => s.id));
+  const [{ playerCount, matchCount: totalMatches }, finalsSessionPair] = await Promise.all([
+    getSeasonStats(realCompleted.map((s) => s.id)),
+    finalsEvent
+      ? getFinalsSessionPair(finalsEvent.finals1_session_id, finalsEvent.finals2_session_id)
+      : Promise.resolve(null),
+  ]);
 
   return (
     <div className="flex flex-col px-4 py-4 gap-4">

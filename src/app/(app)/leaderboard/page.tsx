@@ -5,16 +5,14 @@ import { getSeasonMatchCount } from "@/lib/db/matches";
 import { getAllUbrRatings, type UbrRating } from "@/lib/db/ubr";
 import { getAppSetting } from "@/lib/db/settings";
 import { getActiveSeason } from "@/lib/db/seasons";
-import LeaderboardTable from "./LeaderboardTable";
+import { getAuthPlayer } from "@/lib/auth";
 import { createClient } from "@/lib/supabase-server";
+import LeaderboardTable from "./LeaderboardTable";
 import { redirect } from "next/navigation";
 
 export default async function LeaderboardPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const { data: currentPlayer } = await supabase
-    .from("players").select("is_admin").eq("user_id", user!.id).maybeSingle();
-  const isAdmin = currentPlayer?.is_admin ?? false;
+  const authPlayer = await getAuthPlayer();
+  const isAdmin = authPlayer?.isAdmin ?? false;
 
   if (!isAdmin) redirect("/");
 
@@ -23,6 +21,7 @@ export default async function LeaderboardPage() {
   const seasonLockDate = activeSeason?.stats_lock_date ?? null;
 
   // Season-scoped: W/L stats are per-season. UBR ratings are all-time (cross-season).
+  const supabase = await createClient();
   const [allPlayers, totalMatches, ubrMap, ubrEnabledSetting, lockedSessionsResult] = await Promise.all([
     getActivePlayers({ seasonId, seasonLockDate }),
     getSeasonMatchCount({ seasonId, seasonLockDate }),
