@@ -192,10 +192,16 @@ export default async function SessionDetailPage({
           getSessionMatches(session.id),
           getProposedMatches(session.id),
           getOnlinePlayerIds(checkedInPlayers.map((p) => p.player_id)),
-          isCompleted ? getSessionTally(session.id) : Promise.resolve([] as TallyEntry[]),
+          getSessionTally(session.id),
           isAdmin ? getActivePlayerList() : Promise.resolve([] as { id: string; name: string }[]),
         ])
-      : [[], [], [], new Set<string>(), [], isPending && isAdmin ? await getActivePlayerList() : []];
+      : await (async () => {
+          const [tally, players] = await Promise.all([
+            getSessionTally(session.id),
+            isAdmin ? getActivePlayerList() : Promise.resolve([] as { id: string; name: string }[]),
+          ]);
+          return [[], [], [], new Set<string>(), tally, players];
+        })();
 
   const highlights = isCompleted
     ? await getSessionHighlights(session.id)
@@ -286,8 +292,8 @@ export default async function SessionDetailPage({
         <UploadScoresButton sessionId={session.id} />
       )}
 
-      {/* Admin: upload scores (tally entry) — available on pending sessions */}
-      {isPending && isAdmin && !isFinalsSession && (
+      {/* Admin: upload scores (tally entry) — available on pending sessions without existing tallies */}
+      {isPending && isAdmin && !isFinalsSession && (tallyRows as TallyEntry[]).length === 0 && (
         <TallyEntryForm
           sessionId={session.id}
           allPlayers={formPlayers as { id: string; name: string }[]}
@@ -420,8 +426,8 @@ export default async function SessionDetailPage({
         </>
       )}
 
-      {/* Tally scoreboard — shown for completed sessions with tally data (no match records), not finals */}
-      {isCompleted && !isFinalsSession && (tallyRows as TallyEntry[]).length > 0 && (
+      {/* Tally scoreboard — shown for sessions with tally data, not finals */}
+      {!isFinalsSession && (tallyRows as TallyEntry[]).length > 0 && (
         <>
           <TallyHighlights entries={tallyRows as TallyEntry[]} nameMap={nameMap} />
           <TallyScoreboard
