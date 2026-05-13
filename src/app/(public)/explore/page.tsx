@@ -35,13 +35,14 @@ export default async function ExplorePage() {
       .maybeSingle(),
     supabase
       .from("sessions")
-      .select("id, date, status, is_test_session, season_id")
+      .select("id, date, status, is_test_session, session_type, season_id")
       .order("date", { ascending: false }),
   ]);
 
-  // Filter to active season, non-test
+  // Filter to active season, non-test, non-finals
   const seasonSessions = (sessions ?? []).filter(
-    (s: SessionRow & { season_id: string }) => s.season_id === activeSeason?.id && !s.is_test_session
+    (s: SessionRow & { season_id: string; session_type?: string }) =>
+      s.season_id === activeSeason?.id && !s.is_test_session && s.session_type !== "finals"
   );
 
   const completedSessions = seasonSessions.filter((s: SessionRow) => s.status === "completed");
