@@ -58,13 +58,10 @@ export default function SessionListClient({
     return (
       <NavLink
         href={`/session/${s.id}`}
-        className={`flex items-center justify-between px-4 py-3 border-b border-border-light last:border-0 hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 transition-colors${isLocked ? " opacity-50" : ""}`}
+        className={`flex items-center justify-between px-4 py-3 border-b last:border-0 hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 transition-colors${isLocked ? " opacity-50" : ""}${isCutoff ? " border-amber-300/70 dark:border-amber-700/50" : " border-border-light"}`}
       >
         <div className="flex flex-col gap-0.5">
           <span className="text-sm text-text">{formatDate(s.date)}</span>
-          {isCutoff && (
-            <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">🔒 last counted session</span>
-          )}
           {isAdmin && s.is_test_session && (
             <span className="text-[10px] font-bold text-orange-500 uppercase tracking-wide">Test Session</span>
           )}

@@ -13,6 +13,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.36.5] - 2026-05-12
+
+### Changed
+- **Session list lock UX** — cutoff row now marked with an amber-tinted bottom border instead of a sublabel; no change to row height
+
+---
+
 ## [0.36.4] - 2026-05-12
 
 ### Changed
