@@ -4,15 +4,6 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { TallyEntry } from "@/lib/db/tally";
 
-const MODEL_LABELS: Record<string, string> = {
-  "claude-haiku-4-5-20251001": "Haiku 4.5",
-  "claude-sonnet-4-6": "Sonnet 4.6",
-};
-
-function modelLabel(modelId: string): string {
-  return MODEL_LABELS[modelId] ?? modelId.split("-").slice(-2).join(" ");
-}
-
 interface Props {
   sessionId: string;
   allPlayers: Array<{ id: string; name: string }>;
@@ -37,18 +28,24 @@ type Validation = {
   total_losses: number;
 };
 
+type NameCorrection = {
+  raw_name: string;
+  matched_name: string;
+};
+
 export default function TallyEntryForm({
   sessionId,
   allPlayers,
   initialEntries,
   isEdit,
   isGodMode,
-  tallyModel,
 }: Props) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<"closed" | "manual" | "photo">(
+    isEdit ? "manual" : "closed"
+  );
   const [rows, setRows] = useState<FormRow[]>(() =>
     (initialEntries ?? []).map((e) => ({
       player_id: e.player_id,
@@ -61,20 +58,25 @@ export default function TallyEntryForm({
   const [extracting, setExtracting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validation, setValidation] = useState<Validation | null>(null);
+  const [nameCorrections, setNameCorrections] = useState<NameCorrection[]>([]);
+  const [playerPickerOpen, setPlayerPickerOpen] = useState(false);
 
   const usedIds = new Set(rows.filter((r) => !r.unmatched).map((r) => r.player_id));
   const availablePlayers = allPlayers.filter((p) => !usedIds.has(p.id));
 
-  function handleAddPlayer(e: React.ChangeEvent<HTMLSelectElement>) {
-    const playerId = e.target.value;
-    if (!playerId) return;
+  function handleTogglePlayer(playerId: string) {
     const player = allPlayers.find((p) => p.id === playerId);
     if (!player) return;
-    setRows((prev) => [
-      ...prev,
-      { player_id: playerId, player_name: player.name, wins: "", losses: "" },
-    ]);
-    e.target.value = "";
+    if (usedIds.has(playerId)) {
+      // Remove player
+      setRows((prev) => prev.filter((r) => r.player_id !== playerId));
+    } else {
+      // Add player
+      setRows((prev) => [
+        ...prev,
+        { player_id: playerId, player_name: player.name, wins: "", losses: "" },
+      ]);
+    }
   }
 
   function removeRow(index: number) {
@@ -110,7 +112,9 @@ export default function TallyEntryForm({
     );
     setError(null);
     setValidation(null);
-    setOpen(false);
+    setNameCorrections([]);
+    setPlayerPickerOpen(false);
+    setMode(isEdit ? "manual" : "closed");
   }
 
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -130,6 +134,7 @@ export default function TallyEntryForm({
     setExtracting(true);
     setError(null);
     setValidation(null);
+    setNameCorrections([]);
 
     try {
       const form = new FormData();
@@ -151,6 +156,7 @@ export default function TallyEntryForm({
         wins: number;
         losses: number;
         unmatched: boolean;
+        corrected_from_alias?: boolean;
       };
 
       const extracted: ExtractedEntry[] = (data.entries ?? []).filter(
@@ -166,6 +172,15 @@ export default function TallyEntryForm({
           unmatched: entry.unmatched,
         }))
       );
+
+      // Show name corrections (where raw_name differs from matched player_name)
+      const corrections: NameCorrection[] = extracted
+        .filter((entry) => !entry.unmatched && entry.raw_name !== entry.player_name)
+        .map((entry) => ({
+          raw_name: entry.raw_name,
+          matched_name: entry.player_name,
+        }));
+      setNameCorrections(corrections);
 
       if (data.validation) {
         setValidation(data.validation);
@@ -208,7 +223,7 @@ export default function TallyEntryForm({
         setError(data.error ?? "Failed to save tallies");
         return;
       }
-      setOpen(false);
+      setMode("closed");
       router.refresh();
     } catch {
       setError("Network error — please try again");
@@ -219,11 +234,11 @@ export default function TallyEntryForm({
 
   // ── Closed state ─────────────────────────────────────────────────────────
 
-  if (!open) {
+  if (mode === "closed") {
     if (isEdit) {
       return (
         <button
-          onClick={() => setOpen(true)}
+          onClick={() => setMode("manual")}
           className="text-sm font-medium text-sky-600 hover:text-sky-700 underline-offset-2 hover:underline"
         >
           Edit Tallies
@@ -231,12 +246,12 @@ export default function TallyEntryForm({
       );
     }
     return (
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2">
         <button
-          onClick={() => setOpen(true)}
-          className="flex-1 py-3 rounded-xl text-sm font-semibold border-2 border-dashed border-border text-text-light hover:border-sky-300 hover:text-sky-600 transition-colors"
+          onClick={() => setMode("manual")}
+          className="w-full py-2.5 text-sm font-semibold rounded-xl bg-stone-900 dark:bg-sky-600 text-white hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors"
         >
-          + Enter Final Scores
+          Enter Scoreboard Manually
         </button>
         {isGodMode && (
           <>
@@ -245,32 +260,24 @@ export default function TallyEntryForm({
               type="file"
               accept=".jpg,.jpeg,.png,.heic,.webp"
               className="hidden"
-              onChange={handlePhotoUpload}
+              onChange={(e) => {
+                setMode("photo");
+                handlePhotoUpload(e);
+              }}
             />
-            <div className="flex flex-col items-center gap-1">
-              <button
-                onClick={() => {
-                  setOpen(true);
-                  setTimeout(() => fileInputRef.current?.click(), 50);
-                }}
-                className="px-4 py-3 rounded-xl text-sm font-semibold border-2 border-dashed border-purple-200 text-purple-500 hover:border-purple-400 hover:text-purple-600 transition-colors"
-                title="Import from photo"
-              >
-                📷
-              </button>
-              {tallyModel && (
-                <span className="text-[10px] font-medium text-purple-400 leading-none">
-                  {modelLabel(tallyModel)}
-                </span>
-              )}
-            </div>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full py-2.5 text-sm font-semibold rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition-colors"
+            >
+              Upload Scoreboard Photo
+            </button>
           </>
         )}
       </div>
     );
   }
 
-  // ── Open state ────────────────────────────────────────────────────────────
+  // ── Open state (manual or photo) ──────────────────────────────────────────
 
   return (
     <div className="bg-surface rounded-xl shadow-sm dark:shadow-none dark:ring-1 dark:ring-border px-4 py-4 flex flex-col gap-3">
@@ -290,20 +297,13 @@ export default function TallyEntryForm({
                 className="hidden"
                 onChange={handlePhotoUpload}
               />
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={extracting}
-                  className="text-xs font-medium text-purple-600 hover:text-purple-700 disabled:opacity-50"
-                >
-                  {extracting ? "Extracting…" : "📷 Import from photo"}
-                </button>
-                {tallyModel && !extracting && (
-                  <span className="text-[10px] font-medium text-white bg-purple-400 px-1.5 py-0.5 rounded-full leading-none">
-                    {modelLabel(tallyModel)}
-                  </span>
-                )}
-              </div>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={extracting}
+                className="text-xs font-medium text-purple-600 hover:text-purple-700 disabled:opacity-50"
+              >
+                {extracting ? "Extracting…" : "📷 Import from photo"}
+              </button>
             </>
           )}
           <button onClick={handleCancel} className="text-xs text-muted-light hover:text-text">
@@ -316,6 +316,22 @@ export default function TallyEntryForm({
       {extracting && (
         <div className="text-center py-6 text-sm text-purple-600 animate-pulse">
           Reading whiteboard…
+        </div>
+      )}
+
+      {/* Name corrections from photo extraction */}
+      {nameCorrections.length > 0 && (
+        <div className="rounded-lg bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/20 px-3 py-2">
+          <p className="text-xs font-semibold text-purple-700 dark:text-purple-300 mb-1">
+            Name corrections applied:
+          </p>
+          <div className="flex flex-col gap-0.5">
+            {nameCorrections.map((c, i) => (
+              <p key={i} className="text-xs text-purple-600 dark:text-purple-400">
+                &ldquo;{c.raw_name}&rdquo; → {c.matched_name}
+              </p>
+            ))}
+          </div>
         </div>
       )}
 
@@ -343,7 +359,7 @@ export default function TallyEntryForm({
                   className="border border-red-300 rounded-lg text-sm px-2 py-1 text-red-700 bg-surface focus:outline-none focus:ring-2 focus:ring-red-400"
                 >
                   <option value="" disabled>
-                    ✕ "{row.raw_name ?? row.player_name}" — not in system
+                    ✕ &ldquo;{row.raw_name ?? row.player_name}&rdquo; — not in system
                   </option>
                   {allPlayers
                     .filter((p) => !usedIds.has(p.id))
@@ -384,18 +400,35 @@ export default function TallyEntryForm({
         </div>
       )}
 
-      {/* Add player */}
+      {/* Add players — multi-select picker */}
       {!extracting && availablePlayers.length > 0 && (
-        <select
-          onChange={handleAddPlayer}
-          defaultValue=""
-          className="border border-border rounded-lg text-sm px-3 py-2 text-text-light focus:outline-none focus:ring-2 focus:ring-sky-400 bg-surface"
-        >
-          <option value="" disabled>+ Add player…</option>
-          {availablePlayers.map((p) => (
-            <option key={p.id} value={p.id}>{p.name}</option>
-          ))}
-        </select>
+        <div>
+          <button
+            onClick={() => setPlayerPickerOpen(!playerPickerOpen)}
+            className="w-full border border-border rounded-lg text-sm px-3 py-2 text-text-light text-left focus:outline-none focus:ring-2 focus:ring-sky-400 bg-surface flex items-center justify-between"
+          >
+            <span>+ Add players…</span>
+            <span className="text-xs text-muted-lighter">{playerPickerOpen ? "▲" : "▼"}</span>
+          </button>
+          {playerPickerOpen && (
+            <div className="mt-1 border border-border rounded-lg bg-surface max-h-48 overflow-y-auto shadow-sm">
+              {allPlayers.map((p) => (
+                <label
+                  key={p.id}
+                  className="flex items-center gap-2 px-3 py-1.5 hover:bg-surface-alt cursor-pointer text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    checked={usedIds.has(p.id)}
+                    onChange={() => handleTogglePlayer(p.id)}
+                    className="rounded border-border text-sky-600 focus:ring-sky-400"
+                  />
+                  <span className="text-text truncate">{p.name}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
       )}
 
       {!extracting && rows.length === 0 && availablePlayers.length === 0 && (
@@ -418,7 +451,7 @@ export default function TallyEntryForm({
       {/* Initial extraction balance note (from server) */}
       {validation && !validation.balanced && !formImbalanced && (
         <div className="rounded-lg bg-yellow-50 border border-yellow-200 px-3 py-2 text-xs text-yellow-800">
-          <span className="font-semibold">⚠ Extraction warning:</span> AI read {validation.total_wins}W / {validation.total_losses}L — these don't balance. Review counts before saving.
+          <span className="font-semibold">⚠ Extraction warning:</span> AI read {validation.total_wins}W / {validation.total_losses}L — these don&apos;t balance. Review counts before saving.
         </div>
       )}
 

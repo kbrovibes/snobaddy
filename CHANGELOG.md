@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.36.6] - 2026-05-12
+
+### Changed
+- **Tally entry UX overhaul** — "Enter Scoreboard Manually" and "Upload Scoreboard Photo" are now full-width solid buttons; player selection uses a multi-select checkbox picker instead of a single dropdown; removed model name labels from UI
+- **Name correction learning** — after uploading a scoreboard photo, name corrections (e.g. "Tredeb" → "Tridib") are shown in a summary banner; corrections are persisted and automatically applied on future photo uploads
+
+---
+
 ## [0.36.5] - 2026-05-12
 
 ### Fixed

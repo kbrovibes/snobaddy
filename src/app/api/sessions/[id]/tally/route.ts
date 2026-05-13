@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase-server";
 import { supabase as adminDb } from "@/lib/supabase";
 import { upsertSessionTally, logTallyCorrection } from "@/lib/db/tally";
+import { getActivePlayerList } from "@/lib/db/players";
+import { getAppSetting, setAppSetting } from "@/lib/db/settings";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(
@@ -101,6 +103,45 @@ export async function POST(
       previousTally,
       savedTally: entries,
     });
+
+    // Learn name aliases from user corrections.
+    // Compare AI-extracted raw names against the player IDs the user actually saved.
+    try {
+      const allPlayers = await getActivePlayerList();
+      const playerMap = new Map(allPlayers.map((p) => [p.id, p.name]));
+      const rawEntries = session.tally_extraction_raw as Array<{ name: string; wins: number; losses: number }>;
+
+      // Load existing aliases
+      const aliasJson = await getAppSetting("tally_name_aliases");
+      const aliases: Record<string, string> = aliasJson ? JSON.parse(aliasJson) : {};
+      let changed = false;
+
+      // For each saved entry, find the corresponding raw extraction entry by position
+      // (extraction and save maintain same order for matched entries)
+      for (const saved of entries) {
+        const playerName = playerMap.get(saved.player_id);
+        if (!playerName) continue;
+
+        // Find raw entries that match this player's wins/losses but have a different name
+        for (const raw of rawEntries) {
+          if (raw.wins === saved.wins && raw.losses === saved.losses) {
+            const rawNorm = raw.name.trim().toLowerCase();
+            const playerNorm = playerName.toLowerCase();
+            // Only learn if the raw name differs from the player name and isn't already known
+            if (rawNorm !== playerNorm && !aliases[rawNorm]) {
+              aliases[rawNorm] = playerName;
+              changed = true;
+            }
+          }
+        }
+      }
+
+      if (changed) {
+        await setAppSetting("tally_name_aliases", JSON.stringify(aliases));
+      }
+    } catch {
+      // Non-critical — don't fail the save if alias learning errors
+    }
   }
 
   return NextResponse.json({ ok: true });

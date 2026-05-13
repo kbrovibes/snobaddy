@@ -12,7 +12,6 @@ import { getSessionTally, getWhiteboardPlayers, getWhiteboardLog, type TallyEntr
 import WhiteboardTally from "@/components/WhiteboardTally";
 import UndoLogEntry from "@/components/UndoLogEntry";
 import ScoreModePicker, { type ScoreMode } from "@/components/ScoreModePicker";
-import { getAppSetting } from "@/lib/db/settings";
 import { createClient } from "@/lib/supabase-server";
 import { buildNameMap, shortName } from "@/lib/display-name";
 import StartSessionButton from "@/components/StartSessionButton";
@@ -72,9 +71,6 @@ export default async function SessionDetailPage({
   const isGodMode = (currentPlayer as unknown as { is_god_mode?: boolean } | null)?.is_god_mode ?? false;
   const playerId = currentPlayer?.id;
 
-  const tallyModel = isGodMode
-    ? (await getAppSetting("tally_extraction_model")) ?? "claude-haiku-4-5-20251001"
-    : null;
 
   const session = await getSessionById(id);
   if (!session) redirect("/");
@@ -296,7 +292,7 @@ export default async function SessionDetailPage({
           sessionId={session.id}
           allPlayers={formPlayers as { id: string; name: string }[]}
           isGodMode={isAdmin}
-          tallyModel={tallyModel ?? undefined}
+
         />
       )}
 
@@ -418,7 +414,7 @@ export default async function SessionDetailPage({
               sessionId={session.id}
               allPlayers={formPlayers as { id: string; name: string }[]}
               isGodMode={isAdmin}
-              tallyModel={tallyModel ?? undefined}
+    
             />
           )}
         </>
@@ -441,7 +437,7 @@ export default async function SessionDetailPage({
               initialEntries={tallyRows as TallyEntry[]}
               isEdit
               isGodMode={isAdmin}
-              tallyModel={tallyModel ?? undefined}
+    
             />
           )}
           {isGodMode && <ResetSessionButton sessionId={session.id} />}

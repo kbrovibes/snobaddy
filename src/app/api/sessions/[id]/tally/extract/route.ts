@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase-server";
 import { supabase as adminDb } from "@/lib/supabase";
 import { getActivePlayerList } from "@/lib/db/players";
-import { getAppSetting } from "@/lib/db/settings";
+import { getAppSetting, setAppSetting } from "@/lib/db/settings";
 import { NextResponse, type NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 
@@ -16,12 +16,34 @@ const FIRST_NAME_DEFAULTS: Record<string, string> = {
 };
 
 /**
+ * Load persisted name aliases from app_settings.
+ * Returns a map of lowercase raw name → player full name.
+ */
+async function loadNameAliases(): Promise<Record<string, string>> {
+  const raw = await getAppSetting("tally_name_aliases");
+  if (!raw) return {};
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Save updated name aliases to app_settings.
+ */
+async function saveNameAliases(aliases: Record<string, string>): Promise<void> {
+  await setAppSetting("tally_name_aliases", JSON.stringify(aliases));
+}
+
+/**
  * Match a raw name from the board to a player in the roster.
  * Returns the player id if matched, null if unmatched/ambiguous.
  */
 function matchName(
   rawName: string,
-  roster: Array<{ id: string; name: string }>
+  roster: Array<{ id: string; name: string }>,
+  aliases: Record<string, string>
 ): string | null {
   const norm = rawName.trim().toLowerCase();
 
@@ -29,7 +51,16 @@ function matchName(
   const exact = roster.find((p) => p.name.toLowerCase() === norm);
   if (exact) return exact.id;
 
-  // 2. Check known first-name defaults
+  // 2. Check persisted aliases (learned from past corrections)
+  const aliasFullName = aliases[norm];
+  if (aliasFullName) {
+    const aliasMatch = roster.find(
+      (p) => p.name.toLowerCase() === aliasFullName.toLowerCase()
+    );
+    if (aliasMatch) return aliasMatch.id;
+  }
+
+  // 3. Check known first-name defaults
   const defaultFullName = FIRST_NAME_DEFAULTS[norm];
   if (defaultFullName) {
     const defaultMatch = roster.find(
@@ -38,13 +69,13 @@ function matchName(
     if (defaultMatch) return defaultMatch.id;
   }
 
-  // 3. First-name-only match — only resolve if unambiguous
+  // 4. First-name-only match — only resolve if unambiguous
   const firstNameMatches = roster.filter(
     (p) => p.name.split(" ")[0].toLowerCase() === norm
   );
   if (firstNameMatches.length === 1) return firstNameMatches[0].id;
 
-  // 4. Partial match: raw name is a substring of a player's full name (e.g. "SaiDurga" → "Sai Durga")
+  // 5. Partial match: raw name is a substring of a player's full name (e.g. "SaiDurga" → "Sai Durga")
   const partialMatches = roster.filter((p) =>
     p.name.toLowerCase().replace(/\s+/g, "").includes(norm.replace(/\s+/g, ""))
   );
@@ -227,11 +258,16 @@ export async function POST(
     .eq("id", sessionId);
 
   // Server-side name matching against the roster
-  const allPlayers = await getActivePlayerList();
+  const [allPlayers, aliases] = await Promise.all([
+    getActivePlayerList(),
+    loadNameAliases(),
+  ]);
 
   const entries = rawPlayers.map((raw) => {
-    const matchedId = matchName(raw.name, allPlayers);
+    const matchedId = matchName(raw.name, allPlayers, aliases);
     const matchedPlayer = matchedId ? allPlayers.find((p) => p.id === matchedId) : null;
+    const rawNorm = raw.name.trim().toLowerCase();
+    const correctedFromAlias = !!(matchedId && aliases[rawNorm]);
     return {
       player_id: matchedId,
       // Use DB name if matched, raw name if not (shown to user for resolution)
@@ -240,6 +276,7 @@ export async function POST(
       wins: raw.wins,
       losses: raw.losses,
       unmatched: matchedId === null,
+      corrected_from_alias: correctedFromAlias,
     };
   });
 
