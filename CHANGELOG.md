@@ -6,15 +6,17 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [0.36.4] - 2026-05-12
+## [0.36.5] - 2026-05-12
 
-<<<<<<< Updated upstream
-### Changed
-- **Session list lock UX** — replaced the divider line with a "🔒 last counted session" sublabel on the most recent session that counts toward the leaderboard; sessions after the cutoff remain dimmed
-=======
 ### Fixed
 - **Check-in button sync** — the self check-in/check-out button now correctly updates when an admin checks you out from the player list
->>>>>>> Stashed changes
+
+---
+
+## [0.36.4] - 2026-05-12
+
+### Changed
+- **Session list lock UX** — replaced the divider line with a "🔒 last counted session" sublabel on the most recent session that counts toward the leaderboard; sessions after the cutoff remain dimmed
 
 ---
 
