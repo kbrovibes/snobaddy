@@ -430,16 +430,6 @@ export default async function SessionDetailPage({
             isGodMode={isGodMode}
             hasPhoto={!!session.tally_photo_path}
           />
-          {isAdmin && (
-            <TallyEntryForm
-              sessionId={session.id}
-              allPlayers={formPlayers as { id: string; name: string }[]}
-              initialEntries={tallyRows as TallyEntry[]}
-              isEdit
-              isGodMode={isAdmin}
-    
-            />
-          )}
           {isGodMode && <ResetSessionButton sessionId={session.id} />}
         </>
       )}
