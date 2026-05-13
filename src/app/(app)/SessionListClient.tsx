@@ -58,7 +58,7 @@ export default function SessionListClient({
     return (
       <NavLink
         href={`/session/${s.id}`}
-        className={`flex items-center justify-between px-4 py-3 border-b last:border-0 hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 transition-colors${isLocked ? " opacity-50" : ""}${isCutoff ? " border-amber-300/70 dark:border-amber-700/50" : " border-border-light"}`}
+        className={`flex items-center justify-between px-4 py-3 border-b border-border-light last:border-0 hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 transition-colors${isLocked ? " opacity-50" : ""}`}
       >
         <div className="flex flex-col gap-0.5">
           <span className="text-sm text-text">{formatDate(s.date)}</span>
@@ -81,6 +81,9 @@ export default function SessionListClient({
             <span className="text-xs font-semibold text-red-400 bg-red-50 dark:bg-red-500/10 px-2 py-0.5 rounded-full">No Data</span>
           ) : (
             <span className="text-xs font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 px-2 py-0.5 rounded-full">Finalized</span>
+          )}
+          {isCutoff && (
+            <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 px-1.5 py-0.5 rounded-full">🔒 cutoff</span>
           )}
           <span className="text-muted-lighter text-sm">→</span>
         </div>
