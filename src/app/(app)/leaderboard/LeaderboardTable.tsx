@@ -276,10 +276,11 @@ export default function LeaderboardTable({
                         <td className="px-2 py-1.5 font-medium text-heading">
                           <span className="flex items-center gap-1 min-w-0">
                             <NavLink href={`/players/${player.id}`} className="truncate text-sky-600 dark:text-sky-400 hover:underline active:opacity-60">
-                              {ubrVisible ? shortName(player.name, nameMap) : player.name}
+                              <span className="sm:hidden">{shortName(player.name, nameMap)}</span>
+                              <span className="hidden sm:inline">{player.name}</span>
                             </NavLink>
-                            {!ubrVisible && player.user_id && <VerifiedBadge />}
-                            {!ubrVisible && player.is_admin && <AdminBadge />}
+                            {player.user_id && <VerifiedBadge />}
+                            {player.is_admin && <AdminBadge />}
                           </span>
                         </td>
                         <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.matches_played}</td>

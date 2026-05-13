@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.37.1] - 2026-05-13
+
+### Changed
+- **Leaderboard** — shows full player name on wider screens, short display name on small screens; badges (verified, admin) now visible regardless of UBR toggle
+
+---
+
 ## [0.37.0] - 2026-05-12
 
 ### Improved
