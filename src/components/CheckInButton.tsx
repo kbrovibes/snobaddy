@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function CheckInButton({
   sessionId,
@@ -12,6 +12,11 @@ export default function CheckInButton({
 }) {
   const [loading, setLoading] = useState(false);
   const [checkedIn, setCheckedIn] = useState(alreadyCheckedIn);
+
+  // Sync with server state when prop changes (e.g. admin checkout from player list)
+  useEffect(() => {
+    setCheckedIn(alreadyCheckedIn);
+  }, [alreadyCheckedIn]);
   const router = useRouter();
 
   async function checkIn() {
