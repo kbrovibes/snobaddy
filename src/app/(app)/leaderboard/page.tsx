@@ -48,7 +48,12 @@ export default async function LeaderboardPage() {
 
   return (
     <div className="px-4 py-4 pb-20">
-      <h1 className="text-xs font-semibold uppercase tracking-wide text-muted-light mb-4 px-1">Leaderboard</h1>
+      <div className="mb-4 px-1">
+        <h1 className="text-xs font-semibold uppercase tracking-wide text-muted-light">Leaderboard</h1>
+        {activeSeason?.name && (
+          <p className="text-sm font-semibold text-heading mt-0.5">{activeSeason.name}</p>
+        )}
+      </div>
 
       <LeaderboardTable
         players={allPlayers.filter(p => p.matches_played > 0)}
