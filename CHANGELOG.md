@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.36.9] - 2026-05-12
+
+### Changed
+- **Profile dropdown** — tighter vertical padding on menu items (`py-1.5` instead of `py-2`)
+
+---
+
 ## [0.36.8] - 2026-05-12
 
 ### Changed
