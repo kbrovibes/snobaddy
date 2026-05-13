@@ -1,6 +1,5 @@
 import { supabase as serviceClient } from "@/lib/supabase";
 import Link from "next/link";
-import Image from "next/image";
 import AuthRedirect from "./AuthRedirect";
 
 export const revalidate = 3600; // Re-generate at most once per hour
@@ -79,7 +78,8 @@ export default async function WelcomePage() {
       {/* Top bar */}
       <header className="flex items-center justify-between px-5 py-3">
         <div className="flex items-center gap-2.5">
-          <Image src="/serve-icon.png" alt="" width={28} height={28} className="rounded-lg" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/favicon.gif" alt="" width={28} height={28} className="rounded-lg" />
           <span className="font-bold text-heading text-sm tracking-tight">Serve Snoqualmie</span>
         </div>
         <Link
@@ -128,13 +128,14 @@ export default async function WelcomePage() {
               </div>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { val: playerCount, label: "Players" },
-                  { val: matchCount, label: "Matches" },
-                  { val: daysOfPlay, label: "Sessions" },
-                ].map(({ val, label }) => (
-                  <div key={label} className="bg-surface rounded-xl border border-border-light py-2.5 flex flex-col items-center">
+                  { emoji: "👥", val: playerCount, label: "Players" },
+                  { emoji: "🎯", val: matchCount, label: "Matches" },
+                  { emoji: "📅", val: daysOfPlay, label: "Sessions" },
+                ].map(({ emoji, val, label }) => (
+                  <div key={label} className="bg-surface rounded-xl border border-border-light py-2 flex flex-col items-center gap-0.5">
+                    <span className="text-base leading-none">{emoji}</span>
                     <span className="text-xl font-bold text-heading leading-none">{val}</span>
-                    <span className="text-[10px] font-semibold text-muted-light mt-0.5">{label}</span>
+                    <span className="text-[10px] font-semibold text-muted-light">{label}</span>
                   </div>
                 ))}
               </div>
@@ -147,7 +148,8 @@ export default async function WelcomePage() {
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-light px-1 mb-1.5">Upcoming</p>
               <div className="flex gap-2 overflow-x-auto">
                 {upcomingSessions.map((s) => (
-                  <div key={s.id} className="bg-surface rounded-lg border border-border-light px-3 py-2 flex-shrink-0">
+                  <div key={s.id} className="bg-surface rounded-lg border border-border-light px-3 py-2 flex-shrink-0 flex items-center gap-2">
+                    <span className="text-sm leading-none">🗓️</span>
                     <span className="text-xs font-semibold text-heading">{formatDate(s.date)}</span>
                   </div>
                 ))}
