@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.36.8] - 2026-05-12
+
+### Changed
+- **Session list pills** — all status badges (In Progress, Upcoming, No Data, Finalized) are now uppercase to match the Cutoff pill style
+
+---
+
 ## [0.36.7] - 2026-05-12
 
 ### Fixed
@@ -25,13 +32,6 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 - **Check-in button sync** — the self check-in/check-out button now correctly updates when an admin checks you out from the player list
-
----
-
-## [0.36.6] - 2026-05-12
-
-### Changed
-- **Session list lock UX** — cutoff row shows a small inline "🔒 cutoff" amber pill on the right side; no row height change
 
 ---
 
@@ -741,14 +741,8 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [0.24.13] - 2026-04-06
 
-<<<<<<< Updated upstream
 ### Added
 - **Reset Session Backup** — every Wipe & Reset now saves a full JSON snapshot of all matches (with player names), tally rows, and proposed matches to a `session_reset_backups` table before deleting anything. If the backup fails, the reset is aborted — data is never deleted without a backup. Multiple wipes on the same session each produce their own snapshot.
-=======
-### Fixed
-- **Leaderboard** — tally sessions were not filtered by test-session flag, causing test matches to appear in the public leaderboard (e.g. Karthik's 5W 5L from Apr 5 test session)
-- **Player profile match history** — sessions where a player was added to the tally with 0W 0L no longer show up as phantom session entries
->>>>>>> Stashed changes
 
 ---
 
@@ -762,23 +756,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [0.24.11] - 2026-04-06
 
 ### Changed
-<<<<<<< Updated upstream
 - **Who's Here** — preview reduced from 4 to 2 rows; remaining players shown under "See More".
-=======
-- **Proposed Matches** — compact layout: team names now shown inline (`A & B vs C & D`) with centered "vs", reduced padding and button height.
->>>>>>> Stashed changes
 
 ---
 
 ## [0.24.10] - 2026-04-06
 
 ### Changed
-<<<<<<< Updated upstream
 - **Finalize Scores & Close** — renamed from "Close Session"; now a solid blue button matching the Check In style; moved to sit directly above the Reset button (was separated by scoreboard + match history).
 - **Wipe & Reset Session** — renamed from "Reset Session"; now a solid red button.
-=======
-- **Tonight's Scores** — default sort is now match count (highest first). Added **Pts** column showing total points scored by each player during the session.
->>>>>>> Stashed changes
 
 ---
 
@@ -799,11 +785,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 ## [0.24.8] - 2026-04-06
 
 ### Changed
-<<<<<<< Updated upstream
 - **Control Panel** — moved from a card inside Admin Panel to its own ⚙️ tab in the bottom nav, after Leaderboard. Only visible to God Mode users.
-=======
-- **Leaderboard** — default sort is now Wins (was Win%). Table rows and award cards are more compact.
->>>>>>> Stashed changes
 
 ---
 
@@ -824,13 +806,8 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [0.24.5] - 2026-04-06
 
-<<<<<<< Updated upstream
 ### Added
 - **Pull-to-refresh** — In the installed PWA (iOS/Android), pull down from the top of any page to refresh it. A spinner appears as you pull and spins while refreshing. Has no effect in a regular browser (uses the browser's native gesture instead).
-=======
-### Fixed
-- **Player check-in card alignment** — Cards with single-line names were shorter than cards with two-line names, misaligning the skill dots and buttons across the grid. Name area now has a fixed 2-line minimum height so all rows line up. Check In / Check Out buttons also slightly smaller (`py-1` instead of `py-1.5`).
->>>>>>> Stashed changes
 
 ---
 
@@ -850,14 +827,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [0.24.2] - 2026-04-06
 
-<<<<<<< Updated upstream
 ### Added
 - **Auto-refresh** — Active session pages refresh every 5 seconds automatically. An iOS-style "Live" toggle in the top-right lets you turn it off. Preference is remembered across visits.
 - **Player profile links** — Player names in Tonight's Scores are now tappable links to their profile pages.
-=======
-### Fixed
-- **Player name missing on profile** — God Mode users saw only a ✏️ button with no player name or skill dots. Name and skill level now always display; the edit button appears alongside the name for God Mode users only.
->>>>>>> Stashed changes
 
 ---
 

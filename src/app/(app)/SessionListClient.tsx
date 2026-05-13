@@ -76,16 +76,16 @@ export default function SessionListClient({
         </div>
         <div className="flex items-center gap-2">
           {s.status === "active" ? (
-            <span className="flex items-center gap-1 text-xs font-semibold text-white bg-sky-700 px-2 py-0.5 rounded-full">
+            <span className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-white bg-sky-700 px-2 py-0.5 rounded-full">
               <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-pulse" />
               In Progress
             </span>
           ) : s.status === "pending" ? (
-            <span className="text-xs font-semibold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 px-2 py-0.5 rounded-full">Upcoming</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 px-2 py-0.5 rounded-full">Upcoming</span>
           ) : s.match_count === 0 && s.tally_count === 0 ? (
-            <span className="text-xs font-semibold text-red-400 bg-red-50 dark:bg-red-500/10 px-2 py-0.5 rounded-full">No Data</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-red-400 bg-red-50 dark:bg-red-500/10 px-2 py-0.5 rounded-full">No Data</span>
           ) : (
-            <span className="text-xs font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 px-2 py-0.5 rounded-full">Finalized</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 px-2 py-0.5 rounded-full">Finalized</span>
           )}
           <span className="text-muted-lighter text-sm">→</span>
         </div>
