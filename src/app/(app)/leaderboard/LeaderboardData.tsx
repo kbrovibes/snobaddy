@@ -1,19 +1,26 @@
-import { getActivePlayers } from "@/lib/db/players";
+import { getActivePlayers, type PlayerStats } from "@/lib/db/players";
 import { getSeasonMatchCount } from "@/lib/db/matches";
 import { getAllUbrRatings, type UbrRating } from "@/lib/db/ubr";
 import { getAppSetting } from "@/lib/db/settings";
 import { createClient } from "@/lib/supabase-server";
+import {
+  computeLeaderboardSignature,
+  getCachedLeaderboard,
+  setCachedLeaderboard,
+} from "@/lib/db/leaderboard-cache";
 import LeaderboardTable from "./LeaderboardTable";
 
-export default async function LeaderboardData({
-  seasonId,
-  seasonLockDate,
-  isAdmin,
-}: {
-  seasonId: string | undefined;
-  seasonLockDate: string | null;
-  isAdmin: boolean;
-}) {
+interface CachedData {
+  players: PlayerStats[];
+  totalMatches: number;
+  ubrRatings: Record<string, UbrRating> | undefined;
+  lockedSessionCount: number;
+}
+
+async function computeLeaderboardData(
+  seasonId: string | undefined,
+  seasonLockDate: string | null
+): Promise<CachedData> {
   const supabase = await createClient();
   const [allPlayers, totalMatches, ubrMap, ubrEnabledSetting, lockedSessionsResult] = await Promise.all([
     getActivePlayers({ seasonId, seasonLockDate }),
@@ -37,13 +44,47 @@ export default async function LeaderboardData({
     ubrRatings[k] = v;
   }
 
+  return {
+    players: allPlayers.filter(p => p.matches_played > 0),
+    totalMatches,
+    ubrRatings: ubrEnabled ? ubrRatings : undefined,
+    lockedSessionCount,
+  };
+}
+
+export default async function LeaderboardData({
+  seasonId,
+  seasonLockDate,
+  isAdmin,
+}: {
+  seasonId: string | undefined;
+  seasonLockDate: string | null;
+  isAdmin: boolean;
+}) {
+  let data: CachedData;
+
+  if (seasonId) {
+    const signature = await computeLeaderboardSignature(seasonId, seasonLockDate);
+    const cached = await getCachedLeaderboard(seasonId, signature) as CachedData | null;
+
+    if (cached) {
+      data = cached;
+    } else {
+      data = await computeLeaderboardData(seasonId, seasonLockDate);
+      // Fire-and-forget cache write
+      setCachedLeaderboard(seasonId, signature, data).catch(() => {});
+    }
+  } else {
+    data = await computeLeaderboardData(seasonId, seasonLockDate);
+  }
+
   return (
     <LeaderboardTable
-      players={allPlayers.filter(p => p.matches_played > 0)}
-      totalMatches={totalMatches}
+      players={data.players}
+      totalMatches={data.totalMatches}
       isAdmin={isAdmin}
-      ubrRatings={ubrEnabled ? ubrRatings : undefined}
-      lockedSessionCount={lockedSessionCount}
+      ubrRatings={data.ubrRatings}
+      lockedSessionCount={data.lockedSessionCount}
     />
   );
 }

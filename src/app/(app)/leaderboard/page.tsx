@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { getActiveSeason } from "@/lib/db/seasons";
 import { getAuthPlayer } from "@/lib/auth";
 import LeaderboardData from "./LeaderboardData";
+import RefreshButton from "./RefreshButton";
 import { redirect } from "next/navigation";
 
 function TableSkeleton() {
@@ -40,11 +41,14 @@ export default async function LeaderboardPage() {
 
   return (
     <div className="px-4 py-4 pb-20">
-      <div className="mb-4 px-1">
-        <h1 className="text-xs font-semibold uppercase tracking-wide text-muted-light">Leaderboard</h1>
-        {activeSeason?.name && (
-          <p className="text-sm font-semibold text-heading mt-0.5">{activeSeason.name}</p>
-        )}
+      <div className="mb-4 px-1 flex items-start justify-between">
+        <div>
+          <h1 className="text-xs font-semibold uppercase tracking-wide text-muted-light">Leaderboard</h1>
+          {activeSeason?.name && (
+            <p className="text-sm font-semibold text-heading mt-0.5">{activeSeason.name}</p>
+          )}
+        </div>
+        <RefreshButton />
       </div>
 
       <Suspense fallback={<TableSkeleton />}>
