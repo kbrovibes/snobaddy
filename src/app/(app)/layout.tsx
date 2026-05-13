@@ -16,7 +16,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     // Check if user is authenticated but has no player record
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
+    if (!user) redirect("/welcome");
 
     // No player record yet — create a stub and send to onboarding.
     const { data: newPlayer } = await serviceClient

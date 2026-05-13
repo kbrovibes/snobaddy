@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.38.0] - 2026-05-13
+
+### Added
+- **Public landing page** at `/welcome` — hero with app branding, session schedule details, and CTA buttons
+- **Explore page** at `/explore` — shows active season, stats cards (players/matches/days), live session callout, upcoming and recent sessions — all without requiring login
+- Unauthenticated users now land on `/welcome` instead of being sent directly to `/login`
+
+---
+
 ## [0.37.1] - 2026-05-13
 
 ### Changed
