@@ -60,6 +60,8 @@ export default function TallyEntryForm({
   const [validation, setValidation] = useState<Validation | null>(null);
   const [nameCorrections, setNameCorrections] = useState<NameCorrection[]>([]);
   const [playerPickerOpen, setPlayerPickerOpen] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [confirmReplace, setConfirmReplace] = useState(false);
 
   const usedIds = new Set(rows.filter((r) => !r.unmatched).map((r) => r.player_id));
   const availablePlayers = allPlayers.filter((p) => !usedIds.has(p.id));
@@ -117,20 +119,33 @@ export default function TallyEntryForm({
     setMode(isEdit ? "manual" : "closed");
   }
 
-  async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    e.target.value = "";
 
     if (rows.length > 0) {
-      const ok = window.confirm(
-        "This will replace your current entries with the extracted values. Continue?"
-      );
-      if (!ok) {
-        e.target.value = "";
-        return;
-      }
+      setPendingFile(file);
+      setConfirmReplace(true);
+    } else {
+      processPhoto(file);
     }
+  }
 
+  function handleConfirmReplace() {
+    if (pendingFile) {
+      processPhoto(pendingFile);
+    }
+    setPendingFile(null);
+    setConfirmReplace(false);
+  }
+
+  function handleCancelReplace() {
+    setPendingFile(null);
+    setConfirmReplace(false);
+  }
+
+  async function processPhoto(file: File) {
     setExtracting(true);
     setError(null);
     setValidation(null);
@@ -189,7 +204,6 @@ export default function TallyEntryForm({
       setError("Network error — please try again");
     } finally {
       setExtracting(false);
-      e.target.value = "";
     }
   }
 
@@ -262,7 +276,7 @@ export default function TallyEntryForm({
               className="hidden"
               onChange={(e) => {
                 setMode("photo");
-                handlePhotoUpload(e);
+                handleFileSelect(e);
               }}
             />
             <button
@@ -295,7 +309,7 @@ export default function TallyEntryForm({
                 type="file"
                 accept=".jpg,.jpeg,.png,.heic,.webp"
                 className="hidden"
-                onChange={handlePhotoUpload}
+                onChange={handleFileSelect}
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
@@ -311,6 +325,29 @@ export default function TallyEntryForm({
           </button>
         </div>
       </div>
+
+      {/* Confirm replace existing entries */}
+      {confirmReplace && (
+        <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-lg px-3 py-2.5 flex flex-col gap-2">
+          <p className="text-sm text-amber-800 dark:text-amber-200 font-medium">
+            Replace current entries with extracted values?
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={handleCancelReplace}
+              className="flex-1 py-1.5 text-sm font-medium text-text bg-surface border border-border rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirmReplace}
+              className="flex-1 py-1.5 text-sm font-semibold text-white bg-amber-600 rounded-lg"
+            >
+              Yes, replace
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Extracting spinner */}
       {extracting && (
