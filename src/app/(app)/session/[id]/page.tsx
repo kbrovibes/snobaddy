@@ -197,7 +197,7 @@ export default async function SessionDetailPage({
           getProposedMatches(session.id),
           getOnlinePlayerIds(checkedInPlayers.map((p) => p.player_id)),
           isCompleted ? getSessionTally(session.id) : Promise.resolve([] as TallyEntry[]),
-          isCompleted && isAdmin ? getActivePlayerList() : Promise.resolve([] as { id: string; name: string }[]),
+          (isCompleted || isPending) && isAdmin ? getActivePlayerList() : Promise.resolve([] as { id: string; name: string }[]),
         ])
       : [[], [], [], new Set<string>(), [], []];
 
@@ -285,9 +285,19 @@ export default async function SessionDetailPage({
         </div>
       )}
 
-      {/* Admin: upload scores directly without opening session */}
+      {/* Admin: finalize session directly without opening it */}
       {isPending && isAdmin && !isFinalsSession && (
         <UploadScoresButton sessionId={session.id} />
+      )}
+
+      {/* Admin: upload scores (tally entry) — available on pending sessions */}
+      {isPending && isAdmin && !isFinalsSession && (
+        <TallyEntryForm
+          sessionId={session.id}
+          allPlayers={formPlayers as { id: string; name: string }[]}
+          isGodMode={isAdmin}
+          tallyModel={tallyModel ?? undefined}
+        />
       )}
 
       {/* Admin: start session */}

@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.36.3] - 2026-05-12
+
+### Changed
+- **Finalize & Upload Scores split** — the "Upload Scores & Finalize" button on pending sessions is now two separate actions: a "Finalize Session" button (with in-app confirmation instead of a browser popup) and an "Upload Scores" widget (tally entry with photo import) that works on both pending and finalized sessions
+
+---
+
 ## [0.36.2] - 2026-05-12
 
 ### Changed
