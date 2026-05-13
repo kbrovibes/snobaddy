@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.36.10] - 2026-05-12
+
+### Changed
+- **Seasons page** — seasons now split into three sections: Ongoing at top, Upcoming (sorted by date), and a collapsible Past Seasons folder showing the count
+
+---
+
 ## [0.36.9] - 2026-05-12
 
 ### Changed
