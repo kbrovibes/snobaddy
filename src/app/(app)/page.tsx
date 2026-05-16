@@ -91,7 +91,7 @@ export default async function SessionListPage({
         </div>
       )}
 
-      <SessionListClient sessions={sessions} isAdmin={isAdmin} seasonLockDate={activeSeason.stats_lock_date ?? null} />
+      <SessionListClient sessions={sessions} isAdmin={isAdmin} seasonLockDate={activeSeason.stats_lock_date ?? null} activeSeasonId={activeSeason.id} />
 
       {isAdmin && sessions.length <= 5 && (
         <div className="flex justify-center pt-2">

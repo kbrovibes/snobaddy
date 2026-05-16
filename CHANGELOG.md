@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.39.0] - 2026-05-15
+
+### Added
+- **Season newsletter** (admin only) — auto-generates a humorous season recap from real match data, with sections for top attendees ("The Badminton Nut"), category awards ("The Nutcracker Awards"), per-skill efficiency math, and fun observations
+- Newsletter is persisted in a new `season_newsletters` table and versioned on every regeneration
+- Admins can paste extra free-form context (anecdotes, inside jokes) and regenerate the newsletter with that context folded into the intro
+- New "📰 Season newsletter" link on the session list (admin only) and next to each ongoing/completed season on the Seasons admin page
+
+---
+
 ## [0.38.0] - 2026-05-13
 
 ### Added

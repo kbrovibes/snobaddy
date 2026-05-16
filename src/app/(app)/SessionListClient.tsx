@@ -23,10 +23,12 @@ export default function SessionListClient({
   sessions,
   isAdmin,
   seasonLockDate = null,
+  activeSeasonId = null,
 }: {
   sessions: SessionRow[];
   isAdmin: boolean;
   seasonLockDate?: string | null;
+  activeSeasonId?: string | null;
 }) {
   const [showTest, setShowTest] = useState(false);
   const [showAllPast, setShowAllPast] = useState(false);
@@ -108,6 +110,15 @@ export default function SessionListClient({
 
   return (
     <>
+      {isAdmin && activeSeasonId && (
+        <NavLink
+          href={`/admin/seasons/${activeSeasonId}/newsletter`}
+          className="flex items-center justify-between px-3 py-2 mb-3 rounded-lg border border-sky-200 dark:border-sky-900/40 bg-sky-50/60 dark:bg-sky-900/10 text-sky-700 dark:text-sky-300 hover:bg-sky-100/70 dark:hover:bg-sky-900/20 transition-colors"
+        >
+          <span className="text-xs font-semibold uppercase tracking-wide">📰 Season newsletter</span>
+          <span className="text-xs">→</span>
+        </NavLink>
+      )}
       {upcoming.length === 0 && past.length === 0 && (!isAdmin || tests.length === 0) ? (
         <p className="text-sm text-muted-light text-center py-8">No sessions yet.</p>
       ) : (

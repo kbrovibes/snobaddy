@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { SeasonStatus } from "@/lib/db/seasons";
 
@@ -248,6 +249,16 @@ export default function SeasonCard(props: SeasonCardProps) {
               </button>
             )}
           </div>
+
+          {/* Newsletter link — admin-only page, surfaced for any season that has data. */}
+          {(status === "active" || status === "completed") && (
+            <Link
+              href={`/admin/seasons/${id}/newsletter`}
+              className="inline-flex items-center gap-1 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline"
+            >
+              📰 Season newsletter →
+            </Link>
+          )}
         </div>
       )}
     </div>
