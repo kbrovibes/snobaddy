@@ -14,6 +14,8 @@ Single source of truth for all planned and completed work.
 
 - [x] **33 — Dark Mode** · [spec](specs/33-dark-mode.md) · System-default dark mode + user override (Light/Dark/System toggle); CSS token migration across ~30 files
 
+- [ ] **36 — Enable RLS on Public Tables** · [spec](specs/36-rls-public-tables.md) · SECURITY: 19 tables (players, seasons, matches, season_newsletters, …) have RLS disabled — anon key can read/write everything via PostgREST. Two-phase migration: enable RLS + authenticated read policies, then tighten writes per table
+
 - [ ] **35 — UBR Tally Algorithm Redesign** · [spec](specs/35-ubr-tally-redesign.md) · Fix path-selection bug + replace Elo-pool tally formula with session-relative win% scoring; guarantees win>50% → rating up
 
 - [ ] **30 — On-Demand E2E Test Suite** · [spec](specs/30-on-demand-test-suite.md) · Playwright E2E tests (mobile viewport) covering all features; run on-demand via `npm run test`, not on every deploy; smoke + full + per-feature modes

@@ -63,6 +63,7 @@ interface RawPlayer {
   skill_level: number;
   gender: string;
   deleted_at: string | null;
+  onboarding_complete: boolean | null;
 }
 
 interface RawMatch {
@@ -96,6 +97,16 @@ interface RawUbrHistory {
   rating_after: string | number;
 }
 
+/**
+ * Aggregates one season into a stats snapshot. Mirrors the leaderboard's
+ * accounting so the newsletter numbers line up with what users see on
+ * /leaderboard:
+ *   - non-test sessions only
+ *   - on or before `stats_lock_date` (if set)
+ *   - per-player wins/losses = sum(match wins/losses) + sum(tally wins/losses)
+ *   - matches involving any soft-deleted player are excluded
+ *   - only onboarding-complete, non-deleted players appear in the output
+ */
 export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnapshot> {
   const { data: seasonRow, error: seasonErr } = await adminDb
     .from("seasons")
@@ -106,14 +117,15 @@ export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnaps
   const season = seasonRow as RawSeason;
   const lockDate = season.stats_lock_date;
 
-  // Real (non-test) regular sessions, completed, on or before stats lock date if set.
+  // Eligible sessions: non-test, on or before the stats lock date (if set).
+  // We deliberately do NOT filter by session.status or session_type — the
+  // leaderboard doesn't either; the match_type filter on `matches` and the
+  // absence of tally rows on non-played sessions handle that.
   let sessionsQuery = adminDb
     .from("sessions")
     .select("id, date")
     .eq("season_id", seasonId)
-    .eq("is_test_session", false)
-    .eq("session_type", "regular")
-    .eq("status", "completed");
+    .eq("is_test_session", false);
   if (lockDate) sessionsQuery = sessionsQuery.lte("date", lockDate);
   const { data: sessionRows, error: sessionsErr } = await sessionsQuery;
   if (sessionsErr) throw sessionsErr;
@@ -166,7 +178,7 @@ export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnaps
       .in("session_id", sessionIds),
     adminDb
       .from("players")
-      .select("id, name, skill_level, gender, deleted_at"),
+      .select("id, name, skill_level, gender, deleted_at, onboarding_complete"),
   ]);
 
   const matches = (matchRows ?? []) as RawMatch[];
@@ -175,8 +187,15 @@ export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnaps
   const ubrHistory = (ubrRows ?? []) as RawUbrHistory[];
   const players = (playerRows ?? []) as RawPlayer[];
   const playerById = new Map(players.map((p) => [p.id, p]));
+  const deletedIds = new Set(players.filter((p) => p.deleted_at != null).map((p) => p.id));
 
-  // Match score-level fun stats
+  // Sessions that actually produced results (had matches or tallies) — the
+  // denominator for perfect-attendance and "session count" in the narrative.
+  const sessionsWithResults = new Set<string>();
+  for (const m of matches) if (m.winning_team != null) sessionsWithResults.add(m.session_id);
+  for (const t of tallies) if ((t.wins ?? 0) + (t.losses ?? 0) > 0) sessionsWithResults.add(t.session_id);
+
+  // Match-level fun stats over scored matches.
   let scoredCount = 0, totalMargin = 0, close = 0, blow = 0, bagels = 0;
   for (const m of matches) {
     if (m.winning_team == null) continue;
@@ -189,43 +208,43 @@ export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnaps
     if (Math.min(m.team1_score, m.team2_score) === 0) bagels += 1;
   }
 
-  // Per-player W/L from matches
-  const mWins = new Map<string, number>();
-  const mLosses = new Map<string, number>();
-  const mPlayed = new Map<string, number>();
+  // Per-player wins/losses — SUM of matches + tallies, exactly like the
+  // leaderboard (getActivePlayers in src/lib/db/players.ts).
+  const wins = new Map<string, number>();
+  const losses = new Map<string, number>();
   function bump(map: Map<string, number>, key: string, delta: number = 1) {
     map.set(key, (map.get(key) ?? 0) + delta);
   }
   for (const m of matches) {
     if (m.winning_team == null) continue;
+    // Skip matches that include any soft-deleted player — leaderboard does the same.
+    if (
+      deletedIds.has(m.team1_player1_id) ||
+      deletedIds.has(m.team1_player2_id) ||
+      deletedIds.has(m.team2_player1_id) ||
+      deletedIds.has(m.team2_player2_id)
+    ) continue;
     const t1 = [m.team1_player1_id, m.team1_player2_id];
     const t2 = [m.team2_player1_id, m.team2_player2_id];
-    for (const id of t1) {
-      bump(mPlayed, id);
-      if (m.winning_team === 1) bump(mWins, id); else bump(mLosses, id);
-    }
-    for (const id of t2) {
-      bump(mPlayed, id);
-      if (m.winning_team === 2) bump(mWins, id); else bump(mLosses, id);
-    }
+    const winners = m.winning_team === 1 ? t1 : t2;
+    const losers = m.winning_team === 1 ? t2 : t1;
+    for (const id of winners) bump(wins, id);
+    for (const id of losers) bump(losses, id);
   }
-
-  // Per-player W/L from session_tally (whiteboard mode)
-  const tWins = new Map<string, number>();
-  const tLosses = new Map<string, number>();
   for (const t of tallies) {
-    bump(tWins, t.player_id, t.wins ?? 0);
-    bump(tLosses, t.player_id, t.losses ?? 0);
+    if ((t.wins ?? 0) === 0 && (t.losses ?? 0) === 0) continue;
+    bump(wins, t.player_id, t.wins ?? 0);
+    bump(losses, t.player_id, t.losses ?? 0);
   }
 
-  // Attendance — unique sessions per player
+  // Attendance — unique sessions per player (only counts sessions in scope).
   const attendBy = new Map<string, Set<string>>();
   for (const a of attendance) {
     if (!attendBy.has(a.player_id)) attendBy.set(a.player_id, new Set());
     attendBy.get(a.player_id)!.add(a.session_id);
   }
 
-  // UBR first/last for the season window
+  // UBR first/last for the season window.
   const ubrSorted = [...ubrHistory].sort((a, b) => {
     const da = sessionDateById.get(a.session_id) ?? "";
     const db = sessionDateById.get(b.session_id) ?? "";
@@ -240,17 +259,16 @@ export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnaps
     lastUbr.set(h.player_id, after);
   }
 
+  // Player roster: onboarding-complete, non-deleted — same filter as leaderboard.
   const playerRowsOut: PlayerRow[] = [];
   for (const p of players) {
     if (p.deleted_at) continue;
-    const mw = mWins.get(p.id) ?? 0;
-    const ml = mLosses.get(p.id) ?? 0;
-    const tw = tWins.get(p.id) ?? 0;
-    const tl = tLosses.get(p.id) ?? 0;
-    const wins = Math.max(mw, tw);
-    const losses = Math.max(ml, tl);
-    const games = wins + losses;
-    if (games === 0 && !attendBy.has(p.id)) continue;
+    if (p.onboarding_complete !== true) continue;
+    const w = wins.get(p.id) ?? 0;
+    const l = losses.get(p.id) ?? 0;
+    const games = w + l;
+    const attended = attendBy.get(p.id)?.size ?? 0;
+    if (games === 0 && attended === 0) continue;
     const ubrStart = firstUbr.get(p.id) ?? null;
     const ubrEnd = lastUbr.get(p.id) ?? null;
     const ubrDelta = ubrStart != null && ubrEnd != null ? Math.round(ubrEnd - ubrStart) : null;
@@ -259,19 +277,28 @@ export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnaps
       name: p.name,
       skill_level: p.skill_level,
       gender: p.gender,
-      wins, losses, games,
-      win_pct: games > 0 ? Math.round((1000 * wins) / games) / 10 : 0,
-      sessions_attended: attendBy.get(p.id)?.size ?? 0,
+      wins: w,
+      losses: l,
+      games,
+      win_pct: games > 0 ? Math.round((1000 * w) / games) / 10 : 0,
+      sessions_attended: attended,
       ubr_start: ubrStart != null ? Math.round(ubrStart) : null,
       ubr_end: ubrEnd != null ? Math.round(ubrEnd) : null,
       ubr_delta: ubrDelta,
     });
   }
 
-  // Pair aggregates (only from matches — tally rows don't have partner info)
+  // Partner pairs — match-only (tally rows carry no partner info). Skip pairs
+  // involving any soft-deleted player so the surface aligns with leaderboard.
   const pairMap = new Map<string, { games: number; wins: number; p1: string; p2: string }>();
   for (const m of matches) {
     if (m.winning_team == null) continue;
+    if (
+      deletedIds.has(m.team1_player1_id) ||
+      deletedIds.has(m.team1_player2_id) ||
+      deletedIds.has(m.team2_player1_id) ||
+      deletedIds.has(m.team2_player2_id)
+    ) continue;
     const pairs: { a: string; b: string; won: boolean }[] = [
       { a: m.team1_player1_id, b: m.team1_player2_id, won: m.winning_team === 1 },
       { a: m.team2_player1_id, b: m.team2_player2_id, won: m.winning_team === 2 },
@@ -304,10 +331,12 @@ export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnaps
   }
   pairsOut.sort((x, y) => y.games - x.games || y.wins - x.wins);
 
-  const totalSessions = sessions.length;
+  // "Real session count" = sessions that actually produced results in scope.
+  // Perfect-attendance is measured against that denominator.
+  const realSessionCount = sessionsWithResults.size;
   const perfect = playerRowsOut
-    .filter((p) => p.sessions_attended === totalSessions && totalSessions > 0)
-    .map((p) => ({ name: p.name, sessions_attended: p.sessions_attended }))
+    .filter((p) => realSessionCount > 0 && Array.from(attendBy.get(p.id) ?? []).filter((sid) => sessionsWithResults.has(sid)).length === realSessionCount)
+    .map((p) => ({ name: p.name, sessions_attended: realSessionCount }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return {
@@ -316,7 +345,7 @@ export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnaps
     start_date: season.start_date,
     end_date: season.end_date,
     lock_date: lockDate,
-    real_session_count: totalSessions,
+    real_session_count: realSessionCount,
     scored_match_count: scoredCount,
     avg_margin: scoredCount > 0 ? Math.round((10 * totalMargin) / scoredCount) / 10 : null,
     close_matches: close,

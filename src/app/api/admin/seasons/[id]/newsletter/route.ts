@@ -8,8 +8,8 @@ type Params = { params: Promise<{ id: string }> };
 
 export async function POST(req: Request, { params }: Params) {
   const auth = await getAuthPlayer();
-  if (!auth?.isAdmin) {
-    return NextResponse.json({ error: "Admin only" }, { status: 403 });
+  if (!auth?.isGodMode) {
+    return NextResponse.json({ error: "God-mode only" }, { status: 403 });
   }
 
   const { id: seasonId } = await params;

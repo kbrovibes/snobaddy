@@ -6,6 +6,18 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.39.1] - 2026-05-15
+
+### Fixed
+- **Season newsletter** stats now match the leaderboard exactly — combined match and tally W/L are **summed** (previously the max of the two sources was used, undercounting players who had both detailed matches and whiteboard tallies)
+- Newsletter session scope aligned with leaderboard: drops the `status='completed'` / `session_type='regular'` filters, skips matches involving any soft-deleted player, and only includes onboarding-complete players in the roster
+
+### Changed
+- Newsletter regeneration is now restricted to **god-mode users** (the view stays admin-readable). Regular admins see a note explaining the restriction
+- Spring 2026 newsletter has been re-seeded as v2 with the corrected numbers
+
+---
+
 ## [0.39.0] - 2026-05-15
 
 ### Added

@@ -58,11 +58,17 @@ export default async function NewsletterPage({ params }: Params) {
         <MarkdownView source={newsletter.content_md} />
       </div>
 
-      <RegenerateNewsletterForm
-        seasonId={seasonId}
-        currentContext={newsletter.intro_context}
-        hasNewsletter={true}
-      />
+      {auth.isGodMode ? (
+        <RegenerateNewsletterForm
+          seasonId={seasonId}
+          currentContext={newsletter.intro_context}
+          hasNewsletter={true}
+        />
+      ) : (
+        <p className="text-xs text-muted-light px-1">
+          Regeneration is restricted to god-mode users. Ask one of them to refresh this newsletter or add extra context.
+        </p>
+      )}
     </div>
   );
 }
