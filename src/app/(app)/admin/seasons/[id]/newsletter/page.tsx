@@ -4,12 +4,10 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { getAuthPlayer } from "@/lib/auth";
 import { supabase as adminDb } from "@/lib/supabase";
-import { getNewsletter } from "@/lib/db/newsletters";
+import { getNewsletter, upsertNewsletter } from "@/lib/db/newsletters";
 import { getSeasonStats } from "@/lib/newsletter/stats";
 import { generateNewsletter } from "@/lib/newsletter/generate";
-import { upsertNewsletter } from "@/lib/db/newsletters";
 import MarkdownView from "@/components/MarkdownView";
-import RegenerateNewsletterForm from "@/components/RegenerateNewsletterForm";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -42,6 +40,13 @@ export default async function NewsletterPage({ params }: Params) {
   }
 
   const updated = new Date(newsletter.updated_at);
+  const generatedLabel = updated.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 
   return (
     <div className="px-4 py-4 pb-24 space-y-5">
@@ -49,26 +54,12 @@ export default async function NewsletterPage({ params }: Params) {
         <Link href="/admin/seasons" className="text-xs font-semibold uppercase tracking-wide text-muted-light">
           ← All seasons
         </Link>
-        <span className="text-xs text-muted-light">
-          v{newsletter.version} · {updated.toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
-        </span>
+        <span className="text-xs text-muted-light">Generated {generatedLabel}</span>
       </div>
 
       <div className="rounded-xl border border-muted/30 bg-surface/30 p-4">
         <MarkdownView source={newsletter.content_md} />
       </div>
-
-      {auth.isGodMode ? (
-        <RegenerateNewsletterForm
-          seasonId={seasonId}
-          currentContext={newsletter.intro_context}
-          hasNewsletter={true}
-        />
-      ) : (
-        <p className="text-xs text-muted-light px-1">
-          Regeneration is restricted to god-mode users. Ask one of them to refresh this newsletter or add extra context.
-        </p>
-      )}
     </div>
   );
 }

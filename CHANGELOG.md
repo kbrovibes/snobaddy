@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.39.4] - 2026-05-15
+
+### Changed
+- **Session list newsletter link** restyled as a proper card matching the app's idiom — `rounded-xl` surface card with a stone-900/sky-600 icon disc, title, subtitle ("Stats, awards, and observations from this season"), and chevron. No more pale-sky banner that didn't fit the theme
+- **Newsletter header** simplified: dropped the "v2/v3/v4" version label, header now reads simply "Generated &lt;date and time&gt;"
+- **Regenerate UI removed** — the in-app regenerate form, "regenerate with extra context" textarea, and `POST /api/admin/seasons/[id]/newsletter` endpoint are gone. Regeneration is now done via the CLI seed script (`npx tsx scripts/seed-newsletter.mts &lt;seasonId&gt;`) by anyone with repo + Supabase access
+
+---
+
 ## [0.39.3] - 2026-05-15
 
 ### Changed

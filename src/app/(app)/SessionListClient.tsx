@@ -113,10 +113,16 @@ export default function SessionListClient({
       {isAdmin && activeSeasonId && (
         <NavLink
           href={`/admin/seasons/${activeSeasonId}/newsletter`}
-          className="flex items-center justify-between px-3 py-2 mb-3 rounded-lg border border-sky-200 dark:border-sky-900/40 bg-sky-50/60 dark:bg-sky-900/10 text-sky-700 dark:text-sky-300 hover:bg-sky-100/70 dark:hover:bg-sky-900/20 transition-colors"
+          className="flex items-center gap-3 px-4 py-3 mb-4 rounded-xl bg-surface shadow-sm hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 transition-colors"
         >
-          <span className="text-xs font-semibold uppercase tracking-wide">📰 Season newsletter</span>
-          <span className="text-xs">→</span>
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-stone-900 dark:bg-sky-600 text-white text-lg flex-shrink-0">
+            📰
+          </div>
+          <div className="flex flex-col flex-1 min-w-0">
+            <span className="text-sm font-semibold text-heading">Season newsletter</span>
+            <span className="text-xs text-muted-light">Stats, awards, and observations from this season</span>
+          </div>
+          <span className="text-muted-lighter text-sm">→</span>
         </NavLink>
       )}
       {upcoming.length === 0 && past.length === 0 && (!isAdmin || tests.length === 0) ? (
