@@ -6,6 +6,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.39.3] - 2026-05-15
+
+### Changed
+- **Newsletter intro** rewritten — warmer narrator voice, no more fact-dump opening (the "1,611 W/L outcomes" line is gone)
+- **Awards section** now mirrors the leaderboard exactly: 🥜 **Badminton Nut** (most games played) and ✂️ **Nut Cracker** (highest win rate among players with at least half of the leader's games), each with two runners-up
+- Players can self-recuse from awards via `AWARD_EXCLUDE_NAMES`; the first opt-out is **Sekhar Durga** at his request. The newsletter ends with a small footnote acknowledging his record without listing him as a winner
+- **Fun Observations** expanded from 6 to 17 bullets — mix of individual and collective notes (mode mix, pair dominance, mixed-skill partnerships, UBR cohort movement, gender split, drop-in count, roster breadth, etc.)
+
+---
+
 ## [0.39.2] - 2026-05-15
 
 ### Fixed
