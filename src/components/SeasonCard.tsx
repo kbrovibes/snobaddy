@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { SeasonStatus } from "@/lib/db/seasons";
+import GenerateNewsletterButton from "@/components/GenerateNewsletterButton";
 
 interface SeasonCardProps {
   id: string;
@@ -17,6 +18,7 @@ interface SeasonCardProps {
   match_count: number;
   finals_status: string | null;
   hasActiveSeason: boolean;
+  has_newsletter: boolean;
 }
 
 function formatShortDate(dateStr: string) {
@@ -35,7 +37,7 @@ function formatDate(dateStr: string) {
 }
 
 export default function SeasonCard(props: SeasonCardProps) {
-  const { id, name, start_date, end_date, status, stats_lock_date, session_count, player_count, match_count, finals_status, hasActiveSeason } = props;
+  const { id, name, start_date, end_date, status, stats_lock_date, session_count, player_count, match_count, finals_status, hasActiveSeason, has_newsletter } = props;
   const router = useRouter();
   const [expanded, setExpanded] = useState(status !== "completed");
   const [loading, setLoading] = useState(false);
@@ -250,15 +252,27 @@ export default function SeasonCard(props: SeasonCardProps) {
             )}
           </div>
 
-          {/* Newsletter link — admin-only page, surfaced for any season that has data. */}
-          {(status === "active" || status === "completed") && (
-            <Link
-              href={`/admin/seasons/${id}/newsletter`}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline"
-            >
-              📰 Season newsletter →
-            </Link>
-          )}
+          {/* Newsletter — only surfaced after a season's stats lock date has passed.
+              If the date is set + past + no row yet → Generate button.
+              If the row exists → link into the viewer.
+              Otherwise (no lock date, or lock date still in the future) → nothing. */}
+          {(() => {
+            if (!stats_lock_date) return null;
+            const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+            const lockInPast = stats_lock_date <= today;
+            if (!lockInPast) return null;
+            if (has_newsletter) {
+              return (
+                <Link
+                  href={`/admin/seasons/${id}/newsletter`}
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline"
+                >
+                  📰 Season newsletter →
+                </Link>
+              );
+            }
+            return <GenerateNewsletterButton seasonId={id} />;
+          })()}
         </div>
       )}
     </div>

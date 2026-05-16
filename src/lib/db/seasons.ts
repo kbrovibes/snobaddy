@@ -25,6 +25,7 @@ export interface SeasonWithStats extends Season {
   player_count: number;
   match_count: number;
   finals_status: string | null;
+  has_newsletter: boolean;
 }
 
 /** Returns all seasons ordered by start_date DESC. */
@@ -36,6 +37,7 @@ export async function getAllSeasons(): Promise<SeasonWithStats[]> {
     { data: allSessions },
     { data: allMatchRows },
     { data: allFinals },
+    { data: newsletterRows },
   ] = await Promise.all([
     supabase
       .from("seasons")
@@ -50,7 +52,12 @@ export async function getAllSeasons(): Promise<SeasonWithStats[]> {
     supabase
       .from("finals_events")
       .select("season_id, status"),
+    supabase
+      .from("season_newsletters")
+      .select("season_id"),
   ]);
+
+  const newsletterSeasonIds = new Set<string>((newsletterRows ?? []).map((r) => (r as { season_id: string }).season_id));
 
   if (!seasons || seasons.length === 0) return [];
 
@@ -104,6 +111,7 @@ export async function getAllSeasons(): Promise<SeasonWithStats[]> {
       player_count: stats?.playerIds.size ?? 0,
       match_count: stats?.matchCount ?? 0,
       finals_status: finalsBySeason.get(s.id) ?? null,
+      has_newsletter: newsletterSeasonIds.has(s.id),
     };
   });
 }

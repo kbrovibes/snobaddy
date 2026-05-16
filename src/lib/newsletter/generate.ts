@@ -425,7 +425,7 @@ export function generateNewsletter(snap: SeasonStatsSnapshot, opts: GenerateOpti
 
   lines.push("---");
   lines.push("");
-  lines.push(`_Generated ${formatLong(generatedAt)} from match data through ${formatDate(snap.lock_date ?? snap.end_date)}. Stats locked, drama unlocked._`);
+  lines.push(`_Compiled ${formatLong(generatedAt)} from match data through ${formatDate(snap.lock_date ?? snap.end_date)}. Stats locked, drama unlocked._`);
   lines.push("");
   return { title, content_md: lines.join("\n") };
 }

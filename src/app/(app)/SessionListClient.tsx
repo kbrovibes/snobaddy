@@ -24,11 +24,13 @@ export default function SessionListClient({
   isAdmin,
   seasonLockDate = null,
   activeSeasonId = null,
+  activeSeasonHasNewsletter = false,
 }: {
   sessions: SessionRow[];
   isAdmin: boolean;
   seasonLockDate?: string | null;
   activeSeasonId?: string | null;
+  activeSeasonHasNewsletter?: boolean;
 }) {
   const [showTest, setShowTest] = useState(false);
   const [showAllPast, setShowAllPast] = useState(false);
@@ -110,13 +112,35 @@ export default function SessionListClient({
 
   return (
     <>
-      {isAdmin && activeSeasonId && (
+      {/* Newsletter card — hidden for active seasons that haven't reached their stats
+          lock date yet, and for any season that doesn't have a newsletter row yet.
+          (The Generate flow lives on the admin Seasons page.) */}
+      {isAdmin && activeSeasonId && activeSeasonHasNewsletter && (
         <NavLink
           href={`/admin/seasons/${activeSeasonId}/newsletter`}
           className="flex items-center gap-3 px-4 py-3 mb-4 rounded-xl bg-surface shadow-sm hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 transition-colors"
         >
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-stone-900 dark:bg-sky-600 text-white text-lg flex-shrink-0">
-            📰
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-stone-900 dark:bg-sky-600 text-white flex-shrink-0">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              {/* Outer page */}
+              <path d="M5 4.5 H17 a1.5 1.5 0 0 1 1.5 1.5 V18 a1.5 1.5 0 0 1 -1.5 1.5 H6.5 A1.5 1.5 0 0 1 5 18 V4.5 Z" />
+              {/* Fold tab on the right edge */}
+              <path d="M18.5 9.5 H21 a0.5 0.5 0 0 1 0.5 0.5 V18 a1.5 1.5 0 0 1 -1.5 1.5 H18.5" />
+              {/* Masthead */}
+              <rect x="7" y="6.5" width="8" height="2" rx="0.4" />
+              {/* Body lines */}
+              <path d="M7 11.2 H15 M7 13.4 H15 M7 15.6 H13" />
+            </svg>
           </div>
           <div className="flex flex-col flex-1 min-w-0">
             <span className="text-sm font-semibold text-heading">Season newsletter</span>

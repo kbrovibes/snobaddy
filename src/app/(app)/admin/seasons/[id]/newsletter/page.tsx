@@ -40,7 +40,7 @@ export default async function NewsletterPage({ params }: Params) {
   }
 
   const updated = new Date(newsletter.updated_at);
-  const generatedLabel = updated.toLocaleString("en-US", {
+  const updatedLabel = updated.toLocaleString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -54,7 +54,7 @@ export default async function NewsletterPage({ params }: Params) {
         <Link href="/admin/seasons" className="text-xs font-semibold uppercase tracking-wide text-muted-light">
           ← All seasons
         </Link>
-        <span className="text-xs text-muted-light">Generated {generatedLabel}</span>
+        <span className="text-xs text-muted-light">As of {updatedLabel}</span>
       </div>
 
       <div className="rounded-xl border border-muted/30 bg-surface/30 p-4">

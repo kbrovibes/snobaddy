@@ -6,6 +6,19 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.39.5] - 2026-05-15
+
+### Added
+- **"Generate newsletter" button** on the admin Seasons page — appears next to a season once its `stats_lock_date` is set and has passed, but only while no newsletter row exists yet. Clicking the button generates the newsletter, persists it, and the button is replaced by a link to the viewer
+- `docs/newsletter-spec.md` — canonical spec for the newsletter (sections, sources, voice, awards eligibility, regeneration paths). Future generator changes should update the spec first
+
+### Changed
+- **Newsletter visibility** is now gated on the stats lock date. No newsletter link or button on an active season that hasn't reached its lock date yet. The session-list card only renders once a newsletter has been generated
+- **Newsletter banner icon** replaced the 📰 emoji with a proper inline SVG (rolled newspaper) so it renders consistently across platforms and matches the app's monochrome icon idiom
+- **"Generated" wording removed** from the newsletter UI: page header now reads "As of {date}"; the in-body footer line uses "Compiled" instead
+
+---
+
 ## [0.39.4] - 2026-05-15
 
 ### Changed

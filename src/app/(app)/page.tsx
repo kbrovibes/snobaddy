@@ -3,6 +3,7 @@ import { getActiveSession, getAllSessions, getSeasonStats } from "@/lib/db/sessi
 import { getActiveSeason } from "@/lib/db/seasons";
 import { getAllFinals, getFinalsSessionPair } from "@/lib/db/finals";
 import { getAuthPlayer } from "@/lib/auth";
+import { getNewsletter } from "@/lib/db/newsletters";
 import CreateSessionButton from "@/components/CreateSessionButton";
 import FinalsSection from "@/components/finals/FinalsSection";
 import SessionListClient from "./SessionListClient";
@@ -91,7 +92,13 @@ export default async function SessionListPage({
         </div>
       )}
 
-      <SessionListClient sessions={sessions} isAdmin={isAdmin} seasonLockDate={activeSeason.stats_lock_date ?? null} activeSeasonId={activeSeason.id} />
+      <SessionListClient
+        sessions={sessions}
+        isAdmin={isAdmin}
+        seasonLockDate={activeSeason.stats_lock_date ?? null}
+        activeSeasonId={activeSeason.id}
+        activeSeasonHasNewsletter={Boolean(await getNewsletter(activeSeason.id))}
+      />
 
       {isAdmin && sessions.length <= 5 && (
         <div className="flex justify-center pt-2">
