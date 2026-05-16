@@ -33,7 +33,10 @@ export interface SeasonStatsSnapshot {
   end_date: string;
   lock_date: string | null;
   real_session_count: number;
+  full_detail_session_count: number;  // sessions with per-match team rosters and scores
+  tally_session_count: number;        // whiteboard-tally sessions (no individual matches)
   scored_match_count: number;
+  total_player_outcomes: number;      // sum of all W+L across all players (across both modes)
   avg_margin: number | null;
   close_matches: number;
   blowouts: number;
@@ -140,7 +143,10 @@ export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnaps
     end_date: season.end_date,
     lock_date: lockDate,
     real_session_count: 0,
+    full_detail_session_count: 0,
+    tally_session_count: 0,
     scored_match_count: 0,
+    total_player_outcomes: 0,
     avg_margin: null,
     close_matches: 0,
     blowouts: 0,
@@ -189,11 +195,16 @@ export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnaps
   const playerById = new Map(players.map((p) => [p.id, p]));
   const deletedIds = new Set(players.filter((p) => p.deleted_at != null).map((p) => p.id));
 
-  // Sessions that actually produced results (had matches or tallies) — the
-  // denominator for perfect-attendance and "session count" in the narrative.
-  const sessionsWithResults = new Set<string>();
-  for (const m of matches) if (m.winning_team != null) sessionsWithResults.add(m.session_id);
-  for (const t of tallies) if ((t.wins ?? 0) + (t.losses ?? 0) > 0) sessionsWithResults.add(t.session_id);
+  // Two classes of sessions:
+  //   - full-detail: per-match rosters and scores recorded (matches table)
+  //   - tally-only: whiteboard-mode nights with aggregate W/L per player (session_tally)
+  const fullDetailSessions = new Set<string>();
+  const tallySessions = new Set<string>();
+  for (const m of matches) if (m.winning_team != null) fullDetailSessions.add(m.session_id);
+  for (const t of tallies) if ((t.wins ?? 0) + (t.losses ?? 0) > 0) tallySessions.add(t.session_id);
+  // A session that has both somehow counts as full-detail (more granular).
+  for (const sid of fullDetailSessions) tallySessions.delete(sid);
+  const sessionsWithResults = new Set<string>([...fullDetailSessions, ...tallySessions]);
 
   // Match-level fun stats over scored matches.
   let scoredCount = 0, totalMargin = 0, close = 0, blow = 0, bagels = 0;
@@ -237,11 +248,24 @@ export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnaps
     bump(losses, t.player_id, t.losses ?? 0);
   }
 
-  // Attendance — unique sessions per player (only counts sessions in scope).
+  // Attendance — unique sessions per player. A player counts as having "been
+  // there" if they have a session_players row OR a session_tally row with any
+  // games recorded. Pure session_players misses whiteboard-tally nights where
+  // people didn't formally check in.
   const attendBy = new Map<string, Set<string>>();
-  for (const a of attendance) {
-    if (!attendBy.has(a.player_id)) attendBy.set(a.player_id, new Set());
-    attendBy.get(a.player_id)!.add(a.session_id);
+  function markAttend(player_id: string, session_id: string) {
+    if (!attendBy.has(player_id)) attendBy.set(player_id, new Set());
+    attendBy.get(player_id)!.add(session_id);
+  }
+  for (const a of attendance) markAttend(a.player_id, a.session_id);
+  for (const t of tallies) {
+    if ((t.wins ?? 0) + (t.losses ?? 0) > 0) markAttend(t.player_id, t.session_id);
+  }
+  // Match rosters also imply attendance (covers checkin-skipped detail nights).
+  for (const m of matches) {
+    if (m.winning_team == null) continue;
+    [m.team1_player1_id, m.team1_player2_id, m.team2_player1_id, m.team2_player2_id]
+      .forEach((pid) => markAttend(pid, m.session_id));
   }
 
   // UBR first/last for the season window.
@@ -339,6 +363,8 @@ export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnaps
     .map((p) => ({ name: p.name, sessions_attended: realSessionCount }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
+  const totalOutcomes = playerRowsOut.reduce((s, p) => s + p.games, 0);
+
   return {
     season_id: seasonId,
     season_name: season.name,
@@ -346,7 +372,10 @@ export async function getSeasonStats(seasonId: string): Promise<SeasonStatsSnaps
     end_date: season.end_date,
     lock_date: lockDate,
     real_session_count: realSessionCount,
+    full_detail_session_count: fullDetailSessions.size,
+    tally_session_count: tallySessions.size,
     scored_match_count: scoredCount,
+    total_player_outcomes: totalOutcomes,
     avg_margin: scoredCount > 0 ? Math.round((10 * totalMargin) / scoredCount) / 10 : null,
     close_matches: close,
     blowouts: blow,

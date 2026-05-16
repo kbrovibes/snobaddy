@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.39.2] - 2026-05-15
+
+### Fixed
+- **Newsletter intro** now distinguishes full-detail nights (per-match scoring) from whiteboard-tally nights (W/L only). The average match margin is scoped to the matches with scores; the total "individual W/L outcomes" number covers both modes
+- **Sessions attended** now counts a player as present if they show up in `session_players` OR `session_tally` OR any match roster. Previously only formal check-ins counted, so whiteboard nights were missed and "wins per session" / perfect-attendance figures were off
+- Spring 2026 newsletter re-seeded as v3 with the corrected framing
+
+---
+
 ## [0.39.1] - 2026-05-15
 
 ### Fixed

@@ -54,8 +54,10 @@ export function generateNewsletter(snap: SeasonStatsSnapshot, opts: GenerateOpti
   }
 
   const totalSessions = snap.real_session_count;
+  const fullDetailSessions = snap.full_detail_session_count;
+  const tallySessions = snap.tally_session_count;
   const players = snap.players;
-  const totalPersonGames = players.reduce((s, p) => s + p.games, 0);
+  const totalPersonGames = snap.total_player_outcomes;
   const totalDistinct = snap.unique_players;
 
   // Sorted views
@@ -105,16 +107,21 @@ export function generateNewsletter(snap: SeasonStatsSnapshot, opts: GenerateOpti
     lines.push(opts.extraContext.trim());
     lines.push("");
   }
+  const modeBreakdown = (fullDetailSessions > 0 || tallySessions > 0)
+    ? ` ${fullDetailSessions} of those night${fullDetailSessions === 1 ? "" : "s"} ran in full-detail mode (every match logged with rosters and scores) and ${tallySessions} ran in whiteboard tally mode (per-player W/L only).`
+    : "";
   lines.push(
-    `${totalSessions} regular sessions, ${snap.scored_match_count} scored matches, ${totalDistinct} unique humans on court, and ${totalPersonGames} individual battles fought across the two Snoqualmie courts. ` +
-    `Average match margin was **${snap.avg_margin ?? "—"}** points, which means most games were close enough to keep things interesting and far enough apart to keep things honest.`
+    `${totalSessions} session${totalSessions === 1 ? "" : "s"} on court, ${totalDistinct} unique humans, and **${totalPersonGames}** individual W/L outcomes logged across the two Snoqualmie courts.${modeBreakdown}`
   );
   lines.push("");
-  lines.push(
-    `We saw **${snap.close_matches}** nail-biter${snap.close_matches === 1 ? "" : "s"} (margin of 2 or less), ${snap.blowouts} certifiable thrashing${snap.blowouts === 1 ? "" : "s"} (margin of 10+), and ${snap.bagels} bagel${snap.bagels === 1 ? "" : "s"}. ` +
-    `Nobody lost 21-0, which says good things about all of you and slightly disappointing things about anyone hoping for chaos.`
-  );
-  lines.push("");
+  if (snap.scored_match_count > 0) {
+    lines.push(
+      `Of the ${snap.scored_match_count} matches recorded with full scores, the average margin was **${snap.avg_margin ?? "—"}** points. ` +
+      `**${snap.close_matches}** ended within 2 points (nail-biters), ${snap.blowouts} ended by 10+ (certifiable thrashings), and ${snap.bagels} ended 21-0. ` +
+      `Nobody got bageled, which says good things about all of you and slightly disappointing things about anyone hoping for chaos.`
+    );
+    lines.push("");
+  }
 
   // ── The Badminton Nut ──────────────────────────────────────────────
   lines.push("## 🥜 The Badminton Nut");
