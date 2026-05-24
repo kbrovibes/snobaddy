@@ -65,17 +65,20 @@ export default function FinalsSection({
   const label = event ? deriveStatus(event, sessionPair) : null;
 
   return (
-    <div>
+    <details open={!!event} className="group">
+      <summary className="flex items-center justify-between px-1 mb-2 cursor-pointer list-none">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-light">
+          Season Finals
+        </p>
+        <span className="text-muted-lighter text-xs transition-transform group-open:rotate-180">▼</span>
+      </summary>
+
       {event && (
         <div className="flex justify-center mb-3">
           <CreateFinalsButton label="+ Create New Finals" />
         </div>
       )}
-      <div className="flex items-center px-1 mb-1">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-light">
-          Season Finals
-        </p>
-      </div>
+
       <div className="bg-surface rounded-xl shadow-sm overflow-hidden">
         {event ? (
           <>
@@ -144,6 +147,6 @@ export default function FinalsSection({
           })}
         </div>
       )}
-    </div>
+    </details>
   );
 }

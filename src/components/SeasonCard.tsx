@@ -32,6 +32,14 @@ const STATUS_CONFIG = {
   completed: { label: "Completed", emoji: "✅", badgeClass: "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-400" },
 };
 
+const FINALS_STATUS_LABELS: Record<string, string> = {
+  draft: "Draft",
+  breakdown_generated: "Groups Ready",
+  sessions_created: "Sessions Set",
+  active: "In Progress",
+  completed: "Completed",
+};
+
 function formatDate(dateStr: string) {
   return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
@@ -210,10 +218,18 @@ export default function SeasonCard(props: SeasonCardProps) {
           {finals_status && (
             <div className="text-xs text-muted-light">
               Finals: <span className={`font-bold ${finals_status === "completed" ? "text-green-600 dark:text-green-400" : "text-orange-600 dark:text-orange-400"}`}>
-                {finals_status}
+                {FINALS_STATUS_LABELS[finals_status] ?? finals_status}
               </span>
             </div>
           )}
+
+          <Link
+            href={`/seasons/${id}`}
+            className="inline-flex items-center gap-1 text-xs font-medium text-sky-600 dark:text-sky-400 hover:underline"
+            onClick={(e) => e.stopPropagation()}
+          >
+            View Season Summary →
+          </Link>
 
           {error && (
             <p className="text-xs text-red-600 dark:text-red-400 font-medium">{error}</p>

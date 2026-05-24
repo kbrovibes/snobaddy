@@ -116,6 +116,18 @@ export async function getAllSeasons(): Promise<SeasonWithStats[]> {
   });
 }
 
+/** Returns a single season by ID, or null. */
+export async function getSeasonById(id: string): Promise<Season | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("seasons")
+    .select("id, name, start_date, end_date, status, stats_lock_date")
+    .eq("id", id)
+    .maybeSingle();
+  if (!data) return null;
+  return data as Season;
+}
+
 /** Returns the single active season, or null. */
 export async function getActiveSeason(): Promise<Season | null> {
   const supabase = await createClient();

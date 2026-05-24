@@ -63,6 +63,15 @@ export default async function SessionListPage({
       : Promise.resolve(null),
   ]);
 
+  // First upcoming session (for the starting-soon banner)
+  const firstUpcoming = daysOfPlay === 0
+    ? [...sessions].filter((s) => s.status === "pending").sort((a, b) => a.date.localeCompare(b.date))[0] ?? null
+    : null;
+
+  function fmtDate(dateStr: string) {
+    return new Date(dateStr + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  }
+
   return (
     <div className="flex flex-col px-4 py-4 gap-4">
 
@@ -83,6 +92,24 @@ export default async function SessionListPage({
           </div>
         ))}
       </div>
+
+      {/* Starting-soon banner — shown when the season has no completed sessions yet */}
+      {daysOfPlay === 0 && sessions.length > 0 && (
+        <div className="bg-surface rounded-xl shadow-sm border border-border-light px-4 py-4 flex items-start gap-3">
+          <span className="text-2xl flex-shrink-0">🗓️</span>
+          <div className="flex flex-col gap-0.5">
+            <p className="text-sm font-semibold text-heading">Season starting soon</p>
+            <p className="text-xs text-muted-light">
+              {seasonName} · {fmtDate(activeSeason.start_date)} – {fmtDate(activeSeason.end_date)}
+            </p>
+            {firstUpcoming && (
+              <p className="text-xs text-sky-600 dark:text-sky-400 font-medium mt-0.5">
+                First session: {new Date(firstUpcoming.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {isAdmin && <FinalsSection event={finalsEvent} sessionPair={finalsSessionPair} pastEvents={pastFinalsEvents} />}
 

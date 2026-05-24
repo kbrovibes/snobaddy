@@ -6,6 +6,18 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.40.0] - 2026-05-24
+
+### Added
+- **Season Summary page** (`/seasons/[id]`) — a read-only view of any season showing stat tiles (Players, Matches, Days of Play), the full season leaderboard with award cards (Badminton Nut + Nut Cracker), and a complete session list. Accessible to all logged-in users. Linked from "View Season Summary →" on each SeasonCard in the Seasons tab
+- **"Season starting soon" banner** — when a new season has no completed sessions yet, the session list page shows a full-width card with the season date range and first scheduled session
+- **Season Finals collapsible** — the admin-only Season Finals section on the session list page is now collapsible. It defaults to open when a finals event exists, and collapsed when no finals have been created for the current season
+
+### Fixed
+- **SeasonCard finals status label** — raw DB status values (`sessions_created`, `breakdown_generated`, etc.) are now shown as human-readable labels ("Sessions Set", "Groups Ready", etc.)
+
+---
+
 ## [0.39.6] - 2026-05-24
 
 ### Fixed
