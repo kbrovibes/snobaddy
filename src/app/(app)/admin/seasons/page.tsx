@@ -42,15 +42,6 @@ export default async function SeasonsPage() {
         </div>
       )}
 
-      {upcoming.length > 0 && (
-        <div className="space-y-3">
-          <SectionLabel label="Upcoming" />
-          {upcoming.map((season) => (
-            <SeasonCard key={season.id} {...season} hasActiveSeason={hasActiveSeason} />
-          ))}
-        </div>
-      )}
-
       {past.length > 0 && (
         <details className="group" open>
           <summary className="flex items-center justify-between px-1 mb-2 cursor-pointer list-none">
@@ -61,6 +52,22 @@ export default async function SeasonsPage() {
           </summary>
           <div className="space-y-3 mt-2">
             {past.map((season) => (
+              <SeasonCard key={season.id} {...season} hasActiveSeason={hasActiveSeason} />
+            ))}
+          </div>
+        </details>
+      )}
+
+      {upcoming.length > 0 && (
+        <details className="group">
+          <summary className="flex items-center justify-between px-1 mb-2 cursor-pointer list-none">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-light">
+              Upcoming <span className="font-normal text-muted-lighter">({upcoming.length})</span>
+            </p>
+            <span className="text-muted-lighter text-xs transition-transform group-open:rotate-180">▼</span>
+          </summary>
+          <div className="space-y-3 mt-2">
+            {upcoming.map((season) => (
               <SeasonCard key={season.id} {...season} hasActiveSeason={hasActiveSeason} />
             ))}
           </div>

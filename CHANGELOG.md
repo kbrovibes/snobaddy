@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.40.4] - 2026-05-24
+
+### Changed
+- **Seasons page layout** — Past Seasons section now appears directly below Ongoing (before Upcoming); Upcoming seasons are collapsed by default in a `<details>` accordion
+- **SeasonCard** — season name is larger (`text-base`); Close Season / Start Season / Reopen Season buttons are now compact inline buttons (not full-width) placed to the right of the date range on the same row
+
+---
+
 ## [0.40.3] - 2026-05-24
 
 ### Changed

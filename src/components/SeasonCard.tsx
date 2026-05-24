@@ -125,7 +125,7 @@ export default function SeasonCard(props: SeasonCardProps) {
       >
         <div className="flex items-center gap-2">
           <span className="text-lg">{config.emoji}</span>
-          <span className="font-bold text-heading text-sm">{name}</span>
+          <span className="font-bold text-heading text-base">{name}</span>
         </div>
         <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${config.badgeClass}`}>
           {config.label}
@@ -192,17 +192,48 @@ export default function SeasonCard(props: SeasonCardProps) {
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <p className="text-xs text-muted-light">
-                {formatDate(start_date)} – {formatDate(end_date)}
-                {stats_lock_date && <span className="ml-1.5 text-amber-600 dark:text-amber-400">· 🔒 {formatDate(stats_lock_date)}</span>}
-              </p>
-              <button
-                onClick={() => setEditing(true)}
-                className="text-[10px] text-sky-600 dark:text-sky-400 hover:underline font-medium"
-              >
-                Edit
-              </button>
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs text-muted-light">
+                  {formatDate(start_date)} – {formatDate(end_date)}
+                  {stats_lock_date && <span className="ml-1.5 text-amber-600 dark:text-amber-400">· 🔒 {formatDate(stats_lock_date)}</span>}
+                </p>
+                <button
+                  onClick={() => setEditing(true)}
+                  className="text-[10px] text-sky-600 dark:text-sky-400 hover:underline font-medium mt-0.5"
+                >
+                  Edit
+                </button>
+              </div>
+              {status === "active" && (
+                <button
+                  onClick={() => handleStatusChange("completed")}
+                  disabled={loading}
+                  className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800 disabled:opacity-50 transition-colors"
+                >
+                  {loading ? "Closing…" : "Close Season"}
+                </button>
+              )}
+              {status === "upcoming" && (
+                <button
+                  onClick={() => handleStatusChange("active")}
+                  disabled={loading || hasActiveSeason}
+                  className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-50 text-sky-600 border border-sky-200 hover:bg-sky-100 dark:bg-sky-900/30 dark:text-sky-400 dark:border-sky-800 disabled:opacity-50 transition-colors"
+                  title={hasActiveSeason ? "Close the current season first" : undefined}
+                >
+                  {loading ? "Starting…" : "Start Season"}
+                </button>
+              )}
+              {status === "completed" && (
+                <button
+                  onClick={() => handleStatusChange("active")}
+                  disabled={loading || hasActiveSeason}
+                  className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-50 text-stone-600 border border-stone-200 hover:bg-stone-100 dark:bg-stone-900/30 dark:text-stone-400 dark:border-stone-800 disabled:opacity-50 transition-colors"
+                  title={hasActiveSeason ? "Close the current season first" : undefined}
+                >
+                  {loading ? "Reopening…" : "Reopen Season"}
+                </button>
+              )}
             </div>
           )}
 
@@ -234,39 +265,6 @@ export default function SeasonCard(props: SeasonCardProps) {
           {error && (
             <p className="text-xs text-red-600 dark:text-red-400 font-medium">{error}</p>
           )}
-
-          {/* Action buttons */}
-          <div className="flex gap-2">
-            {status === "active" && (
-              <button
-                onClick={() => handleStatusChange("completed")}
-                disabled={loading}
-                className="flex-1 py-2 rounded-lg text-xs font-bold bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800 disabled:opacity-50 transition-colors"
-              >
-                {loading ? "Closing..." : "Close Season"}
-              </button>
-            )}
-            {status === "upcoming" && (
-              <button
-                onClick={() => handleStatusChange("active")}
-                disabled={loading || hasActiveSeason}
-                className="flex-1 py-2 rounded-lg text-xs font-bold bg-sky-50 text-sky-600 border border-sky-200 hover:bg-sky-100 dark:bg-sky-900/30 dark:text-sky-400 dark:border-sky-800 disabled:opacity-50 transition-colors"
-                title={hasActiveSeason ? "Close the current season first" : undefined}
-              >
-                {loading ? "Starting..." : "Start Season"}
-              </button>
-            )}
-            {status === "completed" && (
-              <button
-                onClick={() => handleStatusChange("active")}
-                disabled={loading || hasActiveSeason}
-                className="flex-1 py-2 rounded-lg text-xs font-bold bg-stone-50 text-stone-600 border border-stone-200 hover:bg-stone-100 dark:bg-stone-900/30 dark:text-stone-400 dark:border-stone-800 disabled:opacity-50 transition-colors"
-                title={hasActiveSeason ? "Close the current season first" : undefined}
-              >
-                {loading ? "Reopening..." : "Reopen Season"}
-              </button>
-            )}
-          </div>
 
           {/* Newsletter — only surfaced after a season's stats lock date has passed.
               If the date is set + past + no row yet → Generate button.
