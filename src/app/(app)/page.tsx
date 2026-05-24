@@ -82,26 +82,26 @@ export default async function SessionListPage({
       {showStartingSoon && (
         <div className="relative rounded-2xl overflow-hidden shadow-lg">
           {/* Gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-sky-400 via-sky-500 to-blue-700 dark:from-sky-950 dark:via-slate-800 dark:to-slate-900" />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 dark:from-zinc-800 dark:via-zinc-900 dark:to-zinc-950" />
           {/* Dot texture */}
           <div
-            className="absolute inset-0 opacity-[0.10]"
-            style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "18px 18px" }}
+            className="absolute inset-0 opacity-[0.08]"
+            style={{ backgroundImage: "radial-gradient(circle, #64748b 1px, transparent 1px)", backgroundSize: "18px 18px" }}
           />
           {/* Decorative racket — big, faded, rotated */}
-          <span className="absolute -top-2 right-3 text-7xl opacity-[0.18] select-none rotate-[20deg] pointer-events-none">🏸</span>
+          <span className="absolute -top-2 right-3 text-7xl opacity-[0.12] select-none rotate-[20deg] pointer-events-none dark:opacity-[0.15]">🏸</span>
 
           <div className="relative px-5 py-7 flex flex-col gap-3">
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-sky-100 dark:text-slate-400">{seasonName}</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-zinc-400">{seasonName}</p>
 
-            <h2 className="text-[1.6rem] font-extrabold text-white leading-snug">
+            <h2 className="text-[1.6rem] font-extrabold text-slate-800 dark:text-zinc-100 leading-snug">
               New Season<br />Starting Soon
             </h2>
 
             {firstUpcoming && (
-              <div className="flex items-center gap-2 bg-white/10 rounded-xl px-3 py-2 self-start backdrop-blur-sm">
+              <div className="flex items-center gap-2 bg-slate-800/10 dark:bg-white/10 rounded-xl px-3 py-2 self-start backdrop-blur-sm">
                 <span className="text-base">📅</span>
-                <span className="text-sm font-bold text-white">
+                <span className="text-sm font-bold text-slate-800 dark:text-zinc-100">
                   {new Date(firstUpcoming.date + "T12:00:00").toLocaleDateString("en-US", {
                     weekday: "long", month: "short", day: "numeric",
                   })}
@@ -110,11 +110,11 @@ export default async function SessionListPage({
             )}
 
             <div className="flex items-center justify-between mt-1">
-              <p className="text-xs text-sky-100 dark:text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-zinc-400">
                 {fmtDate(activeSeason.start_date)} – {fmtDate(activeSeason.end_date)}
               </p>
               {daysOfPlay > 0 && (
-                <span className="text-[11px] font-semibold text-white dark:text-slate-300 bg-white/10 dark:bg-white/[0.05] px-2 py-0.5 rounded-full">
+                <span className="text-[11px] font-semibold text-slate-700 dark:text-zinc-300 bg-slate-800/10 dark:bg-white/[0.08] px-2 py-0.5 rounded-full">
                   {daysOfPlay}/2 sessions in
                 </span>
               )}

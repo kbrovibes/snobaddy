@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.40.5] - 2026-05-24
+
+### Changed
+- **"Season Starting Soon" banner** — switched to Minimal theme: light mode uses a soft slate/blue-50 gradient with dark text; dark mode uses near-black zinc tones — clean and subtle in both modes
+
+---
+
 ## [0.40.4] - 2026-05-24
 
 ### Changed
