@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.40.8] - 2026-05-24
+
+### Removed
+- **Admin badge and verified tick** — removed from leaderboard table, session scoreboard, and session presence list (WhoIsHere)
+
+---
+
 ## [0.40.7] - 2026-05-24
 
 ### Changed

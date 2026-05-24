@@ -3,7 +3,6 @@
 import { useState } from "react";
 import NavLink from "@/components/NavLink";
 import { useRouter } from "next/navigation";
-import { VerifiedBadge, AdminBadge } from "./PlayerBadges";
 
 interface Player {
   player_id: string;
@@ -145,8 +144,6 @@ export default function WhoIsHere({
               <NavLink href={`/players/${p.player_id}`} className="font-medium text-sky-600 text-sm truncate hover:underline active:opacity-60">
                 {p.name}
               </NavLink>
-              {p.user_id && <VerifiedBadge />}
-              {p.is_admin && <AdminBadge />}
             </span>
             <div className="w-24 flex justify-center">
               <SkillDots level={p.skill_level} />

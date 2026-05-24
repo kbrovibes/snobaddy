@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import NavLink from "@/components/NavLink";
 import type { PlayerStats } from "@/lib/db/players";
-import { VerifiedBadge, AdminBadge } from "@/components/PlayerBadges";
 import { buildNameMap, shortName } from "@/lib/display-name";
 import type { UbrRating } from "@/lib/db/ubr";
 
@@ -279,8 +278,6 @@ export default function LeaderboardTable({
                               <span className="sm:hidden">{shortName(player.name, nameMap)}</span>
                               <span className="hidden sm:inline">{player.name}</span>
                             </NavLink>
-                            {player.user_id && <VerifiedBadge />}
-                            {player.is_admin && <AdminBadge />}
                           </span>
                         </td>
                         <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.matches_played}</td>

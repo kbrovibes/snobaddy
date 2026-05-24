@@ -3,7 +3,6 @@
 import { useState } from "react";
 import NavLink from "@/components/NavLink";
 import type { PlayerSessionStats } from "@/lib/db/matches";
-import { VerifiedBadge, AdminBadge } from "./PlayerBadges";
 
 type SortKey = "name" | "matches_played" | "wins" | "losses" | "win_pct" | "points";
 type SortDir = "asc" | "desc";
@@ -101,8 +100,6 @@ export default function SessionScoreboard({ scoreboard, playerId, matchCount }: 
                     >
                       {p.name}
                     </NavLink>
-                    {p.user_id && <VerifiedBadge />}
-                    {p.is_admin && <AdminBadge />}
                   </span>
                   <span className="w-8 text-center text-sm tabular-nums text-text-light">{p.matches_played}</span>
                   <span className="w-8 text-center text-sm font-bold text-green-600 dark:text-green-400">{p.wins}</span>
