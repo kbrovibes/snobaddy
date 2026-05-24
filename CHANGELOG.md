@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.40.7] - 2026-05-24
+
+### Changed
+- **Bottom nav icons** — replaced emoji with custom SVG icons: racket (Session), two-person silhouette (Players), podium bars (Leaderboard), calendar (Seasons); all use currentColor so they respond to active/inactive and light/dark mode automatically
+
+---
+
 ## [0.40.6] - 2026-05-24
 
 ### Changed
