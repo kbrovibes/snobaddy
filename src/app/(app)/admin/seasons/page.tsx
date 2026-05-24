@@ -12,6 +12,20 @@ function SectionLabel({ label }: { label: string }) {
   );
 }
 
+function CollapsibleSection({ label, count, children }: { label: string; count: number; children: React.ReactNode }) {
+  return (
+    <details className="group">
+      <summary className="flex items-center justify-between px-1 mb-2 cursor-pointer list-none">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-light">
+          {label} <span className="font-normal text-muted-lighter">({count})</span>
+        </p>
+        <span className="text-muted-lighter text-xs transition-transform group-open:rotate-180">▼</span>
+      </summary>
+      <div className="space-y-3 mt-2">{children}</div>
+    </details>
+  );
+}
+
 export default async function SeasonsPage() {
   const authPlayer = await getAuthPlayer();
   if (!authPlayer?.isAdmin) redirect("/");
@@ -19,9 +33,12 @@ export default async function SeasonsPage() {
   const seasons = await getAllSeasons();
   const hasActiveSeason = seasons.some((s) => s.status === "active");
 
-  const ongoing  = seasons.filter((s) => s.status === "active");
-  const upcoming = seasons.filter((s) => s.status === "upcoming").sort((a, b) => a.start_date.localeCompare(b.start_date));
-  const past     = seasons.filter((s) => s.status === "completed").sort((a, b) => b.start_date.localeCompare(a.start_date));
+  const ongoing      = seasons.filter((s) => s.status === "active");
+  const past         = seasons.filter((s) => s.status === "completed").sort((a, b) => b.start_date.localeCompare(a.start_date));
+  const upcoming     = seasons.filter((s) => s.status === "upcoming").sort((a, b) => a.start_date.localeCompare(b.start_date));
+
+  const lastSeason   = past[0] ?? null;
+  const priorSeasons = past.slice(1);
 
   return (
     <div className="px-4 py-4 pb-24 space-y-6">
@@ -33,6 +50,7 @@ export default async function SeasonsPage() {
         </p>
       )}
 
+      {/* Ongoing — always expanded */}
       {ongoing.length > 0 && (
         <div className="space-y-3">
           <SectionLabel label="Ongoing" />
@@ -42,36 +60,30 @@ export default async function SeasonsPage() {
         </div>
       )}
 
-      {past.length > 0 && (
-        <details className="group" open>
-          <summary className="flex items-center justify-between px-1 mb-2 cursor-pointer list-none">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-light">
-              Past Seasons <span className="font-normal text-muted-lighter">({past.length})</span>
-            </p>
-            <span className="text-muted-lighter text-xs transition-transform group-open:rotate-180">▼</span>
-          </summary>
-          <div className="space-y-3 mt-2">
-            {past.map((season) => (
-              <SeasonCard key={season.id} {...season} hasActiveSeason={hasActiveSeason} />
-            ))}
-          </div>
-        </details>
+      {/* Last completed season — expanded by default */}
+      {lastSeason && (
+        <div className="space-y-3">
+          <SectionLabel label="Last Season" />
+          <SeasonCard {...lastSeason} hasActiveSeason={hasActiveSeason} defaultExpanded={true} />
+        </div>
       )}
 
+      {/* Prior seasons — collapsed */}
+      {priorSeasons.length > 0 && (
+        <CollapsibleSection label="Prior Seasons" count={priorSeasons.length}>
+          {priorSeasons.map((season) => (
+            <SeasonCard key={season.id} {...season} hasActiveSeason={hasActiveSeason} />
+          ))}
+        </CollapsibleSection>
+      )}
+
+      {/* Upcoming — collapsed */}
       {upcoming.length > 0 && (
-        <details className="group">
-          <summary className="flex items-center justify-between px-1 mb-2 cursor-pointer list-none">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-light">
-              Upcoming <span className="font-normal text-muted-lighter">({upcoming.length})</span>
-            </p>
-            <span className="text-muted-lighter text-xs transition-transform group-open:rotate-180">▼</span>
-          </summary>
-          <div className="space-y-3 mt-2">
-            {upcoming.map((season) => (
-              <SeasonCard key={season.id} {...season} hasActiveSeason={hasActiveSeason} />
-            ))}
-          </div>
-        </details>
+        <CollapsibleSection label="Upcoming" count={upcoming.length}>
+          {upcoming.map((season) => (
+            <SeasonCard key={season.id} {...season} hasActiveSeason={hasActiveSeason} />
+          ))}
+        </CollapsibleSection>
       )}
 
       <CreateSeasonForm lastSeasonName={seasons[0]?.name} />

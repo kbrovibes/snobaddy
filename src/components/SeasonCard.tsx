@@ -19,17 +19,13 @@ interface SeasonCardProps {
   finals_status: string | null;
   hasActiveSeason: boolean;
   has_newsletter: boolean;
+  defaultExpanded?: boolean;
 }
-
-function formatShortDate(dateStr: string) {
-  return new Date(dateStr + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
 
 const STATUS_CONFIG = {
-  active: { label: "Active", emoji: "🟢", badgeClass: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400" },
-  upcoming: { label: "Upcoming", emoji: "⏳", badgeClass: "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400" },
-  completed: { label: "Completed", emoji: "✅", badgeClass: "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-400" },
+  active:    { label: "Active",    dotClass: "bg-green-500",                   badgeClass: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"    },
+  upcoming:  { label: "Upcoming",  dotClass: "bg-orange-400",                  badgeClass: "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400" },
+  completed: { label: "Completed", dotClass: "bg-slate-300 dark:bg-slate-600", badgeClass: "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-400"            },
 };
 
 const FINALS_STATUS_LABELS: Record<string, string> = {
@@ -45,9 +41,9 @@ function formatDate(dateStr: string) {
 }
 
 export default function SeasonCard(props: SeasonCardProps) {
-  const { id, name, start_date, end_date, status, stats_lock_date, session_count, player_count, match_count, finals_status, hasActiveSeason, has_newsletter } = props;
+  const { id, name, start_date, end_date, status, stats_lock_date, session_count, player_count, match_count, finals_status, hasActiveSeason, has_newsletter, defaultExpanded } = props;
   const router = useRouter();
-  const [expanded, setExpanded] = useState(status !== "completed");
+  const [expanded, setExpanded] = useState(defaultExpanded ?? (status !== "completed"));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
@@ -57,6 +53,8 @@ export default function SeasonCard(props: SeasonCardProps) {
   const [editLockDate, setEditLockDate] = useState(stats_lock_date ?? "");
 
   const config = STATUS_CONFIG[status];
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+  const lockInPast = !!stats_lock_date && stats_lock_date <= today;
 
   async function handleStatusChange(newStatus: SeasonStatus) {
     const messages: Record<string, string> = {
@@ -123,8 +121,8 @@ export default function SeasonCard(props: SeasonCardProps) {
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between px-4 py-3 text-left"
       >
-        <div className="flex items-center gap-2">
-          <span className="text-lg">{config.emoji}</span>
+        <div className="flex items-center gap-2.5">
+          <span className={`w-2 h-2 rounded-full flex-shrink-0 ${config.dotClass}`} />
           <span className="font-bold text-heading text-base">{name}</span>
         </div>
         <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${config.badgeClass}`}>
@@ -167,7 +165,9 @@ export default function SeasonCard(props: SeasonCardProps) {
                 </div>
               </div>
               <div>
-                <label className="block text-[10px] font-medium text-muted-light mb-1">Lock date <span className="text-muted-lighter font-normal">(sessions after this date excluded from leaderboard)</span></label>
+                <label className="block text-[10px] font-medium text-muted-light mb-1">
+                  Stats lock date <span className="text-muted-lighter font-normal">(sessions after this date excluded from leaderboard)</span>
+                </label>
                 <input
                   type="date"
                   value={editLockDate}
@@ -193,14 +193,16 @@ export default function SeasonCard(props: SeasonCardProps) {
             </div>
           ) : (
             <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-xs text-muted-light">
-                  {formatDate(start_date)} – {formatDate(end_date)}
-                  {stats_lock_date && <span className="ml-1.5 text-amber-600 dark:text-amber-400">· 🔒 {formatDate(stats_lock_date)}</span>}
-                </p>
+              <div className="min-w-0 space-y-0.5">
+                <p className="text-xs text-muted-light">{formatDate(start_date)} – {formatDate(end_date)}</p>
+                {stats_lock_date && (
+                  <p className="text-[11px] font-medium text-amber-600 dark:text-amber-400">
+                    Stats locked: {formatDate(stats_lock_date)}
+                  </p>
+                )}
                 <button
                   onClick={() => setEditing(true)}
-                  className="text-[10px] text-sky-600 dark:text-sky-400 hover:underline font-medium mt-0.5"
+                  className="text-[10px] text-sky-600 dark:text-sky-400 font-medium"
                 >
                   Edit
                 </button>
@@ -254,39 +256,36 @@ export default function SeasonCard(props: SeasonCardProps) {
             </div>
           )}
 
-          <Link
-            href={`/seasons/${id}`}
-            className="inline-flex items-center gap-1 text-xs font-medium text-sky-600 dark:text-sky-400 hover:underline"
-            onClick={(e) => e.stopPropagation()}
-          >
-            View Season Summary →
-          </Link>
-
           {error && (
             <p className="text-xs text-red-600 dark:text-red-400 font-medium">{error}</p>
           )}
 
-          {/* Newsletter — only surfaced after a season's stats lock date has passed.
-              If the date is set + past + no row yet → Generate button.
-              If the row exists → link into the viewer.
-              Otherwise (no lock date, or lock date still in the future) → nothing. */}
-          {(() => {
-            if (!stats_lock_date) return null;
-            const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
-            const lockInPast = stats_lock_date <= today;
-            if (!lockInPast) return null;
-            if (has_newsletter) {
-              return (
-                <Link
-                  href={`/admin/seasons/${id}/newsletter`}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline"
-                >
-                  📰 Season newsletter →
-                </Link>
-              );
-            }
-            return <GenerateNewsletterButton seasonId={id} />;
-          })()}
+          {/* Links — Season Summary always; Newsletter link or Generate button once lock date has passed */}
+          <div className="space-y-2 pt-0.5">
+            <div className="flex items-center gap-3 text-xs font-medium text-sky-600 dark:text-sky-400">
+              <Link
+                href={`/seasons/${id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="transition-colors hover:text-sky-800 dark:hover:text-sky-200"
+              >
+                Season Summary
+              </Link>
+              {lockInPast && has_newsletter && (
+                <>
+                  <span className="text-slate-200 dark:text-zinc-700 select-none">·</span>
+                  <Link
+                    href={`/admin/seasons/${id}/newsletter`}
+                    className="transition-colors hover:text-sky-800 dark:hover:text-sky-200"
+                  >
+                    Newsletter
+                  </Link>
+                </>
+              )}
+            </div>
+            {lockInPast && !has_newsletter && (
+              <GenerateNewsletterButton seasonId={id} />
+            )}
+          </div>
         </div>
       )}
     </div>

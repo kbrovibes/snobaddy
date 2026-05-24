@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.41.0] - 2026-05-24
+
+### Changed
+- **Seasons page** — split past seasons into "Last Season" (expanded by default) and "Prior Seasons" (collapsed); Ongoing and Last Season are always expanded on load
+- **SeasonCard** — replaced emoji status indicators (🟢✅⏳) with small colored dots; "Stats locked: {date}" shown on its own labeled line instead of inline with a 🔒 emoji; season links ("Season Summary · Newsletter") are now a clean inline row with no arrows or underlines; Generate Newsletter button preserved below the link row
+
+---
+
 ## [0.40.9] - 2026-05-24
 
 ### Changed
