@@ -6,6 +6,18 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.39.6] - 2026-05-24
+
+### Fixed
+- **Spring season finals no longer bleed into the Summer season home page** — the FinalsSection now only considers finals events belonging to the active season
+- **Season stat tiles now always appear** at the top of the session list, even before the first session of a new season has been completed (showing 0 values)
+
+### Added
+- **Past Seasons expanded by default** on the Seasons tab — the collapsible section now opens automatically so past seasons are immediately visible
+- **Summer 2026 sessions pre-created** — all 23 Monday/Thursday sessions from 2026-05-28 through 2026-08-13 have been added as pending sessions tied to the Summer 2026 season
+
+---
+
 ## [0.39.5] - 2026-05-15
 
 ### Added

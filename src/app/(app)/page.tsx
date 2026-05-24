@@ -46,9 +46,11 @@ export default async function SessionListPage({
     getAllSessions(activeSeason.id),
     isAdmin ? getAllFinals() : Promise.resolve([]),
   ]);
+  // Scope finals to the active season only
+  const seasonFinalsEvents = allFinalsEvents.filter((e) => e.season_id === activeSeason.id);
   // Current = most recent non-completed, or most recent overall
-  const finalsEvent = allFinalsEvents.find((e) => e.status !== "completed") ?? allFinalsEvents[0] ?? null;
-  const pastFinalsEvents = allFinalsEvents.filter((e) => e.id !== finalsEvent?.id);
+  const finalsEvent = seasonFinalsEvents.find((e) => e.status !== "completed") ?? seasonFinalsEvents[0] ?? null;
+  const pastFinalsEvents = seasonFinalsEvents.filter((e) => e.id !== finalsEvent?.id);
   const seasonName = sessions[0]?.season?.name ?? "Sessions";
 
   // Season stats + finals session pair — independent, run in parallel
@@ -67,22 +69,20 @@ export default async function SessionListPage({
       <p className="text-xs font-semibold uppercase tracking-wide text-muted-light px-1">{seasonName}</p>
 
       {/* Season stat cards */}
-      {daysOfPlay > 0 && (
-        <div className="grid grid-cols-3 gap-2">
-          {[
-            { emoji: "🏸", label: "Players", value: playerCount, unit: "this season" },
-            { emoji: "🎯", label: "Matches", value: totalMatches, unit: "played" },
-            { emoji: "📅", label: "Days of Play", value: daysOfPlay, unit: "sessions" },
-          ].map(({ emoji, label, value, unit }) => (
-            <div key={label} className="bg-surface rounded-xl shadow-sm border border-border-light px-3 py-3 flex flex-col items-center gap-0.5 text-center">
-              <span className="text-xl">{emoji}</span>
-              <span className="text-2xl font-bold text-heading leading-none">{value}</span>
-              <span className="text-xs font-semibold text-text leading-tight">{label}</span>
-              <span className="text-[10px] text-muted-light leading-tight">{unit}</span>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          { emoji: "🏸", label: "Players", value: playerCount, unit: "this season" },
+          { emoji: "🎯", label: "Matches", value: totalMatches, unit: "played" },
+          { emoji: "📅", label: "Days of Play", value: daysOfPlay, unit: "sessions" },
+        ].map(({ emoji, label, value, unit }) => (
+          <div key={label} className="bg-surface rounded-xl shadow-sm border border-border-light px-3 py-3 flex flex-col items-center gap-0.5 text-center">
+            <span className="text-xl">{emoji}</span>
+            <span className="text-2xl font-bold text-heading leading-none">{value}</span>
+            <span className="text-xs font-semibold text-text leading-tight">{label}</span>
+            <span className="text-[10px] text-muted-light leading-tight">{unit}</span>
+          </div>
+        ))}
+      </div>
 
       {isAdmin && <FinalsSection event={finalsEvent} sessionPair={finalsSessionPair} pastEvents={pastFinalsEvents} />}
 

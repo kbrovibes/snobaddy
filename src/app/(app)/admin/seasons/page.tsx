@@ -52,7 +52,7 @@ export default async function SeasonsPage() {
       )}
 
       {past.length > 0 && (
-        <details className="group">
+        <details className="group" open>
           <summary className="flex items-center justify-between px-1 mb-2 cursor-pointer list-none">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-light">
               Past Seasons <span className="font-normal text-muted-lighter">({past.length})</span>
