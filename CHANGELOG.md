@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.40.9] - 2026-05-24
+
+### Changed
+- **Banner** — heading now reads "{Season Name} Season Starting Soon"; removed inner season label; previous season links ("Spring 2026 Stats · Newsletter") shown in a minimal "Previous Season" row with no underlines, arrows, or emojis
+- **Season Summary page** — newsletter card widget (same card style as session list) now appears after stat tiles when a newsletter exists
+
+---
+
 ## [0.40.8] - 2026-05-24
 
 ### Removed

@@ -90,22 +90,11 @@ export default async function SessionListPage({
           <span className="absolute -top-2 right-3 text-7xl opacity-[0.12] select-none rotate-[20deg] pointer-events-none dark:opacity-[0.15]">🏸</span>
 
           <div className="relative px-5 py-7 flex flex-col gap-3">
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-zinc-400">{seasonName}</p>
-
             <h2 className="text-[1.6rem] font-extrabold text-slate-800 dark:text-zinc-100 leading-snug">
-              New Season<br />Starting Soon
+              {seasonName}<br />Season Starting Soon
             </h2>
 
-            {lastSeason && (
-              <Link
-                href={`/seasons/${lastSeason.id}`}
-                className="self-start text-xs font-semibold text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 underline underline-offset-2 transition-colors"
-              >
-                📊 {lastSeason.name} stats →
-              </Link>
-            )}
-
-            <div className="flex items-center justify-between mt-1">
+            <div className="flex items-center justify-between">
               <p className="text-xs text-slate-500 dark:text-zinc-400">
                 {fmtDate(activeSeason.start_date)} – {fmtDate(activeSeason.end_date)}
               </p>
@@ -115,6 +104,27 @@ export default async function SessionListPage({
                 </span>
               )}
             </div>
+
+            {lastSeason && (
+              <div className="flex flex-col gap-1 pt-1 border-t border-slate-200/60 dark:border-zinc-700/60">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-600">
+                  Previous Season
+                </p>
+                <div className="flex items-center gap-3 text-xs font-semibold text-slate-500 dark:text-zinc-500">
+                  <Link href={`/seasons/${lastSeason.id}`} className="transition-colors hover:text-slate-800 dark:hover:text-zinc-200">
+                    {lastSeason.name} Stats
+                  </Link>
+                  {lastSeason.has_newsletter && (
+                    <>
+                      <span className="text-slate-300 dark:text-zinc-700">·</span>
+                      <Link href={`/admin/seasons/${lastSeason.id}/newsletter`} className="transition-colors hover:text-slate-800 dark:hover:text-zinc-200">
+                        Newsletter
+                      </Link>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

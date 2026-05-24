@@ -116,17 +116,23 @@ export async function getAllSeasons(): Promise<SeasonWithStats[]> {
   });
 }
 
-/** Returns the most recently completed season (by end_date), or null. */
-export async function getLastCompletedSeason(): Promise<Pick<Season, "id" | "name"> | null> {
+/** Returns the most recently completed season (by end_date) with newsletter flag, or null. */
+export async function getLastCompletedSeason(): Promise<(Pick<Season, "id" | "name"> & { has_newsletter: boolean }) | null> {
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data: season } = await supabase
     .from("seasons")
     .select("id, name")
     .eq("status", "completed")
     .order("end_date", { ascending: false })
     .limit(1)
     .maybeSingle();
-  return data ?? null;
+  if (!season) return null;
+  const { data: nl } = await supabase
+    .from("season_newsletters")
+    .select("season_id")
+    .eq("season_id", season.id)
+    .maybeSingle();
+  return { id: season.id, name: season.name, has_newsletter: !!nl };
 }
 
 /** Returns a single season by ID, or null. */

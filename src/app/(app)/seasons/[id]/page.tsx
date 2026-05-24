@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { getSeasonById } from "@/lib/db/seasons";
+import { getNewsletter } from "@/lib/db/newsletters";
 import { getAllSessions, getSeasonStats } from "@/lib/db/sessions";
 import { getAuthPlayer } from "@/lib/auth";
 import LeaderboardData from "@/app/(app)/leaderboard/LeaderboardData";
@@ -105,9 +106,10 @@ export default async function SeasonSummaryPage({
   const realCompleted = real.filter((s) => s.status === "completed");
   const daysOfPlay = realCompleted.length;
 
-  const { playerCount, matchCount } = await getSeasonStats(
-    realCompleted.map((s) => s.id)
-  );
+  const [{ playerCount, matchCount }, newsletter] = await Promise.all([
+    getSeasonStats(realCompleted.map((s) => s.id)),
+    getNewsletter(season.id),
+  ]);
 
   const statusInfo = SEASON_STATUS[season.status];
 
@@ -156,6 +158,28 @@ export default async function SeasonSummaryPage({
           </div>
         ))}
       </div>
+
+      {/* Newsletter card */}
+      {isAdmin && newsletter && (
+        <NavLink
+          href={`/admin/seasons/${season.id}/newsletter`}
+          className="flex items-center gap-3 px-4 py-3 rounded-xl bg-surface shadow-sm border border-border-light hover:bg-surface-alt active:bg-sky-50 dark:active:bg-sky-500/10 transition-colors"
+        >
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-stone-900 dark:bg-sky-600 text-white flex-shrink-0">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 4.5 H17 a1.5 1.5 0 0 1 1.5 1.5 V18 a1.5 1.5 0 0 1 -1.5 1.5 H6.5 A1.5 1.5 0 0 1 5 18 V4.5 Z" />
+              <path d="M18.5 9.5 H21 a0.5 0.5 0 0 1 0.5 0.5 V18 a1.5 1.5 0 0 1 -1.5 1.5 H18.5" />
+              <rect x="7" y="6.5" width="8" height="2" rx="0.4" />
+              <path d="M7 11.2 H15 M7 13.4 H15 M7 15.6 H13" />
+            </svg>
+          </div>
+          <div className="flex flex-col flex-1 min-w-0">
+            <span className="text-sm font-semibold text-heading">Season newsletter</span>
+            <span className="text-xs text-muted-light">Stats, awards, and observations from this season</span>
+          </div>
+          <span className="text-muted-lighter text-sm">→</span>
+        </NavLink>
+      )}
 
       {/* Season leaderboard — only when there is data */}
       {daysOfPlay > 0 && (
