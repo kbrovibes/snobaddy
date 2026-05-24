@@ -116,6 +116,19 @@ export async function getAllSeasons(): Promise<SeasonWithStats[]> {
   });
 }
 
+/** Returns the most recently completed season (by end_date), or null. */
+export async function getLastCompletedSeason(): Promise<Pick<Season, "id" | "name"> | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("seasons")
+    .select("id, name")
+    .eq("status", "completed")
+    .order("end_date", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data ?? null;
+}
+
 /** Returns a single season by ID, or null. */
 export async function getSeasonById(id: string): Promise<Season | null> {
   const supabase = await createClient();

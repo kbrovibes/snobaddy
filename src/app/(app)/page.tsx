@@ -1,6 +1,7 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getActiveSession, getAllSessions, getSeasonStats } from "@/lib/db/sessions";
-import { getActiveSeason } from "@/lib/db/seasons";
+import { getActiveSeason, getLastCompletedSeason } from "@/lib/db/seasons";
 import { getAllFinals, getFinalsSessionPair } from "@/lib/db/finals";
 import { getAuthPlayer } from "@/lib/auth";
 import { getNewsletter } from "@/lib/db/newsletters";
@@ -56,18 +57,15 @@ export default async function SessionListPage({
   // Season stats + finals session pair — independent, run in parallel
   const realCompleted = sessions.filter((s) => !s.is_test_session && s.status === "completed");
   const daysOfPlay = realCompleted.length;
-  const [{ playerCount, matchCount: totalMatches }, finalsSessionPair] = await Promise.all([
+  const showStartingSoon = daysOfPlay < 2 && sessions.length > 0;
+
+  const [{ playerCount, matchCount: totalMatches }, finalsSessionPair, lastSeason] = await Promise.all([
     getSeasonStats(realCompleted.map((s) => s.id)),
     finalsEvent
       ? getFinalsSessionPair(finalsEvent.finals1_session_id, finalsEvent.finals2_session_id)
       : Promise.resolve(null),
+    showStartingSoon ? getLastCompletedSeason() : Promise.resolve(null),
   ]);
-
-  // Starting-soon banner: show while fewer than 2 sessions completed
-  const showStartingSoon = daysOfPlay < 2 && sessions.length > 0;
-  const firstUpcoming = showStartingSoon
-    ? [...sessions].filter((s) => s.status === "pending").sort((a, b) => a.date.localeCompare(b.date))[0] ?? null
-    : null;
 
   function fmtDate(dateStr: string) {
     return new Date(dateStr + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
@@ -98,15 +96,13 @@ export default async function SessionListPage({
               New Season<br />Starting Soon
             </h2>
 
-            {firstUpcoming && (
-              <div className="flex items-center gap-2 bg-slate-800/10 dark:bg-white/10 rounded-xl px-3 py-2 self-start backdrop-blur-sm">
-                <span className="text-base">📅</span>
-                <span className="text-sm font-bold text-slate-800 dark:text-zinc-100">
-                  {new Date(firstUpcoming.date + "T12:00:00").toLocaleDateString("en-US", {
-                    weekday: "long", month: "short", day: "numeric",
-                  })}
-                </span>
-              </div>
+            {lastSeason && (
+              <Link
+                href={`/seasons/${lastSeason.id}`}
+                className="self-start text-xs font-semibold text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 underline underline-offset-2 transition-colors"
+              >
+                📊 {lastSeason.name} stats →
+              </Link>
             )}
 
             <div className="flex items-center justify-between mt-1">

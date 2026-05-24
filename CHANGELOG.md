@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.40.6] - 2026-05-24
+
+### Changed
+- **"Season Starting Soon" banner** — removed upcoming session date chip; added a "📊 [Season Name] stats →" link to the previous season's summary page
+
+---
+
 ## [0.40.5] - 2026-05-24
 
 ### Changed
