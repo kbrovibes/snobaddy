@@ -82,7 +82,7 @@ export default async function SessionListPage({
       {showStartingSoon && (
         <div className="relative rounded-2xl overflow-hidden shadow-lg">
           {/* Gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-sky-500 via-sky-700 to-blue-950" />
+          <div className="absolute inset-0 bg-gradient-to-br from-sky-400 via-sky-500 to-blue-700 dark:from-sky-950 dark:via-slate-800 dark:to-slate-900" />
           {/* Dot texture */}
           <div
             className="absolute inset-0 opacity-[0.10]"
@@ -92,7 +92,7 @@ export default async function SessionListPage({
           <span className="absolute -top-2 right-3 text-7xl opacity-[0.18] select-none rotate-[20deg] pointer-events-none">🏸</span>
 
           <div className="relative px-5 py-7 flex flex-col gap-3">
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-sky-300">{seasonName}</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-sky-100 dark:text-slate-400">{seasonName}</p>
 
             <h2 className="text-[1.6rem] font-extrabold text-white leading-snug">
               New Season<br />Starting Soon
@@ -110,11 +110,11 @@ export default async function SessionListPage({
             )}
 
             <div className="flex items-center justify-between mt-1">
-              <p className="text-xs text-sky-300">
+              <p className="text-xs text-sky-100 dark:text-slate-400">
                 {fmtDate(activeSeason.start_date)} – {fmtDate(activeSeason.end_date)}
               </p>
               {daysOfPlay > 0 && (
-                <span className="text-[11px] font-semibold text-sky-100 bg-white/10 px-2 py-0.5 rounded-full">
+                <span className="text-[11px] font-semibold text-white dark:text-slate-300 bg-white/10 dark:bg-white/[0.05] px-2 py-0.5 rounded-full">
                   {daysOfPlay}/2 sessions in
                 </span>
               )}

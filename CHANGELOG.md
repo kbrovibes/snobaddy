@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.40.3] - 2026-05-24
+
+### Changed
+- **"Season Starting Soon" banner colors tuned** — light mode gradient is softer (sky-400→blue-700, was sky-500→blue-950); dark mode switches to a near-black navy (sky-950→slate-900) so it doesn't clash against dark backgrounds
+
+---
+
 ## [0.40.2] - 2026-05-24
 
 ### Changed
