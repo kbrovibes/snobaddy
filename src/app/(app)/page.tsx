@@ -63,8 +63,9 @@ export default async function SessionListPage({
       : Promise.resolve(null),
   ]);
 
-  // First upcoming session (for the starting-soon banner)
-  const firstUpcoming = daysOfPlay === 0
+  // Starting-soon banner: show while fewer than 2 sessions completed
+  const showStartingSoon = daysOfPlay < 2 && sessions.length > 0;
+  const firstUpcoming = showStartingSoon
     ? [...sessions].filter((s) => s.status === "pending").sort((a, b) => a.date.localeCompare(b.date))[0] ?? null
     : null;
 
@@ -76,6 +77,51 @@ export default async function SessionListPage({
     <div className="flex flex-col px-4 py-4 gap-4">
 
       <p className="text-xs font-semibold uppercase tracking-wide text-muted-light px-1">{seasonName}</p>
+
+      {/* Starting-soon banner — prominent hero when the season is just kicking off (< 2 sessions done) */}
+      {showStartingSoon && (
+        <div className="relative rounded-2xl overflow-hidden shadow-lg">
+          {/* Gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-sky-500 via-sky-700 to-blue-950" />
+          {/* Dot texture */}
+          <div
+            className="absolute inset-0 opacity-[0.10]"
+            style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "18px 18px" }}
+          />
+          {/* Decorative racket — big, faded, rotated */}
+          <span className="absolute -top-2 right-3 text-7xl opacity-[0.18] select-none rotate-[20deg] pointer-events-none">🏸</span>
+
+          <div className="relative px-5 py-7 flex flex-col gap-3">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-sky-300">{seasonName}</p>
+
+            <h2 className="text-[1.6rem] font-extrabold text-white leading-snug">
+              New Season<br />Starting Soon
+            </h2>
+
+            {firstUpcoming && (
+              <div className="flex items-center gap-2 bg-white/10 rounded-xl px-3 py-2 self-start backdrop-blur-sm">
+                <span className="text-base">📅</span>
+                <span className="text-sm font-bold text-white">
+                  {new Date(firstUpcoming.date + "T12:00:00").toLocaleDateString("en-US", {
+                    weekday: "long", month: "short", day: "numeric",
+                  })}
+                </span>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between mt-1">
+              <p className="text-xs text-sky-300">
+                {fmtDate(activeSeason.start_date)} – {fmtDate(activeSeason.end_date)}
+              </p>
+              {daysOfPlay > 0 && (
+                <span className="text-[11px] font-semibold text-sky-100 bg-white/10 px-2 py-0.5 rounded-full">
+                  {daysOfPlay}/2 sessions in
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Season stat cards */}
       <div className="grid grid-cols-3 gap-2">
@@ -92,24 +138,6 @@ export default async function SessionListPage({
           </div>
         ))}
       </div>
-
-      {/* Starting-soon banner — shown when the season has no completed sessions yet */}
-      {daysOfPlay === 0 && sessions.length > 0 && (
-        <div className="bg-surface rounded-xl shadow-sm border border-border-light px-4 py-4 flex items-start gap-3">
-          <span className="text-2xl flex-shrink-0">🗓️</span>
-          <div className="flex flex-col gap-0.5">
-            <p className="text-sm font-semibold text-heading">Season starting soon</p>
-            <p className="text-xs text-muted-light">
-              {seasonName} · {fmtDate(activeSeason.start_date)} – {fmtDate(activeSeason.end_date)}
-            </p>
-            {firstUpcoming && (
-              <p className="text-xs text-sky-600 dark:text-sky-400 font-medium mt-0.5">
-                First session: {new Date(firstUpcoming.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
 
       {isAdmin && <FinalsSection event={finalsEvent} sessionPair={finalsSessionPair} pastEvents={pastFinalsEvents} />}
 

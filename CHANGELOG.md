@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.40.2] - 2026-05-24
+
+### Changed
+- **"Season Starting Soon" banner redesigned** — now a full-width hero card at the top of the session list with a sky-to-navy gradient, dot texture, large faded racket decoration, "New Season Starting Soon" headline, date chip, and season date range. Disappears after 2 sessions are completed (previously disappeared after 1). When 1 session is done, shows a "1/2 sessions in" pill
+
+---
+
 ## [0.40.1] - 2026-05-24
 
 ### Changed
