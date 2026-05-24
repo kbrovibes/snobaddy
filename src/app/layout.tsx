@@ -28,8 +28,11 @@ export const metadata: Metadata = {
   title: "Serve Snoqualmie Badminton",
   description: "Badminton session and season tracker for snoqualmie club",
   icons: {
-    icon: "/favicon.gif",
-    apple: "/serve-icon.png",
+    icon: [
+      { url: "/favicon-crest.ico", sizes: "any" },
+      { url: "/favicon-crest.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
   appleWebApp: {
     capable: true,

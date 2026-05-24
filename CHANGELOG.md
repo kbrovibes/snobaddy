@@ -6,6 +6,13 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.40.1] - 2026-05-24
+
+### Changed
+- **New favicon** — replaced the serve-icon favicon with the Serve Snoqualmie coat of arms crest across browser tabs, home screen shortcuts, and PWA install icon. Old `favicon.gif` and `serve-icon.png` are preserved in `/public`
+
+---
+
 ## [0.40.0] - 2026-05-24
 
 ### Added
