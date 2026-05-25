@@ -26,6 +26,16 @@ function formatPct(p: GlobalPlayerStats) {
   return `${Math.round((p.wins / p.matches_played) * 100)}%`;
 }
 
+function PlayerName({ player, nameMap }: { player: GlobalPlayerStats; nameMap: Map<string, string> }) {
+  const display = nameMap.get(player.name) ?? player.name.split(" ")[0];
+  return (
+    <NavLink href={`/players/${player.id}`} className="truncate text-sky-600 dark:text-sky-400 hover:underline active:opacity-60">
+      <span className="sm:hidden">{display}</span>
+      <span className="hidden sm:inline">{player.name}</span>
+    </NavLink>
+  );
+}
+
 export default function GlobalLeaderboardTable({
   players,
   computedAt,
@@ -33,8 +43,11 @@ export default function GlobalLeaderboardTable({
   players: GlobalPlayerStats[];
   computedAt: string;
 }) {
-  const [sortKey, setSortKey] = useState<SortKey>("ubr");
+  const [sortKey, setSortKey] = useState<SortKey>("matches_played");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+
+  const activePlayers = players.filter((p) => p.matches_played > 0);
+  const benchPlayers  = players.filter((p) => p.matches_played === 0);
 
   const nameMap = buildNameMap(players.map((p) => p.name));
 
@@ -48,53 +61,51 @@ export default function GlobalLeaderboardTable({
     return <span className="text-sky-500 ml-0.5">{sortDir === "asc" ? "↑" : "↓"}</span>;
   }
 
-  const sorted = [...players].sort((a, b) => {
+  const sorted = [...activePlayers].sort((a, b) => {
     let av: number | string, bv: number | string;
     if (sortKey === "win_pct") {
-      if (a.matches_played === 0 && b.matches_played === 0) { av = 0; bv = 0; }
-      else if (a.matches_played === 0) return 1;
-      else if (b.matches_played === 0) return -1;
-      else { av = winPct(a); bv = winPct(b); }
+      av = winPct(a); bv = winPct(b);
     } else if (sortKey === "name") {
       av = a.name.toLowerCase(); bv = b.name.toLowerCase();
     } else if (sortKey === "ubr") {
       av = a.ubr_rating ?? -1; bv = b.ubr_rating ?? -1;
     } else {
-      if (a.matches_played === 0 && b.matches_played === 0) { av = 0; bv = 0; }
-      else if (a.matches_played === 0) return 1;
-      else if (b.matches_played === 0) return -1;
-      else { av = a[sortKey] as number; bv = b[sortKey] as number; }
+      av = a[sortKey] as number; bv = b[sortKey] as number;
     }
     if (av < bv) return sortDir === "asc" ? -1 : 1;
     if (av > bv) return sortDir === "asc" ? 1 : -1;
     return a.name.localeCompare(b.name);
   });
 
+  const benchSorted = [...benchPlayers].sort((a, b) => a.name.localeCompare(b.name));
+
   const fmtDate = (iso: string) =>
     new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+
+  const headerRow = (
+    <tr className="border-b border-border-light">
+      <th className="w-8 px-4 py-2 text-left text-xs font-medium text-muted-light">#</th>
+      {COLUMNS.map(({ key, label, title }) => (
+        <th
+          key={key}
+          title={title}
+          onClick={() => handleSort(key)}
+          className={`py-2 text-xs font-semibold uppercase tracking-wide cursor-pointer select-none whitespace-nowrap
+            ${key === "name" ? "px-2 text-left w-full" : "px-1.5 text-right"}
+            ${key === "ubr" ? "text-purple-600 dark:text-purple-400" : ""}
+            ${sortKey === key ? "text-sky-600" : key === "ubr" ? "" : "text-muted-light hover:text-text"}`}
+        >
+          {label}{indicator(key)}
+        </th>
+      ))}
+    </tr>
+  );
 
   return (
     <div>
       <div className="overflow-x-auto rounded-xl border border-border-light bg-surface shadow-sm">
         <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border-light">
-              <th className="w-8 px-4 py-2 text-left text-xs font-medium text-muted-light">#</th>
-              {COLUMNS.map(({ key, label, title }) => (
-                <th
-                  key={key}
-                  title={title}
-                  onClick={() => handleSort(key)}
-                  className={`py-2 text-xs font-semibold uppercase tracking-wide cursor-pointer select-none whitespace-nowrap
-                    ${key === "name" ? "px-2 text-left w-full" : "px-1.5 text-right"}
-                    ${key === "ubr" ? "text-purple-600 dark:text-purple-400" : ""}
-                    ${sortKey === key ? "text-sky-600" : key === "ubr" ? "" : "text-muted-light hover:text-text"}`}
-                >
-                  {label}{indicator(key)}
-                </th>
-              ))}
-            </tr>
-          </thead>
+          <thead>{headerRow}</thead>
           <tbody>
             {sorted.map((player, i) => (
               <tr
@@ -103,12 +114,9 @@ export default function GlobalLeaderboardTable({
               >
                 <td className="px-4 py-1.5 text-xs font-bold text-right text-muted-lighter">{i + 1}</td>
                 <td className="px-2 py-1.5 font-medium text-heading">
-                  <NavLink href={`/players/${player.id}`} className="truncate text-sky-600 dark:text-sky-400 hover:underline active:opacity-60">
-                    <span className="sm:hidden">{nameMap.get(player.name) ?? player.name.split(" ")[0]}</span>
-                    <span className="hidden sm:inline">{player.name}</span>
-                  </NavLink>
+                  <PlayerName player={player} nameMap={nameMap} />
                 </td>
-                <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.matches_played || <span className="text-muted-lighter">—</span>}</td>
+                <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.matches_played}</td>
                 <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.wins || <span className="text-muted-lighter">—</span>}</td>
                 <td className="px-1.5 py-1.5 text-right tabular-nums text-text">{player.losses || <span className="text-muted-lighter">—</span>}</td>
                 <td className="px-1.5 py-1.5 text-right tabular-nums font-bold text-heading">{formatPct(player)}</td>
@@ -120,6 +128,37 @@ export default function GlobalLeaderboardTable({
           </tbody>
         </table>
       </div>
+
+      {benchPlayers.length > 0 && (
+        <details className="mt-3 group">
+          <summary className="flex items-center justify-between px-1 mb-2 cursor-pointer list-none">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-light">
+              No matches yet <span className="font-normal text-muted-lighter">({benchPlayers.length})</span>
+            </p>
+            <span className="text-muted-lighter text-xs transition-transform group-open:rotate-180">▼</span>
+          </summary>
+          <div className="overflow-x-auto rounded-xl border border-border-light bg-surface shadow-sm">
+            <table className="w-full text-sm">
+              <tbody>
+                {benchSorted.map((player) => (
+                  <tr key={player.id} className="border-b border-border-light last:border-0">
+                    <td className="w-8 px-4 py-1.5 text-xs font-bold text-right text-muted-lighter">—</td>
+                    <td className="px-2 py-1.5 font-medium text-muted-light">
+                      <PlayerName player={player} nameMap={nameMap} />
+                    </td>
+                    <td className="px-1.5 py-1.5 text-right tabular-nums text-muted-lighter">—</td>
+                    <td className="px-1.5 py-1.5 text-right tabular-nums text-muted-lighter">—</td>
+                    <td className="px-1.5 py-1.5 text-right tabular-nums text-muted-lighter">—</td>
+                    <td className="px-1.5 py-1.5 text-right tabular-nums text-muted-lighter">—</td>
+                    <td className="px-1.5 py-1.5 text-right tabular-nums text-muted-lighter">—</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      )}
+
       <p className="text-[10px] text-muted-lighter text-right mt-1.5 px-1">
         Updated {fmtDate(computedAt)} · all seasons, regular + tally play
       </p>

@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- All-Time leaderboard now sorts by match count by default (was UBR)
+- Players with 0 matches are shown in a collapsed "No matches yet" section below the main table, not ranked alongside active players
+- All-Time leaderboard uses full names on wider screens, display names on mobile
+
 All notable changes to snobaddy are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versions follow [Semantic Versioning](https://semver.org/).
