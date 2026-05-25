@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import NavLink from "@/components/NavLink";
 import type { PlayerStats } from "@/lib/db/players";
 import { buildNameMap, shortName } from "@/lib/display-name";
@@ -65,7 +65,6 @@ const BASE_COLUMNS: { key: SortKey; label: string; title: string }[] = [
 
 const UBR_COLUMN = { key: "ubr" as SortKey, label: "UBR", title: "Universal Badminton Rating" };
 
-const LS_UBR_KEY = "snobaddy:leaderboard-show-ubr";
 
 export default function LeaderboardTable({
   players,
@@ -73,29 +72,21 @@ export default function LeaderboardTable({
   isAdmin,
   ubrRatings,
   lockedSessionCount = 0,
+  showFullNames = false,
+  sectionLabel,
 }: {
   players: PlayerStats[];
   totalMatches: number;
   isAdmin: boolean;
   ubrRatings?: Record<string, UbrRating>;
   lockedSessionCount?: number;
+  showFullNames?: boolean;
+  sectionLabel?: string;
 }) {
   const [sortKey, setSortKey] = useState<SortKey>("wins");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [showUbr, setShowUbr] = useState(false);
-
-  useEffect(() => {
-    try { setShowUbr(localStorage.getItem(LS_UBR_KEY) === "true"); } catch {}
-  }, []);
-
-  function toggleShowUbr() {
-    const next = !showUbr;
-    setShowUbr(next);
-    try { localStorage.setItem(LS_UBR_KEY, String(next)); } catch {}
-  }
-
   const hasUbr = !!ubrRatings && Object.keys(ubrRatings).length > 0;
-  const ubrVisible = hasUbr && showUbr;
+  const ubrVisible = hasUbr;
 
   const activePlayers = players;
   const matchCount = totalMatches;
@@ -182,25 +173,6 @@ export default function LeaderboardTable({
 
   return (
     <>
-      {/* Header row: player count + toggles */}
-      <div className="flex items-center justify-between mb-4 gap-3">
-        <span className="text-sm text-muted-light shrink-0">{activePlayers.length} players</span>
-        <div className="flex items-center gap-4">
-          {hasUbr && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-light">UBR</span>
-              <button
-                onClick={toggleShowUbr}
-                className="relative inline-flex w-9 h-5 rounded-full transition-colors duration-200 focus:outline-none"
-                style={{ background: showUbr ? "#0ea5e9" : "var(--muted-lighter)" }}
-              >
-                <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${showUbr ? "translate-x-4" : "translate-x-0"}`} />
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
       {/* Award cards */}
       {(badmintonNut || nutCracker) && (
         <div className="flex flex-col gap-2 mb-4">
@@ -231,6 +203,10 @@ export default function LeaderboardTable({
             </div>
           )}
         </div>
+      )}
+
+      {sectionLabel && (
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-light px-1 mb-3 mt-2">{sectionLabel}</p>
       )}
 
       {activePlayers.length === 0 ? (
@@ -275,8 +251,12 @@ export default function LeaderboardTable({
                         <td className="px-2 py-1.5 font-medium text-heading">
                           <span className="flex items-center gap-1 min-w-0">
                             <NavLink href={`/players/${player.id}`} className="truncate text-sky-600 dark:text-sky-400 hover:underline active:opacity-60">
-                              <span className="sm:hidden">{shortName(player.name, nameMap)}</span>
-                              <span className="hidden sm:inline">{player.name}</span>
+                              {showFullNames ? player.name : (
+                                <>
+                                  <span className="sm:hidden">{shortName(player.name, nameMap)}</span>
+                                  <span className="hidden sm:inline">{player.name}</span>
+                                </>
+                              )}
                             </NavLink>
                           </span>
                         </td>
@@ -301,15 +281,6 @@ export default function LeaderboardTable({
         </div>
       )}
 
-      <div className="mt-8 pt-8 border-t border-border-light text-center">
-        <div className="text-sm text-muted-light">Total matches recorded this season</div>
-        <div className="text-2xl font-bold text-heading mt-1">{matchCount}</div>
-        {lockedSessionCount > 0 && (
-          <div className="mt-2 text-[11px] text-muted-lighter">
-            🔒 {lockedSessionCount} session{lockedSessionCount > 1 ? "s" : ""} excluded · stats locked
-          </div>
-        )}
-      </div>
     </>
   );
 }

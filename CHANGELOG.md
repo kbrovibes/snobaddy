@@ -6,6 +6,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.41.1] - 2026-05-24
+
+### Changed
+- **Leaderboard table** — full player name always shown on season summary page; UBR column always visible when data exists (toggle removed); removed player-count header row and total-matches footer
+- **Season Summary page** — "Season Leaderboard" heading moved below award cards, right above the table; sessions list collapsed by default in a foldable accordion
+
+---
+
 ## [0.41.0] - 2026-05-24
 
 ### Changed

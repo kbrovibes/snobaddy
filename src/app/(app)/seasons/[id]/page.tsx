@@ -183,26 +183,26 @@ export default async function SeasonSummaryPage({
 
       {/* Season leaderboard — only when there is data */}
       {daysOfPlay > 0 && (
-        <>
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-light px-1">
-            Season Leaderboard
-          </p>
-          <Suspense fallback={<TableSkeleton />}>
-            <LeaderboardData
-              seasonId={season.id}
-              seasonLockDate={season.stats_lock_date}
-              isAdmin={isAdmin}
-            />
-          </Suspense>
-        </>
+        <Suspense fallback={<TableSkeleton />}>
+          <LeaderboardData
+            seasonId={season.id}
+            seasonLockDate={season.stats_lock_date}
+            isAdmin={isAdmin}
+            showFullNames
+            sectionLabel="Season Leaderboard"
+          />
+        </Suspense>
       )}
 
-      {/* Session list */}
+      {/* Session list — collapsed by default */}
       {real.length > 0 && (
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-light px-1 mb-2">
-            Sessions
-          </p>
+        <details className="group">
+          <summary className="flex items-center justify-between px-1 mb-2 cursor-pointer list-none">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-light">
+              Sessions <span className="font-normal text-muted-lighter">({real.length})</span>
+            </p>
+            <span className="text-muted-lighter text-xs transition-transform group-open:rotate-180">▼</span>
+          </summary>
           <div className="bg-surface rounded-xl shadow-sm overflow-hidden">
             {pendingSessions.map((s) => (
               <SessionItem key={s.id} s={s} seasonStatus={season.status} />
@@ -211,7 +211,7 @@ export default async function SeasonSummaryPage({
               <SessionItem key={s.id} s={s} seasonStatus={season.status} />
             ))}
           </div>
-        </div>
+        </details>
       )}
 
       {real.length === 0 && (

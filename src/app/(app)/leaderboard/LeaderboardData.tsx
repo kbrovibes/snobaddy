@@ -56,10 +56,14 @@ export default async function LeaderboardData({
   seasonId,
   seasonLockDate,
   isAdmin,
+  showFullNames = false,
+  sectionLabel,
 }: {
   seasonId: string | undefined;
   seasonLockDate: string | null;
   isAdmin: boolean;
+  showFullNames?: boolean;
+  sectionLabel?: string;
 }) {
   let data: CachedData;
 
@@ -85,6 +89,8 @@ export default async function LeaderboardData({
       isAdmin={isAdmin}
       ubrRatings={data.ubrRatings}
       lockedSessionCount={data.lockedSessionCount}
+      showFullNames={showFullNames}
+      sectionLabel={sectionLabel}
     />
   );
 }
