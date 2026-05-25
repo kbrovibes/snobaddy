@@ -45,7 +45,7 @@ async function computeLeaderboardData(
   }
 
   return {
-    players: allPlayers.filter(p => p.matches_played > 0),
+    players: allPlayers,  // include 0-match players so UBR ranking is visible before season starts
     totalMatches,
     ubrRatings: ubrEnabled ? ubrRatings : undefined,
     lockedSessionCount,

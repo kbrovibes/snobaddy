@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/global-leaderboard",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}

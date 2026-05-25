@@ -6,6 +6,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.42.0] - 2026-05-24
+
+### Added
+- **All-Time leaderboard tab** — second tab on the Leaderboard page aggregates stats across every season (regular + tally play, excluding test/finals); defaults to sorted by UBR rating; cached in `global_leaderboard_cache` DB table
+- **Daily cron** — `/api/cron/global-leaderboard` recomputes and refreshes the cache every night at midnight Pacific (8am UTC); secured with `CRON_SECRET` env var; Vercel cron configured in `vercel.json`
+- **0-match players visible** — Season leaderboard now shows all players so UBR rankings are visible before the first match of the season; 0-match players sort to the bottom on stat columns
+
+---
+
 ## [0.41.1] - 2026-05-24
 
 ### Changed

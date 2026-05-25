@@ -135,14 +135,22 @@ export default function LeaderboardTable({
     let bv: number | string;
 
     if (sortKey === "win_pct") {
-      av = winPct(a); bv = winPct(b);
+      // 0-match players always sink to bottom regardless of sort direction
+      if (a.matches_played === 0 && b.matches_played === 0) { av = 0; bv = 0; }
+      else if (a.matches_played === 0) return 1;
+      else if (b.matches_played === 0) return -1;
+      else { av = winPct(a); bv = winPct(b); }
     } else if (sortKey === "name") {
       av = a.name.toLowerCase(); bv = b.name.toLowerCase();
     } else if (sortKey === "ubr") {
       av = ubrRatings?.[a.id]?.rating ?? 0;
       bv = ubrRatings?.[b.id]?.rating ?? 0;
     } else {
-      av = a[sortKey]; bv = b[sortKey];
+      // For stat sorts, 0-match players always sink to bottom
+      if (a.matches_played === 0 && b.matches_played === 0) { av = 0; bv = 0; }
+      else if (a.matches_played === 0) return 1;
+      else if (b.matches_played === 0) return -1;
+      else { av = a[sortKey]; bv = b[sortKey]; }
     }
 
     if (av < bv) return sortDir === "asc" ? -1 : 1;
