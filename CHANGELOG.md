@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 ### Fixed
-- Pending session admin buttons (Finalize Session, Enter Scoreboard Manually, Upload Scoreboard Photo, Start Tonight's Session) now have consistent height (`py-3`) and uniform spacing (`gap-3`)
+- Pending session admin buttons (Finalize Session, Enter Scoreboard Manually, Upload Scoreboard Photo, Start Tonight's Session) now have consistent height, font size, and uniform spacing
 
 ### Changed
 - All-Time leaderboard now sorts by win count by default (was UBR)

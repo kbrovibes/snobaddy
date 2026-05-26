@@ -35,7 +35,7 @@ export default function StartSessionButton({ sessionId, sessionDate }: { session
       <button
         onClick={handleClick}
         disabled={loading}
-        className="w-full py-3 bg-green-600 text-white font-semibold rounded-xl disabled:opacity-50 hover:bg-green-700 transition-colors"
+        className="w-full py-3 text-sm bg-green-600 text-white font-semibold rounded-xl disabled:opacity-50 hover:bg-green-700 transition-colors"
       >
         {loading ? "Starting…" : "▶ Start Tonight's Session"}
       </button>
