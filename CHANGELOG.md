@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Fixed
+- Pending session admin buttons (Finalize Session, Enter Scoreboard Manually, Upload Scoreboard Photo, Start Tonight's Session) now have consistent height (`py-3`) and uniform spacing (`gap-3`)
+
 ### Changed
 - All-Time leaderboard now sorts by win count by default (was UBR)
 - Players with 0 matches are shown in a collapsed "No matches yet" section below the main table, not ranked alongside active players

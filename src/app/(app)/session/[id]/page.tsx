@@ -287,24 +287,21 @@ export default async function SessionDetailPage({
         </div>
       )}
 
-      {/* Admin: finalize session directly without opening it */}
-      {isPending && isAdmin && !isFinalsSession && (
-        <UploadScoresButton sessionId={session.id} />
-      )}
-
-      {/* Admin: upload scores (tally entry) — available on pending sessions without existing tallies */}
-      {isPending && isAdmin && !isFinalsSession && (tallyRows as TallyEntry[]).length === 0 && (
-        <TallyEntryForm
-          sessionId={session.id}
-          allPlayers={formPlayers as { id: string; name: string }[]}
-          isGodMode={isAdmin}
-
-        />
-      )}
-
-      {/* Admin: start session */}
+      {/* Admin: pending session actions — finalize, tally entry, start */}
       {isPending && isAdmin && (
-        <StartSessionButton sessionId={session.id} sessionDate={session.date} />
+        <div className="flex flex-col gap-3">
+          {!isFinalsSession && (
+            <UploadScoresButton sessionId={session.id} />
+          )}
+          {!isFinalsSession && (tallyRows as TallyEntry[]).length === 0 && (
+            <TallyEntryForm
+              sessionId={session.id}
+              allPlayers={formPlayers as { id: string; name: string }[]}
+              isGodMode={isAdmin}
+            />
+          )}
+          <StartSessionButton sessionId={session.id} sessionDate={session.date} />
+        </div>
       )}
 
       {/* Finals: Group A / Group B tabs with format, pairs, matches, standings */}
