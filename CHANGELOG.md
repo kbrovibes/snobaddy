@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 ### Changed
-- All-Time leaderboard now sorts by match count by default (was UBR)
+- All-Time leaderboard now sorts by win count by default (was UBR)
 - Players with 0 matches are shown in a collapsed "No matches yet" section below the main table, not ranked alongside active players
 - All-Time leaderboard uses full names on wider screens, display names on mobile
 

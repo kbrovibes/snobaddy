@@ -43,7 +43,7 @@ export default function GlobalLeaderboardTable({
   players: GlobalPlayerStats[];
   computedAt: string;
 }) {
-  const [sortKey, setSortKey] = useState<SortKey>("matches_played");
+  const [sortKey, setSortKey] = useState<SortKey>("wins");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
   const activePlayers = players.filter((p) => p.matches_played > 0);
