@@ -434,7 +434,7 @@ export default async function SessionDetailPage({
             isGodMode={isGodMode}
             hasPhoto={!!session.tally_photo_path}
             allPlayers={formPlayers as { id: string; name: string }[]}
-            isAdmin={isAdmin}
+            isAdmin={isAdmin && !isCompleted}
           />
           {isGodMode && <ResetSessionButton sessionId={session.id} />}
         </>
