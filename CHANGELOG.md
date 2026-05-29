@@ -10,6 +10,7 @@
 - Removed the redundant season name heading above the session list (the hero card already shows it)
 
 ### Fixed
+- Season summary page no longer shows players with zero matches (only players who actually played appear)
 - Pending session admin buttons (Finalize Session, Enter Scoreboard Manually, Upload Scoreboard Photo, Start Tonight's Session) now have consistent height, font size, and uniform spacing
 - Duplicate "Wipe & Reset" button no longer appears when a session is active with tally data
 - Edit tally button restored — tally summary shows an "Edit Tallies" link; clicking it opens the editable form; saving or cancelling returns to the summary view

@@ -190,6 +190,7 @@ export default async function SeasonSummaryPage({
             isAdmin={isAdmin}
             showFullNames
             sectionLabel="Season Leaderboard"
+            hideZeroMatch
           />
         </Suspense>
       )}

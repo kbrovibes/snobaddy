@@ -58,12 +58,14 @@ export default async function LeaderboardData({
   isAdmin,
   showFullNames = false,
   sectionLabel,
+  hideZeroMatch = false,
 }: {
   seasonId: string | undefined;
   seasonLockDate: string | null;
   isAdmin: boolean;
   showFullNames?: boolean;
   sectionLabel?: string;
+  hideZeroMatch?: boolean;
 }) {
   let data: CachedData;
 
@@ -91,6 +93,7 @@ export default async function LeaderboardData({
       lockedSessionCount={data.lockedSessionCount}
       showFullNames={showFullNames}
       sectionLabel={sectionLabel}
+      hideZeroMatch={hideZeroMatch}
     />
   );
 }

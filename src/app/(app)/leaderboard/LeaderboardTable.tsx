@@ -74,6 +74,7 @@ export default function LeaderboardTable({
   lockedSessionCount = 0,
   showFullNames = false,
   sectionLabel,
+  hideZeroMatch = false,
 }: {
   players: PlayerStats[];
   totalMatches: number;
@@ -82,13 +83,14 @@ export default function LeaderboardTable({
   lockedSessionCount?: number;
   showFullNames?: boolean;
   sectionLabel?: string;
+  hideZeroMatch?: boolean;
 }) {
   const [sortKey, setSortKey] = useState<SortKey>("wins");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const hasUbr = !!ubrRatings && Object.keys(ubrRatings).length > 0;
   const ubrVisible = hasUbr;
 
-  const activePlayers = players;
+  const activePlayers = hideZeroMatch ? players.filter((p) => p.matches_played > 0) : players;
   const matchCount = totalMatches;
 
   // Award card computation — reactive to toggle
