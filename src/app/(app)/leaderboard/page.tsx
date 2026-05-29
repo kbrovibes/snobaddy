@@ -6,6 +6,7 @@ import { getAuthPlayer } from "@/lib/auth";
 import LeaderboardData from "./LeaderboardData";
 import GlobalLeaderboardData from "./GlobalLeaderboardData";
 import RefreshButton from "./RefreshButton";
+import GlobalRefreshButton from "./GlobalRefreshButton";
 import TabSwitcher from "./TabSwitcher";
 import { redirect } from "next/navigation";
 
@@ -52,7 +53,7 @@ export default async function LeaderboardPage({
     <div className="px-4 py-4 pb-20">
       <div className="mb-4 px-1 flex items-start justify-between">
         <h1 className="text-xs font-semibold uppercase tracking-wide text-muted-light">Leaderboard</h1>
-        {activeTab === "season" && <RefreshButton />}
+        {activeTab === "season" ? <RefreshButton /> : <GlobalRefreshButton />}
       </div>
 
       <TabSwitcher activeTab={activeTab} />

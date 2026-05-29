@@ -13,7 +13,7 @@ export default async function GlobalLeaderboardData() {
   return (
     <GlobalLeaderboardTable
       players={payload.players}
-      computedAt={payload.computed_at}
+      computedAt={payload.triggered_at ?? payload.computed_at}
     />
   );
 }

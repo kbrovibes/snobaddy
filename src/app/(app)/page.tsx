@@ -57,14 +57,15 @@ export default async function SessionListPage({
   // Season stats + finals session pair — independent, run in parallel
   const realCompleted = sessions.filter((s) => !s.is_test_session && s.status === "completed");
   const daysOfPlay = realCompleted.length;
-  const showStartingSoon = daysOfPlay < 2 && sessions.length > 0;
+  const showSeasonHero = sessions.length > 0;
+  const isEarlySeason = daysOfPlay < 2;
 
   const [{ playerCount, matchCount: totalMatches }, finalsSessionPair, lastSeason] = await Promise.all([
     getSeasonStats(realCompleted.map((s) => s.id)),
     finalsEvent
       ? getFinalsSessionPair(finalsEvent.finals1_session_id, finalsEvent.finals2_session_id)
       : Promise.resolve(null),
-    showStartingSoon ? getLastCompletedSeason() : Promise.resolve(null),
+    isEarlySeason ? getLastCompletedSeason() : Promise.resolve(null),
   ]);
 
   function fmtDate(dateStr: string) {
@@ -74,10 +75,8 @@ export default async function SessionListPage({
   return (
     <div className="flex flex-col px-4 py-4 gap-4">
 
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted-light px-1">{seasonName}</p>
-
-      {/* Starting-soon banner — prominent hero when the season is just kicking off (< 2 sessions done) */}
-      {showStartingSoon && (
+      {/* Season hero banner */}
+      {showSeasonHero && (
         <div className="relative rounded-2xl overflow-hidden shadow-lg">
           {/* Gradient background */}
           <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 dark:from-zinc-800 dark:via-zinc-900 dark:to-zinc-950" />
@@ -91,21 +90,21 @@ export default async function SessionListPage({
 
           <div className="relative px-5 py-7 flex flex-col gap-3">
             <h2 className="text-[1.6rem] font-extrabold text-slate-800 dark:text-zinc-100 leading-snug">
-              {seasonName}<br />Season Starting Soon
+              {seasonName}<br />{daysOfPlay === 0 ? "Starting Soon" : "Is Underway"}
             </h2>
 
             <div className="flex items-center justify-between">
               <p className="text-xs text-slate-500 dark:text-zinc-400">
                 {fmtDate(activeSeason.start_date)} – {fmtDate(activeSeason.end_date)}
               </p>
-              {daysOfPlay > 0 && (
+              {isEarlySeason && daysOfPlay > 0 && (
                 <span className="text-[11px] font-semibold text-slate-700 dark:text-zinc-300 bg-slate-800/10 dark:bg-white/[0.08] px-2 py-0.5 rounded-full">
                   {daysOfPlay}/2 sessions in
                 </span>
               )}
             </div>
 
-            {lastSeason && (
+            {isEarlySeason && lastSeason && (
               <div className="flex flex-col gap-1 pt-1 border-t border-slate-200/60 dark:border-zinc-700/60">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-600">
                   Previous Season

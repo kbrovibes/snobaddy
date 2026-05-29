@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Added
+- All-Time leaderboard now has a Refresh button that stores the exact click time as `triggered_at` in the DB; the "Updated" footer shows when the refresh was triggered, not when the compute finished
+- Session list hero card now stays visible throughout the entire active season (was hidden after 2 sessions); heading changes from "Starting Soon" to "Is Underway" once the first session is complete
+
+### Changed
+- Removed the redundant season name heading above the session list (the hero card already shows it)
+
 ### Fixed
 - Pending session admin buttons (Finalize Session, Enter Scoreboard Manually, Upload Scoreboard Photo, Start Tonight's Session) now have consistent height, font size, and uniform spacing
 - Duplicate "Wipe & Reset" button no longer appears when a session is active with tally data

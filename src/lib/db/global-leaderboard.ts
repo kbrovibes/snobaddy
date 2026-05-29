@@ -13,6 +13,7 @@ export interface GlobalPlayerStats {
 export interface GlobalLeaderboardPayload {
   players: GlobalPlayerStats[];
   computed_at: string;
+  triggered_at?: string;
 }
 
 /** Compute global leaderboard across all non-test, non-finals sessions. */
@@ -89,18 +90,27 @@ export async function computeGlobalLeaderboard(): Promise<GlobalLeaderboardPaylo
 }
 
 /** Write computed payload to the singleton cache row. */
-export async function setGlobalLeaderboardCache(payload: GlobalLeaderboardPayload): Promise<void> {
+export async function setGlobalLeaderboardCache(
+  payload: GlobalLeaderboardPayload,
+  triggeredAt?: string,
+): Promise<void> {
   await serviceClient
     .from("global_leaderboard_cache")
-    .upsert({ id: 1, payload, computed_at: payload.computed_at }, { onConflict: "id" });
+    .upsert(
+      { id: 1, payload, computed_at: payload.computed_at, triggered_at: triggeredAt ?? payload.computed_at },
+      { onConflict: "id" },
+    );
 }
 
 /** Read cached payload, or null if not yet computed. */
 export async function getGlobalLeaderboardCache(): Promise<GlobalLeaderboardPayload | null> {
   const { data } = await serviceClient
     .from("global_leaderboard_cache")
-    .select("payload, computed_at")
+    .select("payload, computed_at, triggered_at")
     .eq("id", 1)
     .maybeSingle();
-  return (data?.payload as GlobalLeaderboardPayload) ?? null;
+  if (!data?.payload) return null;
+  const payload = data.payload as GlobalLeaderboardPayload;
+  if (data.triggered_at) payload.triggered_at = data.triggered_at as string;
+  return payload;
 }
