@@ -134,7 +134,7 @@ export default function TallyScoreboard({ entries, sessionId, isGodMode, hasPhot
       )}
 
       {(canEdit || (isGodMode && hasPhoto && sessionId)) && (
-        <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border">
+        <div className="flex items-center justify-center gap-6 mt-3 pt-3 border-t border-border">
           {canEdit && onEdit && (
             <button
               onClick={onEdit}
@@ -154,7 +154,7 @@ export default function TallyScoreboard({ entries, sessionId, isGodMode, hasPhot
               disabled={loadingPhoto}
               className="text-sm font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 underline-offset-2 hover:underline disabled:opacity-50"
             >
-              {loadingPhoto ? "Loading…" : "Source photo →"}
+              {loadingPhoto ? "Loading…" : "Source photo"}
             </button>
           )}
         </div>
