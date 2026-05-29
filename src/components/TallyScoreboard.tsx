@@ -36,9 +36,11 @@ interface Props {
   sessionId?: string;
   isGodMode?: boolean;
   hasPhoto?: boolean;
+  canEdit?: boolean;
+  onEdit?: () => void;
 }
 
-export default function TallyScoreboard({ entries, sessionId, isGodMode, hasPhoto }: Props) {
+export default function TallyScoreboard({ entries, sessionId, isGodMode, hasPhoto, canEdit, onEdit }: Props) {
   const [sortKey, setSortKey] = useState<SortKey>("wins");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [loadingPhoto, setLoadingPhoto] = useState(false);
@@ -131,19 +133,31 @@ export default function TallyScoreboard({ entries, sessionId, isGodMode, hasPhot
         </>
       )}
 
-      {isGodMode && hasPhoto && sessionId && (
-        <button
-          onClick={async () => {
-            setLoadingPhoto(true);
-            const url = await getSignedPhotoUrl(sessionId);
-            setLoadingPhoto(false);
-            if (url) window.open(url, "_blank");
-          }}
-          disabled={loadingPhoto}
-          className="mt-2 text-xs text-purple-500 hover:text-purple-700 hover:underline disabled:opacity-50"
-        >
-          {loadingPhoto ? "Loading…" : "Source photo →"}
-        </button>
+      {(canEdit || (isGodMode && hasPhoto && sessionId)) && (
+        <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border">
+          {canEdit && onEdit && (
+            <button
+              onClick={onEdit}
+              className="text-sm font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 underline-offset-2 hover:underline"
+            >
+              Edit Tallies
+            </button>
+          )}
+          {isGodMode && hasPhoto && sessionId && (
+            <button
+              onClick={async () => {
+                setLoadingPhoto(true);
+                const url = await getSignedPhotoUrl(sessionId);
+                setLoadingPhoto(false);
+                if (url) window.open(url, "_blank");
+              }}
+              disabled={loadingPhoto}
+              className="text-sm font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 underline-offset-2 hover:underline disabled:opacity-50"
+            >
+              {loadingPhoto ? "Loading…" : "Source photo →"}
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

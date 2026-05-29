@@ -38,21 +38,13 @@ export default function TallyEditSection({
   }
 
   return (
-    <>
-      <TallyScoreboard
-        entries={entries}
-        sessionId={sessionId}
-        isGodMode={isGodMode}
-        hasPhoto={hasPhoto}
-      />
-      {isAdmin && (
-        <button
-          onClick={() => setEditing(true)}
-          className="text-sm font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 underline-offset-2 hover:underline self-start"
-        >
-          Edit Tallies
-        </button>
-      )}
-    </>
+    <TallyScoreboard
+      entries={entries}
+      sessionId={sessionId}
+      isGodMode={isGodMode}
+      hasPhoto={hasPhoto}
+      canEdit={isAdmin}
+      onEdit={() => setEditing(true)}
+    />
   );
 }

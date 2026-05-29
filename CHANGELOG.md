@@ -7,6 +7,7 @@
 - Duplicate "Wipe & Reset" button no longer appears when a session is active with tally data
 - Edit tally button restored — tally summary shows an "Edit Tallies" link; clicking it opens the editable form; saving or cancelling returns to the summary view
 - Edit Tallies link hidden on finalized sessions
+- "Edit Tallies" and "Source photo →" links now live inside the tally scoreboard card footer, consistently styled
 - Upload Scoreboard Photo and score extraction now accessible to all admins (was restricted to god-mode only)
 - Pending session admin buttons redesigned: rose solid for Finalize, dark slate for Enter Manually, sky blue for Upload Photo, green for Start
 
