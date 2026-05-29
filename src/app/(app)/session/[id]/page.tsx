@@ -411,7 +411,7 @@ export default async function SessionDetailPage({
           {!isFinalsSession && (tallyRows as unknown[]).length === 0 && highlights && highlights.totalMatches >= 3 && (
             <SessionHighlights highlights={highlights} nameMap={nameMap} />
           )}
-          <p className="text-sm text-muted-light text-center">Session closed. No new matches can be recorded.</p>
+          <p className="text-sm text-muted-light text-center">Session closed. To edit scores, re-open the session first.</p>
           {/* Tally entry: shown when no matches recorded yet */}
           {isAdmin && !isFinalsSession && (recentMatches as unknown[]).length === 0 && (tallyRows as TallyEntry[]).length === 0 && (
             <TallyEntryForm
