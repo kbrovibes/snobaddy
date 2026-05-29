@@ -30,6 +30,7 @@ import SessionScoreboard from "@/components/SessionScoreboard";
 import SimpleMatchForm from "@/components/SimpleMatchForm";
 import TestSessionToggle from "@/components/TestSessionToggle";
 import TallyScoreboard from "@/components/TallyScoreboard";
+import TallyEditSection from "@/components/TallyEditSection";
 import TallyEntryForm from "@/components/TallyEntryForm";
 import TallyHighlights from "@/components/TallyHighlights";
 import ResetSessionButton from "@/components/ResetSessionButton";
@@ -427,21 +428,14 @@ export default async function SessionDetailPage({
       {!isFinalsSession && (tallyRows as TallyEntry[]).length > 0 && (
         <>
           <TallyHighlights entries={tallyRows as TallyEntry[]} nameMap={nameMap} />
-          <TallyScoreboard
+          <TallyEditSection
             entries={tallyRows as TallyEntry[]}
             sessionId={session.id}
             isGodMode={isGodMode}
             hasPhoto={!!session.tally_photo_path}
+            allPlayers={formPlayers as { id: string; name: string }[]}
+            isAdmin={isAdmin}
           />
-          {isAdmin && (
-            <TallyEntryForm
-              sessionId={session.id}
-              allPlayers={formPlayers as { id: string; name: string }[]}
-              isGodMode={isAdmin}
-              isEdit
-              initialEntries={tallyRows as TallyEntry[]}
-            />
-          )}
           {isGodMode && <ResetSessionButton sessionId={session.id} />}
         </>
       )}

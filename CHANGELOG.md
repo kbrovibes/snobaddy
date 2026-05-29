@@ -5,7 +5,7 @@
 ### Fixed
 - Pending session admin buttons (Finalize Session, Enter Scoreboard Manually, Upload Scoreboard Photo, Start Tonight's Session) now have consistent height, font size, and uniform spacing
 - Duplicate "Wipe & Reset" button no longer appears when a session is active with tally data
-- Edit tally button restored — admins can now edit scores, add rows, and delete rows on sessions with existing tally data
+- Edit tally button restored — tally summary shows an "Edit Tallies" link; clicking it opens the editable form; saving or cancelling returns to the summary view
 - Upload Scoreboard Photo and score extraction now accessible to all admins (was restricted to god-mode only)
 - Pending session admin buttons redesigned: rose solid for Finalize, dark slate for Enter Manually, sky blue for Upload Photo, green for Start
 

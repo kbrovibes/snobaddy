@@ -11,6 +11,7 @@ interface Props {
   isEdit?: boolean;
   isGodMode?: boolean;
   tallyModel?: string;
+  onDone?: () => void;
 }
 
 type FormRow = {
@@ -39,6 +40,7 @@ export default function TallyEntryForm({
   initialEntries,
   isEdit,
   isGodMode,
+  onDone,
 }: Props) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -117,6 +119,7 @@ export default function TallyEntryForm({
     setNameCorrections([]);
     setPlayerPickerOpen(false);
     setMode(isEdit ? "manual" : "closed");
+    if (isEdit) onDone?.();
   }
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
@@ -239,6 +242,7 @@ export default function TallyEntryForm({
       }
       setMode("closed");
       router.refresh();
+      onDone?.();
     } catch {
       setError("Network error — please try again");
     } finally {
