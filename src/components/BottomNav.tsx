@@ -5,13 +5,11 @@ import { usePathname } from "next/navigation";
 
 type IconProps = { className?: string };
 
-function RacketIcon({ className }: IconProps) {
+function HomeIcon({ className }: IconProps) {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-      <circle cx="12" cy="8.5" r="5.5" />
-      <line x1="12" y1="3" x2="12" y2="14" />
-      <line x1="6.5" y1="8.5" x2="17.5" y2="8.5" />
-      <path d="M11 14 L9 22" />
+      <path d="M3 10.5L12 3l9 7.5" />
+      <path d="M5 8.5V20a1 1 0 0 0 1 1h4v-5h4v5h4a1 1 0 0 0 1-1V8.5" />
     </svg>
   );
 }
@@ -55,7 +53,7 @@ function CalendarIcon({ className }: IconProps) {
 }
 
 const NAV_ITEMS = [
-  { href: "/", label: "Session", Icon: RacketIcon, adminOnly: false, godModeOnly: false },
+  { href: "/", label: "Home", Icon: HomeIcon, adminOnly: false, godModeOnly: false },
   { href: "/players", label: "Players", Icon: PlayersIcon, adminOnly: false, godModeOnly: false },
   { href: "/leaderboard", label: "Leaderboard", Icon: LeaderboardIcon, adminOnly: true, godModeOnly: false },
   { href: "/admin/seasons", label: "Seasons", Icon: CalendarIcon, adminOnly: true, godModeOnly: false },
