@@ -263,7 +263,7 @@ export default function TallyEntryForm({
       <div className="flex flex-col gap-3">
         <button
           onClick={() => setMode("manual")}
-          className="w-full py-3 text-sm font-semibold rounded-xl bg-stone-900 dark:bg-sky-600 text-white hover:bg-stone-800 dark:hover:bg-sky-500 transition-colors"
+          className="w-full py-3 text-sm font-semibold rounded-xl bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-500 text-white transition-colors"
         >
           Enter Scoreboard Manually
         </button>
@@ -281,7 +281,7 @@ export default function TallyEntryForm({
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-3 text-sm font-semibold rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition-colors"
+              className="w-full py-3 text-sm font-semibold rounded-xl bg-slate-500 hover:bg-slate-600 dark:bg-slate-500 dark:hover:bg-slate-400 text-white transition-colors"
             >
               Upload Scoreboard Photo
             </button>

@@ -5,6 +5,7 @@
 ### Fixed
 - Pending session admin buttons (Finalize Session, Enter Scoreboard Manually, Upload Scoreboard Photo, Start Tonight's Session) now have consistent height, font size, and uniform spacing
 - Upload Scoreboard Photo and score extraction now accessible to all admins (was restricted to god-mode only)
+- Pending session admin buttons redesigned: ghost outline for Finalize, slate neutrals for score-entry buttons, green reserved for Start (primary CTA)
 
 ### Changed
 - All-Time leaderboard now sorts by win count by default (was UBR)
