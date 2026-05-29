@@ -57,7 +57,7 @@ export default function UploadScoresButton({ sessionId }: { sessionId: string })
   return (
     <button
       onClick={() => setConfirming(true)}
-      className="w-full py-3 text-sm font-medium rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
+      className="w-full py-3 text-sm font-medium rounded-xl bg-rose-600 hover:bg-rose-700 dark:bg-rose-700 dark:hover:bg-rose-800 text-white transition-colors"
     >
       Finalize Session
     </button>
