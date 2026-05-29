@@ -433,6 +433,15 @@ export default async function SessionDetailPage({
             isGodMode={isGodMode}
             hasPhoto={!!session.tally_photo_path}
           />
+          {isAdmin && (
+            <TallyEntryForm
+              sessionId={session.id}
+              allPlayers={formPlayers as { id: string; name: string }[]}
+              isGodMode={isAdmin}
+              isEdit
+              initialEntries={tallyRows as TallyEntry[]}
+            />
+          )}
           {isGodMode && <ResetSessionButton sessionId={session.id} />}
         </>
       )}
@@ -521,7 +530,7 @@ export default async function SessionDetailPage({
       {/* Admin: finalize, reopen, reset — grouped at bottom */}
       {isAdmin && isActive && <CloseSessionButton sessionId={session.id} />}
       {isAdmin && isCompleted && <ReopenSessionButton sessionId={session.id} />}
-      {isGodMode && (isActive || (isCompleted && (tallyRows as TallyEntry[]).length === 0)) && (
+      {isGodMode && (tallyRows as TallyEntry[]).length === 0 && (isActive || isCompleted) && (
         <ResetSessionButton sessionId={session.id} />
       )}
 
