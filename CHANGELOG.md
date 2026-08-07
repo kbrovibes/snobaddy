@@ -7,6 +7,7 @@
 - Session list hero card now stays visible throughout the entire active season (was hidden after 2 sessions); heading changes from "Starting Soon" to "Is Underway" once the first session is complete
 
 ### Changed
+- New app icon: dark navy shuttlecock glyph replaces the crest artwork for the browser favicon, PWA icon, and iOS home-screen icon
 - Bottom nav: "Session" tab renamed to "Home" with a house icon
 - Removed the redundant season name heading above the session list (the hero card already shows it)
 
