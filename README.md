@@ -14,6 +14,10 @@
 </p>
 
 <p align="center">
+  <a href="https://kbrovibes.github.io/snobaddy/"><strong>Project page</strong></a> — what it is, a screenshot tour, and the honest FAQ.
+</p>
+
+<p align="center">
   <em>Want to play? We're at <a href="https://churchontheridge.churchcenter.com/registrations/events/category/35751">Serve Snoqualmie Sports</a> — Mondays and Thursdays.</em>
 </p>
 

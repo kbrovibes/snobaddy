@@ -1,862 +1,671 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Snobaddy — Serve Sports Badminton Tracker</title>
-  <meta name="description" content="The digital scoreboard for Serve Sports Snoqualmie Badminton. Track sessions, record matches, run finals — all from your phone." />
-  <link rel="icon" href="serve-icon.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-    :root {
-      --bg:       #FAFAF9;
-      --surface:  #FFFFFF;
-      --surface2: #F5F5F4;
-      --border:   #E7E5E4;
-      --text:     #44403C;
-      --heading:  #1C1917;
-      --muted:    #78716C;
-      --muted-lt: #A8A29E;
-      --sky:      #0ea5e9;
-      --sky-dk:   #0284c7;
-      --sky-lt:   #e0f2fe;
-      --sky-xlt:  #f0f9ff;
-      --orange:   #f97316;
-      --orange-lt:#fff7ed;
-      --green:    #16a34a;
-      --green-lt: #dcfce7;
-      --purple:   #7c3aed;
-      --purple-lt:#f5f3ff;
-      --amber:    #d97706;
-      --amber-lt: #fffbeb;
-      --max:      1040px;
-    }
+<title>Sno Baddy — badminton club session tracker</title>
+<meta name="description" content="The digital whiteboard for a Monday and Thursday drop-in badminton club in Snoqualmie, WA. Check in, record the game, watch the scoreboard move.">
+<meta name="author" content="Karthik Rajan">
+<meta name="color-scheme" content="light">
 
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
+<link rel="canonical" href="https://kbrovibes.github.io/snobaddy/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kbrovibes.github.io/snobaddy/">
+<meta property="og:title" content="Sno Baddy — badminton club session tracker">
+<meta property="og:description" content="The digital whiteboard for a Monday and Thursday drop-in badminton club in Snoqualmie, WA.">
+<meta property="og:image" content="https://kbrovibes.github.io/snobaddy/media/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 
-    /* ── UTILS ── */
-    .container { max-width: var(--max); margin: 0 auto; padding: 0 1.5rem; }
-    .eyebrow {
-      display: inline-block;
-      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--sky); margin-bottom: 0.6rem;
-    }
-    .section-title {
-      font-size: clamp(1.75rem, 4vw, 2.6rem); font-weight: 800; color: var(--heading);
-      letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 0.85rem;
-    }
-    .section-sub { font-size: 1rem; color: var(--muted); max-width: 520px; }
-    .tag {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em;
-      padding: 0.25rem 0.65rem; border-radius: 999px;
-    }
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%B8%3C/text%3E%3C/svg%3E">
 
-    /* ── NAV ── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(250,250,249,0.88);
-      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-inner {
-      max-width: var(--max); margin: 0 auto; padding: 0 1.5rem;
-      height: 56px; display: flex; align-items: center; justify-content: space-between;
-    }
-    .nav-logo { text-decoration: none; display: flex; flex-direction: column; line-height: 1; }
-    .nav-logo .brand { font-size: 1rem; font-weight: 800; color: var(--heading); letter-spacing: -0.02em; }
-    .nav-logo .sub   { font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
-    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
-    .nav-links a { font-size: 0.85rem; font-weight: 600; color: var(--muted); text-decoration: none; }
-    .nav-links a:hover { color: var(--heading); }
-    .btn { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; border-radius: 999px; font-weight: 700; transition: background 0.15s, border-color 0.15s; white-space: nowrap; }
-    .btn-dark  { background: var(--heading); color: #fff; padding: 0.55rem 1.25rem; font-size: 0.85rem; }
-    .btn-dark:hover  { background: var(--sky-dk); }
-    .btn-sky   { background: var(--sky); color: #fff; padding: 0.75rem 1.75rem; font-size: 0.95rem; }
-    .btn-sky:hover   { background: var(--sky-dk); }
-    .btn-outline { border: 1.5px solid var(--border); color: var(--heading); padding: 0.75rem 1.75rem; font-size: 0.95rem; background: var(--surface); }
-    .btn-outline:hover { border-color: var(--sky); background: var(--sky-xlt); }
-    .btn-white { background: #fff; color: var(--heading); padding: 0.75rem 1.75rem; font-size: 0.95rem; }
-    .btn-white:hover { background: var(--sky-lt); }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    /* ── HERO ── */
-    .hero { padding: 5.5rem 1.5rem 4rem; text-align: center; }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--sky-lt); color: var(--sky-dk);
-      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-      padding: 0.3rem 0.9rem; border-radius: 999px; margin-bottom: 1.75rem;
-    }
-    .hero h1 {
-      font-size: clamp(2.4rem, 7vw, 4rem); font-weight: 800; color: var(--heading);
-      letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 1.25rem;
-    }
-    .hero h1 em { font-style: normal; color: var(--sky); }
-    .hero-sub { font-size: clamp(1rem, 2.5vw, 1.2rem); color: var(--muted); max-width: 560px; margin: 0 auto 2.25rem; }
-    .hero-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3.5rem; }
+<style>
+/* ==========================================================================
+   THEME TOKENS — derived from src/app/globals.css (Tailwind v4, CSS-first)
+   and src/app/layout.tsx (next/font: Plus Jakarta Sans + Geist Mono).
+   --accent is sky-700 rather than the app's sky-600 (#0284c7): sky-600 as
+   *text* is 3.9:1 on --bg and fails the contrast gate. Same hue, one step down.
+   ========================================================================== */
+:root{
+  --bg:            #fafaf9;   /* --background, stone-50 */
+  --surface:       #ffffff;   /* --surface */
+  --surface-2:     #f0f9ff;   /* sky-50 — the band; this app leans sky everywhere */
+  --ink:           #1c1917;   /* --foreground, stone-900 */
+  --muted:         #57534e;   /* stone-600 (app's stone-500 --muted fails 4.5:1 on --bg) */
+  --accent:        #0369a1;   /* sky-700 */
+  --accent-ink:    #ffffff;
+  --accent-2:      #7e22ce;   /* purple-700 — the skill/rating colour */
+  --accent-3:      #15803d;   /* green-700 — the live "checked in" ping, used twice */
+  --hairline:      #e7e5e4;   /* --border, stone-200 */
+  --radius:        14px;      /* rounded-xl, the dominant radius in the app */
+  --shadow:        0 1px 2px rgba(28,25,23,.05), 0 14px 34px -16px rgba(3,105,161,.20);
+  --font-display:  "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-body:     "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:     "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  color-scheme:    light;
+}
+/* ==================== end theme tokens =================================== */
 
-    .stat-strip {
-      display: flex; justify-content: center;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 1.25rem; overflow: hidden;
-      max-width: 640px; margin: 0 auto;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-    }
-    .stat-item {
-      flex: 1; padding: 1.25rem 0.75rem; text-align: center;
-      border-right: 1px solid var(--border);
-    }
-    .stat-item:last-child { border-right: none; }
-    .stat-num { font-size: 1.75rem; font-weight: 800; color: var(--heading); line-height: 1; }
-    .stat-lbl { font-size: 0.68rem; font-weight: 600; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img,svg{display:block;max-width:100%}
+a{color:inherit}
+h1,h2,h3{margin:0;line-height:1.1;letter-spacing:-.025em;font-weight:800}
+p{margin:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+::selection{background:var(--accent);color:var(--accent-ink)}
 
-    /* ── STORY ── */
-    .story { padding: 5rem 1.5rem; }
-    .story-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
-    }
-    .story-text h2 { margin-bottom: 1rem; }
-    .story-text p { color: var(--muted); margin-bottom: 0.9rem; line-height: 1.75; }
-    .story-text p:last-child { margin-bottom: 0; }
-    .story-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
-    .pill {
-      display: inline-flex; align-items: center; gap: 5px;
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--text); font-size: 0.8rem; font-weight: 600;
-      padding: 0.3rem 0.75rem; border-radius: 999px;
-    }
+.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-2)}
+.lede{color:var(--muted);font-size:17px;max-width:62ch}
+.band{background:var(--surface-2)}
+section{scroll-margin-top:80px}
 
-    .story-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 1.5rem; padding: 2rem; position: relative; overflow: hidden;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-    }
-    .story-card::before {
-      content: '🏸';
-      position: absolute; right: 1.5rem; top: 1.25rem;
-      font-size: 3rem; opacity: 0.12;
-    }
-    .story-stat { display: flex; flex-direction: column; gap: 1.25rem; }
-    .story-stat-item { display: flex; align-items: center; gap: 1rem; }
-    .story-stat-icon {
-      width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
-    }
-    .story-stat-item h4 { font-size: 0.9rem; font-weight: 700; color: var(--heading); }
-    .story-stat-item p  { font-size: 0.8rem; color: var(--muted); }
+.skip{position:absolute;left:-9999px;top:0;background:var(--accent);color:var(--accent-ink);
+  padding:12px 18px;z-index:99;border-radius:0 0 10px 0;font-weight:600}
+.skip:focus{left:0}
 
-    /* ── SCORE MODES ── */
-    .modes { padding: 5rem 1.5rem; background: var(--sky-xlt); border-top: 1px solid #dbeafe; border-bottom: 1px solid #dbeafe; }
-    .modes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 2.5rem; }
-    .mode-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 1.5rem; padding: 1.75rem; position: relative; overflow: hidden;
-      transition: box-shadow 0.2s, transform 0.2s;
-    }
-    .mode-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.09); transform: translateY(-3px); }
-    .mode-card.featured { border-color: var(--sky); box-shadow: 0 0 0 1px var(--sky), 0 4px 24px rgba(14,165,233,0.12); }
-    .mode-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
-    .mode-label {
-      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 0.2rem 0.6rem; border-radius: 999px; margin-bottom: 0.75rem; display: inline-block;
-    }
-    .mode-card h3 { font-size: 1.05rem; font-weight: 800; color: var(--heading); margin-bottom: 0.5rem; }
-    .mode-card p  { font-size: 0.875rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
-    .mode-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
-    .mode-bullets li { font-size: 0.8rem; color: var(--text); display: flex; align-items: flex-start; gap: 0.5rem; }
-    .mode-bullets li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+/* ---------- buttons / the three link affordances ---------- */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:999px;
+  font-size:14px;font-weight:600;text-decoration:none;border:1px solid transparent;
+  transition:background .16s,color .16s,border-color .16s,transform .16s;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+/* inverted primary: the app's own primary buttons are ink, not accent */
+.btn-primary{background:var(--ink);color:var(--bg)}
+.btn-primary:hover{background:var(--accent);color:var(--accent-ink)}
+.btn-ghost{background:var(--surface);color:var(--ink);border-color:var(--hairline)}
+.btn-ghost:hover{border-color:var(--ink)}
+.btn-quiet{color:var(--muted);padding:11px 10px}
+.btn-quiet:hover{color:var(--ink)}
+.btn svg{width:15px;height:15px;flex:none;fill:currentColor}
 
-    /* ── FEATURES ── */
-    .features { padding: 5rem 1.5rem; }
-    .features-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-top: 2.5rem;
-    }
-    .feature-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 1.25rem; padding: 1.5rem;
-      transition: box-shadow 0.2s, transform 0.2s;
-    }
-    .feature-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
-    .feature-icon {
-      width: 40px; height: 40px; border-radius: 11px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; margin-bottom: 0.85rem;
-    }
-    .feature-card h3 { font-size: 0.9rem; font-weight: 700; color: var(--heading); margin-bottom: 0.3rem; }
-    .feature-card p  { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+/* ---------- header ---------- */
+.site{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 86%,transparent);
+  backdrop-filter:saturate(1.6) blur(12px);border-bottom:1px solid var(--hairline)}
+.site .wrap{display:flex;align-items:center;gap:20px;height:62px}
+.wordmark{font-family:var(--font-display);font-size:20px;text-decoration:none;
+  display:flex;align-items:baseline;gap:.4em}
+.wordmark b{font-weight:800;letter-spacing:-.03em}
+.wordmark span{font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.01em}
+.site nav{display:flex;gap:22px;margin-left:auto;font-size:14px}
+.site nav a{color:var(--muted);text-decoration:none;padding:4px 0;border-bottom:1.5px solid transparent}
+.site nav a:hover{color:var(--ink)}
+.site nav a[aria-current="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.site .links{display:flex;align-items:center;gap:6px;margin-left:auto}
+.site nav + .links{margin-left:16px}
+@media (max-width:900px){.site nav{display:none}.site .links .label-long{display:none}}
+@media (max-width:560px){.site .wrap{gap:10px;padding:0 16px}.btn{padding:9px 13px;font-size:13px}}
 
-    /* ── SCREENS ── */
-    .screens { padding: 5rem 0; background: linear-gradient(180deg, #f0f9ff 0%, var(--bg) 100%); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .screens-header { text-align: center; padding: 0 1.5rem; margin-bottom: 3rem; }
-    .phones-track {
-      display: flex; gap: 1.5rem; padding: 0.5rem 2rem 1.5rem;
-      overflow-x: auto; scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch; scrollbar-width: none;
-    }
-    .phones-track::-webkit-scrollbar { display: none; }
-    .phone-wrap { display: flex; flex-direction: column; align-items: center; scroll-snap-align: center; }
-    .phone {
-      flex: 0 0 auto; width: 195px;
-      background: #1C1917; border-radius: 28px; padding: 6px;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 24px 64px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.06);
-      position: relative;
-    }
-    .phone::before {
-      content: ''; position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
-      width: 50px; height: 5px; background: #2d2d2d; border-radius: 0 0 5px 5px; z-index: 2;
-    }
-    .phone-screen { border-radius: 22px; overflow: hidden; background: #fff; }
-    .phone-screen img { width: 100%; display: block; }
-    .phone-label { font-size: 0.72rem; font-weight: 600; color: var(--muted-lt); margin-top: 0.85rem; text-align: center; }
-    .scroll-hint { text-align: center; font-size: 0.75rem; color: var(--muted-lt); margin-top: 0.5rem; }
+/* ---------- hero ---------- */
+.hero{padding:72px 0 28px}
+.hero h1{font-size:clamp(34px,6.2vw,60px);max-width:15ch}
+.hero h1 em{font-style:normal;font-weight:800;color:var(--accent)}
+.hero .lede{margin-top:18px;font-size:clamp(16px,2.2vw,19px)}
+.hero .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px;padding:0;list-style:none}
+.facts li{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);
+  border:1px solid var(--hairline);background:var(--surface);border-radius:999px;padding:5px 12px;
+  font-variant-numeric:tabular-nums}
 
-    /* ── FINALS ── */
-    .finals { padding: 5rem 1.5rem; }
-    .finals-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; margin-top: 2.5rem; }
-    .finals-features { display: flex; flex-direction: column; gap: 1.25rem; }
-    .finals-item { display: flex; gap: 1rem; align-items: flex-start; }
-    .finals-dot {
-      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center; font-size: 1rem;
-    }
-    .finals-item h4 { font-size: 0.9rem; font-weight: 700; color: var(--heading); margin-bottom: 0.2rem; }
-    .finals-item p  { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+/* the app's one animated flourish: a green "session is live" dot with a ping halo */
+.ping{position:relative;width:9px;height:9px;flex:none}
+.ping i{position:absolute;inset:0;border-radius:50%;background:var(--accent-3);display:block}
+.ping i.halo{opacity:.7;animation:ping 1.9s cubic-bezier(0,0,.2,1) infinite}
+@keyframes ping{70%,100%{transform:scale(2.6);opacity:0}}
+@media (prefers-reduced-motion:reduce){.ping i.halo{display:none}}
 
-    .finals-bracket {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 1.5rem; padding: 1.75rem;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
-    }
-    .finals-bracket h4 { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 1.25rem; }
-    .bracket-groups { display: flex; flex-direction: column; gap: 0.75rem; }
-    .bracket-group {
-      border: 1px solid var(--border); border-radius: 0.875rem; overflow: hidden;
-    }
-    .bracket-group-header {
-      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-      padding: 0.5rem 0.875rem; border-bottom: 1px solid var(--border);
-    }
-    .bracket-players { padding: 0.5rem 0.875rem; display: flex; flex-direction: column; gap: 0.3rem; }
-    .bracket-player { font-size: 0.82rem; color: var(--text); display: flex; justify-content: space-between; }
-    .bracket-player .wins { font-weight: 700; color: var(--heading); font-size: 0.78rem; }
-    .bracket-arrow {
-      display: flex; align-items: center; gap: 0.5rem;
-      font-size: 0.72rem; color: var(--muted); font-weight: 600;
-      padding: 0.5rem 0;
-    }
-    .bracket-arrow::before { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .bracket-arrow::after  { content: ''; flex: 1; height: 1px; background: var(--border); }
+/* ---------- screenshots ----------
+   Every capture is a transparent PNG that already carries its own window chrome
+   and drop shadow, so it is placed straight on the page: no second frame, no
+   crop, natural aspect ratio, nothing zoomed past readability. */
+.device{max-width:330px;margin-inline:auto}
+.device img{width:100%;height:auto}
 
-    /* ── DARK MODE SHOWCASE ── */
-    .themes { padding: 5rem 1.5rem; }
-    .themes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2.5rem; align-items: start; }
-    .theme-demo {
-      border-radius: 1.5rem; overflow: hidden; border: 1px solid var(--border);
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    }
-    .theme-demo img { width: 100%; display: block; }
-    .theme-demo-label {
-      padding: 0.875rem 1.25rem; font-size: 0.82rem; font-weight: 600;
-      display: flex; align-items: center; gap: 0.5rem;
-    }
-    .theme-light .theme-demo-label { background: #fff; color: var(--text); border-top: 1px solid var(--border); }
-    .theme-dark  .theme-demo-label { background: #1a1a1a; color: #d4d4d4; border-top: 1px solid #2a2a2a; }
-    .theme-desc { margin-top: 1rem; }
-    .theme-desc h3 { font-size: 1rem; font-weight: 700; color: var(--heading); margin-bottom: 0.3rem; }
-    .theme-desc p  { font-size: 0.875rem; color: var(--muted); }
+.trio{display:grid;grid-template-columns:1fr 1.16fr 1fr;align-items:end;
+  max-width:960px;margin:40px auto 0}
+.trio img{width:100%;height:auto}
+.trio .a,.trio .c{transform-origin:bottom center}
+.trio .a{transform:translateX(11%) scale(.9)}
+.trio .c{transform:translateX(-11%) scale(.9)}
+.trio .b{position:relative;z-index:2}
+@media (max-width:820px){
+  .trio{grid-template-columns:1fr;max-width:330px;margin-top:34px}
+  .trio .a,.trio .c{display:none}
+}
 
-    /* ── PLAYER PROFILE ── */
-    .profile { padding: 5rem 1.5rem; background: var(--surface2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .profile-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 2.5rem; }
+/* ---------- generic section head ---------- */
+.head{max-width:70ch}
+.head h2{font-size:clamp(26px,3.6vw,38px);margin-top:10px}
+.head p{margin-top:14px;color:var(--muted);font-size:17px}
+.pad{padding:76px 0}
+.pad-sm{padding:56px 0}
 
-    /* ── HOW IT WORKS ── */
-    .how { padding: 5rem 1.5rem; }
-    .steps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 2.5rem; }
-    .step {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 1.25rem; padding: 1.5rem;
-    }
-    .step-num {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: var(--heading); color: #fff;
-      font-size: 0.9rem; font-weight: 800;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 0.875rem;
-    }
-    .step h3 { font-size: 0.95rem; font-weight: 700; color: var(--heading); margin-bottom: 0.3rem; }
-    .step p  { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+/* ---------- "what it is" ---------- */
+.what{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:start}
+.what p + p{margin-top:14px}
+.what .prose{font-size:17.5px}
+.what .prose strong{font-weight:600}
+.forwho{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--radius);padding:22px 24px}
+.forwho h3{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.forwho ul{margin:14px 0 0;padding-left:0;list-style:none;display:grid;gap:12px}
+.forwho li{display:flex;gap:10px;font-size:15px;color:var(--muted)}
+.forwho li b{color:var(--ink);font-weight:600}
+.forwho li::before{content:"";flex:none;width:6px;height:6px;margin-top:9px;border-radius:50%;background:var(--accent)}
+@media (max-width:860px){.what{grid-template-columns:1fr;gap:32px}}
 
-    /* ── CALLOUT ── */
-    .callout-wrap { padding: 0 1.5rem 5rem; }
-    .callout {
-      background: var(--heading); color: #fff;
-      border-radius: 2rem; padding: 3.5rem 2rem; text-align: center;
-      max-width: 720px; margin: 0 auto;
-      position: relative; overflow: hidden;
-    }
-    .callout::before {
-      content: '🏸'; position: absolute;
-      font-size: 8rem; opacity: 0.06;
-      right: -1rem; bottom: -1.5rem; line-height: 1;
-    }
-    .callout h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
-    .callout p  { font-size: 0.95rem; color: rgba(255,255,255,0.6); margin-bottom: 2rem; max-width: 400px; margin-left: auto; margin-right: auto; }
+/* ---------- carousel ---------- */
+.tour{padding:72px 0 60px;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+.tour .bar{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
+  margin-top:30px;gap:0;overscroll-behavior-x:contain}
+.track::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;
+  display:grid;grid-template-columns:.85fr 1.15fr;gap:52px;align-items:center;padding:0 24px}
+.slide .copy h3{font-size:clamp(24px,3.4vw,36px);margin-top:8px}
+.slide .copy h3 em{font-style:normal;font-weight:800;color:var(--accent)}
+.slide .copy p{margin-top:14px;color:var(--muted);font-size:16.5px;max-width:46ch}
+.slide .copy ul{margin:18px 0 0;padding-left:0;list-style:none;display:grid;gap:8px;font-size:14.5px;color:var(--muted)}
+.slide .copy li::before{content:"— ";color:var(--accent)}
+.controls{display:flex;align-items:center;gap:14px;margin-top:30px;justify-content:center}
+.dots{display:flex;gap:8px}
+.dot{width:8px;height:8px;padding:0;border:0;border-radius:999px;background:color-mix(in srgb,var(--ink) 25%,transparent);
+  cursor:pointer;transition:width .2s,background .2s}
+.dot[aria-current="true"]{width:26px;background:var(--accent)}
+.arrow,.pause{width:34px;height:34px;display:grid;place-items:center;border-radius:999px;cursor:pointer;
+  border:1px solid var(--hairline);background:var(--surface);color:var(--ink)}
+.arrow:hover,.pause:hover{border-color:var(--ink)}
+.arrow svg,.pause svg{width:14px;height:14px;fill:currentColor}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+@media (max-width:900px){
+  .slide{grid-template-columns:1fr;gap:26px;padding:0 20px}
+  .slide .shot{order:-1}
+  .slide .copy p{max-width:none}
+}
 
-    /* ── FOOTER ── */
-    .footer-inner {
-      max-width: var(--max); margin: 0 auto; padding: 2rem 1.5rem;
-      border-top: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
-    }
-    .footer-brand .name { font-size: 0.9rem; font-weight: 800; color: var(--heading); }
-    .footer-brand .sub  { font-size: 0.78rem; color: var(--muted-lt); margin-top: 2px; }
-    .footer-links { display: flex; gap: 1.25rem; flex-wrap: wrap; justify-content: flex-end; }
-    .footer-links a { font-size: 0.8rem; color: var(--muted); text-decoration: none; }
-    .footer-links a:hover { color: var(--sky); }
-    .footer-tech { font-size: 0.75rem; color: var(--muted-lt); margin-top: 4px; text-align: right; }
+/* ---------- steps ---------- */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;margin-top:38px;
+  background:var(--hairline);border:1px solid var(--hairline);border-radius:var(--radius);overflow:hidden}
+.step{background:var(--bg);padding:26px 24px}
+.step .n{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--accent-2);
+  letter-spacing:.08em;font-variant-numeric:tabular-nums}
+.step h3{font-size:17px;margin-top:12px}
+.step p{margin-top:8px;font-size:14.5px;color:var(--muted)}
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 720px) {
-      .story-grid, .finals-layout, .themes-grid, .profile-layout { grid-template-columns: 1fr; gap: 2rem; }
-      .modes-grid { grid-template-columns: 1fr; }
-      .steps { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
-      .stat-num { font-size: 1.35rem; }
-      .phones-track { padding: 0.5rem 1.5rem 1.5rem; }
-    }
-  </style>
+/* ---------- feature grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:38px}
+.card{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--radius);padding:22px}
+.card h3{font-size:16px;display:flex;align-items:center;gap:9px}
+.card h3 svg{width:16px;height:16px;fill:none;stroke:var(--accent);stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round;flex:none}
+.card p{margin-top:9px;font-size:14.5px;color:var(--muted)}
+
+/* ---------- stack ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px;padding:0;list-style:none}
+.chips li{font-family:var(--font-mono);font-size:12.5px;background:var(--surface);border:1px solid var(--hairline);
+  border-radius:999px;padding:6px 13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.note{margin-top:22px;font-size:14.5px;color:var(--muted);max-width:64ch}
+
+/* ---------- faq ---------- */
+.faq{margin-top:34px;border-top:1px solid var(--hairline);max-width:78ch}
+.faq details{border-bottom:1px solid var(--hairline)}
+.faq summary{cursor:pointer;list-style:none;padding:18px 2px;font-weight:600;font-size:16px;
+  display:flex;justify-content:space-between;gap:16px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--accent);font-weight:400;font-size:20px;line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq p{padding:0 2px 20px;color:var(--muted);font-size:15.5px;max-width:66ch}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--hairline);background:var(--surface-2);padding:52px 0 40px}
+.foot{display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between;align-items:flex-start}
+.foot .links{display:flex;flex-wrap:wrap;gap:8px}
+.foot small{display:block;color:var(--muted);font-size:13px;line-height:1.7}
+.foot a.plain{color:var(--muted)}
+.foot a.plain:hover{color:var(--ink)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .btn:hover{transform:none}
+}
+@media (min-width:1px){html{scroll-behavior:smooth}}
+</style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-inner">
-    <a class="nav-logo" href="#">
-      <span class="brand">Serve Sports</span>
-      <span class="sub">Badminton</span>
-    </a>
-    <div class="nav-links">
+<!-- ══ HEADER — link affordances #1 ══════════════════════════════════ -->
+<header class="site">
+  <div class="wrap">
+    <a class="wordmark" href="#top"><b>Sno Baddy</b><span>club badminton</span></a>
+
+    <nav aria-label="Page sections">
+      <a href="#what">What it is</a>
+      <a href="#tour">Tour</a>
+      <a href="#how">How it works</a>
       <a href="#features">Features</a>
-      <a href="#screens">Screenshots</a>
-      <a href="#finals">Finals</a>
-      <a href="#how">How It Works</a>
-    </div>
-    <a class="btn btn-dark" href="https://snobaddy.vercel.app" target="_blank">Open App ↗</a>
-  </div>
-</nav>
+      <a href="#faq">FAQ</a>
+    </nav>
 
-<!-- ══════════════════════════════════════════════════════
-     HERO
-══════════════════════════════════════════════════════ -->
-<section class="hero">
-  <div class="hero-badge">🏸 Serve Sports · Snoqualmie, WA</div>
-  <h1>Your club's<br/><em>digital home</em></h1>
-  <p class="hero-sub">From who checked in tonight to who tops the season leaderboard — Snobaddy runs it all. No paper, no math, no whiteboard.</p>
-  <div class="hero-actions">
-    <a class="btn btn-sky" href="https://snobaddy.vercel.app" target="_blank">Open the App</a>
-    <a class="btn btn-outline" href="#screens">See Screenshots</a>
-  </div>
-
-  <div class="stat-strip">
-    <div class="stat-item">
-      <div class="stat-num">30–50</div>
-      <div class="stat-lbl">Players / Night</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">2</div>
-      <div class="stat-lbl">Courts</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">Mon + Thu</div>
-      <div class="stat-lbl">Weekly Sessions</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">0</div>
-      <div class="stat-lbl">Whiteboards Needed</div>
+    <div class="links">
+      <a class="btn btn-primary" href="https://snobaddy.vercel.app" rel="noopener">Open the app</a>
+      <a class="btn btn-ghost" href="https://github.com/kbrovibes/snobaddy" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.93-.89-1.18-.89-1.18-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        <span class="label-long">View source</span>
+      </a>
+      <a class="btn btn-quiet" href="https://kbrovibes.github.io/">All projects</a>
     </div>
   </div>
-</section>
+</header>
 
-<!-- ══════════════════════════════════════════════════════
-     THE STORY
-══════════════════════════════════════════════════════ -->
-<section class="story">
-  <div class="container">
-    <div class="story-grid">
-      <div class="story-text">
-        <span class="eyebrow">Our Story</span>
-        <h2 class="section-title">Built for real<br/>drop-in play</h2>
-        <p>Serve Sports is a drop-in badminton community in Snoqualmie, WA. Every Monday and Thursday evening, 30–50 players show up to play doubles on two courts — no pre-registration, no fixed teams, just show up and hit.</p>
-        <p>For years, a physical whiteboard tracked who was here and how everyone was doing. But math errors, illegible names, and arguments over the tally were a recurring theme.</p>
-        <p><strong style="color:var(--heading);">Snobaddy was built to replace that whiteboard</strong> — and do everything it couldn't. Season-long stats, AI match suggestions, finals tournaments, player profiles, and more. All from the phone in your pocket.</p>
-        <div class="story-pills">
-          <span class="pill">🔐 Google Sign-In</span>
-          <span class="pill">📱 Mobile-First</span>
-          <span class="pill">🌙 Dark & Light Mode</span>
-          <span class="pill">☁️ Live & Synced</span>
-          <span class="pill">🤖 AI-Powered</span>
-        </div>
+<main id="main">
+
+<!-- ══ 1. HERO ══════════════════════════════════════════════════════ -->
+<section id="top" class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Club badminton</p>
+    <h1>The whiteboard, except it can <em>count</em>.</h1>
+    <p class="lede">A drop-in badminton club in Snoqualmie, WA ran Mondays and Thursdays on a whiteboard and illegible handwriting. This replaced it: check in, record the game, watch the scoreboard move.</p>
+
+    <div class="cta">
+      <a class="btn btn-primary" href="https://snobaddy.vercel.app" rel="noopener">Open the app</a>
+      <a class="btn btn-ghost" href="https://github.com/kbrovibes/snobaddy" rel="noopener">View source on GitHub</a>
+      <a class="btn btn-quiet" href="https://kbrovibes.github.io/">← Back to all projects</a>
+    </div>
+
+    <ul class="facts">
+      <li><span class="ping" aria-hidden="true"><i class="halo"></i><i></i></span>Mondays and Thursdays</li>
+      <li>Next.js + Supabase</li>
+      <li>Free, no ads</li>
+      <li>Built for phones</li>
+    </ul>
+
+    <div class="trio">
+      <div class="a">
+        <img src="media/hero-live-scoreboard.png" alt="Live session scoreboard showing four players, one recorded match and past session links" decoding="async">
       </div>
-
-      <div class="story-card">
-        <div class="story-stat">
-          <div class="story-stat-item">
-            <div class="story-stat-icon" style="background:var(--sky-lt);">✅</div>
-            <div>
-              <h4>Instant Check-In</h4>
-              <p>Players check themselves in from their phone the moment they walk in. Admins can manage anyone.</p>
-            </div>
-          </div>
-          <div class="story-stat-item">
-            <div class="story-stat-icon" style="background:var(--green-lt);">📊</div>
-            <div>
-              <h4>Live Scoreboard</h4>
-              <p>W/L totals update in real time as matches are recorded. Everyone can see the board.</p>
-            </div>
-          </div>
-          <div class="story-stat-item">
-            <div class="story-stat-icon" style="background:var(--amber-lt);">🏆</div>
-            <div>
-              <h4>Season Leaderboard</h4>
-              <p>Win rate, total matches, and rankings roll up automatically across every session all season.</p>
-            </div>
-          </div>
-          <div class="story-stat-item">
-            <div class="story-stat-icon" style="background:var(--purple-lt);">🏅</div>
-            <div>
-              <h4>Season Finals</h4>
-              <p>Run end-of-season tournaments with group stages, round robin, and knockout rounds — fully managed in the app.</p>
-            </div>
-          </div>
-        </div>
+      <div class="b">
+        <img src="media/hero-whos-here.png" alt="Active session with a checked-in banner, the Who's Here list and the score entry form" fetchpriority="high" decoding="async">
+      </div>
+      <div class="c">
+        <img src="media/hero-leaderboard.png" alt="Season leaderboard ranking players by wins with two season award cards above" decoding="async">
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════
-     SCORE ENTRY MODES
-══════════════════════════════════════════════════════ -->
-<section class="modes">
-  <div class="container">
-    <span class="eyebrow">Three Ways to Score</span>
-    <h2 class="section-title">However your night runs,<br/>we've got a mode for it</h2>
-    <p class="section-sub">Different sessions run differently. Snobaddy adapts to your night — not the other way around.</p>
-
-    <div class="modes-grid">
-      <div class="mode-card featured">
-        <span class="mode-icon">⚔️</span>
-        <span class="mode-label" style="background:var(--sky-lt);color:var(--sky-dk);">Live Match Mode</span>
-        <h3>Record Every Match</h3>
-        <p>The full live experience. As each match finishes, an admin picks the 4 players and enters the score. The scoreboard updates instantly for everyone.</p>
-        <ul class="mode-bullets">
-          <li>Pick 4 checked-in players per match</li>
-          <li>Enter final score — winner determined automatically</li>
-          <li>Live scoreboard visible to all players</li>
-          <li>Full match history saved at session close</li>
-        </ul>
-      </div>
-
-      <div class="mode-card">
-        <span class="mode-icon">📋</span>
-        <span class="mode-label" style="background:var(--orange-lt);color:var(--orange);">Whiteboard Mode</span>
-        <h3>Tally at End of Night</h3>
-        <p>Already tracking W/L on a physical board? Just enter the final tally when the session closes. Great for nights when someone else is keeping track.</p>
-        <ul class="mode-bullets">
-          <li>Enter total wins and losses per player</li>
-          <li>Built-in balance check (W = L across all players)</li>
-          <li>Inline edit stepper to adjust scores in-place</li>
-          <li>Feeds into the same season leaderboard</li>
-        </ul>
-      </div>
-
-      <div class="mode-card">
-        <span class="mode-icon">📷</span>
-        <span class="mode-label" style="background:var(--purple-lt);color:var(--purple);">AI Photo Import</span>
-        <h3>Snap the Board</h3>
-        <p>Already have a whiteboard full of names and tallies? Take a photo and let Claude AI read it. Names and scores are filled in automatically.</p>
-        <ul class="mode-bullets">
-          <li>Upload a photo of the physical whiteboard</li>
-          <li>AI extracts names and W/L counts</li>
-          <li>Unmatched names flagged for manual resolution</li>
-          <li>Review, adjust, and save in seconds</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════
-     FEATURES GRID
-══════════════════════════════════════════════════════ -->
-<section class="features" id="features">
-  <div class="container">
-    <span class="eyebrow">Everything It Does</span>
-    <h2 class="section-title">A full-featured club<br/>management tool</h2>
-    <p class="section-sub">Built one real problem at a time, by the players who use it.</p>
-
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon" style="background:var(--sky-lt);">✅</div>
-        <h3>Player Check-In</h3>
-        <p>Self-service check-in for everyone. Admins can check in or out any player. Arrival time tracked automatically.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:var(--green-lt);">📊</div>
-        <h3>Live Session Scoreboard</h3>
-        <p>Tonight's W/L per player, points scored, win %, and match count — updating live as results come in.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:var(--amber-lt);">🏆</div>
-        <h3>Season Leaderboard</h3>
-        <p>All-time season rankings: win %, total matches, wins, losses. Sortable by any stat.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:var(--orange-lt);">👤</div>
-        <h3>Player Profiles</h3>
-        <p>Per-player win rate, W/L bar chart by session, and full match history with opponents and scores.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:var(--purple-lt);">🤖</div>
-        <h3>AI Match Generation</h3>
-        <p>Propose balanced doubles pairings based on skill levels. Fair fights every time — no more mismatches.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:#fce7f3;">🏅</div>
-        <h3>Session Awards</h3>
-        <p>The Slayer (most wins), The Unstoppable (most matches), The Untouchable (best win rate), The Point Collector, and The Ones With No Mercy.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:var(--sky-lt);">⭐</div>
-        <h3>Skill Levels</h3>
-        <p>1–5 skill rating per player. Used by the match generator to create balanced teams. Editable by admins.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:var(--green-lt);">📅</div>
-        <h3>Session History</h3>
-        <p>Full archive of every past session with match data, tallies, and per-session summaries. Seasons group sessions automatically.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:var(--amber-lt);">🏟️</div>
-        <h3>Season Finals</h3>
-        <p>Run end-of-season tournaments with groups, round-robins, and playoffs. Multiple formats supported.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:var(--orange-lt);">🌙</div>
-        <h3>Dark & Light Mode</h3>
-        <p>Beautiful in both. Follows your OS preference or toggle manually. Near-black dark mode — WhatsApp-style.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:var(--purple-lt);">🔐</div>
-        <h3>Google Sign-In</h3>
-        <p>No passwords to remember. Sign in with your Google account. New players get a skill level prompt on first visit.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon" style="background:#fce7f3;">📱</div>
-        <h3>Installable PWA</h3>
-        <p>Add to your home screen for a native app feel. Works offline for viewing and looks great on any phone.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════
-     SCREENSHOTS
-══════════════════════════════════════════════════════ -->
-<div class="screens" id="screens">
-  <div class="screens-header container">
-    <span class="eyebrow">The App</span>
-    <h2 class="section-title">Designed for the court,<br/>not a desk</h2>
-    <p style="color:var(--muted);font-size:1rem;max-width:460px;margin:0 auto;">Every pixel optimised for mobile — because that's where you are when you need it.</p>
-  </div>
-
-  <div class="phones-track">
-    <div class="phone-wrap">
-      <div class="phone"><div class="phone-screen"><img src="screenshots/snobaddy-screen-v2-1.png" alt="Session list" loading="lazy" /></div></div>
-      <div class="phone-label">Session List</div>
-    </div>
-    <div class="phone-wrap">
-      <div class="phone"><div class="phone-screen"><img src="screenshots/snobaddy-screen-v2-2.png" alt="Start session" loading="lazy" /></div></div>
-      <div class="phone-label">Start a Session</div>
-    </div>
-    <div class="phone-wrap">
-      <div class="phone"><div class="phone-screen"><img src="screenshots/snobaddy-screen-v2-4.png" alt="Players grid" loading="lazy" /></div></div>
-      <div class="phone-label">Players Grid</div>
-    </div>
-    <div class="phone-wrap">
-      <div class="phone"><div class="phone-screen"><img src="screenshots/snobaddy-screen-v2-7.png" alt="Who's here" loading="lazy" /></div></div>
-      <div class="phone-label">Who's Here Tonight</div>
-    </div>
-    <div class="phone-wrap">
-      <div class="phone"><div class="phone-screen"><img src="screenshots/snobaddy-screen-v2-8.png" alt="Record a match" loading="lazy" /></div></div>
-      <div class="phone-label">Record a Match</div>
-    </div>
-    <div class="phone-wrap">
-      <div class="phone"><div class="phone-screen"><img src="screenshots/snobaddy-screen-v2-9.png" alt="Tonight's scores" loading="lazy" /></div></div>
-      <div class="phone-label">Tonight's Scores</div>
-    </div>
-    <div class="phone-wrap">
-      <div class="phone"><div class="phone-screen"><img src="screenshots/snobaddy-screen-v2-10.png" alt="Session awards" loading="lazy" /></div></div>
-      <div class="phone-label">Session Awards</div>
-    </div>
-    <div class="phone-wrap">
-      <div class="phone"><div class="phone-screen"><img src="screenshots/snobaddy-screen-v2-11.png" alt="Full scoreboard" loading="lazy" /></div></div>
-      <div class="phone-label">Full Scoreboard</div>
-    </div>
-    <div class="phone-wrap">
-      <div class="phone"><div class="phone-screen"><img src="screenshots/snobaddy-screen-v2-5.png" alt="Season leaderboard" loading="lazy" /></div></div>
-      <div class="phone-label">Season Leaderboard</div>
-    </div>
-    <div class="phone-wrap">
-      <div class="phone"><div class="phone-screen"><img src="screenshots/snobaddy-screen-v2-12.png" alt="Player profile" loading="lazy" /></div></div>
-      <div class="phone-label">Player Profile</div>
-    </div>
-  </div>
-  <p class="scroll-hint">← swipe to see more →</p>
-</div>
-
-<!-- ══════════════════════════════════════════════════════
-     FINALS
-══════════════════════════════════════════════════════ -->
-<section class="finals" id="finals">
-  <div class="container">
-    <span class="eyebrow">Season Finals</span>
-    <h2 class="section-title">End the season<br/>with a proper tournament</h2>
-    <p class="section-sub">Go beyond regular sessions. Run a full end-of-season finals with group stages, standings, and knockout rounds — all inside the app.</p>
-
-    <div class="finals-layout">
-      <div class="finals-features">
-        <div class="finals-item">
-          <div class="finals-dot" style="background:var(--sky-lt);">🏟️</div>
-          <div>
-            <h4>Multiple Groups</h4>
-            <p>Split players into Groups A, B, C, S — any number of pools. Each group runs its own round-robin stage.</p>
-          </div>
-        </div>
-        <div class="finals-item">
-          <div class="finals-dot" style="background:var(--green-lt);">🔄</div>
-          <div>
-            <h4>Round Robin Format</h4>
-            <p>Every pair plays every other pair in the group. Standings update automatically as results are entered.</p>
-          </div>
-        </div>
-        <div class="finals-item">
-          <div class="finals-dot" style="background:var(--amber-lt);">⚡</div>
-          <div>
-            <h4>Playoff Advancement</h4>
-            <p>Configure how many advance — Top 2, Top 4 — and who they face in the knockout stage.</p>
-          </div>
-        </div>
-        <div class="finals-item">
-          <div class="finals-dot" style="background:var(--orange-lt);">🏅</div>
-          <div>
-            <h4>Gold, Silver & Bronze</h4>
-            <p>Separate brackets ensure every team plays a final match — gold/silver final and a 3rd place play-off.</p>
-          </div>
-        </div>
-        <div class="finals-item">
-          <div class="finals-dot" style="background:var(--purple-lt);">🤝</div>
-          <div>
-            <h4>Pair Configuration</h4>
-            <p>Manually set up doubles pairs for the finals or carry over season partners — full admin control.</p>
-          </div>
-        </div>
-        <div class="finals-item">
-          <div class="finals-dot" style="background:#fce7f3;">📋</div>
-          <div>
-            <h4>Separate Session</h4>
-            <p>Finals run as their own session type — they don't pollute regular season stats or leaderboard data.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="finals-bracket">
-        <h4>Example: Spring Finals Structure</h4>
-        <div class="bracket-groups">
-          <div class="bracket-group">
-            <div class="bracket-group-header" style="background:var(--sky-xlt);color:var(--sky-dk);">Group A — Round Robin</div>
-            <div class="bracket-players">
-              <div class="bracket-player"><span>Kiran & Sekhar</span><span class="wins">2W 0L</span></div>
-              <div class="bracket-player"><span>Sahit & Revo</span><span class="wins">1W 1L</span></div>
-              <div class="bracket-player"><span>Miz & Tridib</span><span class="wins">0W 2L</span></div>
-            </div>
-          </div>
-          <div class="bracket-group">
-            <div class="bracket-group-header" style="background:var(--green-lt);color:var(--green);">Group B — Round Robin</div>
-            <div class="bracket-players">
-              <div class="bracket-player"><span>Deepa & Swathi</span><span class="wins">2W 0L</span></div>
-              <div class="bracket-player"><span>Arjun & Chitra</span><span class="wins">1W 1L</span></div>
-              <div class="bracket-player"><span>Joe & Ajay</span><span class="wins">0W 2L</span></div>
-            </div>
-          </div>
-          <div class="bracket-arrow">Top 2 from each group advance</div>
-          <div class="bracket-group">
-            <div class="bracket-group-header" style="background:var(--amber-lt);color:var(--amber);">🏅 Playoff — Semi-Finals → Final</div>
-            <div class="bracket-players">
-              <div class="bracket-player"><span>A1 vs B2</span><span class="wins">Semi 1</span></div>
-              <div class="bracket-player"><span>B1 vs A2</span><span class="wins">Semi 2</span></div>
-              <div class="bracket-player"><span>Winners → Gold Final</span><span class="wins">🥇</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════
-     DARK & LIGHT MODE
-══════════════════════════════════════════════════════ -->
-<section class="themes">
-  <div class="container">
-    <span class="eyebrow">Looks Great Everywhere</span>
-    <h2 class="section-title">Light mode for the day,<br/>dark mode for the court</h2>
-    <p class="section-sub">Full dark and light mode support. Toggle manually or follow your OS. Designed to look equally sharp in both — no afterthought dark mode here.</p>
-
-    <div class="themes-grid">
-      <div>
-        <div class="theme-demo theme-light">
-          <img src="screenshots/snobaddy-screen-v2-5.png" alt="Light mode leaderboard" />
-          <div class="theme-demo-label">☀️ Light Mode — clean stone palette</div>
-        </div>
-        <div class="theme-desc">
-          <h3>Light Mode</h3>
-          <p>Stone-50 backgrounds, crisp white cards, and sky-blue accents. Clean and readable in bright gym lighting.</p>
-        </div>
-      </div>
-      <div>
-        <div class="theme-demo theme-dark">
-          <img src="screenshots/snobaddy-screen-v2-11.png" alt="Dark mode scoreboard" />
-          <div class="theme-demo-label">🌙 Dark Mode — near-black WhatsApp palette</div>
-        </div>
-        <div class="theme-desc">
-          <h3>Dark Mode</h3>
-          <p>Near-black backgrounds (#0A0A0A) with warm neutral text. Easy on the eyes during evening play. Toggle from your profile or follow OS auto.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════
-     PLAYER PROFILES
-══════════════════════════════════════════════════════ -->
-<section class="profile">
-  <div class="container">
-    <div class="profile-layout">
-      <div>
-        <span class="eyebrow">Player Profiles</span>
-        <h2 class="section-title">Your stats,<br/>all season long</h2>
-        <p class="section-sub" style="margin-bottom:1.5rem;">Every player gets a personal page with their performance story — from week one to the season finale.</p>
-        <div class="finals-features">
-          <div class="finals-item">
-            <div class="finals-dot" style="background:var(--sky-lt);">📈</div>
-            <div>
-              <h4>Win Rate Over Time</h4>
-              <p>W/L bar chart across every session. See if your game is improving or if the competition is just getting harder.</p>
-            </div>
-          </div>
-          <div class="finals-item">
-            <div class="finals-dot" style="background:var(--green-lt);">📜</div>
-            <div>
-              <h4>Full Match History</h4>
-              <p>Every match you've played — who your partners and opponents were, the score, and whether you won.</p>
-            </div>
-          </div>
-          <div class="finals-item">
-            <div class="finals-dot" style="background:var(--amber-lt);">✍️</div>
-            <div>
-              <h4>AI-Written Bio</h4>
-              <p>A short, fun blurb about your season — auto-generated from your stats. "Sekhar Durga swings with grace and might…"</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:1.5rem;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.07);">
-          <img src="screenshots/snobaddy-screen-v2-12.png" alt="Player profile page" style="width:70%;display:block;margin:0 auto;" />
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════
-     HOW IT WORKS
-══════════════════════════════════════════════════════ -->
-<section class="how" id="how">
-  <div class="container">
-    <span class="eyebrow">How It Works</span>
-    <h2 class="section-title">From the front door<br/>to the final score</h2>
-
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Admin opens the session</h3>
-        <p>One tap before play starts. The session goes live and players can start checking in.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>Players check in</h3>
-        <p>Everyone opens the app and taps "I'm here." No clipboard, no shouting. Admins can check in players too.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Record matches live</h3>
-        <p>After each game, pick the 4 players and enter the score. Or use the AI match suggester to decide who plays next.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <h3>Close & celebrate</h3>
-        <p>Admin closes the session. Session awards are announced, tonight's stats are locked in, and the leaderboard updates.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════
-     CTA
-══════════════════════════════════════════════════════ -->
-<div class="callout-wrap">
-  <div class="callout">
-    <h2>Ditch the whiteboard. 🏸</h2>
-    <p>Free for the Serve Sports Snoqualmie badminton club. Sign in with Google — no password, no setup.</p>
-    <a class="btn btn-white" href="https://snobaddy.vercel.app" target="_blank">Open Snobaddy →</a>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════════════
-     FOOTER
-══════════════════════════════════════════════════════ -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <div class="name">Serve Sports · Snobaddy</div>
-      <div class="sub">Drop-in badminton tracker · Snoqualmie, WA</div>
-    </div>
+<!-- ══ 2. WHAT IT IS ════════════════════════════════════════════════ -->
+<section id="what" class="pad">
+  <div class="wrap what">
     <div>
-      <div class="footer-links">
-        <a href="mockups/">Mockups</a>
-        <a href="ubr.html">UBR Rating Algorithm</a>
-        <a href="season-lifecycle.html">Season Lifecycle</a>
-        <a href="https://github.com/kbrovibes/snobaddy" target="_blank">GitHub</a>
-        <a href="https://snobaddy.vercel.app" target="_blank">Open App ↗</a>
+      <p class="eyebrow">What it is</p>
+      <h2 style="font-size:clamp(26px,3.6vw,38px);margin-top:10px">A badminton night, on the phone that was already in your pocket</h2>
+      <div class="prose" style="margin-top:18px">
+        <p>Every Monday and Thursday, a drop-in club in Snoqualmie turns up with rackets and a whiteboard. Names get scrawled at the top, wins get tallied in the margin, and by the last game of the night nobody can read the handwriting or agree on who beat whom.</p>
+        <p>Sno Baddy puts the same night on a phone. An admin starts the session, players tap Check In, and the app knows who is on court. Tap Generate Matches and it proposes the next round from wait time, skill and who has already played whom — the part a whiteboard cannot do.</p>
       </div>
-      <div class="footer-tech">Built with Next.js · Supabase · Vercel · Claude AI</div>
+    </div>
+    <aside class="forwho">
+      <h3>Who it’s for</h3>
+      <ul>
+        <li><span><b>Drop-in players.</b> Check in when you arrive, record a game in two taps, see tonight’s win rate before you leave.</span></li>
+        <li><span><b>Whoever runs the night.</b> Start and close the session, generate the next matches, fix a wrong score inline.</span></li>
+        <li><span><b>Not for tournament organisers.</b> There are no brackets, no seeding and no draws. This tracks a casual night, not an event.</span></li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<!-- ══ 3. TOUR — the carousel ═══════════════════════════════════════ -->
+<section id="tour" class="tour band"
+         aria-roledescription="carousel" aria-label="Product tour">
+  <div class="wrap bar">
+    <div class="head">
+      <p class="eyebrow">Tour</p>
+      <h2>One night, screen by screen</h2>
+    </div>
+    <div class="controls" style="margin-top:0">
+      <button class="arrow" data-prev type="button" aria-controls="track" aria-label="Previous slide">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2 4.5 8l6 6 1.4-1.4L7.3 8l4.6-4.6z"/></svg></button>
+      <button class="arrow" data-next type="button" aria-controls="track" aria-label="Next slide">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 2 4.1 3.4 8.7 8l-4.6 4.6L5.5 14l6-6z"/></svg></button>
+      <button class="pause" data-toggle type="button" aria-label="Pause automatic slide rotation" aria-pressed="false">
+        <svg viewBox="0 0 16 16" aria-hidden="true" data-icon><rect x="4" y="3" width="3" height="10" rx="1"></rect><rect x="9" y="3" width="3" height="10" rx="1"></rect></svg></button>
+    </div>
+  </div>
+
+  <div class="track" id="track" tabindex="0" role="group" aria-label="Slides, use arrow keys">
+
+    <article class="slide" role="group" aria-roledescription="slide" aria-label="1 of 5: Session list">
+      <div class="shot device">
+        <img src="media/tour-01-session-list.png" alt="Session list with one upcoming Thursday session above five finalized past sessions" loading="lazy" decoding="async">
+      </div>
+      <div class="copy">
+        <p class="eyebrow">Session list</p>
+        <h3>Every night gets a <em>page</em></h3>
+        <p>The home screen is the season. Tonight sits at the top; every past Monday and Thursday sits under it, finalized and still readable months later. An admin starts a new one in a tap.</p>
+        <ul>
+          <li>Upcoming, in progress, finalized</li>
+          <li>Test sessions hidden behind a toggle</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="slide" role="group" aria-roledescription="slide" aria-label="2 of 5: Players and check-in">
+      <div class="shot device">
+        <img src="media/tour-02-players-checkin.png" alt="Player grid of coloured initials with counts for total players, checked in and out" loading="lazy" decoding="async">
+      </div>
+      <div class="copy">
+        <p class="eyebrow">Check-in</p>
+        <h3>Who is actually <em>here</em></h3>
+        <p>Players tap Check In on their own phone; an admin can check anyone in or out from the card grid. Walk-ins get added by hand, with no account, and count like everyone else.</p>
+        <ul>
+          <li>Skill level 1–5, editable by an admin</li>
+          <li>Soft delete keeps a leaver’s history</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="slide" role="group" aria-roledescription="slide" aria-label="3 of 5: Scores and match generation">
+      <div class="shot device">
+        <img src="media/tour-03-score-entry.png" alt="Score entry form with two teams, a twenty-one to nineteen result and Generate Matches" loading="lazy" decoding="async">
+      </div>
+      <div class="copy">
+        <p class="eyebrow">Scores</p>
+        <h3>Two taps, one <em>score</em></h3>
+        <p>Pick two teams and a number, or flip Win/Loss Only for a night nobody wants to type. Generate Matches proposes the next batch: longest waiters first, no back-to-back games, teams split for even skill.</p>
+        <ul>
+          <li>Simple or full scoring, set per session</li>
+          <li>Queue tops itself up after each score</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="slide" role="group" aria-roledescription="slide" aria-label="4 of 5: End of night">
+      <div class="shot device">
+        <img src="media/tour-04-session-awards.png" alt="Session award cards above a finalized scoreboard listing twenty-five matches with points" loading="lazy" decoding="async">
+      </div>
+      <div class="copy">
+        <p class="eyebrow">End of night</p>
+        <h3>Awards, then the <em>ledger</em></h3>
+        <p>Finalizing closes the session and hands out awards: The Slayer, The Unstoppable, The Untouchable, The Point Collector. Under them sits the night’s full table — matches, wins, losses, points, win rate.</p>
+        <ul>
+          <li>Closed sessions can be reopened</li>
+          <li>Numbers roll into the season automatically</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="slide" role="group" aria-roledescription="slide" aria-label="5 of 5: Player profiles">
+      <div class="shot device">
+        <img src="media/tour-05-player-profile.png" alt="Player profile with win rate, a short poem and a wins and losses chart per session" loading="lazy" decoding="async">
+      </div>
+      <div class="copy">
+        <p class="eyebrow">Profiles</p>
+        <h3>Your season, with a <em>poem</em></h3>
+        <p>Tap any name for wins and losses per session as a bar chart, plus every match you played — partner, opponents, score. Each profile also carries a short poem about the player, written by Claude.</p>
+        <ul>
+          <li>Poem is cached, rewritten as the record changes</li>
+        </ul>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="controls">
+    <div class="dots" aria-label="Choose a slide">
+      <button class="dot" type="button" aria-current="true"  aria-label="Slide 1"></button>
+      <button class="dot" type="button" aria-current="false" aria-label="Slide 2"></button>
+      <button class="dot" type="button" aria-current="false" aria-label="Slide 3"></button>
+      <button class="dot" type="button" aria-current="false" aria-label="Slide 4"></button>
+      <button class="dot" type="button" aria-current="false" aria-label="Slide 5"></button>
+    </div>
+  </div>
+  <p class="sr" aria-live="polite" data-live></p>
+</section>
+
+<!-- ══ 4. HOW IT WORKS ══════════════════════════════════════════════ -->
+<section id="how" class="pad">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">How it works</p>
+      <h2>From an empty court to a season table</h2>
+      <p>Four things happen every club night, in this order, and the app only ever asks for the next one.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><p class="n">01</p><h3>Start the session</h3><p>An admin opens tonight’s date and taps Start. The session goes live for everyone who has the app open.</p></div>
+      <div class="step"><p class="n">02</p><h3>Check in</h3><p>Players tap Check In from their own phone; walk-ins get added by hand. Who’s Here fills up with skill dots and arrival times.</p></div>
+      <div class="step"><p class="n">03</p><h3>Play, then record</h3><p>Generate Matches proposes the next fair batch. After a game, someone saves the score and the scoreboard updates for everyone.</p></div>
+      <div class="step"><p class="n">04</p><h3>Finalize the night</h3><p>The admin closes the session. Awards get handed out and the night’s numbers roll into the season leaderboard.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 5. FEATURES ══════════════════════════════════════════════════ -->
+<section id="features" class="pad band">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Features</p>
+      <h2>What’s actually in it</h2>
+    </div>
+    <div class="grid">
+      <div class="card"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Live check-in</h3><p>Tap in when you arrive, tap out when you leave. Who’s Here updates for everyone with the app open.</p></div>
+      <div class="card"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18"/></svg>Match generator</h3><p>Proposes balanced doubles from wait time, skill level, and who has already played whom tonight.</p></div>
+      <div class="card"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Two scoring modes</h3><p>Full mode records the actual points. Win/Loss mode records only who won, for nights nobody wants to type.</p></div>
+      <div class="card"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18V8m5 10V5m5 13v-7m5 7V9"/></svg>Session scoreboard</h3><p>Wins, losses, points and win rate for tonight, sortable by any column, with the full match log underneath.</p></div>
+      <div class="card"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0zM9 20h6M12 14v6"/></svg>Season leaderboard</h3><p>Cumulative record for the whole season, plus two season awards for volume played and best win rate.</p></div>
+      <div class="card"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Session awards</h3><p>Closing a night hands out The Slayer, The Unstoppable, The Point Collector and a few more.</p></div>
+      <div class="card"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>Player profiles</h3><p>Win rate per session as a bar chart, plus every match with partner, opponent and score.</p></div>
+      <div class="card"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l1.8 4.2L18 10l-4.2 1.8L12 16l-1.8-4.2L6 10l4.2-1.8z"/></svg>A poem per player</h3><p>Claude writes a short poem for each profile and rewrites it when that player’s match count changes.</p></div>
+      <div class="card"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9z"/></svg>Admin controls</h3><p>Start, close or reopen a session, edit or delete a match, and set anyone’s skill level from one to five.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 6. BUILT WITH ════════════════════════════════════════════════ -->
+<section id="stack" class="pad-sm">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Built with</p>
+      <h2>The stack, and where the data lives</h2>
+    </div>
+    <ul class="chips">
+      <li>Next.js 16</li><li>React 19</li><li>TypeScript</li><li>Tailwind CSS v4</li>
+      <li>Supabase</li><li>Anthropic SDK</li><li>Vercel</li>
+    </ul>
+    <p class="note">Names, skill levels and scores live in a Supabase Postgres database behind row-level security. Sign-in is Google OAuth or email and password. The poems cost a few cents of Anthropic credit. It is, objectively, more engineering than a whiteboard requires. The whiteboard cost $4.99.</p>
+  </div>
+</section>
+
+<!-- ══ 7. FAQ ═══════════════════════════════════════════════════════ -->
+<section id="faq" class="pad-sm">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">FAQ</p>
+      <h2>Reasonable questions</h2>
+    </div>
+    <div class="faq">
+      <details open><summary>Is it free?</summary><p>Yes. No ads, no subscription, nothing to buy. The Anthropic API credit the player poems burn through is measured in cents, and it is mine.</p></details>
+      <details><summary>Do I need an account?</summary><p>To check in or record a score, yes — Google sign-in or an email and password, then about ten seconds to pick a skill level. Walk-ins need nothing: an admin adds them by hand.</p></details>
+      <details><summary>Where does my data go?</summary><p>A Supabase Postgres database with row-level security, served from Vercel. It holds display names, skill levels and match scores. Vercel Analytics and Speed Insights collect page-level traffic data.</p></details>
+      <details><summary>Does it work on my phone?</summary><p>That is the only place it really gets used — the whole thing is built mobile-first for people standing next to a court. It is a website, not an App Store download.</p></details>
+      <details><summary>Can my club use it?</summary><p>Not as it stands. Admin emails are a hard-coded whitelist and it assumes one club and one season. The source is on GitHub if you want to fork it and change that.</p></details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══ FOOTER — link affordances #2 ══════════════════════════════════ -->
+<footer>
+  <div class="wrap foot">
+    <div>
+      <a class="wordmark" href="#top" style="text-decoration:none"><b>Sno Baddy</b><span>club badminton</span></a>
+      <small style="margin-top:12px">
+        Built by <a class="plain" href="https://karthikrajan.info" rel="noopener">Karthik Rajan</a> for
+        <a class="plain" href="https://snobaddy.vercel.app" rel="noopener">Serve Snoqualmie Sports</a>. 🏸<br>
+        Last updated <time datetime="2026-08">August 2026</time>.
+      </small>
+    </div>
+    <div class="links">
+      <a class="btn btn-primary" href="https://snobaddy.vercel.app" rel="noopener">Open the app</a>
+      <a class="btn btn-ghost" href="https://github.com/kbrovibes/snobaddy" rel="noopener">View source on GitHub</a>
+      <a class="btn btn-ghost" href="https://kbrovibes.github.io/">All projects</a>
     </div>
   </div>
 </footer>
 
+<script>
+/* ============================================================
+   Markup-driven: add or remove .slide elements (and matching
+   .dot buttons) and the carousel adapts.
+   ============================================================ */
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  /* ---------- 1. Carousel ---------- */
+  var track = document.getElementById("track");
+  if (track) {
+    var slides = Array.prototype.slice.call(track.querySelectorAll(".slide"));
+    var dots   = Array.prototype.slice.call(document.querySelectorAll(".dot"));
+    var live   = document.querySelector("[data-live]");
+    var toggle = document.querySelector("[data-toggle]");
+    var index  = 0;
+    var paused = false;      // user asked for pause
+    var resting = true;      // no pointer/focus inside right now
+    var timer  = null;
+    var AUTOPLAY_MS = 6500;
+
+    function label(i) {
+      var s = slides[i];
+      var h = s && s.querySelector(".copy h3");
+      return "Slide " + (i + 1) + " of " + slides.length + (h ? ": " + h.textContent.trim() : "");
+    }
+
+    function paint(i) {
+      index = i;
+      dots.forEach(function (d, n) { d.setAttribute("aria-current", n === i ? "true" : "false"); });
+      if (live) live.textContent = label(i);
+    }
+
+    function goTo(i, smooth) {
+      var n = (i + slides.length) % slides.length;
+      track.scrollTo({
+        left: n * track.clientWidth,
+        behavior: smooth && !reduce.matches ? "smooth" : "auto"
+      });
+      paint(n);
+    }
+
+    /* scroll-spy: the scroll position is the source of truth */
+    var raf = null;
+    track.addEventListener("scroll", function () {
+      if (raf) return;
+      raf = requestAnimationFrame(function () {
+        raf = null;
+        var n = Math.round(track.scrollLeft / track.clientWidth);
+        if (n !== index && slides[n]) paint(n);
+      });
+    }, { passive: true });
+
+    dots.forEach(function (d, n) {
+      d.addEventListener("click", function () { rest(false); goTo(n, true); });
+    });
+    var prev = document.querySelector("[data-prev]");
+    var next = document.querySelector("[data-next]");
+    if (prev) prev.addEventListener("click", function () { rest(false); goTo(index - 1, true); });
+    if (next) next.addEventListener("click", function () { rest(false); goTo(index + 1, true); });
+
+    /* keyboard: arrows when the track (or anything inside it) has focus */
+    track.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight") { e.preventDefault(); rest(false); goTo(index + 1, true); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); rest(false); goTo(index - 1, true); }
+      else if (e.key === "Home") { e.preventDefault(); rest(false); goTo(0, true); }
+      else if (e.key === "End") { e.preventDefault(); rest(false); goTo(slides.length - 1, true); }
+    });
+
+    /* autoplay, and every way it can stop */
+    var PLAY = '<path d="M4 2.5v11l9-5.5z"></path>';
+    var PAUSE = '<rect x="4" y="3" width="3" height="10" rx="1"></rect><rect x="9" y="3" width="3" height="10" rx="1"></rect>';
+
+    function rest(v) { resting = v; }
+
+    function tick() {
+      if (paused || !resting || document.hidden) return;
+      goTo(index + 1, true);
+    }
+
+    function start() {
+      stop();
+      if (reduce.matches) return;      /* honour prefers-reduced-motion: no autoplay */
+      timer = setInterval(tick, AUTOPLAY_MS);
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+    function setPaused(v) {
+      paused = v;
+      if (toggle) {
+        toggle.setAttribute("aria-pressed", v ? "true" : "false");
+        toggle.setAttribute("aria-label", v ? "Resume automatic slide rotation" : "Pause automatic slide rotation");
+        var icon = toggle.querySelector("[data-icon]");
+        if (icon) icon.innerHTML = v ? PLAY : PAUSE;
+      }
+    }
+
+    if (toggle) {
+      if (reduce.matches) { toggle.hidden = true; }
+      toggle.addEventListener("click", function () { setPaused(!paused); });
+    }
+
+    /* hovering, touching, or tabbing into the carousel suspends rotation */
+    ["pointerenter", "pointerdown", "focusin"].forEach(function (ev) {
+      track.addEventListener(ev, function () { rest(false); });
+    });
+    ["pointerleave", "focusout"].forEach(function (ev) {
+      track.addEventListener(ev, function () { rest(true); });
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) stop(); else start();
+    });
+    reduce.addEventListener("change", function () { start(); if (toggle) toggle.hidden = reduce.matches; });
+
+    /* keep the slide aligned when the viewport changes width */
+    var rt = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(rt);
+      rt = setTimeout(function () { goTo(index, false); }, 120);
+    });
+
+    paint(0);
+    start();
+  }
+
+  /* ---------- 2. Header scroll-spy ---------- */
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll(".site nav a"));
+  var targets = navLinks
+    .map(function (a) { return document.querySelector(a.getAttribute("href")); })
+    .filter(Boolean);
+
+  if (targets.length && "IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        navLinks.forEach(function (a) {
+          a.setAttribute("aria-current", a.getAttribute("href") === "#" + entry.target.id ? "true" : "false");
+        });
+      });
+    }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
+    targets.forEach(function (t) { io.observe(t); });
+  }
+})();
+</script>
 </body>
 </html>
